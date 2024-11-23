@@ -40,7 +40,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Auth />} />
                   <Route
-                    path="/admin"
+                    path="/admin/*"
                     element={
                       <PrivateRoute allowedRoles={["admin"]}>
                         <AdminDashboard />
