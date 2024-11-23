@@ -49,7 +49,8 @@ export function Auth() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center">
+    <div className="flex min-h-[80vh] items-center justify-center flex-col">
+      <img src="/logo.svg" alt="Logo" className="h-20 mb-8" />
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>مرحباً بك</CardTitle>
