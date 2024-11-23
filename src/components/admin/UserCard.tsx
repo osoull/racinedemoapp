@@ -14,7 +14,9 @@ import { EditUserDialog } from "./EditUserDialog";
 type User = {
   id: string;
   email: string;
-  full_name: string | null;
+  first_name: string | null;
+  middle_name: string | null;
+  last_name: string | null;
   user_type: string | null;
   kyc_status: string | null;
 };
@@ -27,14 +29,16 @@ type UserCardProps = {
 };
 
 export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps) {
+  const fullName = [user.first_name, user.middle_name, user.last_name]
+    .filter(Boolean)
+    .join(' ') || 'الاسم غير محدد';
+
   return (
     <Card className="p-4">
       <div className="flex flex-col space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex flex-col">
-            <h3 className="font-semibold">
-              {user.full_name || 'الاسم غير محدد'}
-            </h3>
+            <h3 className="font-semibold">{fullName}</h3>
             <div className="flex items-center text-sm text-gray-500">
               <Mail className="ml-2 h-4 w-4" />
               {user.email}

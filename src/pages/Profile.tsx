@@ -13,7 +13,9 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState({
-    full_name: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
     phone: "",
     address: "",
   })
@@ -36,7 +38,9 @@ export default function Profile() {
 
       if (data) {
         setProfile({
-          full_name: data.full_name || "",
+          first_name: data.first_name || "",
+          middle_name: data.middle_name || "",
+          last_name: data.last_name || "",
           phone: data.phone || "",
           address: data.address || "",
         })
@@ -61,7 +65,9 @@ export default function Profile() {
       const { error } = await supabase
         .from("profiles")
         .update({
-          full_name: profile.full_name,
+          first_name: profile.first_name,
+          middle_name: profile.middle_name,
+          last_name: profile.last_name,
           phone: profile.phone,
           address: profile.address,
           updated_at: new Date().toISOString(),
@@ -103,16 +109,44 @@ export default function Profile() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="full_name" className="text-sm font-medium">
-                الاسم الكامل
+              <label htmlFor="first_name" className="text-sm font-medium">
+                الاسم الأول
               </label>
               <Input
-                id="full_name"
-                value={profile.full_name}
+                id="first_name"
+                value={profile.first_name}
                 onChange={(e) =>
-                  setProfile({ ...profile, full_name: e.target.value })
+                  setProfile({ ...profile, first_name: e.target.value })
                 }
-                placeholder="أدخل اسمك الكامل"
+                placeholder="أدخل اسمك الأول"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="middle_name" className="text-sm font-medium">
+                الاسم الأوسط
+              </label>
+              <Input
+                id="middle_name"
+                value={profile.middle_name}
+                onChange={(e) =>
+                  setProfile({ ...profile, middle_name: e.target.value })
+                }
+                placeholder="أدخل اسمك الأوسط"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="last_name" className="text-sm font-medium">
+                اسم العائلة
+              </label>
+              <Input
+                id="last_name"
+                value={profile.last_name}
+                onChange={(e) =>
+                  setProfile({ ...profile, last_name: e.target.value })
+                }
+                placeholder="أدخل اسم عائلتك"
               />
             </div>
 

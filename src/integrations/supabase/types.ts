@@ -213,9 +213,11 @@ export type Database = {
           address: string | null
           created_at: string
           email: string | null
-          full_name: string | null
+          first_name: string | null
           id: string
           kyc_status: string | null
+          last_name: string | null
+          middle_name: string | null
           national_id: string | null
           phone: string | null
           updated_at: string
@@ -225,9 +227,11 @@ export type Database = {
           address?: string | null
           created_at?: string
           email?: string | null
-          full_name?: string | null
+          first_name?: string | null
           id: string
           kyc_status?: string | null
+          last_name?: string | null
+          middle_name?: string | null
           national_id?: string | null
           phone?: string | null
           updated_at?: string
@@ -237,9 +241,11 @@ export type Database = {
           address?: string | null
           created_at?: string
           email?: string | null
-          full_name?: string | null
+          first_name?: string | null
           id?: string
           kyc_status?: string | null
+          last_name?: string | null
+          middle_name?: string | null
           national_id?: string | null
           phone?: string | null
           updated_at?: string
