@@ -15,6 +15,7 @@ const UserManagement = () => {
         .select(`
           id,
           full_name,
+          national_id,
           kyc_status,
           user_type,
           created_at
@@ -83,6 +84,9 @@ const UserCard = ({ user }: { user: any }) => {
       <CardContent className="flex justify-between items-center p-4">
         <div>
           <h3 className="font-semibold">{user.full_name}</h3>
+          <p className="text-sm text-gray-500">
+            رقم الهوية: {user.national_id}
+          </p>
           <p className="text-sm text-gray-500">
             حالة KYC: {user.kyc_status}
           </p>

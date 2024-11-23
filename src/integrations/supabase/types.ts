@@ -187,7 +187,7 @@ export type Database = {
           full_name: string | null
           id: string
           kyc_status: Database["public"]["Enums"]["kyc_status"] | null
-          national_id: string | null
+          national_id: string
           phone: string | null
           two_factor_enabled: boolean | null
           updated_at: string
@@ -199,7 +199,7 @@ export type Database = {
           full_name?: string | null
           id: string
           kyc_status?: Database["public"]["Enums"]["kyc_status"] | null
-          national_id?: string | null
+          national_id: string
           phone?: string | null
           two_factor_enabled?: boolean | null
           updated_at?: string
@@ -211,7 +211,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           kyc_status?: Database["public"]["Enums"]["kyc_status"] | null
-          national_id?: string | null
+          national_id?: string
           phone?: string | null
           two_factor_enabled?: boolean | null
           updated_at?: string
