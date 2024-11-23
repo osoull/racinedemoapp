@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProjectsTable from "@/components/investment-manager/ProjectsTable";
 import InvestmentsTable from "@/components/investment-manager/InvestmentsTable";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 type ProjectStatus = "pending" | "approved" | "rejected" | "funding" | "completed";
 type InvestmentStatus = "pending" | "confirmed" | "cancelled";
@@ -10,6 +12,35 @@ type InvestmentStatus = "pending" | "confirmed" | "cancelled";
 const InvestmentManagerDashboard = () => {
   const [selectedProjectStatus, setSelectedProjectStatus] = useState<ProjectStatus>("pending");
   const [selectedInvestmentStatus, setSelectedInvestmentStatus] = useState<InvestmentStatus>("pending");
+
+  const { data: projects, isLoading: projectsLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select(`
+          *,
+          owner: profiles(full_name)
+        `);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: investments, isLoading: investmentsLoading } = useQuery({
+    queryKey: ["investments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("investments")
+        .select(`
+          *,
+          investor: profiles(full_name),
+          project: projects(title)
+        `);
+      if (error) throw error;
+      return data;
+    },
+  });
 
   return (
     <div className="container mx-auto px-4 pt-20 pb-6">
@@ -36,7 +67,11 @@ const InvestmentManagerDashboard = () => {
                 <option value="completed">مكتمل</option>
               </select>
             </div>
-            <ProjectsTable status={selectedProjectStatus} />
+            <ProjectsTable 
+              projects={projects || []} 
+              status={selectedProjectStatus}
+              isLoading={projectsLoading}
+            />
           </Card>
         </TabsContent>
 
@@ -53,7 +88,11 @@ const InvestmentManagerDashboard = () => {
                 <option value="cancelled">ملغى</option>
               </select>
             </div>
-            <InvestmentsTable status={selectedInvestmentStatus} />
+            <InvestmentsTable 
+              investments={investments || []} 
+              status={selectedInvestmentStatus}
+              isLoading={investmentsLoading}
+            />
           </Card>
         </TabsContent>
       </Tabs>
