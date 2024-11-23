@@ -69,29 +69,32 @@ export const NotificationsProvider = ({ children }: { children: React.ReactNode 
     undefined,
     (payload) => {
       // Handle updates
-      if (payload.new && 'notification_id' in payload.new) {
+      if (payload.new && typeof payload.new === 'object' && 'notification_id' in payload.new) {
+        const newNotification = payload.new as Notification;
         setNotifications(prev =>
           prev.map(n =>
-            n.notification_id === payload.new.notification_id ? payload.new : n
+            n.notification_id === newNotification.notification_id ? newNotification : n
           )
         );
       }
     },
     (payload) => {
       // Handle new notifications
-      if (payload.new && 'notification_id' in payload.new) {
-        setNotifications(prev => [payload.new, ...prev]);
+      if (payload.new && typeof payload.new === 'object' && 'notification_id' in payload.new) {
+        const newNotification = payload.new as Notification;
+        setNotifications(prev => [newNotification, ...prev]);
         setUnreadCount(prev => prev + 1);
-        toast(payload.new.title, {
-          description: payload.new.message,
+        toast(newNotification.title, {
+          description: newNotification.message,
         });
       }
     },
     (payload) => {
       // Handle deletions
-      if (payload.old && 'notification_id' in payload.old) {
+      if (payload.old && typeof payload.old === 'object' && 'notification_id' in payload.old) {
+        const oldNotification = payload.old as Notification;
         setNotifications(prev =>
-          prev.filter(n => n.notification_id !== payload.old.notification_id)
+          prev.filter(n => n.notification_id !== oldNotification.notification_id)
         );
       }
     }
