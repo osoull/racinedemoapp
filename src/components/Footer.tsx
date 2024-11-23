@@ -9,8 +9,8 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="bg-primary text-white py-4 text-center">
-      <p className="text-white/80">
+    <footer className="bg-white text-primary py-4 text-center border-t">
+      <p className="text-primary/80">
         جميع الحقوق محفوظة لشركة رسين للأستثمار© {year}
       </p>
     </footer>
