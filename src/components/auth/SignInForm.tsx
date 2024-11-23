@@ -37,8 +37,6 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
 
   const handleRedirect = async (userId: string) => {
     try {
-      console.log("Fetching user profile for ID:", userId);
-      
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('user_type')
@@ -50,25 +48,18 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         throw new Error("Failed to fetch user profile");
       }
 
-      console.log("User profile data:", profile);
-
       if (!profile) {
         console.error("No profile found for user");
         throw new Error("No profile found");
       }
 
-      switch (profile.user_type) {
-        case 'admin':
-          console.log("Redirecting to admin dashboard");
-          navigate('/admin');
-          break;
-        case 'investment_manager':
-          console.log("Redirecting to investment manager dashboard");
-          navigate('/investment-manager');
-          break;
-        default:
-          console.log("Redirecting to user dashboard");
-          navigate('/dashboard');
+      // Redirection basée sur le type d'utilisateur
+      if (profile.user_type === 'admin') {
+        navigate('/admin');
+      } else if (profile.user_type === 'investment_manager') {
+        navigate('/investment-manager');
+      } else {
+        navigate('/dashboard');
       }
 
       toast.success("تم تسجيل الدخول بنجاح");
@@ -84,10 +75,9 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      console.log("Attempting sign in for email:", values.email);
 
-      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
+      // Tentative de connexion avec Supabase
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
@@ -99,16 +89,13 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         return;
       }
 
-      if (!authData.user) {
-        console.error("No user data returned after sign in");
+      if (!data.user) {
         setError("فشل تسجيل الدخول");
         setIsLoading(false);
         return;
       }
 
-      console.log("Sign in successful, user:", authData.user);
-      await handleRedirect(authData.user.id);
-      
+      await handleRedirect(data.user.id);
     } catch (error) {
       console.error("Unexpected error during sign in:", error);
       setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
