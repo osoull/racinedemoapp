@@ -32,8 +32,27 @@ const UserManagement = () => {
     },
   });
 
+  // Nouvelle requête pour compter les administrateurs
+  const { data: adminCount } = useQuery({
+    queryKey: ["adminCount"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("profiles")
+        .select("*", { count: 'exact', head: true })
+        .eq("user_type", "admin");
+
+      if (error) throw error;
+      return count;
+    },
+  });
+
   const deleteAllUsersMutation = useMutation({
     mutationFn: async () => {
+      // Vérifier si on essaie de supprimer des administrateurs
+      if (userType === "admin" && adminCount === 1) {
+        throw new Error("Impossible de supprimer le dernier administrateur");
+      }
+
       const { error } = await supabase
         .from("profiles")
         .delete()
@@ -51,7 +70,7 @@ const UserManagement = () => {
     onError: (error) => {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression des utilisateurs",
+        description: error instanceof Error ? error.message : "Une erreur est survenue lors de la suppression des utilisateurs",
         variant: "destructive",
       });
       console.error("Error deleting users:", error);
@@ -73,6 +92,11 @@ const UserManagement = () => {
               <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
               <AlertDialogDescription>
                 Cette action est irréversible. Elle supprimera définitivement tous les utilisateurs de type {userType === "investor" ? "investisseur" : "propriétaire de projet"}.
+                {userType === "admin" && adminCount === 1 && (
+                  <p className="text-red-500 mt-2">
+                    Impossible de supprimer le dernier administrateur.
+                  </p>
+                )}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -80,6 +104,7 @@ const UserManagement = () => {
               <AlertDialogAction 
                 onClick={() => deleteAllUsersMutation.mutate()}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                disabled={userType === "admin" && adminCount === 1}
               >
                 Supprimer
               </AlertDialogAction>
