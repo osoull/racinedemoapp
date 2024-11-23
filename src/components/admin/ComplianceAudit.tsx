@@ -43,6 +43,13 @@ const ComplianceAudit = () => {
     },
   });
 
+  const formatUserName = (user: any) => {
+    if (!user) return 'غير معروف';
+    return [user.first_name, user.middle_name, user.last_name]
+      .filter(Boolean)
+      .join(' ') || 'غير معروف';
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -163,7 +170,7 @@ const ComplianceAudit = () => {
                       {users?.map((user) => (
                         <div key={user.id} className="flex items-center justify-between py-2 border-b">
                           <div>
-                            <p className="font-medium">{user.full_name}</p>
+                            <p className="font-medium">{formatUserName(user)}</p>
                             <p className="text-sm text-muted-foreground">
                               حالة التحقق: {user.kyc_status === 'approved' ? 'مكتمل' : 'قيد المراجعة'}
                             </p>

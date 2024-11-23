@@ -21,7 +21,7 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("first_name, middle_name, last_name")
         .eq("id", user?.id)
         .single();
       
@@ -31,13 +31,22 @@ const Dashboard = () => {
     enabled: !!user?.id,
   });
 
+  const formatUserName = (profile: any) => {
+    if (!profile) return '';
+    return [profile.first_name, profile.middle_name, profile.last_name]
+      .filter(Boolean)
+      .join(' ');
+  };
+
+  // ... keep existing code
+
   return (
     <div className="container mx-auto px-4 py-8 mt-14">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold">لوحة التحكم</h1>
           <p className="text-muted-foreground mt-1">
-            {profile?.full_name ? `مرحباً بك, ${profile.full_name}` : "مرحباً بك"}
+            {profile ? `مرحباً بك, ${formatUserName(profile)}` : "مرحباً بك"}
           </p>
         </div>
         <UserAvatar />

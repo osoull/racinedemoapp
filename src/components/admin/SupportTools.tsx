@@ -4,7 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
 type SupportTicket = Tables<"support_tickets"> & {
-  user?: Tables<"profiles">;
+  user?: {
+    first_name: string | null;
+    middle_name: string | null;
+    last_name: string | null;
+  };
 };
 
 const SupportTools = () => {
@@ -15,13 +19,20 @@ const SupportTools = () => {
         .from("support_tickets")
         .select(`
           *,
-          user:profiles(full_name)
+          user:profiles(first_name, middle_name, last_name)
         `);
 
       if (error) throw error;
       return data as SupportTicket[];
     },
   });
+
+  const formatUserName = (user: SupportTicket['user']) => {
+    if (!user) return 'غير معروف';
+    return [user.first_name, user.middle_name, user.last_name]
+      .filter(Boolean)
+      .join(' ') || 'غير معروف';
+  };
 
   return (
     <Card>
@@ -44,6 +55,13 @@ const SupportTools = () => {
 };
 
 const TicketCard = ({ ticket }: { ticket: SupportTicket }) => {
+  const formatUserName = (user: SupportTicket['user']) => {
+    if (!user) return 'غير معروف';
+    return [user.first_name, user.middle_name, user.last_name]
+      .filter(Boolean)
+      .join(' ') || 'غير معروف';
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -53,7 +71,7 @@ const TicketCard = ({ ticket }: { ticket: SupportTicket }) => {
               {ticket.category}
             </h3>
             <p className="text-sm text-gray-500">
-              المستخدم: {ticket.user?.full_name}
+              المستخدم: {formatUserName(ticket.user)}
             </p>
             <p className="text-sm text-gray-500">
               الحالة: {ticket.status}

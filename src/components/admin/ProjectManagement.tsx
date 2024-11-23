@@ -4,7 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 
 type Project = Tables<"projects"> & {
-  owner?: Tables<"profiles">;
+  owner?: {
+    first_name: string | null;
+    middle_name: string | null;
+    last_name: string | null;
+  };
 };
 
 const ProjectManagement = () => {
@@ -15,13 +19,20 @@ const ProjectManagement = () => {
         .from("projects")
         .select(`
           *,
-          owner:profiles(full_name)
+          owner:profiles(first_name, middle_name, last_name)
         `);
 
       if (error) throw error;
       return data as Project[];
     },
   });
+
+  const formatOwnerName = (owner: Project['owner']) => {
+    if (!owner) return 'غير معروف';
+    return [owner.first_name, owner.middle_name, owner.last_name]
+      .filter(Boolean)
+      .join(' ') || 'غير معروف';
+  };
 
   return (
     <Card>
@@ -51,7 +62,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
           <div>
             <h3 className="font-semibold">{project.title}</h3>
             <p className="text-sm text-gray-500">
-              صاحب المشروع: {project.owner?.full_name}
+              صاحب المشروع: {formatOwnerName(project.owner)}
             </p>
             <p className="text-sm text-gray-500">
               الحالة: {project.status}
