@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,7 @@ interface SignInFormProps {
 const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -31,21 +33,47 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     },
   });
 
+  const handleRedirect = async (userId: string) => {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_type')
+      .eq('id', userId)
+      .single();
+
+    if (profile) {
+      switch (profile.user_type) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'investment_manager':
+          navigate('/investment-manager');
+          break;
+        default:
+          navigate('/dashboard');
+      }
+    } else {
+      navigate('/dashboard');
+    }
+  };
+
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (error) throw error;
 
-      toast({
-        title: "تم بنجاح",
-        description: "تم تسجيل الدخول بنجاح",
-      });
-      onSuccess();
+      if (data.user) {
+        await handleRedirect(data.user.id);
+        toast({
+          title: "تم بنجاح",
+          description: "تم تسجيل الدخول بنجاح",
+        });
+        onSuccess();
+      }
     } catch (error) {
       toast({
         title: "خطأ",
