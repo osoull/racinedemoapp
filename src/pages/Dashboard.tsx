@@ -7,18 +7,15 @@ import {
   MessageSquare, 
   Settings, 
   Shield,
-  User
 } from "lucide-react";
+import { UserAvatar } from "@/components/UserAvatar";
 
 const Dashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8 mt-14">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">لوحة التحكم</h1>
-        <Button variant="outline">
-          <User className="ml-2 h-4 w-4" />
-          الملف الشخصي
-        </Button>
+        <UserAvatar />
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
