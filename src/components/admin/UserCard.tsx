@@ -6,8 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { Mail, Trash2, UserCog } from "lucide-react";
+import { UserTypeLabel } from "./UserTypeLabel";
+import { KycStatusLabel } from "./KycStatusLabel";
 
 type User = {
   id: string;
@@ -24,42 +25,16 @@ type UserCardProps = {
 };
 
 export function UserCard({ user, onDelete, onUpdateType }: UserCardProps) {
-  const getUserTypeColor = (type: string | null) => {
-    switch (type) {
-      case 'admin':
-        return 'bg-red-500';
-      case 'investment_manager':
-        return 'bg-blue-500';
-      case 'investor':
-        return 'bg-green-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
-  const getKycStatusColor = (status: string | null) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-green-500';
-      case 'pending':
-        return 'bg-yellow-500';
-      case 'rejected':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
   return (
     <Card className="p-4">
       <div className="flex flex-col space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex flex-col">
             <h3 className="font-semibold">
-              {user.full_name || 'Nom non défini'}
+              {user.full_name || 'الاسم غير محدد'}
             </h3>
             <div className="flex items-center text-sm text-gray-500">
-              <Mail className="mr-2 h-4 w-4" />
+              <Mail className="ml-2 h-4 w-4" />
               {user.email}
             </div>
           </div>
@@ -72,13 +47,13 @@ export function UserCard({ user, onDelete, onUpdateType }: UserCardProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onUpdateType(user.id, 'investor')}>
-                  Définir comme Investisseur
+                  تعيين كمستثمر
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onUpdateType(user.id, 'investment_manager')}>
-                  Définir comme Manager
+                  تعيين كمدير استثمار
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onUpdateType(user.id, 'admin')}>
-                  Définir comme Admin
+                  تعيين كمشرف
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -92,12 +67,8 @@ export function UserCard({ user, onDelete, onUpdateType }: UserCardProps) {
           </div>
         </div>
         <div className="flex space-x-2">
-          <Badge variant="secondary" className={getUserTypeColor(user.user_type)}>
-            {user.user_type || 'Type non défini'}
-          </Badge>
-          <Badge variant="secondary" className={getKycStatusColor(user.kyc_status)}>
-            KYC: {user.kyc_status || 'Non défini'}
-          </Badge>
+          <UserTypeLabel type={user.user_type} />
+          <KycStatusLabel status={user.kyc_status} />
         </div>
       </div>
     </Card>

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -57,15 +55,15 @@ export default function UserManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       toast({
-        title: "Utilisateur supprimé",
-        description: "L'utilisateur a été supprimé avec succès.",
+        title: "تم حذف المستخدم",
+        description: "تم حذف المستخدم بنجاح",
       });
       setIsDeleteDialogOpen(false);
     },
     onError: (error) => {
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression de l'utilisateur.",
+        title: "خطأ",
+        description: "حدث خطأ أثناء حذف المستخدم",
         variant: "destructive",
       });
     },
@@ -83,14 +81,14 @@ export default function UserManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       toast({
-        title: "Type d'utilisateur mis à jour",
-        description: "Le type d'utilisateur a été mis à jour avec succès.",
+        title: "تم تحديث نوع المستخدم",
+        description: "تم تحديث نوع المستخدم بنجاح",
       });
     },
     onError: (error) => {
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour du type d'utilisateur.",
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث نوع المستخدم",
         variant: "destructive",
       });
     },
@@ -124,24 +122,24 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6" dir="rtl">
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="all">
-            <Users className="mr-2 h-4 w-4" />
-            Tous
+            <Users className="ml-2 h-4 w-4" />
+            الكل
           </TabsTrigger>
           <TabsTrigger value="investor">
-            <Users className="mr-2 h-4 w-4" />
-            Investisseurs
+            <Users className="ml-2 h-4 w-4" />
+            المستثمرون
           </TabsTrigger>
           <TabsTrigger value="investment_manager">
-            <UserCog className="mr-2 h-4 w-4" />
-            Managers
+            <UserCog className="ml-2 h-4 w-4" />
+            مدراء الاستثمار
           </TabsTrigger>
           <TabsTrigger value="admin">
-            <UserCog className="mr-2 h-4 w-4" />
-            Administrateurs
+            <UserCog className="ml-2 h-4 w-4" />
+            المشرفون
           </TabsTrigger>
         </TabsList>
 
@@ -201,14 +199,14 @@ export default function UserManagement() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</AlertDialogTitle>
+            <AlertDialogTitle>هل أنت متأكد من حذف هذا المستخدم؟</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est irréversible. Toutes les données associées à cet utilisateur seront supprimées.
+              هذا الإجراء لا يمكن التراجع عنه. سيتم حذف جميع البيانات المرتبطة بهذا المستخدم.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>Confirmer</AlertDialogAction>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>تأكيد</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
