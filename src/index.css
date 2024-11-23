@@ -40,6 +40,11 @@
   [dir="rtl"] {
     text-align: right;
   }
+
+  /* Default text direction for Arabic */
+  html {
+    direction: rtl;
+  }
 }
 
 @layer components {

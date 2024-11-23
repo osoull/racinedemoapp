@@ -10,19 +10,19 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-              Racine Investment
+              راسين للاستثمار
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8">
-              Shariah-compliant crowdfunding platform connecting innovative projects with ethical investors
+              منصة تمويل جماعي متوافقة مع الشريعة الإسلامية تربط المشاريع المبتكرة بالمستثمرين الأخلاقيين
             </p>
             <div className="flex gap-4 justify-center">
               <Button className="btn-primary">
-                Start Investing
                 <ArrowRight className="ml-2 h-4 w-4" />
+                ابدأ الاستثمار
               </Button>
               <Button className="btn-secondary">
-                Submit Project
                 <ArrowRight className="ml-2 h-4 w-4" />
+                قدم مشروعك
               </Button>
             </div>
           </div>
@@ -32,27 +32,27 @@ const Index = () => {
       {/* Features Section */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Racine Investment?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">لماذا تختار راسين للاستثمار؟</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="p-6 card-hover">
               <Shield className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Shariah Compliant</h3>
+              <h3 className="text-xl font-semibold mb-2">متوافق مع الشريعة</h3>
               <p className="text-gray-600">
-                All investments are vetted for compliance with Islamic finance principles
+                جميع الاستثمارات تخضع للتدقيق للتأكد من توافقها مع مبادئ التمويل الإسلامي
               </p>
             </Card>
             <Card className="p-6 card-hover">
               <Users className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Trusted Community</h3>
+              <h3 className="text-xl font-semibold mb-2">مجتمع موثوق</h3>
               <p className="text-gray-600">
-                Join a growing community of ethical investors and innovative entrepreneurs
+                انضم إلى مجتمع متنامي من المستثمرين الأخلاقيين ورواد الأعمال المبتكرين
               </p>
             </Card>
             <Card className="p-6 card-hover">
               <DollarSign className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Transparent Fees</h3>
+              <h3 className="text-xl font-semibold mb-2">رسوم شفافة</h3>
               <p className="text-gray-600">
-                Clear and competitive commission structure with no hidden charges
+                هيكل عمولات واضح وتنافسي بدون رسوم خفية
               </p>
             </Card>
           </div>
