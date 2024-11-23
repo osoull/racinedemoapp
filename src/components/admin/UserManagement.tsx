@@ -4,11 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Tables } from "@/integrations/supabase/types";
+import { Edit2, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-type UserType = "investor" | "project_owner" | "admin";
+type UserType = "investor" | "project_owner" | "investment_manager" | "admin";
 type Profile = Tables<"profiles">;
 
 const UserManagement = () => {
@@ -36,29 +47,12 @@ const UserManagement = () => {
     },
   });
 
-  const { data: adminCount } = useQuery({
-    queryKey: ["adminCount"],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from("profiles")
-        .select("*", { count: 'exact', head: true })
-        .eq("user_type", "admin");
-
-      if (error) throw error;
-      return count;
-    },
-  });
-
-  const deleteAllUsersMutation = useMutation({
-    mutationFn: async () => {
-      if (userType === "admin" && adminCount === 1) {
-        throw new Error("Impossible de supprimer le dernier administrateur");
-      }
-
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
       const { error } = await supabase
         .from("profiles")
         .delete()
-        .eq("user_type", userType);
+        .eq("id", userId);
       
       if (error) throw error;
     },
@@ -66,57 +60,27 @@ const UserManagement = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         title: "Succès",
-        description: "Tous les utilisateurs ont été supprimés",
+        description: "L'utilisateur a été supprimé",
       });
     },
     onError: (error) => {
       toast({
         title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur est survenue lors de la suppression des utilisateurs",
+        description: "Une erreur est survenue lors de la suppression de l'utilisateur",
         variant: "destructive",
       });
-      console.error("Error deleting users:", error);
+      console.error("Error deleting user:", error);
     },
   });
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader>
         <CardTitle>إدارة المستخدمين</CardTitle>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive">
-              Supprimer tous les utilisateurs
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Cette action est irréversible. Elle supprimera définitivement tous les utilisateurs de type {userType === "investor" ? "investisseur" : "propriétaire de projet"}.
-                {userType === "admin" && adminCount === 1 && (
-                  <p className="text-red-500 mt-2">
-                    Impossible de supprimer le dernier administrateur.
-                  </p>
-                )}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={() => deleteAllUsersMutation.mutate()}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                disabled={userType === "admin" && adminCount === 1}
-              >
-                Supprimer
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="investors" className="space-y-4">
-          <TabsList>
+          <TabsList className="grid grid-cols-4 gap-4">
             <TabsTrigger 
               value="investors" 
               onClick={() => setUserType("investor")}
@@ -129,6 +93,18 @@ const UserManagement = () => {
             >
               أصحاب المشاريع
             </TabsTrigger>
+            <TabsTrigger 
+              value="investment_managers"
+              onClick={() => setUserType("investment_manager")}
+            >
+              مديري الاستثمار
+            </TabsTrigger>
+            <TabsTrigger 
+              value="admins"
+              onClick={() => setUserType("admin")}
+            >
+              المشرفين
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="investors">
@@ -137,7 +113,11 @@ const UserManagement = () => {
             ) : (
               <div className="space-y-4">
                 {users?.map((user) => (
-                  <UserCard key={user.id} user={user} />
+                  <UserCard 
+                    key={user.id} 
+                    user={user} 
+                    onDelete={() => deleteUserMutation.mutate(user.id)}
+                  />
                 ))}
               </div>
             )}
@@ -149,7 +129,43 @@ const UserManagement = () => {
             ) : (
               <div className="space-y-4">
                 {users?.map((user) => (
-                  <UserCard key={user.id} user={user} />
+                  <UserCard 
+                    key={user.id} 
+                    user={user}
+                    onDelete={() => deleteUserMutation.mutate(user.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="investment_managers">
+            {isLoading ? (
+              <div>جاري التحميل...</div>
+            ) : (
+              <div className="space-y-4">
+                {users?.map((user) => (
+                  <UserCard 
+                    key={user.id} 
+                    user={user}
+                    onDelete={() => deleteUserMutation.mutate(user.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="admins">
+            {isLoading ? (
+              <div>جاري التحميل...</div>
+            ) : (
+              <div className="space-y-4">
+                {users?.map((user) => (
+                  <UserCard 
+                    key={user.id} 
+                    user={user}
+                    onDelete={() => deleteUserMutation.mutate(user.id)}
+                  />
                 ))}
               </div>
             )}
@@ -160,7 +176,7 @@ const UserManagement = () => {
   );
 };
 
-const UserCard = ({ user }: { user: Profile }) => {
+const UserCard = ({ user, onDelete }: { user: Profile; onDelete: () => void }) => {
   return (
     <Card>
       <CardContent className="flex justify-between items-center p-4">
@@ -173,8 +189,34 @@ const UserCard = ({ user }: { user: Profile }) => {
             حالة KYC: {user.kyc_status}
           </p>
         </div>
-        <div className="space-x-2">
-          {/* Add action buttons here */}
+        <div className="flex gap-2">
+          <Button variant="outline" size="icon">
+            <Edit2 className="h-4 w-4" />
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="icon">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action est irréversible. Elle supprimera définitivement cet utilisateur.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={onDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Supprimer
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardContent>
     </Card>
