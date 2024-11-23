@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 
 interface InvestmentsTableProps {
   investments: any[];
-  onUpdateStatus: (investmentId: string, status: string) => void;
-  isLoading: boolean;
+  onUpdateStatus?: (investmentId: string, status: string) => void;
+  isLoading?: boolean;
+  status?: string;
 }
 
-const InvestmentsTable = ({ investments, onUpdateStatus, isLoading }: InvestmentsTableProps) => {
+const InvestmentsTable = ({ investments, onUpdateStatus, isLoading, status }: InvestmentsTableProps) => {
   if (isLoading) return <div>جاري التحميل...</div>;
+
+  const filteredInvestments = status ? investments.filter(investment => investment.status === status) : investments;
 
   return (
     <Table>
@@ -22,7 +25,7 @@ const InvestmentsTable = ({ investments, onUpdateStatus, isLoading }: Investment
         </TableRow>
       </TableHeader>
       <TableBody>
-        {investments?.map((investment) => (
+        {filteredInvestments?.map((investment) => (
           <TableRow key={investment.investment_id}>
             <TableCell>{investment.investor?.full_name}</TableCell>
             <TableCell>{investment.project?.title}</TableCell>
@@ -32,14 +35,14 @@ const InvestmentsTable = ({ investments, onUpdateStatus, isLoading }: Investment
               <div className="space-x-2">
                 <Button
                   variant="outline"
-                  onClick={() => onUpdateStatus(investment.investment_id, "confirmed")}
+                  onClick={() => onUpdateStatus?.(investment.investment_id, "confirmed")}
                   disabled={investment.status === "confirmed"}
                 >
                   تأكيد
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => onUpdateStatus(investment.investment_id, "cancelled")}
+                  onClick={() => onUpdateStatus?.(investment.investment_id, "cancelled")}
                   disabled={investment.status === "cancelled"}
                 >
                   إلغاء

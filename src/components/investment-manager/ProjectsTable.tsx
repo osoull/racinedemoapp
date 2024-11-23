@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 
 interface ProjectsTableProps {
   projects: any[];
-  onUpdateStatus: (projectId: string, status: string) => void;
-  isLoading: boolean;
+  onUpdateStatus?: (projectId: string, status: string) => void;
+  isLoading?: boolean;
+  status?: string;
 }
 
-const ProjectsTable = ({ projects, onUpdateStatus, isLoading }: ProjectsTableProps) => {
+const ProjectsTable = ({ projects, onUpdateStatus, isLoading, status }: ProjectsTableProps) => {
   if (isLoading) return <div>جاري التحميل...</div>;
+
+  const filteredProjects = status ? projects.filter(project => project.status === status) : projects;
 
   return (
     <Table>
@@ -21,7 +24,7 @@ const ProjectsTable = ({ projects, onUpdateStatus, isLoading }: ProjectsTablePro
         </TableRow>
       </TableHeader>
       <TableBody>
-        {projects?.map((project) => (
+        {filteredProjects?.map((project) => (
           <TableRow key={project.project_id}>
             <TableCell>{project.title}</TableCell>
             <TableCell>{project.owner?.full_name}</TableCell>
@@ -30,14 +33,14 @@ const ProjectsTable = ({ projects, onUpdateStatus, isLoading }: ProjectsTablePro
               <div className="space-x-2">
                 <Button
                   variant="outline"
-                  onClick={() => onUpdateStatus(project.project_id, "approved")}
+                  onClick={() => onUpdateStatus?.(project.project_id, "approved")}
                   disabled={project.status === "approved"}
                 >
                   موافقة
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => onUpdateStatus(project.project_id, "rejected")}
+                  onClick={() => onUpdateStatus?.(project.project_id, "rejected")}
                   disabled={project.status === "rejected"}
                 >
                   رفض
