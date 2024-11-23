@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const signInSchema = z.object({
@@ -22,8 +22,8 @@ interface SignInFormProps {
 
 const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const toast = useToast();
   
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -68,18 +68,11 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
 
       if (data.user) {
         await handleRedirect(data.user.id);
-        toast({
-          title: "تم بنجاح",
-          description: "تم تسجيل الدخول بنجاح",
-        });
+        toast.success("تم تسجيل الدخول بنجاح");
         onSuccess();
       }
     } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.",
-        variant: "destructive",
-      });
+      toast.error("فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.");
     } finally {
       setIsLoading(false);
     }
