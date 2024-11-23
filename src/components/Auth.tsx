@@ -17,17 +17,28 @@ export function Auth() {
   const handleSubmit = async (action: "signin" | "signup") => {
     try {
       if (action === "signin") {
-        await signIn(email, password)
-        // Redirect based on user type
-        switch (userType) {
-          case "admin":
-            navigate("/admin")
-            break
-          case "investment_manager":
-            navigate("/investment-manager")
-            break
-          default:
-            navigate("/")
+        const { data: { user } } = await signIn(email, password)
+        if (!user) return
+
+        // Fetch user profile to get user type
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('id', user.id)
+          .single()
+
+        // Redirect based on user type from profile
+        if (profile?.user_type) {
+          switch (profile.user_type) {
+            case "admin":
+              navigate("/admin")
+              break
+            case "investment_manager":
+              navigate("/investment-manager")
+              break
+            default:
+              navigate("/")
+          }
         }
       } else {
         await signUp(email, password, userType)
@@ -64,17 +75,6 @@ export function Auth() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <Select value={userType} onValueChange={setUserType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر نوع المستخدم" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="investor">مستثمر</SelectItem>
-                    <SelectItem value="project_owner">صاحب مشروع</SelectItem>
-                    <SelectItem value="admin">مشرف</SelectItem>
-                    <SelectItem value="investment_manager">مدير استثمار</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </CardContent>
             <CardFooter>
