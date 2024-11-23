@@ -15,6 +15,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 
+type ProjectStatus = "pending" | "approved" | "rejected" | "funding" | "completed";
+type InvestmentStatus = "pending" | "confirmed" | "cancelled";
+
 const InvestmentManagerDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -77,7 +80,7 @@ const InvestmentManagerDashboard = () => {
     },
   });
 
-  const updateProjectStatus = async (projectId: string, status: string) => {
+  const updateProjectStatus = async (projectId: string, status: ProjectStatus) => {
     const { error } = await supabase
       .from("projects")
       .update({ status })
@@ -97,7 +100,7 @@ const InvestmentManagerDashboard = () => {
     }
   };
 
-  const updateInvestmentStatus = async (investmentId: string, status: string) => {
+  const updateInvestmentStatus = async (investmentId: string, status: InvestmentStatus) => {
     const { error } = await supabase
       .from("investments")
       .update({ status })

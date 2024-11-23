@@ -24,7 +24,7 @@ export const useRealtimeSubscription = (
     };
 
     subscription = subscription.on(
-      'postgres_changes' as const,
+      'postgres_changes',
       config,
       (payload) => {
         try {
