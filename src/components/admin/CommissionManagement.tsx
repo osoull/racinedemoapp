@@ -28,9 +28,16 @@ const CommissionManagement = () => {
 
   useRealtimeSubscription(
     "commissions",
-    undefined,
-    () => {
-      queryClient.invalidateQueries({ queryKey: ["commissions"] });
+    {
+      onUpdate: () => {
+        queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      },
+      onInsert: () => {
+        queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      },
+      onDelete: () => {
+        queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      }
     }
   );
 

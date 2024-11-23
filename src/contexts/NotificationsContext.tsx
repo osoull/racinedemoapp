@@ -66,36 +66,34 @@ export const NotificationsProvider = ({ children }: { children: React.ReactNode 
 
   useRealtimeSubscription(
     'notifications',
-    undefined,
-    (payload) => {
-      // Handle updates
-      if (payload.new && typeof payload.new === 'object' && 'notification_id' in payload.new) {
-        const newNotification = payload.new as Notification;
-        setNotifications(prev =>
-          prev.map(n =>
-            n.notification_id === newNotification.notification_id ? newNotification : n
-          )
-        );
-      }
-    },
-    (payload) => {
-      // Handle new notifications
-      if (payload.new && typeof payload.new === 'object' && 'notification_id' in payload.new) {
-        const newNotification = payload.new as Notification;
-        setNotifications(prev => [newNotification, ...prev]);
-        setUnreadCount(prev => prev + 1);
-        toast(newNotification.title, {
-          description: newNotification.message,
-        });
-      }
-    },
-    (payload) => {
-      // Handle deletions
-      if (payload.old && typeof payload.old === 'object' && 'notification_id' in payload.old) {
-        const oldNotification = payload.old as Notification;
-        setNotifications(prev =>
-          prev.filter(n => n.notification_id !== oldNotification.notification_id)
-        );
+    {
+      onUpdate: (payload) => {
+        if (payload.new && typeof payload.new === 'object' && 'notification_id' in payload.new) {
+          const newNotification = payload.new as Notification;
+          setNotifications(prev =>
+            prev.map(n =>
+              n.notification_id === newNotification.notification_id ? newNotification : n
+            )
+          );
+        }
+      },
+      onInsert: (payload) => {
+        if (payload.new && typeof payload.new === 'object' && 'notification_id' in payload.new) {
+          const newNotification = payload.new as Notification;
+          setNotifications(prev => [newNotification, ...prev]);
+          setUnreadCount(prev => prev + 1);
+          toast(newNotification.title, {
+            description: newNotification.message,
+          });
+        }
+      },
+      onDelete: (payload) => {
+        if (payload.old && typeof payload.old === 'object' && 'notification_id' in payload.old) {
+          const oldNotification = payload.old as Notification;
+          setNotifications(prev =>
+            prev.filter(n => n.notification_id !== oldNotification.notification_id)
+          );
+        }
       }
     }
   );
