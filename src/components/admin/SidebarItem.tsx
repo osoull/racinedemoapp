@@ -15,8 +15,8 @@ export const SidebarItem = ({ title, icon: Icon, path, description, isActive }: 
     <Link
       to={path}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-gray-600 transition-all hover:bg-primary/5",
-        "group relative",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all",
+        "group relative hover:bg-primary/5",
         isActive && "bg-primary/10 text-primary font-medium"
       )}
     >
