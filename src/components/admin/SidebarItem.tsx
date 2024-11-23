@@ -17,7 +17,7 @@ export const SidebarItem = ({ title, icon: Icon, path, description, isActive }: 
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
         "group relative",
-        isActive && "bg-gray-100 text-gray-900"
+        isActive && "bg-gray-100/80 text-gray-900"
       )}
     >
       <div className={cn(

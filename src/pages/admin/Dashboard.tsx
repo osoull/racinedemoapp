@@ -1,12 +1,12 @@
 import { useEffect } from "react"
-import { Routes, Route, useNavigate } from "react-router-dom"
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { UserAvatar } from "@/components/UserAvatar"
-import { Bell, Search, Menu } from "lucide-react"
+import { Bell, Search, Menu, ChevronRight } from "lucide-react"
 import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import CommissionManagement from "@/components/admin/CommissionManagement"
@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { toast } = useToast()
   const { user } = useAuth()
 
@@ -65,6 +66,22 @@ const AdminDashboard = () => {
     }
   }
 
+  const getBreadcrumb = () => {
+    const path = location.pathname.split("/").filter(Boolean)
+    if (path.length <= 1) return "لوحة التحكم"
+    
+    const pageMap: { [key: string]: string } = {
+      users: "المستخدمين",
+      projects: "المشاريع",
+      commissions: "العمولات",
+      compliance: "الامتثال",
+      content: "المحتوى",
+      support: "الدعم"
+    }
+    
+    return pageMap[path[1]] || "لوحة التحكم"
+  }
+
   return (
     <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
@@ -83,6 +100,10 @@ const AdminDashboard = () => {
 
           <div className="flex flex-1 items-center gap-4">
             <div className="hidden md:flex md:flex-1">
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <ChevronRight className="h-4 w-4" />
+                <span className="font-medium text-gray-900">{getBreadcrumb()}</span>
+              </div>
               <form className="flex-1 mr-4 ml-4 lg:ml-6">
                 <div className="relative">
                   <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
@@ -124,7 +145,7 @@ const AdminDashboard = () => {
           </div>
 
           <div className={cn(
-            "rounded-lg border bg-white shadow-sm",
+            "rounded-lg border bg-white/80 backdrop-blur-sm shadow-sm",
             "animate-fade-in"
           )}>
             <Routes>
