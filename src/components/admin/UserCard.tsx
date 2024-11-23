@@ -9,6 +9,7 @@ import {
 import { Mail, Trash2, UserCog } from "lucide-react";
 import { UserTypeLabel } from "./UserTypeLabel";
 import { KycStatusLabel } from "./KycStatusLabel";
+import { EditUserDialog } from "./EditUserDialog";
 
 type User = {
   id: string;
@@ -22,9 +23,10 @@ type UserCardProps = {
   user: User;
   onDelete: (user: User) => void;
   onUpdateType: (userId: string, newType: string) => void;
+  onEdit: (userId: string, updatedData: Partial<User>) => void;
 };
 
-export function UserCard({ user, onDelete, onUpdateType }: UserCardProps) {
+export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps) {
   return (
     <Card className="p-4">
       <div className="flex flex-col space-y-4">
@@ -39,6 +41,7 @@ export function UserCard({ user, onDelete, onUpdateType }: UserCardProps) {
             </div>
           </div>
           <div className="flex space-x-2">
+            <EditUserDialog user={user} onSave={onEdit} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">

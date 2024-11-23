@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { UserCard } from './UserCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, UserCog, Users } from 'lucide-react';
+import { UserList } from './UserList';
 
 type User = {
   id: string;
@@ -69,6 +70,31 @@ export default function UserManagement() {
     },
   });
 
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ userId, userData }: { userId: string; userData: Partial<User> }) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update(userData)
+        .eq('id', userId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث معلومات المستخدم بنجاح",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث معلومات المستخدم",
+        variant: "destructive",
+      });
+    },
+  });
+
   const updateUserTypeMutation = useMutation({
     mutationFn: async ({ userId, userType }: { userId: string; userType: string }) => {
       const { error } = await supabase
@@ -109,6 +135,10 @@ export default function UserManagement() {
     updateUserTypeMutation.mutate({ userId, userType: newType });
   };
 
+  const handleEditUser = (userId: string, updatedData: Partial<User>) => {
+    updateUserMutation.mutate({ userId, userData: updatedData });
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -116,10 +146,6 @@ export default function UserManagement() {
       </div>
     );
   }
-
-  const filterUsersByType = (type: string) => {
-    return users?.filter(user => user.user_type === type) || [];
-  };
 
   return (
     <div className="container mx-auto p-6" dir="rtl">
@@ -143,57 +169,12 @@ export default function UserManagement() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {users?.map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                onDelete={() => handleDeleteUser(user)}
-                onUpdateType={handleUpdateUserType}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="investor" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filterUsersByType('investor').map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                onDelete={() => handleDeleteUser(user)}
-                onUpdateType={handleUpdateUserType}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="investment_manager" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filterUsersByType('investment_manager').map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                onDelete={() => handleDeleteUser(user)}
-                onUpdateType={handleUpdateUserType}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="admin" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filterUsersByType('admin').map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                onDelete={() => handleDeleteUser(user)}
-                onUpdateType={handleUpdateUserType}
-              />
-            ))}
-          </div>
-        </TabsContent>
+        <UserList 
+          users={users} 
+          onDelete={handleDeleteUser}
+          onUpdateType={handleUpdateUserType}
+          onEdit={handleEditUser}
+        />
       </Tabs>
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
