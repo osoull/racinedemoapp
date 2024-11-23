@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useNavigate } from "react-router-dom"
+import { supabase } from "@/integrations/supabase/client"
 
 export function Auth() {
   const [email, setEmail] = useState("")
@@ -17,14 +18,13 @@ export function Auth() {
   const handleSubmit = async (action: "signin" | "signup") => {
     try {
       if (action === "signin") {
-        const { data: { user } } = await signIn(email, password)
-        if (!user) return
-
+        await signIn(email, password)
+        
         // Fetch user profile to get user type
         const { data: profile } = await supabase
           .from('profiles')
           .select('user_type')
-          .eq('id', user.id)
+          .eq('id', (await supabase.auth.getUser()).data.user?.id)
           .single()
 
         // Redirect based on user type from profile
