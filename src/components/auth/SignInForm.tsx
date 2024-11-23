@@ -37,7 +37,6 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
 
   const handleRedirect = async (userId: string) => {
     try {
-      console.log("Fetching user profile for ID:", userId);
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('user_type')
@@ -54,23 +53,21 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         throw new Error("No profile found");
       }
 
-      console.log("User profile found:", profile);
-
-      if (profile.user_type === 'admin') {
-        console.log("Redirecting to admin dashboard");
-        navigate('/admin');
-      } else if (profile.user_type === 'investment_manager') {
-        console.log("Redirecting to investment manager dashboard");
-        navigate('/investment-manager');
-      } else {
-        console.log("Redirecting to user dashboard");
-        navigate('/dashboard');
+      switch (profile.user_type) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'investment_manager':
+          navigate('/investment-manager');
+          break;
+        default:
+          navigate('/dashboard');
       }
 
       toast.success("تم تسجيل الدخول بنجاح");
       onSuccess();
     } catch (error) {
-      console.error("Redirect error details:", error);
+      console.error("Redirect error:", error);
       setError("حدث خطأ في توجيه المستخدم");
       setIsLoading(false);
     }
@@ -80,8 +77,6 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      console.log("Attempting sign in with email:", values.email);
 
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
@@ -89,23 +84,27 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       });
 
       if (signInError) {
-        console.error("Sign in error details:", signInError);
-        setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        console.error("Sign in error:", signInError);
+        if (signInError.message.includes("Invalid login credentials")) {
+          setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        } else if (signInError.message.includes("Email not confirmed")) {
+          setError("يرجى تأكيد بريدك الإلكتروني أولاً");
+        } else {
+          setError("حدث خطأ أثناء تسجيل الدخول");
+        }
         setIsLoading(false);
         return;
       }
 
       if (!data.user) {
-        console.error("No user data returned after successful sign in");
         setError("فشل تسجيل الدخول");
         setIsLoading(false);
         return;
       }
 
-      console.log("Sign in successful, user data:", data.user);
       await handleRedirect(data.user.id);
     } catch (error) {
-      console.error("Unexpected error during sign in:", error);
+      console.error("Unexpected error:", error);
       setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
       setIsLoading(false);
     }
