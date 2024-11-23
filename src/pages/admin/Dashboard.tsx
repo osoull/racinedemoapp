@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("first_name, middle_name, last_name")
+        .select("first_name")
         .eq("id", user?.id)
         .single();
       
@@ -34,13 +34,6 @@ const AdminDashboard = () => {
     },
     enabled: !!user?.id,
   });
-
-  const formatUserName = (profile: any) => {
-    if (!profile) return '';
-    return [profile.first_name, profile.middle_name, profile.last_name]
-      .filter(Boolean)
-      .join(' ');
-  };
 
   useEffect(() => {
     checkAdminAccess()
@@ -76,7 +69,7 @@ const AdminDashboard = () => {
           <div>
             <h1 className="text-4xl font-bold text-primary mb-2">لوحة تحكم المشرف</h1>
             <p className="text-muted-foreground">
-              {profile ? `مرحباً بك, ${formatUserName(profile)}` : "مرحباً بك"}
+              {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
             </p>
           </div>
           <UserAvatar />

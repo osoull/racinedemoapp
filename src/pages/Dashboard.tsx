@@ -22,7 +22,7 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("first_name, middle_name, last_name")
+        .select("first_name")
         .eq("id", user?.id)
         .single();
       
@@ -32,15 +32,6 @@ const Dashboard = () => {
     enabled: !!user?.id,
   });
 
-  const formatUserName = (profile: any) => {
-    if (!profile) return '';
-    return [profile.first_name, profile.middle_name, profile.last_name]
-      .filter(Boolean)
-      .join(' ');
-  };
-
-  // ... keep existing code
-
   return (
     <div className="container mx-auto px-4 py-8 mt-14">
       <BackButton />
@@ -48,7 +39,7 @@ const Dashboard = () => {
         <div>
           <h1 className="text-2xl font-bold">لوحة التحكم</h1>
           <p className="text-muted-foreground mt-1">
-            {profile ? `مرحباً بك, ${formatUserName(profile)}` : "مرحباً بك"}
+            {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
           </p>
         </div>
         <UserAvatar />
@@ -151,7 +142,7 @@ const Dashboard = () => {
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

@@ -22,7 +22,7 @@ const InvestmentManagerDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("first_name, middle_name, last_name")
+        .select("first_name")
         .eq("id", user?.id)
         .single();
       
@@ -31,13 +31,6 @@ const InvestmentManagerDashboard = () => {
     },
     enabled: !!user?.id,
   });
-
-  const formatUserName = (profile: any) => {
-    if (!profile) return '';
-    return [profile.first_name, profile.middle_name, profile.last_name]
-      .filter(Boolean)
-      .join(' ');
-  };
 
   const { data: projects, isLoading: projectsLoading } = useQuery({
     queryKey: ["projects"],
@@ -75,7 +68,7 @@ const InvestmentManagerDashboard = () => {
         <div>
           <h1 className="text-2xl font-bold">لوحة تحكم مدير الاستثمار</h1>
           <p className="text-muted-foreground mt-1">
-            {profile ? `مرحباً بك, ${formatUserName(profile)}` : "مرحباً بك"}
+            {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
           </p>
         </div>
         <UserAvatar />
