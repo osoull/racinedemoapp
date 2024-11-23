@@ -6,26 +6,26 @@
 
 @layer base {
   :root {
-    --background: 246 57% 98%;
-    --foreground: 246 57% 10%;
+    --background: 250 33% 99%;
+    --foreground: 250 33% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 246 57% 10%;
+    --card-foreground: 250 33% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 246 57% 10%;
-    --primary: 246 57% 31%;
+    --popover-foreground: 250 33% 10%;
+    --primary: 250 33% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 246 45% 46%;
+    --secondary: 250 33% 66%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 246 57% 95%;
-    --muted-foreground: 246 57% 40%;
-    --accent: 246 57% 61%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 250 33% 96%;
+    --muted-foreground: 250 33% 40%;
+    --accent: 250 33% 92%;
+    --accent-foreground: 250 33% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
-    --border: 246 57% 90%;
-    --input: 246 57% 90%;
-    --ring: 246 57% 31%;
-    --radius: 0.5rem;
+    --border: 250 33% 90%;
+    --input: 250 33% 90%;
+    --ring: 250 33% 50%;
+    --radius: 0.75rem;
   }
 
   * {
@@ -33,7 +33,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 
   /* RTL Support */
@@ -49,24 +49,37 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2;
+    @apply bg-primary text-primary-foreground hover:bg-primary-600 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2 shadow-sm;
   }
 
   .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2 shadow-sm;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 rounded-xl border bg-card p-6;
   }
 
   /* Navigation styles */
   .nav-link {
-    @apply transition-colors hover:text-primary;
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-primary hover:bg-primary-50;
+  }
+
+  .nav-link.active {
+    @apply bg-primary-100 text-primary font-medium;
+  }
+
+  /* Tabs styles */
+  .custom-tab {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground;
+  }
+
+  .dashboard-card {
+    @apply rounded-xl border bg-card p-6 shadow-sm hover:shadow-md transition-all duration-200;
   }
 
   /* Footer styles */
   .footer-link {
-    @apply transition-colors hover:text-secondary;
+    @apply transition-colors hover:text-primary;
   }
 }

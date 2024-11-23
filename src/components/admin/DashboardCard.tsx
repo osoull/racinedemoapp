@@ -33,7 +33,7 @@ const DashboardCard = ({
   return (
     <Card 
       className={cn(
-        "hover:shadow-lg transition-all duration-300 cursor-pointer",
+        "dashboard-card cursor-pointer",
         loading && "animate-pulse",
         className
       )}
@@ -41,7 +41,7 @@ const DashboardCard = ({
     >
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
-          <div className="rounded-full bg-primary/10 p-3">
+          <div className="rounded-xl bg-primary-50 p-3">
             <Icon className="h-6 w-6 text-primary" />
           </div>
           <div className="flex-1">

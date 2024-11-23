@@ -7,9 +7,12 @@ import {
   FileText,
   HeadphonesIcon,
   LayoutDashboard,
-  Settings
+  Settings,
+  LogOut
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
+import { Button } from "@/components/ui/button"
+import { useAuth } from "@/contexts/AuthContext"
 
 const menuItems = [
   {
@@ -64,13 +67,14 @@ const menuItems = [
 
 export const AdminSidebar = () => {
   const location = useLocation()
+  const { signOut } = useAuth()
 
   return (
-    <aside className="fixed h-full w-72 bg-white border-l shadow-sm">
+    <div className="flex h-full flex-col bg-white">
       <div className="flex h-16 items-center border-b px-6">
         <h2 className="text-xl font-bold text-primary">راسين للاستثمار</h2>
       </div>
-      <nav className="p-4 space-y-1">
+      <nav className="flex-1 space-y-1 p-4">
         {menuItems.map((item) => (
           <SidebarItem
             key={item.path}
@@ -79,6 +83,16 @@ export const AdminSidebar = () => {
           />
         ))}
       </nav>
-    </aside>
+      <div className="border-t p-4">
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+          onClick={() => signOut?.()}
+        >
+          <LogOut className="ml-2 h-5 w-5" />
+          تسجيل الخروج
+        </Button>
+      </div>
+    </div>
   )
 }

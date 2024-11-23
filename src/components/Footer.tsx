@@ -8,7 +8,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="border-t">
+    <footer className="border-t bg-white">
       <div className="container mx-auto px-4">
         <div className="py-4 flex flex-col items-center justify-center">
           <p className="text-primary/80 font-medium text-base">
