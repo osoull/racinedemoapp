@@ -40,7 +40,10 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
 
       if (profile) {
         switch (profile.user_type) {
@@ -59,11 +62,10 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
           default:
             navigate('/dashboard');
         }
-      } else {
-        navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error in handleRedirect:', error);
+      toast.error("حدث خطأ أثناء توجيهك. يرجى المحاولة مرة أخرى.");
       navigate('/dashboard');
     }
   };
@@ -71,24 +73,32 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
+      console.log('Attempting sign in with:', values.email);
       
-      const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
-      if (signInError) {
-        throw signInError;
+      if (error) {
+        console.error('Sign in error:', error);
+        if (error.message.includes('Invalid login credentials')) {
+          toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        } else {
+          toast.error("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
+        }
+        return;
       }
 
-      if (user) {
+      if (data.user) {
+        console.log('Sign in successful:', data.user.id);
         toast.success("تم تسجيل الدخول بنجاح");
-        await handleRedirect(user.id);
+        await handleRedirect(data.user.id);
         onSuccess();
       }
-    } catch (error: any) {
-      console.error('Sign in error:', error);
-      toast.error("فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.");
+    } catch (error) {
+      console.error('Unexpected error during sign in:', error);
+      toast.error("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsLoading(false);
     }
@@ -104,7 +114,11 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
             <FormItem>
               <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
-                <Input placeholder="أدخل بريدك الإلكتروني" {...field} />
+                <Input 
+                  placeholder="أدخل بريدك الإلكتروني" 
+                  {...field} 
+                  autoComplete="email"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -117,7 +131,12 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
             <FormItem>
               <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="أدخل كلمة المرور" {...field} />
+                <Input 
+                  type="password" 
+                  placeholder="أدخل كلمة المرور" 
+                  {...field} 
+                  autoComplete="current-password"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
