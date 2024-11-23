@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 const UserManagement = () => {
   const [userType, setUserType] = useState<"investor" | "project_owner">("investor");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users", userType],
@@ -27,10 +32,60 @@ const UserManagement = () => {
     },
   });
 
+  const deleteAllUsersMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("profiles")
+        .delete()
+        .eq("user_type", userType);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast({
+        title: "Succès",
+        description: "Tous les utilisateurs ont été supprimés",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression des utilisateurs",
+        variant: "destructive",
+      });
+      console.error("Error deleting users:", error);
+    },
+  });
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>إدارة المستخدمين</CardTitle>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive">
+              Supprimer tous les utilisateurs
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Cette action est irréversible. Elle supprimera définitivement tous les utilisateurs de type {userType === "investor" ? "investisseur" : "propriétaire de projet"}.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => deleteAllUsersMutation.mutate()}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Supprimer
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="investors" className="space-y-4">
