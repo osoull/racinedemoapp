@@ -9,57 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      commissions: {
-        Row: {
-          applicable_to: Database["public"]["Enums"]["applicable_to"]
-          commission_id: string
-          commission_type: Database["public"]["Enums"]["commission_type"]
-          created_at: string | null
-          rate: number
-          updated_at: string | null
-        }
-        Insert: {
-          applicable_to: Database["public"]["Enums"]["applicable_to"]
-          commission_id?: string
-          commission_type: Database["public"]["Enums"]["commission_type"]
-          created_at?: string | null
-          rate: number
-          updated_at?: string | null
-        }
-        Update: {
-          applicable_to?: Database["public"]["Enums"]["applicable_to"]
-          commission_id?: string
-          commission_type?: Database["public"]["Enums"]["commission_type"]
-          created_at?: string | null
-          rate?: number
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      project_documents: {
-        Row: {
-          document_id: string
-          document_name: string
-          file_path: string
-          project_id: string | null
-          uploaded_at: string | null
-        }
-        Insert: {
-          document_id?: string
-          document_name: string
-          file_path: string
-          project_id?: string | null
-          uploaded_at?: string | null
-        }
-        Update: {
-          document_id?: string
-          document_name?: string
-          file_path?: string
-          project_id?: string | null
-          uploaded_at?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -68,28 +18,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      admin_action_type:
-        | "suspend_account"
-        | "reactivate_account"
-        | "delete_account"
-        | "approve_project"
-        | "reject_project"
-      applicable_to: "investor" | "project_owner"
-      commission_type:
-        | "entry_fee"
-        | "management_fee"
-        | "withdrawal_fee"
-        | "project_fee"
-      investment_status: "pending" | "confirmed" | "cancelled"
-      kyc_status: "pending" | "approved" | "rejected"
-      project_status:
-        | "pending"
-        | "approved"
-        | "rejected"
-        | "funding"
-        | "completed"
-      transaction_type: "investment" | "withdrawal" | "commission" | "refund"
-      user_type: "investor" | "project_owner" | "admin" | "investment_manager"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
