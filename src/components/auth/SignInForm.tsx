@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 const signInSchema = z.object({
   email: z.string().email("البريد الإلكتروني غير صالح"),
@@ -35,12 +36,56 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     },
   });
 
+  // Subscribe to auth changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        checkUserTypeAndRedirect(session.user.id);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const checkUserTypeAndRedirect = async (userId: string) => {
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', userId)
+        .single();
+
+      if (profileError) {
+        console.error("Profile fetch error:", profileError);
+        setError("حدث خطأ في تحميل بيانات المستخدم");
+        return;
+      }
+
+      console.log("User profile:", profile);
+
+      if (profile?.user_type === 'admin') {
+        navigate('/admin');
+      } else if (profile?.user_type === 'investment_manager') {
+        navigate('/investment-manager');
+      } else {
+        navigate('/dashboard');
+      }
+
+      toast.success("تم تسجيل الدخول بنجاح");
+      onSuccess();
+    } catch (error) {
+      console.error("Error checking user type:", error);
+      setError("حدث خطأ في التحقق من نوع المستخدم");
+    }
+  };
+
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // First, attempt to sign in
+
       const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
@@ -52,35 +97,11 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         return;
       }
 
-      if (authData.user) {
-        // After successful sign in, get the user's profile to check their type
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('user_type')
-          .eq('id', authData.user.id)
-          .single();
-
-        if (profileError) {
-          console.error("Profile fetch error:", profileError);
-          setError("حدث خطأ في تحميل بيانات المستخدم");
-          return;
-        }
-
-        console.log("User profile:", profile); // Debug log
-
-        toast.success("تم تسجيل الدخول بنجاح");
-
-        // Redirect based on user type
-        if (profile?.user_type === 'admin') {
-          navigate('/admin');
-        } else if (profile?.user_type === 'investment_manager') {
-          navigate('/investment-manager');
-        } else {
-          navigate('/dashboard');
-        }
-        
-        onSuccess();
+      if (!authData.user) {
+        setError("لم يتم العثور على المستخدم");
+        return;
       }
+
     } catch (error) {
       console.error("Unexpected error:", error);
       setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
