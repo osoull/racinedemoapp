@@ -9,8 +9,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("البريد الإلكتروني غير صالح"),
+  password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
 });
 
 type SignInValues = z.infer<typeof signInSchema>;
@@ -42,14 +42,14 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "You have been signed in successfully.",
+        title: "تم بنجاح",
+        description: "تم تسجيل الدخول بنجاح",
       });
       onSuccess();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to sign in. Please check your credentials.",
+        title: "خطأ",
+        description: "فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.",
         variant: "destructive",
       });
     } finally {
@@ -65,9 +65,9 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder="أدخل بريدك الإلكتروني" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,16 +78,16 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter your password" {...field} />
+                <Input type="password" placeholder="أدخل كلمة المرور" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign In"}
+          {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
         </Button>
       </form>
     </Form>

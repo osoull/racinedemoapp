@@ -9,9 +9,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const signUpSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-  fullName: z.string().min(2),
+  email: z.string().email("البريد الإلكتروني غير صالح"),
+  password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+  fullName: z.string().min(2, "الاسم يجب أن يكون حرفين على الأقل"),
 });
 
 type SignUpValues = z.infer<typeof signUpSchema>;
@@ -49,14 +49,14 @@ const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Please check your email to verify your account.",
+        title: "تم بنجاح",
+        description: "يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك.",
       });
       onSuccess();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create account. Please try again.",
+        title: "خطأ",
+        description: "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
         variant: "destructive",
       });
     } finally {
@@ -72,9 +72,9 @@ const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder="أدخل بريدك الإلكتروني" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,9 +85,9 @@ const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter your password" {...field} />
+                <Input type="password" placeholder="أدخل كلمة المرور" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -98,16 +98,16 @@ const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>الاسم الكامل</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your full name" {...field} />
+                <Input placeholder="أدخل اسمك الكامل" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Creating account..." : "Sign Up"}
+          {isLoading ? "جاري إنشاء الحساب..." : "إنشاء حساب"}
         </Button>
       </form>
     </Form>

@@ -13,12 +13,12 @@ const AuthDialog = ({ isOpen, onClose }: AuthDialogProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Authentication</DialogTitle>
+          <DialogTitle>تسجيل الدخول</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="signin">تسجيل الدخول</TabsTrigger>
+            <TabsTrigger value="signup">إنشاء حساب</TabsTrigger>
           </TabsList>
           <TabsContent value="signin">
             <SignInForm onSuccess={onClose} />
