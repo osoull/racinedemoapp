@@ -5,6 +5,7 @@ import ProjectsTable from "@/components/investment-manager/ProjectsTable";
 import InvestmentsTable from "@/components/investment-manager/InvestmentsTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { UserAvatar } from "@/components/UserAvatar";
 
 type ProjectStatus = "pending" | "approved" | "rejected" | "funding" | "completed";
 type InvestmentStatus = "pending" | "confirmed" | "cancelled";
@@ -44,7 +45,10 @@ const InvestmentManagerDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 pt-20 pb-6">
-      <h1 className="text-2xl font-bold mb-6">لوحة تحكم مدير الاستثمار</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">لوحة تحكم مدير الاستثمار</h1>
+        <UserAvatar />
+      </div>
       
       <Tabs defaultValue="projects" className="space-y-4">
         <TabsList>
