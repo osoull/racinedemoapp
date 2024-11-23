@@ -104,13 +104,6 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "investments_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["project_id"]
-          },
         ]
       }
       kyc_documents: {
@@ -247,15 +240,7 @@ export type Database = {
           project_id?: string | null
           uploaded_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "project_documents_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["project_id"]
-          },
-        ]
+        Relationships: []
       }
       project_reviews: {
         Row: {
