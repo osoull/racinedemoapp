@@ -1,6 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
+
+type SupportTicket = Tables<"support_tickets"> & {
+  user?: Tables<"profiles">;
+};
 
 const SupportTools = () => {
   const { data: tickets, isLoading } = useQuery({
@@ -10,11 +15,11 @@ const SupportTools = () => {
         .from("support_tickets")
         .select(`
           *,
-          user: profiles(full_name)
+          user:profiles(full_name)
         `);
 
       if (error) throw error;
-      return data;
+      return data as SupportTicket[];
     },
   });
 
@@ -38,7 +43,7 @@ const SupportTools = () => {
   );
 };
 
-const TicketCard = ({ ticket }: { ticket: any }) => {
+const TicketCard = ({ ticket }: { ticket: SupportTicket }) => {
   return (
     <Card>
       <CardContent className="p-4">

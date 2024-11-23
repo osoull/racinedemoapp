@@ -6,9 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Tables } from "@/integrations/supabase/types";
+
+type UserType = "investor" | "project_owner" | "admin";
+type Profile = Tables<"profiles">;
 
 const UserManagement = () => {
-  const [userType, setUserType] = useState<"investor" | "project_owner">("investor");
+  const [userType, setUserType] = useState<UserType>("investor");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -28,11 +32,10 @@ const UserManagement = () => {
         .eq("user_type", userType);
 
       if (error) throw error;
-      return data;
+      return data as Profile[];
     },
   });
 
-  // Nouvelle requête pour compter les administrateurs
   const { data: adminCount } = useQuery({
     queryKey: ["adminCount"],
     queryFn: async () => {
@@ -48,7 +51,6 @@ const UserManagement = () => {
 
   const deleteAllUsersMutation = useMutation({
     mutationFn: async () => {
-      // Vérifier si on essaie de supprimer des administrateurs
       if (userType === "admin" && adminCount === 1) {
         throw new Error("Impossible de supprimer le dernier administrateur");
       }
@@ -158,7 +160,7 @@ const UserManagement = () => {
   );
 };
 
-const UserCard = ({ user }: { user: any }) => {
+const UserCard = ({ user }: { user: Profile }) => {
   return (
     <Card>
       <CardContent className="flex justify-between items-center p-4">

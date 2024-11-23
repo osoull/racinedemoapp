@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
+
+type Commission = Tables<"commissions">;
 
 const CommissionManagement = () => {
   const { data: commissions, isLoading } = useQuery({
@@ -11,7 +14,7 @@ const CommissionManagement = () => {
         .select("*");
 
       if (error) throw error;
-      return data;
+      return data as Commission[];
     },
   });
 
@@ -38,7 +41,7 @@ const CommissionManagement = () => {
   );
 };
 
-const CommissionCard = ({ commission }: { commission: any }) => {
+const CommissionCard = ({ commission }: { commission: Commission }) => {
   return (
     <Card>
       <CardContent className="p-4">

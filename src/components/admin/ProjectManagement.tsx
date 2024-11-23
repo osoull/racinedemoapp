@@ -1,6 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Tables } from "@/integrations/supabase/types";
+
+type Project = Tables<"projects"> & {
+  owner?: Tables<"profiles">;
+};
 
 const ProjectManagement = () => {
   const { data: projects, isLoading } = useQuery({
@@ -10,12 +15,11 @@ const ProjectManagement = () => {
         .from("projects")
         .select(`
           *,
-          owner: profiles(full_name),
-          reviews: project_reviews(*)
+          owner:profiles(full_name)
         `);
 
       if (error) throw error;
-      return data;
+      return data as Project[];
     },
   });
 
@@ -30,7 +34,7 @@ const ProjectManagement = () => {
         ) : (
           <div className="space-y-4">
             {projects?.map((project) => (
-              <ProjectCard key={project.project_id} project={project} />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         )}
@@ -39,7 +43,7 @@ const ProjectManagement = () => {
   );
 };
 
-const ProjectCard = ({ project }: { project: any }) => {
+const ProjectCard = ({ project }: { project: Project }) => {
   return (
     <Card>
       <CardContent className="p-4">

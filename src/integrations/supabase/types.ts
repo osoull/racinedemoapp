@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      commissions: {
+        Row: {
+          commission_id: string
+          commission_type: string
+          created_at: string
+          rate: number
+          updated_at: string
+        }
+        Insert: {
+          commission_id?: string
+          commission_type: string
+          created_at?: string
+          rate: number
+          updated_at?: string
+        }
+        Update: {
+          commission_id?: string
+          commission_type?: string
+          created_at?: string
+          rate?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investments: {
         Row: {
           amount: number
@@ -85,6 +109,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "kyc_documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          date: string
+          message: string
+          notification_id: string
+          read: boolean
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          date?: string
+          message: string
+          notification_id?: string
+          read?: boolean
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          date?: string
+          message?: string
+          notification_id?: string
+          read?: boolean
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -201,6 +260,44 @@ export type Database = {
           {
             foreignKeyName: "projects_owner_id_fkey"
             columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: string
+          created_at: string
+          message: string
+          status: string
+          ticket_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          message: string
+          status?: string
+          ticket_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          message?: string
+          status?: string
+          ticket_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
