@@ -40,7 +40,10 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
 
       if (profile) {
         switch (profile.user_type) {
@@ -66,6 +69,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
+      console.log('Tentative de connexion avec:', values.email); // Log de débogage
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
@@ -73,8 +77,8 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       });
 
       if (error) {
-        console.error('Sign in error:', error);
-        // Gérer spécifiquement les différents types d'erreurs
+        console.error('Erreur détaillée:', error); // Log détaillé de l'erreur
+        
         switch (error.message) {
           case 'Invalid login credentials':
             toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
@@ -86,18 +90,19 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
             toast.error("محاولات كثيرة جداً، يرجى المحاولة لاحقاً");
             break;
           default:
-            toast.error("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
+            toast.error(`خطأ: ${error.message}`);
         }
         return;
       }
 
       if (data.user) {
+        console.log('Connexion réussie pour:', data.user.email); // Log de succès
         toast.success("تم تسجيل الدخول بنجاح");
         await handleRedirect(data.user.id);
         onSuccess();
       }
     } catch (error) {
-      console.error('Unexpected error during sign in:', error);
+      console.error('Erreur inattendue:', error);
       toast.error("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsLoading(false);
