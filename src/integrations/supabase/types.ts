@@ -213,10 +213,10 @@ export type Database = {
           address: string | null
           created_at: string
           email: string | null
-          first_name: string | null
+          first_name: string
           id: string
           kyc_status: string | null
-          last_name: string | null
+          last_name: string
           middle_name: string | null
           national_id: string | null
           phone: string | null
@@ -227,10 +227,10 @@ export type Database = {
           address?: string | null
           created_at?: string
           email?: string | null
-          first_name?: string | null
+          first_name: string
           id: string
           kyc_status?: string | null
-          last_name?: string | null
+          last_name: string
           middle_name?: string | null
           national_id?: string | null
           phone?: string | null
@@ -241,10 +241,10 @@ export type Database = {
           address?: string | null
           created_at?: string
           email?: string | null
-          first_name?: string | null
+          first_name?: string
           id?: string
           kyc_status?: string | null
-          last_name?: string | null
+          last_name?: string
           middle_name?: string | null
           national_id?: string | null
           phone?: string | null
