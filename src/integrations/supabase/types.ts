@@ -151,6 +151,63 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value: Json
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      platform_statistics: {
+        Row: {
+          created_at: string
+          id: string
+          metric_name: string
+          metric_value: number
+          period: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_name: string
+          metric_value: number
+          period: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_name?: string
+          metric_value?: number
+          period?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address: string | null
