@@ -59,4 +59,14 @@
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
+
+  /* Navigation styles */
+  .nav-link {
+    @apply transition-colors hover:text-primary;
+  }
+
+  /* Footer styles */
+  .footer-link {
+    @apply transition-colors hover:text-secondary;
+  }
 }
