@@ -496,7 +496,7 @@ export type Database = {
         | "funding"
         | "completed"
       transaction_type: "investment" | "withdrawal" | "commission" | "refund"
-      user_type: "investor" | "project_owner" | "admin"
+      user_type: "investor" | "project_owner" | "admin" | "investment_manager"
     }
     CompositeTypes: {
       [_ in never]: never

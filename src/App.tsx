@@ -1,37 +1,41 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { NotificationsProvider } from "@/contexts/NotificationsContext";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { NotificationsProvider } from "@/components/ui/notifications";
+import { Toaster } from "@/components/ui/toast";
+import { ThemeProvider } from "@/components/ui/theme";
+import { queryClient } from "@/lib/utils";
+import Header from "@/components/ui/header";
+import Footer from "@/components/ui/footer";
+import Index from "@/pages/index";
+import Dashboard from "@/pages/Dashboard";
+import AdminDashboard from "@/pages/admin/Dashboard";
+import InvestmentManagerDashboard from "@/pages/InvestmentManagerDashboard";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <NotificationsProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow pt-20">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </BrowserRouter>
-      </NotificationsProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <NotificationsProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-background">
+              <Header />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/investment-manager" element={<InvestmentManagerDashboard />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </BrowserRouter>
+          <Toaster />
+        </NotificationsProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
