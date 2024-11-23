@@ -17,10 +17,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, UserCog, Users } from 'lucide-react';
 import { UserList } from './UserList';
 
-type User = {
+export type User = {
   id: string;
-  email: string;
-  full_name: string | null;
+  email: string | null;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
   user_type: string | null;
   kyc_status: string | null;
 };

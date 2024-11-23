@@ -27,13 +27,6 @@ const ProjectManagement = () => {
     },
   });
 
-  const formatOwnerName = (owner: Project['owner']) => {
-    if (!owner) return 'غير معروف';
-    return [owner.first_name, owner.middle_name, owner.last_name]
-      .filter(Boolean)
-      .join(' ') || 'غير معروف';
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -52,6 +45,13 @@ const ProjectManagement = () => {
       </CardContent>
     </Card>
   );
+};
+
+const formatOwnerName = (owner: Project['owner']) => {
+  if (!owner) return 'غير معروف';
+  return [owner.first_name, owner.middle_name, owner.last_name]
+    .filter(Boolean)
+    .join(' ') || 'غير معروف';
 };
 
 const ProjectCard = ({ project }: { project: Project }) => {
