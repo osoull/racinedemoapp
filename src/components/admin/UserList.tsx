@@ -1,4 +1,5 @@
 import { UserCard } from './UserCard';
+import { TabsContent } from "@/components/ui/tabs";
 
 type User = {
   id: string;
