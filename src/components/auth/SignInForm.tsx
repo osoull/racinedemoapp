@@ -37,6 +37,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
 
   const handleRedirect = async (userId: string) => {
     try {
+      console.log("Fetching user profile for ID:", userId);
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('user_type')
@@ -49,23 +50,27 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       }
 
       if (!profile) {
-        console.error("No profile found for user");
+        console.error("No profile found for user ID:", userId);
         throw new Error("No profile found");
       }
 
-      // Redirection basée sur le type d'utilisateur
+      console.log("User profile found:", profile);
+
       if (profile.user_type === 'admin') {
+        console.log("Redirecting to admin dashboard");
         navigate('/admin');
       } else if (profile.user_type === 'investment_manager') {
+        console.log("Redirecting to investment manager dashboard");
         navigate('/investment-manager');
       } else {
+        console.log("Redirecting to user dashboard");
         navigate('/dashboard');
       }
 
       toast.success("تم تسجيل الدخول بنجاح");
       onSuccess();
     } catch (error) {
-      console.error("Redirect error:", error);
+      console.error("Redirect error details:", error);
       setError("حدث خطأ في توجيه المستخدم");
       setIsLoading(false);
     }
@@ -75,26 +80,29 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     try {
       setIsLoading(true);
       setError(null);
+      
+      console.log("Attempting sign in with email:", values.email);
 
-      // Tentative de connexion avec Supabase
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (signInError) {
-        console.error("Sign in error:", signInError);
+        console.error("Sign in error details:", signInError);
         setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
         setIsLoading(false);
         return;
       }
 
       if (!data.user) {
+        console.error("No user data returned after successful sign in");
         setError("فشل تسجيل الدخول");
         setIsLoading(false);
         return;
       }
 
+      console.log("Sign in successful, user data:", data.user);
       await handleRedirect(data.user.id);
     } catch (error) {
       console.error("Unexpected error during sign in:", error);
