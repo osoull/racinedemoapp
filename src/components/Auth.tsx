@@ -49,7 +49,11 @@ export function Auth() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
-      <img src="/logo.svg" alt="Logo" className="h-20 mb-8" />
+      <img 
+        src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F8fefc08ff6352b1f82851d81737a6460.cdn.bubble.io%2Ff1729676645537x190880546208797250%2Flogo-horizontal-full.png" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
+      />
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>{isSignUp ? "إنشاء حساب جديد" : "مرحباً بك"}</CardTitle>
