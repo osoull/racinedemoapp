@@ -9,6 +9,8 @@ import CommissionManagement from "@/components/admin/CommissionManagement";
 import ComplianceAudit from "@/components/admin/ComplianceAudit";
 import ContentManagement from "@/components/admin/ContentManagement";
 import SupportTools from "@/components/admin/SupportTools";
+import { Card, CardContent } from "@/components/ui/card";
+import { Activity, Users, Briefcase, PieChart, FileText, HeadphonesIcon } from "lucide-react";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -42,43 +44,106 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto py-6 mt-14">
-      <h1 className="text-3xl font-bold mb-6">لوحة تحكم المشرف</h1>
-      
-      <Tabs defaultValue="users" className="space-y-4">
-        <TabsList className="grid grid-cols-6 w-full">
-          <TabsTrigger value="users">المستخدمين</TabsTrigger>
-          <TabsTrigger value="projects">المشاريع</TabsTrigger>
-          <TabsTrigger value="commissions">العمولات</TabsTrigger>
-          <TabsTrigger value="compliance">الامتثال</TabsTrigger>
-          <TabsTrigger value="content">المحتوى</TabsTrigger>
-          <TabsTrigger value="support">الدعم</TabsTrigger>
-        </TabsList>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto py-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-primary mb-2">لوحة تحكم المشرف</h1>
+          <p className="text-muted-foreground">مرحباً بك في لوحة التحكم الإدارية</p>
+        </div>
 
-        <TabsContent value="users">
-          <UserManagement />
-        </TabsContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-primary/5 hover:bg-primary/10 transition-colors">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <Users className="h-8 w-8 text-primary" />
+                <div>
+                  <h3 className="text-lg font-semibold">إدارة المستخدمين</h3>
+                  <p className="text-sm text-muted-foreground">إدارة حسابات المستخدمين والصلاحيات</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-secondary/5 hover:bg-secondary/10 transition-colors">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <Briefcase className="h-8 w-8 text-secondary" />
+                <div>
+                  <h3 className="text-lg font-semibold">إدارة المشاريع</h3>
+                  <p className="text-sm text-muted-foreground">مراقبة وإدارة المشاريع النشطة</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-accent/5 hover:bg-accent/10 transition-colors">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-4">
+                <Activity className="h-8 w-8 text-accent" />
+                <div>
+                  <h3 className="text-lg font-semibold">النشاط</h3>
+                  <p className="text-sm text-muted-foreground">متابعة نشاط المنصة</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         
-        <TabsContent value="projects">
-          <ProjectManagement />
-        </TabsContent>
-        
-        <TabsContent value="commissions">
-          <CommissionManagement />
-        </TabsContent>
-        
-        <TabsContent value="compliance">
-          <ComplianceAudit />
-        </TabsContent>
-        
-        <TabsContent value="content">
-          <ContentManagement />
-        </TabsContent>
-        
-        <TabsContent value="support">
-          <SupportTools />
-        </TabsContent>
-      </Tabs>
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList className="grid grid-cols-3 lg:grid-cols-6 h-auto gap-4 bg-muted p-1">
+            <TabsTrigger value="users" className="data-[state=active]:bg-background flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span>المستخدمين</span>
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="data-[state=active]:bg-background flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              <span>المشاريع</span>
+            </TabsTrigger>
+            <TabsTrigger value="commissions" className="data-[state=active]:bg-background flex items-center gap-2">
+              <PieChart className="h-4 w-4" />
+              <span>العمولات</span>
+            </TabsTrigger>
+            <TabsTrigger value="compliance" className="data-[state=active]:bg-background flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span>الامتثال</span>
+            </TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:bg-background flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span>المحتوى</span>
+            </TabsTrigger>
+            <TabsTrigger value="support" className="data-[state=active]:bg-background flex items-center gap-2">
+              <HeadphonesIcon className="h-4 w-4" />
+              <span>الدعم</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="bg-card rounded-lg border p-6">
+            <TabsContent value="users" className="mt-0">
+              <UserManagement />
+            </TabsContent>
+            
+            <TabsContent value="projects" className="mt-0">
+              <ProjectManagement />
+            </TabsContent>
+            
+            <TabsContent value="commissions" className="mt-0">
+              <CommissionManagement />
+            </TabsContent>
+            
+            <TabsContent value="compliance" className="mt-0">
+              <ComplianceAudit />
+            </TabsContent>
+            
+            <TabsContent value="content" className="mt-0">
+              <ContentManagement />
+            </TabsContent>
+            
+            <TabsContent value="support" className="mt-0">
+              <SupportTools />
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 };
