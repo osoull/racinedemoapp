@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 const signInSchema = z.object({
   email: z.string().email("البريد الإلكتروني غير صالح"),
@@ -36,21 +35,10 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     },
   });
 
-  // Subscribe to auth changes
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        checkUserTypeAndRedirect(session.user.id);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const checkUserTypeAndRedirect = async (userId: string) => {
+  const handleRedirect = async (userId: string) => {
     try {
+      console.log("Fetching user profile for ID:", userId);
+      
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('user_type')
@@ -59,25 +47,36 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
 
       if (profileError) {
         console.error("Profile fetch error:", profileError);
-        setError("حدث خطأ في تحميل بيانات المستخدم");
-        return;
+        throw new Error("Failed to fetch user profile");
       }
 
-      console.log("User profile:", profile);
+      console.log("User profile data:", profile);
 
-      if (profile?.user_type === 'admin') {
-        navigate('/admin');
-      } else if (profile?.user_type === 'investment_manager') {
-        navigate('/investment-manager');
-      } else {
-        navigate('/dashboard');
+      if (!profile) {
+        console.error("No profile found for user");
+        throw new Error("No profile found");
+      }
+
+      switch (profile.user_type) {
+        case 'admin':
+          console.log("Redirecting to admin dashboard");
+          navigate('/admin');
+          break;
+        case 'investment_manager':
+          console.log("Redirecting to investment manager dashboard");
+          navigate('/investment-manager');
+          break;
+        default:
+          console.log("Redirecting to user dashboard");
+          navigate('/dashboard');
       }
 
       toast.success("تم تسجيل الدخول بنجاح");
       onSuccess();
     } catch (error) {
-      console.error("Error checking user type:", error);
-      setError("حدث خطأ في التحقق من نوع المستخدم");
+      console.error("Redirect error:", error);
+      setError("حدث خطأ في توجيه المستخدم");
+      setIsLoading(false);
     }
   };
 
@@ -85,6 +84,8 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
     try {
       setIsLoading(true);
       setError(null);
+      
+      console.log("Attempting sign in for email:", values.email);
 
       const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
@@ -94,18 +95,23 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       if (signInError) {
         console.error("Sign in error:", signInError);
         setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        setIsLoading(false);
         return;
       }
 
       if (!authData.user) {
-        setError("لم يتم العثور على المستخدم");
+        console.error("No user data returned after sign in");
+        setError("فشل تسجيل الدخول");
+        setIsLoading(false);
         return;
       }
 
+      console.log("Sign in successful, user:", authData.user);
+      await handleRedirect(authData.user.id);
+      
     } catch (error) {
-      console.error("Unexpected error:", error);
+      console.error("Unexpected error during sign in:", error);
       setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
-    } finally {
       setIsLoading(false);
     }
   };
