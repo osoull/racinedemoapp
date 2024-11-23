@@ -66,7 +66,10 @@ export const AdminSidebar = () => {
   const location = useLocation()
 
   return (
-    <aside className="hidden border-l bg-white lg:block lg:w-64">
+    <aside className="fixed h-full w-64 border-l bg-white">
+      <div className="flex h-16 items-center border-b px-6">
+        <h2 className="text-lg font-semibold">لوحة التحكم</h2>
+      </div>
       <nav className="grid gap-1 p-4">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path
@@ -76,17 +79,25 @@ export const AdminSidebar = () => {
               to={item.path}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-                "animate-fade-in",
+                "group relative",
                 isActive && "bg-gray-100 text-gray-900"
               )}
             >
-              <div className="flex h-7 w-7 items-center justify-center">
+              <div className={cn(
+                "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                isActive ? "bg-primary/10 text-primary" : "group-hover:bg-gray-100"
+              )}>
                 <item.icon className="h-5 w-5" />
               </div>
               <div className="flex-1 text-right">
                 <p className="text-sm font-medium leading-none">{item.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                <p className="text-xs text-gray-500 mt-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  {item.description}
+                </p>
               </div>
+              {isActive && (
+                <div className="absolute right-0 h-full w-1 bg-primary rounded-l-lg" />
+              )}
             </Link>
           )
         })}

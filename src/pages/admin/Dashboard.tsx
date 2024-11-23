@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { UserAvatar } from "@/components/UserAvatar"
-import { Bell, Search } from "lucide-react"
+import { Bell, Search, Menu } from "lucide-react"
 import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import CommissionManagement from "@/components/admin/CommissionManagement"
@@ -15,6 +15,7 @@ import ContentManagement from "@/components/admin/ContentManagement"
 import SupportTools from "@/components/admin/SupportTools"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
 const AdminDashboard = () => {
@@ -65,26 +66,42 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="flex h-16 items-center px-4 md:px-6">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="lg:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="p-0">
+              <AdminSidebar />
+            </SheetContent>
+          </Sheet>
+
           <div className="flex flex-1 items-center gap-4">
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Bell className="h-5 w-5" />
-            </Button>
             <div className="hidden md:flex md:flex-1">
-              <Input
-                placeholder="البحث..."
-                className="w-[300px] bg-gray-50"
-                type="search"
-              />
+              <form className="flex-1 mr-4 ml-4 lg:ml-6">
+                <div className="relative">
+                  <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                  <Input
+                    placeholder="البحث..."
+                    className="w-full max-w-[300px] bg-gray-50/50 pr-8"
+                    type="search"
+                  />
+                </div>
+              </form>
             </div>
           </div>
+
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <span className="sr-only">الإشعارات</span>
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white">
+                3
+              </span>
             </Button>
             <UserAvatar />
           </div>
@@ -92,12 +109,14 @@ const AdminDashboard = () => {
       </header>
 
       <div className="flex min-h-[calc(100vh-4rem)]">
-        {/* Sidebar */}
-        <AdminSidebar />
+        {/* Sidebar - Hidden on mobile */}
+        <div className="hidden lg:block">
+          <AdminSidebar />
+        </div>
 
         {/* Main Content */}
         <main className="flex-1 p-6">
-          <div className="mb-8">
+          <div className="mb-8 animate-fade-in">
             <h1 className="text-2xl font-bold text-gray-900">
               {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
             </h1>
