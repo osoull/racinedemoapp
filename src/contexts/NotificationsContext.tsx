@@ -2,15 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Tables } from '@/integrations/supabase/types';
 
-interface Notification {
-  notification_id: string;
-  user_id: string;
-  title: string;
-  message: string;
-  date: string;
-  read: boolean;
-}
+type Notification = Tables<'notifications'>;
 
 interface NotificationsContextType {
   notifications: Notification[];
@@ -75,25 +69,31 @@ export const NotificationsProvider = ({ children }: { children: React.ReactNode 
     undefined,
     (payload) => {
       // Handle updates
-      setNotifications(prev =>
-        prev.map(n =>
-          n.notification_id === payload.new.notification_id ? payload.new : n
-        )
-      );
+      if (payload.new && 'notification_id' in payload.new) {
+        setNotifications(prev =>
+          prev.map(n =>
+            n.notification_id === payload.new.notification_id ? payload.new : n
+          )
+        );
+      }
     },
     (payload) => {
       // Handle new notifications
-      setNotifications(prev => [payload.new, ...prev]);
-      setUnreadCount(prev => prev + 1);
-      toast(payload.new.title, {
-        description: payload.new.message,
-      });
+      if (payload.new && 'notification_id' in payload.new) {
+        setNotifications(prev => [payload.new, ...prev]);
+        setUnreadCount(prev => prev + 1);
+        toast(payload.new.title, {
+          description: payload.new.message,
+        });
+      }
     },
     (payload) => {
       // Handle deletions
-      setNotifications(prev =>
-        prev.filter(n => n.notification_id !== payload.old.notification_id)
-      );
+      if (payload.old && 'notification_id' in payload.old) {
+        setNotifications(prev =>
+          prev.filter(n => n.notification_id !== payload.old.notification_id)
+        );
+      }
     }
   );
 
