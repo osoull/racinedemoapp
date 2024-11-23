@@ -8,6 +8,8 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import InvestmentManagerDashboard from "@/pages/InvestmentManagerDashboard"
+import Profile from "@/pages/Profile"
+import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
 import "./App.css"
 
@@ -50,6 +52,22 @@ function App() {
                     element={
                       <PrivateRoute allowedRoles={["investment_manager"]}>
                         <InvestmentManagerDashboard />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor"]}>
+                        <Profile />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor"]}>
+                        <Settings />
                       </PrivateRoute>
                     }
                   />
