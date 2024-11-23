@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/contexts/AuthContext"
+import { useQuery } from "@tanstack/react-query"
 import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import CommissionManagement from "@/components/admin/CommissionManagement"
@@ -10,11 +12,28 @@ import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import ContentManagement from "@/components/admin/ContentManagement"
 import SupportTools from "@/components/admin/SupportTools"
 import DashboardCard from "@/components/admin/DashboardCard"
+import { UserAvatar } from "@/components/UserAvatar"
 import { Activity, Users, Briefcase, PieChart, FileText, HeadphonesIcon, Settings, BarChart } from "lucide-react"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { user } = useAuth()
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
 
   useEffect(() => {
     checkAdminAccess()
@@ -46,9 +65,14 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
-        <div className="mb-8 text-right">
-          <h1 className="text-4xl font-bold text-primary mb-2">لوحة تحكم المشرف</h1>
-          <p className="text-muted-foreground">مرحباً بك في لوحة التحكم الإدارية</p>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-primary mb-2">لوحة تحكم المشرف</h1>
+            <p className="text-muted-foreground">
+              {profile?.full_name ? `مرحباً بك, ${profile.full_name}` : "مرحباً بك"}
+            </p>
+          </div>
+          <UserAvatar />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
