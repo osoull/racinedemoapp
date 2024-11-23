@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const signInSchema = z.object({
   email: z.string().email("البريد الإلكتروني غير صالح"),
@@ -22,6 +24,7 @@ interface SignInFormProps {
 
 const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   
   const form = useForm<SignInValues>({
@@ -35,14 +38,19 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
+      setError(null);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
-      if (error) {
-        toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      if (signInError) {
+        if (signInError.message.includes('Invalid login credentials')) {
+          setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        } else {
+          setError("حدث خطأ أثناء تسجيل الدخول");
+        }
         return;
       }
 
@@ -73,7 +81,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         onSuccess();
       }
     } catch (error) {
-      toast.error("حدث خطأ. يرجى المحاولة مرة أخرى.");
+      setError("حدث خطأ. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsLoading(false);
     }
@@ -82,6 +90,13 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <FormField
           control={form.control}
           name="email"
@@ -90,6 +105,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
               <FormLabel>البريد الإلكتروني</FormLabel>
               <FormControl>
                 <Input 
+                  dir="ltr"
                   placeholder="أدخل بريدك الإلكتروني" 
                   {...field} 
                   autoComplete="email"
@@ -99,6 +115,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -107,6 +124,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
               <FormLabel>كلمة المرور</FormLabel>
               <FormControl>
                 <Input 
+                  dir="ltr"
                   type="password" 
                   placeholder="أدخل كلمة المرور" 
                   {...field} 
@@ -117,6 +135,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
             </FormItem>
           )}
         />
+
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
         </Button>
