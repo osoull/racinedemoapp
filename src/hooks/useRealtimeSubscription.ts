@@ -18,13 +18,14 @@ export const useRealtimeSubscription = (
     let subscription = supabase.channel(`public:${table}`);
 
     const config = {
+      event: '*',
       schema: 'public',
       table: table,
       ...(filters && { filter: filters }),
     };
 
     subscription = subscription.on(
-      'postgres_changes',
+      'postgres_changes' as const,
       config,
       (payload) => {
         try {
