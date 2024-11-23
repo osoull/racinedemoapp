@@ -1,6 +1,3 @@
-import { Bell, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { UserAvatar } from "@/components/UserAvatar"
 
 interface DashboardHeaderProps {
@@ -11,29 +8,10 @@ export const DashboardHeader = ({ breadcrumb }: DashboardHeaderProps) => {
   return (
     <header className="fixed top-0 right-72 left-0 z-50 bg-white border-b">
       <div className="flex h-16 items-center px-6">
-        <div className="flex flex-1 items-center gap-4">
+        <div className="flex flex-1 items-center">
           <span className="font-medium text-gray-900">{breadcrumb}</span>
-          <form className="flex-1 mr-4 ml-4 lg:ml-6">
-            <div className="relative max-w-md">
-              <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
-              <Input
-                placeholder="البحث..."
-                className="w-full pr-8"
-                type="search"
-              />
-            </div>
-          </form>
         </div>
-
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-[10px] font-medium text-white flex items-center justify-center">
-              3
-            </span>
-          </Button>
-          <UserAvatar />
-        </div>
+        <UserAvatar />
       </div>
     </header>
   )
