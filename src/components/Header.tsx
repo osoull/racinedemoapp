@@ -9,7 +9,11 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/logo.svg" alt="رسين للاستثمار" className="h-8" />
+            <img 
+              src="/logo.svg" 
+              alt="رسين للاستثمار - Racine Investment" 
+              className="h-12 md:h-16" 
+            />
           </Link>
 
           {/* Navigation */}
