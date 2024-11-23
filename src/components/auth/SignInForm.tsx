@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "sonner";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const signInSchema = z.object({
@@ -23,7 +23,6 @@ interface SignInFormProps {
 const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const toast = useToast();
   
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
