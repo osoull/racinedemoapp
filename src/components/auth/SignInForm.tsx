@@ -40,10 +40,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         .eq('id', userId)
         .single();
 
-      if (error) {
-        console.error('Error fetching profile:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       if (profile) {
         switch (profile.user_type) {
@@ -54,11 +51,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
             navigate('/investment-manager');
             break;
           case 'project_owner':
-            navigate('/dashboard');
-            break;
           case 'investor':
-            navigate('/dashboard');
-            break;
           default:
             navigate('/dashboard');
         }
@@ -73,7 +66,6 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
-      console.log('Attempting sign in with:', values.email);
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
@@ -82,16 +74,24 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
 
       if (error) {
         console.error('Sign in error:', error);
-        if (error.message.includes('Invalid login credentials')) {
-          toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
-        } else {
-          toast.error("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
+        // Gérer spécifiquement les différents types d'erreurs
+        switch (error.message) {
+          case 'Invalid login credentials':
+            toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+            break;
+          case 'Email not confirmed':
+            toast.error("يرجى تأكيد بريدك الإلكتروني أولاً");
+            break;
+          case 'Too many requests':
+            toast.error("محاولات كثيرة جداً، يرجى المحاولة لاحقاً");
+            break;
+          default:
+            toast.error("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
         }
         return;
       }
 
       if (data.user) {
-        console.log('Sign in successful:', data.user.id);
         toast.success("تم تسجيل الدخول بنجاح");
         await handleRedirect(data.user.id);
         onSuccess();
