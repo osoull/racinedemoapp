@@ -10,8 +10,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const signInSchema = z.object({
-  email: z.string().email("البريد الإلكتروني غير صالح"),
-  password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
+  email: z.string().email("Email invalide"),
+  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
 });
 
 type SignInValues = z.infer<typeof signInSchema>;
@@ -65,7 +65,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       }
     } catch (error) {
       console.error('Error in handleRedirect:', error);
-      toast.error("حدث خطأ أثناء توجيهك. يرجى المحاولة مرة أخرى.");
+      toast.error("Une erreur est survenue lors de la redirection. Veuillez réessayer.");
       navigate('/dashboard');
     }
   };
@@ -83,22 +83,22 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       if (error) {
         console.error('Sign in error:', error);
         if (error.message.includes('Invalid login credentials')) {
-          toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+          toast.error("Email ou mot de passe incorrect");
         } else {
-          toast.error("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.");
+          toast.error("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
         }
         return;
       }
 
       if (data.user) {
         console.log('Sign in successful:', data.user.id);
-        toast.success("تم تسجيل الدخول بنجاح");
+        toast.success("Connexion réussie");
         await handleRedirect(data.user.id);
         onSuccess();
       }
     } catch (error) {
       console.error('Unexpected error during sign in:', error);
-      toast.error("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
+      toast.error("Une erreur inattendue est survenue. Veuillez réessayer.");
     } finally {
       setIsLoading(false);
     }
@@ -112,10 +112,10 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>البريد الإلكتروني</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="أدخل بريدك الإلكتروني" 
+                  placeholder="Entrez votre email" 
                   {...field} 
                   autoComplete="email"
                 />
@@ -129,11 +129,11 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>كلمة المرور</FormLabel>
+              <FormLabel>Mot de passe</FormLabel>
               <FormControl>
                 <Input 
                   type="password" 
-                  placeholder="أدخل كلمة المرور" 
+                  placeholder="Entrez votre mot de passe" 
                   {...field} 
                   autoComplete="current-password"
                 />
@@ -143,7 +143,7 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+          {isLoading ? "Connexion en cours..." : "Se connecter"}
         </Button>
       </form>
     </Form>
