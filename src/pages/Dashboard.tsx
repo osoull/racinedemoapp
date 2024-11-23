@@ -9,12 +9,37 @@ import {
   Shield,
 } from "lucide-react";
 import { UserAvatar } from "@/components/UserAvatar";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   return (
     <div className="container mx-auto px-4 py-8 mt-14">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">لوحة التحكم</h1>
+        <div>
+          <h1 className="text-2xl font-bold">لوحة التحكم</h1>
+          <p className="text-muted-foreground mt-1">
+            {profile?.full_name ? `مرحباً بك, ${profile.full_name}` : "مرحباً بك"}
+          </p>
+        </div>
         <UserAvatar />
       </div>
 

@@ -6,13 +6,30 @@ import InvestmentsTable from "@/components/investment-manager/InvestmentsTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserAvatar } from "@/components/UserAvatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ProjectStatus = "pending" | "approved" | "rejected" | "funding" | "completed";
 type InvestmentStatus = "pending" | "confirmed" | "cancelled";
 
 const InvestmentManagerDashboard = () => {
+  const { user } = useAuth();
   const [selectedProjectStatus, setSelectedProjectStatus] = useState<ProjectStatus>("pending");
   const [selectedInvestmentStatus, setSelectedInvestmentStatus] = useState<InvestmentStatus>("pending");
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
 
   const { data: projects, isLoading: projectsLoading } = useQuery({
     queryKey: ["projects"],
@@ -46,7 +63,12 @@ const InvestmentManagerDashboard = () => {
   return (
     <div className="container mx-auto px-4 pt-20 pb-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">لوحة تحكم مدير الاستثمار</h1>
+        <div>
+          <h1 className="text-2xl font-bold">لوحة تحكم مدير الاستثمار</h1>
+          <p className="text-muted-foreground mt-1">
+            {profile?.full_name ? `مرحباً بك, ${profile.full_name}` : "مرحباً بك"}
+          </p>
+        </div>
         <UserAvatar />
       </div>
       
