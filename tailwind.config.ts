@@ -54,7 +54,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Outfit", "IBM Plex Sans Arabic", "sans-serif"],
+        sans: ["El Messiri", "Outfit", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
