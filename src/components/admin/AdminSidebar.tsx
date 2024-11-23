@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom"
-import { Card, CardContent } from "@/components/ui/card"
+import { Link, useLocation } from "react-router-dom"
+import { cn } from "@/lib/utils"
 import { 
   Users, 
   Briefcase, 
   Wallet,
   ShieldCheck,
   FileText,
-  HeadphonesIcon
+  HeadphonesIcon,
+  LayoutDashboard
 } from "lucide-react"
 
 interface SidebarItem {
@@ -14,76 +15,82 @@ interface SidebarItem {
   icon: any
   path: string
   description: string
-  color: string
 }
 
 const menuItems: SidebarItem[] = [
   {
+    title: "لوحة التحكم",
+    icon: LayoutDashboard,
+    path: "/admin",
+    description: "نظرة عامة على النظام"
+  },
+  {
     title: "المستخدمين",
     icon: Users,
     path: "/admin/users",
-    description: "إدارة المستخدمين والأدوار",
-    color: "bg-blue-500/10 text-blue-500"
+    description: "إدارة المستخدمين والأدوار"
   },
   {
     title: "المشاريع",
     icon: Briefcase,
     path: "/admin/projects",
-    description: "إدارة المشاريع والتمويل",
-    color: "bg-green-500/10 text-green-500"
+    description: "إدارة المشاريع والتمويل"
   },
   {
     title: "العمولات",
     icon: Wallet,
     path: "/admin/commissions",
-    description: "إدارة العمولات والمدفوعات",
-    color: "bg-purple-500/10 text-purple-500"
+    description: "إدارة العمولات والمدفوعات"
   },
   {
     title: "الامتثال",
     icon: ShieldCheck,
     path: "/admin/compliance",
-    description: "مراجعة وثائق KYC",
-    color: "bg-yellow-500/10 text-yellow-500"
+    description: "مراجعة وثائق KYC"
   },
   {
     title: "المحتوى",
     icon: FileText,
     path: "/admin/content",
-    description: "إدارة محتوى المنصة",
-    color: "bg-pink-500/10 text-pink-500"
+    description: "إدارة محتوى المنصة"
   },
   {
     title: "الدعم",
     icon: HeadphonesIcon,
     path: "/admin/support",
-    description: "إدارة تذاكر الدعم",
-    color: "bg-orange-500/10 text-orange-500"
+    description: "إدارة تذاكر الدعم"
   }
 ]
 
 export const AdminSidebar = () => {
+  const location = useLocation()
+
   return (
-    <Card className="col-span-12 md:col-span-3 h-fit">
-      <CardContent className="p-4">
-        <nav className="space-y-2">
-          {menuItems.map((item) => (
+    <aside className="hidden border-l bg-white lg:block lg:w-64">
+      <nav className="grid gap-1 p-4">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path
+          return (
             <Link
               key={item.path}
               to={item.path}
-              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-right"
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
+                "animate-fade-in",
+                isActive && "bg-gray-100 text-gray-900"
+              )}
             >
-              <div className={`p-2 rounded-lg ${item.color}`}>
+              <div className="flex h-7 w-7 items-center justify-center">
                 <item.icon className="h-5 w-5" />
               </div>
-              <div className="flex-1">
-                <p className="font-medium">{item.title}</p>
-                <p className="text-sm text-gray-500">{item.description}</p>
+              <div className="flex-1 text-right">
+                <p className="text-sm font-medium leading-none">{item.title}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
               </div>
             </Link>
-          ))}
-        </nav>
-      </CardContent>
-    </Card>
+          )
+        })}
+      </nav>
+    </aside>
   )
 }

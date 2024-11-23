@@ -4,16 +4,18 @@ import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
-import { Card, CardContent } from "@/components/ui/card"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { UserAvatar } from "@/components/UserAvatar"
-import { Bell } from "lucide-react"
+import { Bell, Search } from "lucide-react"
 import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import CommissionManagement from "@/components/admin/CommissionManagement"
 import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import ContentManagement from "@/components/admin/ContentManagement"
 import SupportTools from "@/components/admin/SupportTools"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const AdminDashboard = () => {
   const navigate = useNavigate()
@@ -63,44 +65,60 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 px-4">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8 bg-white rounded-lg p-6 shadow-sm">
-          <div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-white">
+        <div className="flex h-16 items-center px-4 md:px-6">
+          <div className="flex flex-1 items-center gap-4">
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Bell className="h-5 w-5" />
+            </Button>
+            <div className="hidden md:flex md:flex-1">
+              <Input
+                placeholder="البحث..."
+                className="w-[300px] bg-gray-50"
+                type="search"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon">
+              <Bell className="h-5 w-5" />
+              <span className="sr-only">الإشعارات</span>
+            </Button>
+            <UserAvatar />
+          </div>
+        </div>
+      </header>
+
+      <div className="flex min-h-[calc(100vh-4rem)]">
+        {/* Sidebar */}
+        <AdminSidebar />
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">
               {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
             </h1>
             <p className="text-gray-500 mt-1">لوحة تحكم المشرف</p>
           </div>
-          <div className="flex items-center gap-4">
-            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-              <Bell className="h-5 w-5 text-gray-600" />
-            </button>
-            <UserAvatar />
+
+          <div className={cn(
+            "rounded-lg border bg-white shadow-sm",
+            "animate-fade-in"
+          )}>
+            <Routes>
+              <Route index element={<UserManagement />} />
+              <Route path="users" element={<UserManagement />} />
+              <Route path="projects" element={<ProjectManagement />} />
+              <Route path="commissions" element={<CommissionManagement />} />
+              <Route path="compliance" element={<ComplianceAudit />} />
+              <Route path="content" element={<ContentManagement />} />
+              <Route path="support" element={<SupportTools />} />
+            </Routes>
           </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-12 gap-6">
-          {/* Sidebar Navigation */}
-          <AdminSidebar />
-
-          {/* Main Content Area */}
-          <Card className="col-span-12 md:col-span-9">
-            <CardContent className="p-6">
-              <Routes>
-                <Route index element={<UserManagement />} />
-                <Route path="users" element={<UserManagement />} />
-                <Route path="projects" element={<ProjectManagement />} />
-                <Route path="commissions" element={<CommissionManagement />} />
-                <Route path="compliance" element={<ComplianceAudit />} />
-                <Route path="content" element={<ContentManagement />} />
-                <Route path="support" element={<SupportTools />} />
-              </Routes>
-            </CardContent>
-          </Card>
-        </div>
+        </main>
       </div>
     </div>
   )
