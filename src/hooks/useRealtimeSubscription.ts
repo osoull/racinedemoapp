@@ -23,8 +23,9 @@ export const useRealtimeSubscription = (
       ...(filters && { filter: filters }),
     };
 
+    // Fix: Use the correct type for the channel event
     subscription = subscription.on(
-      'postgres_changes',
+      'postgres_changes' as 'INSERT' | 'UPDATE' | 'DELETE',
       config,
       (payload) => {
         try {
