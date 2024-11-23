@@ -10,7 +10,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-              راسين للاستثمار
+              رسين للاستثمار
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-8">
               منصة تمويل جماعي متوافقة مع الشريعة الإسلامية تربط المشاريع المبتكرة بالمستثمرين الأخلاقيين
