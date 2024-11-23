@@ -26,7 +26,6 @@ const CommissionManagement = () => {
     },
   });
 
-  // Set up realtime subscription for commission updates
   useRealtimeSubscription(
     "commissions",
     undefined,
@@ -34,6 +33,17 @@ const CommissionManagement = () => {
       queryClient.invalidateQueries({ queryKey: ["commissions"] });
     }
   );
+
+  const getArabicCommissionType = (type: string) => {
+    switch (type) {
+      case "wallet_deposit":
+        return "إيداع المحفظة";
+      case "funding_request":
+        return "طلب التمويل";
+      default:
+        return type;
+    }
+  };
 
   return (
     <Card>
@@ -44,11 +54,12 @@ const CommissionManagement = () => {
         {isLoading ? (
           <div>جاري التحميل...</div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4" dir="rtl">
             {commissions?.map((commission) => (
               <CommissionCard 
                 key={commission.commission_id} 
                 commission={commission}
+                getArabicCommissionType={getArabicCommissionType}
               />
             ))}
           </div>
@@ -58,7 +69,13 @@ const CommissionManagement = () => {
   );
 };
 
-const CommissionCard = ({ commission }: { commission: Commission }) => {
+const CommissionCard = ({ 
+  commission,
+  getArabicCommissionType 
+}: { 
+  commission: Commission;
+  getArabicCommissionType: (type: string) => string;
+}) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
@@ -109,8 +126,8 @@ const CommissionCard = ({ commission }: { commission: Commission }) => {
       <CardContent className="p-4">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="font-semibold">
-              {commission.commission_type}
+            <h3 className="font-semibold text-lg">
+              {getArabicCommissionType(commission.commission_type)}
             </h3>
             {isEditing ? (
               <div className="flex items-center gap-2 mt-2">
@@ -118,10 +135,11 @@ const CommissionCard = ({ commission }: { commission: Commission }) => {
                   type="number"
                   value={newRate}
                   onChange={(e) => setNewRate(e.target.value)}
-                  className="w-24"
+                  className="w-24 text-right"
                   min="0"
                   max="100"
                   step="0.01"
+                  dir="ltr"
                 />
                 <span>%</span>
               </div>
@@ -131,21 +149,21 @@ const CommissionCard = ({ commission }: { commission: Commission }) => {
               </p>
             )}
           </div>
-          <div className="space-x-2">
+          <div className="space-x-2 flex flex-row-reverse">
             {isEditing ? (
               <>
+                <Button onClick={handleSave}>
+                  حفظ
+                </Button>
                 <Button
                   variant="outline"
                   onClick={() => {
                     setIsEditing(false);
                     setNewRate(commission.rate.toString());
                   }}
-                  className="ml-2"
+                  className="mr-2"
                 >
                   إلغاء
-                </Button>
-                <Button onClick={handleSave}>
-                  حفظ
                 </Button>
               </>
             ) : (
