@@ -33,24 +33,37 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   });
 
   const handleRedirect = async (userId: string) => {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('user_type')
-      .eq('id', userId)
-      .single();
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', userId)
+        .single();
 
-    if (profile) {
-      switch (profile.user_type) {
-        case 'admin':
-          navigate('/admin');
-          break;
-        case 'investment_manager':
-          navigate('/investment-manager');
-          break;
-        default:
-          navigate('/dashboard');
+      if (error) throw error;
+
+      if (profile) {
+        switch (profile.user_type) {
+          case 'admin':
+            navigate('/admin');
+            break;
+          case 'investment_manager':
+            navigate('/investment-manager');
+            break;
+          case 'project_owner':
+            navigate('/dashboard');
+            break;
+          case 'investor':
+            navigate('/dashboard');
+            break;
+          default:
+            navigate('/dashboard');
+        }
+      } else {
+        navigate('/dashboard');
       }
-    } else {
+    } catch (error) {
+      console.error('Error fetching profile:', error);
       navigate('/dashboard');
     }
   };
@@ -58,19 +71,23 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
   const onSubmit = async (values: SignInValues) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
+      
+      const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
-      if (error) throw error;
+      if (signInError) {
+        throw signInError;
+      }
 
-      if (data.user) {
-        await handleRedirect(data.user.id);
+      if (user) {
         toast.success("تم تسجيل الدخول بنجاح");
+        await handleRedirect(user.id);
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Sign in error:', error);
       toast.error("فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.");
     } finally {
       setIsLoading(false);
