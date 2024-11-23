@@ -56,7 +56,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 mt-14">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">لوحة التحكم</h1>
         <Button variant="outline" onClick={() => navigate("/profile")}>
@@ -117,13 +117,11 @@ const Dashboard = () => {
             {profile.user_type === 'investor' ? (
               <div>
                 <h3 className="font-semibold mb-4">استثماراتي</h3>
-                {/* Investment list component will be added here */}
                 <p className="text-gray-600">لا توجد استثمارات حالية</p>
               </div>
             ) : (
               <div>
                 <h3 className="font-semibold mb-4">مشاريعي</h3>
-                {/* Projects list component will be added here */}
                 <p className="text-gray-600">لا توجد مشاريع حالية</p>
               </div>
             )}
@@ -159,7 +157,6 @@ const Dashboard = () => {
             <Button className="w-full">
               فتح تذكرة جديدة
             </Button>
-            {/* Support tickets list will be added here */}
           </Card>
         </TabsContent>
 

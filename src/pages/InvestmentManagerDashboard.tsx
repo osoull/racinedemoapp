@@ -4,19 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-
-type ProjectStatus = "pending" | "approved" | "rejected" | "funding" | "completed";
-type InvestmentStatus = "pending" | "confirmed" | "cancelled";
+import ProjectsTable from "@/components/investment-manager/ProjectsTable";
+import InvestmentsTable from "@/components/investment-manager/InvestmentsTable";
 
 const InvestmentManagerDashboard = () => {
   const navigate = useNavigate();
@@ -80,7 +70,7 @@ const InvestmentManagerDashboard = () => {
     },
   });
 
-  const updateProjectStatus = async (projectId: string, status: ProjectStatus) => {
+  const updateProjectStatus = async (projectId: string, status: string) => {
     const { error } = await supabase
       .from("projects")
       .update({ status })
@@ -100,7 +90,7 @@ const InvestmentManagerDashboard = () => {
     }
   };
 
-  const updateInvestmentStatus = async (investmentId: string, status: InvestmentStatus) => {
+  const updateInvestmentStatus = async (investmentId: string, status: string) => {
     const { error } = await supabase
       .from("investments")
       .update({ status })
@@ -136,47 +126,11 @@ const InvestmentManagerDashboard = () => {
               <CardTitle>إدارة المشاريع</CardTitle>
             </CardHeader>
             <CardContent>
-              {projectsLoading ? (
-                <div>جاري التحميل...</div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>عنوان المشروع</TableHead>
-                      <TableHead>صاحب المشروع</TableHead>
-                      <TableHead>الحالة</TableHead>
-                      <TableHead>الإجراءات</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {projects?.map((project) => (
-                      <TableRow key={project.project_id}>
-                        <TableCell>{project.title}</TableCell>
-                        <TableCell>{project.owner?.full_name}</TableCell>
-                        <TableCell>{project.status}</TableCell>
-                        <TableCell>
-                          <div className="space-x-2">
-                            <Button
-                              variant="outline"
-                              onClick={() => updateProjectStatus(project.project_id, "approved")}
-                              disabled={project.status === "approved"}
-                            >
-                              موافقة
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() => updateProjectStatus(project.project_id, "rejected")}
-                              disabled={project.status === "rejected"}
-                            >
-                              رفض
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
+              <ProjectsTable 
+                projects={projects || []}
+                onUpdateStatus={updateProjectStatus}
+                isLoading={projectsLoading}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -187,49 +141,11 @@ const InvestmentManagerDashboard = () => {
               <CardTitle>إدارة الاستثمارات</CardTitle>
             </CardHeader>
             <CardContent>
-              {investmentsLoading ? (
-                <div>جاري التحميل...</div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>المستثمر</TableHead>
-                      <TableHead>المشروع</TableHead>
-                      <TableHead>المبلغ</TableHead>
-                      <TableHead>الحالة</TableHead>
-                      <TableHead>الإجراءات</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {investments?.map((investment) => (
-                      <TableRow key={investment.investment_id}>
-                        <TableCell>{investment.investor?.full_name}</TableCell>
-                        <TableCell>{investment.project?.title}</TableCell>
-                        <TableCell>{investment.amount}</TableCell>
-                        <TableCell>{investment.status}</TableCell>
-                        <TableCell>
-                          <div className="space-x-2">
-                            <Button
-                              variant="outline"
-                              onClick={() => updateInvestmentStatus(investment.investment_id, "confirmed")}
-                              disabled={investment.status === "confirmed"}
-                            >
-                              تأكيد
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() => updateInvestmentStatus(investment.investment_id, "cancelled")}
-                              disabled={investment.status === "cancelled"}
-                            >
-                              إلغاء
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
+              <InvestmentsTable 
+                investments={investments || []}
+                onUpdateStatus={updateInvestmentStatus}
+                isLoading={investmentsLoading}
+              />
             </CardContent>
           </Card>
         </TabsContent>

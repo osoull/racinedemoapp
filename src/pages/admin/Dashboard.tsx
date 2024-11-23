@@ -42,7 +42,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 mt-14">
       <h1 className="text-3xl font-bold mb-6">لوحة تحكم المشرف</h1>
       
       <Tabs defaultValue="users" className="space-y-4">
