@@ -40,40 +40,41 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
       setIsLoading(true);
       setError(null);
       
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      // First, attempt to sign in
+      const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (signInError) {
-        if (signInError.message.includes('Invalid login credentials')) {
-          setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
-        } else {
-          setError("حدث خطأ أثناء تسجيل الدخول");
-        }
+        console.error("Sign in error:", signInError);
+        setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
         return;
       }
 
-      if (data.user) {
-        const { data: profile } = await supabase
+      if (authData.user) {
+        // After successful sign in, get the user's profile to check their type
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('user_type')
-          .eq('id', data.user.id)
+          .eq('id', authData.user.id)
           .single();
+
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          setError("حدث خطأ في تحميل بيانات المستخدم");
+          return;
+        }
+
+        console.log("User profile:", profile); // Debug log
 
         toast.success("تم تسجيل الدخول بنجاح");
 
-        if (profile) {
-          switch (profile.user_type) {
-            case 'admin':
-              navigate('/admin');
-              break;
-            case 'investment_manager':
-              navigate('/investment-manager');
-              break;
-            default:
-              navigate('/dashboard');
-          }
+        // Redirect based on user type
+        if (profile?.user_type === 'admin') {
+          navigate('/admin');
+        } else if (profile?.user_type === 'investment_manager') {
+          navigate('/investment-manager');
         } else {
           navigate('/dashboard');
         }
@@ -81,7 +82,8 @@ const SignInForm = ({ onSuccess }: SignInFormProps) => {
         onSuccess();
       }
     } catch (error) {
-      setError("حدث خطأ. يرجى المحاولة مرة أخرى.");
+      console.error("Unexpected error:", error);
+      setError("حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsLoading(false);
     }
