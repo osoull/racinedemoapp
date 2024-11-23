@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action_id: string
+          action_type: Database["public"]["Enums"]["admin_action_type"]
+          admin_id: string | null
+          created_at: string | null
+          notes: string | null
+          target_id: string
+        }
+        Insert: {
+          action_id?: string
+          action_type: Database["public"]["Enums"]["admin_action_type"]
+          admin_id?: string | null
+          created_at?: string | null
+          notes?: string | null
+          target_id: string
+        }
+        Update: {
+          action_id?: string
+          action_type?: Database["public"]["Enums"]["admin_action_type"]
+          admin_id?: string | null
+          created_at?: string | null
+          notes?: string | null
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_actions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commissions: {
         Row: {
           applicable_to: Database["public"]["Enums"]["applicable_to"]
@@ -216,6 +251,51 @@ export type Database = {
           },
         ]
       }
+      project_reviews: {
+        Row: {
+          created_at: string | null
+          notes: string | null
+          project_id: string | null
+          review_id: string
+          reviewer_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          notes?: string | null
+          project_id?: string | null
+          review_id?: string
+          reviewer_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          notes?: string | null
+          project_id?: string | null
+          review_id?: string
+          reviewer_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_reviews_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "project_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           amount_raised: number | null
@@ -395,6 +475,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      admin_action_type:
+        | "suspend_account"
+        | "reactivate_account"
+        | "delete_account"
+        | "approve_project"
+        | "reject_project"
       applicable_to: "investor" | "project_owner"
       commission_type:
         | "entry_fee"
