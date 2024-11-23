@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-primary/5 to-secondary/5 border-t">
       <div className="container mx-auto px-4">
-        <div className="py-8 flex flex-col items-center justify-center">
+        <div className="py-4 flex flex-col items-center justify-center">
           <p className="text-primary/80 font-medium text-base">
             جميع الحقوق محفوظة لشركة رسين للأستثمار© {year}
           </p>
