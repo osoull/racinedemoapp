@@ -8,11 +8,17 @@ import {
   HeadphonesIcon,
   LayoutDashboard,
   Settings,
-  LogOut
+  LogOut,
+  Menu
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 
 const menuItems = [
   {
@@ -65,7 +71,7 @@ const menuItems = [
   }
 ]
 
-export const AdminSidebar = () => {
+const SidebarContent = () => {
   const location = useLocation()
   const { signOut } = useAuth()
 
@@ -94,5 +100,30 @@ export const AdminSidebar = () => {
         </Button>
       </div>
     </div>
+  )
+}
+
+export const AdminSidebar = () => {
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div className="fixed top-0 right-0 bottom-0 w-72 border-l bg-white shadow-sm hidden lg:block">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile Drawer */}
+      <div className="lg:hidden fixed top-4 right-4 z-50">
+        <Drawer direction="right">
+          <DrawerTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="h-full w-72 fixed right-0 top-0 rounded-none">
+            <SidebarContent />
+          </DrawerContent>
+        </Drawer>
+      </div>
+    </>
   )
 }

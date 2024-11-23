@@ -100,11 +100,9 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader breadcrumb={getBreadcrumb()} />
       
-      <div className="fixed top-0 right-0 bottom-0 w-72 border-l bg-white shadow-sm">
-        <AdminSidebar />
-      </div>
+      <AdminSidebar />
 
-      <main className="pt-20 pr-80 pl-6">
+      <main className="pt-20 lg:pr-80 px-6">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">
             {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
