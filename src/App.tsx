@@ -22,7 +22,7 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />
+    return <Navigate to="/" replace />
   }
 
   // Check user role here
@@ -39,7 +39,7 @@ function App() {
               <Header />
               <main className="flex-1">
                 <Routes>
-                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/" element={<Auth />} />
                   <Route
                     path="/admin"
                     element={
