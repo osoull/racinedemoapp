@@ -154,6 +154,7 @@ export type Database = {
           kyc_status: Database["public"]["Enums"]["kyc_status"] | null
           national_id: string | null
           phone: string | null
+          two_factor_enabled: boolean | null
           updated_at: string
           user_type: Database["public"]["Enums"]["user_type"] | null
         }
@@ -165,6 +166,7 @@ export type Database = {
           kyc_status?: Database["public"]["Enums"]["kyc_status"] | null
           national_id?: string | null
           phone?: string | null
+          two_factor_enabled?: boolean | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"] | null
         }
@@ -176,6 +178,7 @@ export type Database = {
           kyc_status?: Database["public"]["Enums"]["kyc_status"] | null
           national_id?: string | null
           phone?: string | null
+          two_factor_enabled?: boolean | null
           updated_at?: string
           user_type?: Database["public"]["Enums"]["user_type"] | null
         }
@@ -266,6 +269,83 @@ export type Database = {
           {
             foreignKeyName: "projects_owner_id_fkey"
             columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_messages: {
+        Row: {
+          message: string
+          message_id: string
+          sender_id: string | null
+          sent_at: string | null
+          ticket_id: string | null
+        }
+        Insert: {
+          message: string
+          message_id?: string
+          sender_id?: string | null
+          sent_at?: string | null
+          ticket_id?: string | null
+        }
+        Update: {
+          message?: string
+          message_id?: string
+          sender_id?: string | null
+          sent_at?: string | null
+          ticket_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["ticket_id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: string
+          created_at: string | null
+          message: string
+          status: string | null
+          ticket_id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          message: string
+          status?: string | null
+          ticket_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          message?: string
+          status?: string | null
+          ticket_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
