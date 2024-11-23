@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { UserAvatar } from "@/components/UserAvatar"
-import { Bell, Search, Menu, ChevronRight } from "lucide-react"
+import { Bell, Search, Menu, ChevronRight, Users, Briefcase, Wallet, Activity } from "lucide-react"
 import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import CommissionManagement from "@/components/admin/CommissionManagement"
@@ -16,6 +16,7 @@ import SupportTools from "@/components/admin/SupportTools"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 const AdminDashboard = () => {
@@ -37,6 +38,30 @@ const AdminDashboard = () => {
       return data
     },
     enabled: !!user?.id,
+  })
+
+  const { data: stats } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: async () => {
+      const { data: users } = await supabase
+        .from("profiles")
+        .select("id")
+      
+      const { data: projects } = await supabase
+        .from("projects")
+        .select("id, current_funding")
+      
+      const { data: investments } = await supabase
+        .from("investments")
+        .select("id")
+
+      return {
+        totalUsers: users?.length || 0,
+        totalProjects: projects?.length || 0,
+        totalInvestments: investments?.length || 0,
+        totalFunding: projects?.reduce((acc, proj) => acc + (proj.current_funding || 0), 0) || 0
+      }
+    }
   })
 
   useEffect(() => {
@@ -82,11 +107,25 @@ const AdminDashboard = () => {
     return pageMap[path[1]] || "لوحة التحكم"
   }
 
+  const StatCard = ({ icon: Icon, title, value, className }: { icon: any, title: string, value: string | number, className?: string }) => (
+    <Card className={cn("p-6", className)}>
+      <div className="flex items-center gap-4">
+        <div className="rounded-full bg-primary/10 p-3">
+          <Icon className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        </div>
+      </div>
+    </Card>
+  )
+
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="flex h-16 items-center px-4 md:px-6">
+      <header className="fixed top-0 right-72 left-0 z-50 bg-white border-b">
+        <div className="flex h-16 items-center px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
@@ -99,22 +138,20 @@ const AdminDashboard = () => {
           </Sheet>
 
           <div className="flex flex-1 items-center gap-4">
-            <div className="hidden md:flex md:flex-1">
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <ChevronRight className="h-4 w-4" />
-                <span className="font-medium text-gray-900">{getBreadcrumb()}</span>
-              </div>
-              <form className="flex-1 mr-4 ml-4 lg:ml-6">
-                <div className="relative">
-                  <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                  <Input
-                    placeholder="البحث..."
-                    className="w-full max-w-[300px] bg-gray-50/50 pr-8"
-                    type="search"
-                  />
-                </div>
-              </form>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <ChevronRight className="h-4 w-4" />
+              <span className="font-medium text-gray-900">{getBreadcrumb()}</span>
             </div>
+            <form className="flex-1 mr-4 ml-4 lg:ml-6">
+              <div className="relative">
+                <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                <Input
+                  placeholder="البحث..."
+                  className="w-full max-w-[300px] pr-8"
+                  type="search"
+                />
+              </div>
+            </form>
           </div>
 
           <div className="flex items-center gap-4">
@@ -129,25 +166,47 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <div className="flex min-h-[calc(100vh-4rem)]">
-        {/* Sidebar - Hidden on mobile */}
-        <div className="hidden lg:block">
-          <AdminSidebar />
-        </div>
+      {/* Sidebar */}
+      <div className="fixed top-0 right-0 h-full">
+        <AdminSidebar />
+      </div>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="mb-8 animate-fade-in">
+      {/* Main Content */}
+      <main className="pt-16 pr-72">
+        <div className="p-6">
+          <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900">
               {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
             </h1>
-            <p className="text-gray-500 mt-1">لوحة تحكم المشرف</p>
+            <p className="text-gray-500 mt-1">هذه نظرة عامة على أداء المنصة</p>
           </div>
 
-          <div className={cn(
-            "rounded-lg border bg-white/80 backdrop-blur-sm shadow-sm",
-            "animate-fade-in"
-          )}>
+          {location.pathname === "/admin" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <StatCard
+                icon={Users}
+                title="إجمالي المستخدمين"
+                value={stats?.totalUsers || 0}
+              />
+              <StatCard
+                icon={Briefcase}
+                title="المشاريع النشطة"
+                value={stats?.totalProjects || 0}
+              />
+              <StatCard
+                icon={Activity}
+                title="الاستثمارات"
+                value={stats?.totalInvestments || 0}
+              />
+              <StatCard
+                icon={Wallet}
+                title="إجمالي التمويل"
+                value={`${stats?.totalFunding.toLocaleString()} ريال`}
+              />
+            </div>
+          )}
+
+          <div className="rounded-lg border bg-white shadow-sm">
             <Routes>
               <Route index element={<UserManagement />} />
               <Route path="users" element={<UserManagement />} />
@@ -158,8 +217,8 @@ const AdminDashboard = () => {
               <Route path="support" element={<SupportTools />} />
             </Routes>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   )
 }

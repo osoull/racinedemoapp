@@ -6,7 +6,8 @@ import {
   ShieldCheck,
   FileText,
   HeadphonesIcon,
-  LayoutDashboard
+  LayoutDashboard,
+  Settings
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 
@@ -52,6 +53,12 @@ const menuItems = [
     icon: HeadphonesIcon,
     path: "/admin/support",
     description: "إدارة تذاكر الدعم"
+  },
+  {
+    title: "الإعدادات",
+    icon: Settings,
+    path: "/admin/settings",
+    description: "إعدادات النظام"
   }
 ]
 
@@ -59,11 +66,11 @@ export const AdminSidebar = () => {
   const location = useLocation()
 
   return (
-    <aside className="fixed h-full w-64 border-l bg-white/80 backdrop-blur-sm">
+    <aside className="fixed h-full w-72 bg-white border-l shadow-sm">
       <div className="flex h-16 items-center border-b px-6">
-        <h2 className="text-lg font-semibold">لوحة التحكم</h2>
+        <h2 className="text-xl font-bold text-primary">راسين للاستثمار</h2>
       </div>
-      <nav className="grid gap-1 p-4">
+      <nav className="p-4 space-y-1">
         {menuItems.map((item) => (
           <SidebarItem
             key={item.path}
