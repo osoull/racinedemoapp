@@ -9,7 +9,9 @@ import { useToast } from "@/components/ui/use-toast";
 type User = {
   id: string;
   email: string;
-  full_name: string | null;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
   user_type: string | null;
   kyc_status: string | null;
 };
@@ -21,24 +23,28 @@ type EditUserDialogProps = {
 
 export function EditUserDialog({ user, onSave }: EditUserDialogProps) {
   const [open, setOpen] = useState(false);
-  const [fullName, setFullName] = useState(user.full_name || "");
+  const [firstName, setFirstName] = useState(user.first_name || "");
+  const [middleName, setMiddleName] = useState(user.middle_name || "");
+  const [lastName, setLastName] = useState(user.last_name || "");
   const [email, setEmail] = useState(user.email || "");
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!fullName.trim() || !email.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
       toast({
         title: "خطأ",
-        description: "جميع الحقول مطلوبة",
+        description: "الاسم الأول والأخير والبريد الإلكتروني مطلوبة",
         variant: "destructive",
       });
       return;
     }
 
     onSave(user.id, {
-      full_name: fullName,
+      first_name: firstName,
+      middle_name: middleName || null,
+      last_name: lastName,
       email: email,
     });
     
@@ -62,14 +68,35 @@ export function EditUserDialog({ user, onSave }: EditUserDialogProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName">الاسم الكامل</Label>
+            <Label htmlFor="firstName">الاسم الأول</Label>
             <Input
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="الاسم الكامل"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="الاسم الأول"
             />
           </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="middleName">الاسم الأوسط</Label>
+            <Input
+              id="middleName"
+              value={middleName}
+              onChange={(e) => setMiddleName(e.target.value)}
+              placeholder="الاسم الأوسط (اختياري)"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="lastName">اسم العائلة</Label>
+            <Input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="اسم العائلة"
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="email">البريد الإلكتروني</Label>
             <Input
@@ -80,6 +107,7 @@ export function EditUserDialog({ user, onSave }: EditUserDialogProps) {
               placeholder="البريد الإلكتروني"
             />
           </div>
+
           <div className="flex justify-end space-x-2">
             <Button type="submit">حفظ التغييرات</Button>
           </div>

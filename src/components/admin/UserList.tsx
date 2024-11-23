@@ -1,10 +1,12 @@
-import { UserCard } from './UserCard';
+import { UserCard } from "./UserCard";
 import { TabsContent } from "@/components/ui/tabs";
 
 type User = {
   id: string;
   email: string;
-  full_name: string | null;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
   user_type: string | null;
   kyc_status: string | null;
 };
@@ -39,7 +41,7 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
 
       <TabsContent value="investor" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filterUsersByType('investor').map((user) => (
+          {filterUsersByType("investor").map((user) => (
             <UserCard
               key={user.id}
               user={user}
@@ -53,7 +55,7 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
 
       <TabsContent value="investment_manager" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filterUsersByType('investment_manager').map((user) => (
+          {filterUsersByType("investment_manager").map((user) => (
             <UserCard
               key={user.id}
               user={user}
@@ -67,7 +69,7 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
 
       <TabsContent value="admin" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filterUsersByType('admin').map((user) => (
+          {filterUsersByType("admin").map((user) => (
             <UserCard
               key={user.id}
               user={user}

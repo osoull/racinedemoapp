@@ -14,9 +14,9 @@ import { EditUserDialog } from "./EditUserDialog";
 type User = {
   id: string;
   email: string;
-  first_name: string | null;
+  first_name: string;
   middle_name: string | null;
-  last_name: string | null;
+  last_name: string;
   user_type: string | null;
   kyc_status: string | null;
 };
@@ -31,7 +31,7 @@ type UserCardProps = {
 export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps) {
   const fullName = [user.first_name, user.middle_name, user.last_name]
     .filter(Boolean)
-    .join(' ') || 'الاسم غير محدد';
+    .join(" ");
 
   return (
     <Card className="p-4">
@@ -53,13 +53,13 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onUpdateType(user.id, 'investor')}>
+                <DropdownMenuItem onClick={() => onUpdateType(user.id, "investor")}>
                   تعيين كمستثمر
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onUpdateType(user.id, 'investment_manager')}>
+                <DropdownMenuItem onClick={() => onUpdateType(user.id, "investment_manager")}>
                   تعيين كمدير استثمار
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onUpdateType(user.id, 'admin')}>
+                <DropdownMenuItem onClick={() => onUpdateType(user.id, "admin")}>
                   تعيين كمشرف
                 </DropdownMenuItem>
               </DropdownMenuContent>
