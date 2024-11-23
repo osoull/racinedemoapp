@@ -1,17 +1,18 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
   ChartBar, 
   FileText, 
   MessageSquare, 
   Settings, 
   Shield,
-} from "lucide-react";
-import { UserAvatar } from "@/components/UserAvatar";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+} from "lucide-react"
+import { UserAvatar } from "@/components/UserAvatar"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/contexts/AuthContext"
+import { BackButton } from "@/components/BackButton"
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -42,6 +43,7 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 mt-14">
+      <BackButton />
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold">لوحة التحكم</h1>
@@ -149,7 +151,7 @@ const Dashboard = () => {
         </TabsContent>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

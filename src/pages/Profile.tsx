@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
+import { BackButton } from "@/components/BackButton"
 
 export default function Profile() {
   const { user } = useAuth()
@@ -102,6 +103,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <BackButton />
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>الملف الشخصي</CardTitle>

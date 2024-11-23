@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
+import { BackButton } from "@/components/BackButton"
 
 export default function Settings() {
   const [emailNotifications, setEmailNotifications] = useState(true)
@@ -19,6 +20,7 @@ export default function Settings() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <BackButton />
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>الإعدادات</CardTitle>

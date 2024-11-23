@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { BackButton } from "@/components/BackButton";
 
 type ProjectStatus = "pending" | "approved" | "rejected" | "funding" | "completed";
 type InvestmentStatus = "pending" | "confirmed" | "cancelled";
@@ -69,6 +70,7 @@ const InvestmentManagerDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 pt-20 pb-6">
+      <BackButton />
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">لوحة تحكم مدير الاستثمار</h1>
