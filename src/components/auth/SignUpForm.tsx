@@ -36,7 +36,6 @@ const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
     try {
       setIsLoading(true);
       
-      // Combine birth date fields
       const birthDate = `${values.birthYear}-${values.birthMonth}-${values.birthDay}`;
       
       const { error } = await supabase.auth.signUp({
@@ -51,12 +50,19 @@ const SignUpForm = ({ onSuccess }: SignUpFormProps) => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('email')) {
+          toast.error("البريد الإلكتروني مستخدم بالفعل");
+        } else {
+          toast.error("حدث خطأ أثناء إنشاء الحساب");
+        }
+        return;
+      }
 
       toast.success("تم إنشاء الحساب بنجاح. يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك.");
       onSuccess();
     } catch (error) {
-      toast.error("فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.");
+      toast.error("حدث خطأ أثناء إنشاء الحساب");
     } finally {
       setIsLoading(false);
     }
