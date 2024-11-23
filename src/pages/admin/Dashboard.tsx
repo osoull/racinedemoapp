@@ -67,10 +67,10 @@ const AdminDashboard = () => {
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-primary mb-2">لوحة تحكم المشرف</h1>
-            <p className="text-muted-foreground">
+            <p className="text-2xl font-bold mb-2">
               {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
             </p>
+            <h1 className="text-4xl text-primary">لوحة تحكم المشرف</h1>
           </div>
           <UserAvatar />
         </div>

@@ -37,10 +37,10 @@ const Dashboard = () => {
       <BackButton />
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold">لوحة التحكم</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-xl font-bold mb-2">
             {profile ? `مرحباً بك, ${profile.first_name}` : "مرحباً بك"}
           </p>
+          <h1 className="text-2xl">لوحة التحكم</h1>
         </div>
         <UserAvatar />
       </div>
