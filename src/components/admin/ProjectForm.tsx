@@ -13,13 +13,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ProjectDocumentUpload } from "./project/ProjectDocumentUpload";
 import { ProjectClassification } from "./project/ProjectClassification";
 import { ProjectInvestmentLimits } from "./project/ProjectInvestmentLimits";
-import { usePlatformSettings } from "@/hooks/usePlatformSettings";
 
-const createProjectSchema = (minInvestment: number) => z.object({
+const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
   description: z.string().min(1, "وصف المشروع مطلوب"),
   funding_goal: z.number().min(1000, "المبلغ المستهدف يجب أن يكون أكبر من 1000 ريال"),
-  min_investment: z.number().min(minInvestment, `الحد الأدنى للاستثمار يجب أن يكون أكبر من ${minInvestment} ريال`),
+  min_investment: z.number().min(1000, "الحد الأدنى للاستثمار يجب أن يكون أكبر من 1000 ريال"),
   classification: z.enum([
     'تمويل مشاريع طرف ثاني',
     'تمويل الفواتير',
@@ -31,6 +30,8 @@ const createProjectSchema = (minInvestment: number) => z.object({
   }),
 });
 
+type ProjectFormValues = z.infer<typeof projectSchema>;
+
 interface ProjectFormProps {
   project?: Tables<"projects"> | null;
   onSuccess?: () => void;
@@ -40,10 +41,6 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { data: settings } = usePlatformSettings();
-
-  const projectSchema = createProjectSchema(settings?.min_investment || 1000);
-  type ProjectFormValues = z.infer<typeof projectSchema>;
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -51,7 +48,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
       title: project?.title || "",
       description: project?.description || "",
       funding_goal: project?.funding_goal || 0,
-      min_investment: settings?.min_investment || 1000,
+      min_investment: 1000,
       classification: project?.classification as any || "تمويل مشاريع طرف ثاني",
     },
   });
