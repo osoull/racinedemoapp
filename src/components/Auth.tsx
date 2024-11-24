@@ -12,7 +12,7 @@ import { SignUpForm } from "./auth/SignUpForm"
 type AuthStep = "selection" | "signup" | "signin";
 
 export function Auth() {
-  const [step, setStep] = useState<AuthStep>("signin")
+  const [step, setStep] = useState<AuthStep>("selection")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState<"investor" | "project_owner">("investor")
@@ -89,7 +89,7 @@ export function Auth() {
       <div className="flex min-h-[80vh] items-center justify-center flex-col">
         <SignUpForm 
           userType={userType}
-          onBack={() => setStep("signin")}
+          onBack={() => setStep("selection")}
           onSuccess={() => setStep("signin")}
         />
       </div>
@@ -99,13 +99,13 @@ export function Auth() {
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
       <img 
-        src="/lovable-uploads/fc89e6cb-8530-49ac-b372-ed14dd14c70e.png"
-        alt="Racine Investment Logo" 
-        className="w-64 md:w-72 lg:w-80 mb-12 object-contain" 
+        src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F8fefc08ff6352b1f82851d81737a6460.cdn.bubble.io%2Ff1729676645537x190880546208797250%2Flogo-horizontal-full.png" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
       />
       <Card className="w-[350px]">
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl">مرحباً بك</CardTitle>
+        <CardHeader>
+          <CardTitle>مرحباً بك</CardTitle>
           <CardDescription>
             قم بتسجيل الدخول للمتابعة
           </CardDescription>
@@ -118,24 +118,21 @@ export function Auth() {
                 placeholder="البريد الإلكتروني"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="text-right"
               />
               <Input
                 type="password"
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="text-right"
               />
             </div>
-            <Button type="submit" className="w-full bg-[#5D4696] hover:bg-[#4A3875]">
+            <Button type="submit" className="w-full">
               تسجيل الدخول
             </Button>
-            <div className="text-sm text-center">
+            <div className="text-sm text-muted-foreground text-center">
               <button 
-                type="button"
                 onClick={() => setStep("selection")}
-                className="text-[#5D4696] hover:underline"
+                className="text-primary hover:underline"
               >
                 ليس لديك حساب؟ قم بإنشاء حساب جديد
               </button>
