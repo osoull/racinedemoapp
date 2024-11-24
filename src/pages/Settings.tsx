@@ -19,11 +19,13 @@ export default function Settings() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackButton />
+    <div className="container max-w-6xl mx-auto px-8 py-8">
+      <div className="mb-8">
+        <BackButton />
+      </div>
       <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>الإعدادات</CardTitle>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl">الإعدادات</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">

@@ -50,7 +50,7 @@ const ProjectOwnerDashboard = () => {
   const totalInvestors = projects?.reduce((sum, proj) => sum + (proj.investments?.length || 0), 0) || 0
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto px-8 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold mb-2">
@@ -102,13 +102,7 @@ const ProjectOwnerDashboard = () => {
         />
       </div>
 
-      <Tabs defaultValue="active" className="space-y-4">
-        <TabsList className="bg-muted/50">
-          <TabsTrigger value="active">المشاريع النشطة</TabsTrigger>
-          <TabsTrigger value="pending">قيد المراجعة</TabsTrigger>
-          <TabsTrigger value="completed">المشاريع المكتملة</TabsTrigger>
-        </TabsList>
-
+      <Tabs defaultValue="active" className="space-y-6">
         {["active", "pending", "completed"].map((status) => (
           <TabsContent key={status} value={status} className="space-y-4">
             {projects?.filter(proj => proj.status === status).map((project) => (

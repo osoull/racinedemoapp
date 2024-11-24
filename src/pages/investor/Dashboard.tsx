@@ -34,9 +34,9 @@ const InvestorDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 p-8">
+      <div className="space-y-8">
         {/* Stats Overview */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={Wallet}
             title="إجمالي الاستثمارات"
@@ -72,13 +72,13 @@ const InvestorDashboard = () => {
         </div>
 
         {/* Charts and Activity */}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2">
           <FundingChart />
           <ActivityFeed />
         </div>
 
         {/* Active Investments */}
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">استثماراتي النشطة</h3>
             <div className="space-y-4">

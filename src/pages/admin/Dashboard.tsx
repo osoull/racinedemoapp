@@ -12,7 +12,7 @@ export default function AdminDashboard() {
     <div className="relative min-h-screen">
       <AdminSidebar />
       <div className="lg:pl-72">
-        <div className="p-4 sm:p-6 lg:p-8">
+        <div className="p-8">
           <Routes>
             <Route index element={<DashboardOverview />} />
             

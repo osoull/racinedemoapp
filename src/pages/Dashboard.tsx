@@ -14,7 +14,7 @@ const Dashboard = () => {
       
       {/* Header */}
       <header className="fixed top-0 right-64 left-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-6 border-b">
+        <div className="flex h-16 items-center justify-between px-8 border-b">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold">لوحة التحكم</h1>
           </div>
@@ -29,7 +29,9 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="pr-64 pt-16">
-        <DashboardOverview />
+        <div className="p-8">
+          <DashboardOverview />
+        </div>
       </main>
     </div>
   )

@@ -95,18 +95,20 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackButton />
+    <div className="container max-w-6xl mx-auto px-8 py-8">
+      <div className="mb-8">
+        <BackButton />
+      </div>
       <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>الملف الشخصي</CardTitle>
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl">الملف الشخصي</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
