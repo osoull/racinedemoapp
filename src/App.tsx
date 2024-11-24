@@ -53,11 +53,11 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
   }
 
   if (!user) {
-    return <Navigate to="/signin" replace />
+    return <Navigate to="/" replace />
   }
 
   if (!userType || !allowedRoles.includes(userType)) {
-    return <Navigate to="/signin" replace />
+    return <Navigate to="/" replace />
   }
 
   return <>{children}</>
@@ -102,7 +102,7 @@ function AppContent() {
   }, [user])
 
   const getDashboardRoute = () => {
-    if (!user || !userType) return "/signin"
+    if (!user || !userType) return "/"
     
     switch (userType) {
       case "project_owner":
@@ -112,7 +112,7 @@ function AppContent() {
       case "admin":
         return "/admin"
       default:
-        return "/signin"
+        return "/"
     }
   }
 
@@ -121,8 +121,8 @@ function AppContent() {
       <main className="flex-1">
         <Routes>
           {/* Public routes */}
-          <Route path="/signin" element={<Auth />} />
-          <Route path="/" element={<Navigate to="/signin" replace />} />
+          <Route path="/signin" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<Auth />} />
 
           {/* Protected routes */}
           <Route
