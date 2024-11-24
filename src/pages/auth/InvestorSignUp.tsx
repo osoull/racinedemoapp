@@ -1,17 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { InvestorSignUpForm } from "@/components/auth/InvestorSignUpForm";
 
 const InvestorSignUp = () => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate("/auth/signup");
+  };
+
+  const handleSuccess = () => {
+    navigate("/auth/signin");
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>تسجيل حساب مستثمر جديد</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <InvestorSignUpForm />
-        </CardContent>
-      </Card>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <InvestorSignUpForm onBack={handleBack} onSuccess={handleSuccess} />
     </div>
   );
 };
