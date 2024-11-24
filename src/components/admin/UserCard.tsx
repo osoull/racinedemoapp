@@ -10,16 +10,7 @@ import { Mail, Trash2, UserCog } from "lucide-react";
 import { UserTypeLabel } from "./UserTypeLabel";
 import { KycStatusLabel } from "./KycStatusLabel";
 import { EditUserDialog } from "./EditUserDialog";
-
-type User = {
-  id: string;
-  email: string;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
-  user_type: string | null;
-  kyc_status: string | null;
-};
+import { User } from "@/types/user";
 
 type UserCardProps = {
   user: User;
