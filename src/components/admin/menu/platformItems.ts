@@ -1,80 +1,72 @@
 import {
-  Scale,
-  PieChart,
-  MessageSquare,
-  Settings,
-  FileText,
-  AlertCircle,
-  BookOpen,
-  HelpCircle,
   Settings2,
+  Wallet,
+  FileText,
+  Shield,
+  PieChart,
+  Building2,
+  Percent,
+  ScrollText,
   ShieldCheck,
-  Wallet
+  BarChart
 } from "lucide-react";
 
 export const platformSettingsItems = [
   {
-    title: "إدارة العمولات",
-    icon: Scale,
+    title: "عام",
+    icon: Settings2,
+    path: "/admin/platform-settings/general",
+    description: "الإعدادات العامة للمنصة"
+  },
+  {
+    title: "العمولات",
+    icon: Percent,
     path: "/admin/platform-settings/commissions",
-    description: "تكوين وتتبع العمولات"
+    description: "إدارة العمولات والرسوم"
+  },
+  {
+    title: "الحساب البنكي",
+    icon: Building2,
+    path: "/admin/platform-settings/bank",
+    description: "إدارة الحسابات البنكية"
+  },
+  {
+    title: "الامتثال",
+    icon: Shield,
+    path: "/admin/platform-settings/compliance",
+    description: "إدارة الامتثال والتحقق",
+    subItems: [
+      {
+        title: "التحقق من الهوية",
+        path: "/admin/platform-settings/compliance/kyc",
+        icon: ShieldCheck,
+        description: "إدارة عمليات KYC"
+      },
+      {
+        title: "متطلبات هيئة السوق المالية",
+        path: "/admin/platform-settings/compliance/cma",
+        icon: ScrollText,
+        description: "متابعة متطلبات CMA"
+      }
+    ]
   },
   {
     title: "التقارير",
-    icon: PieChart,
+    icon: FileText,
     path: "/admin/platform-settings/reports",
-    description: "تقارير وإحصائيات المنصة",
+    description: "التقارير والإحصائيات",
     subItems: [
       {
         title: "تقارير الأداء",
         path: "/admin/platform-settings/reports/performance",
-        icon: FileText
+        icon: BarChart,
+        description: "تقارير أداء المنصة"
       },
       {
-        title: "تقارير المخاطر",
-        path: "/admin/platform-settings/reports/risk",
-        icon: AlertCircle
-      },
-      {
-        title: "تقارير الامتثال",
-        path: "/admin/platform-settings/reports/compliance",
-        icon: BookOpen
-      }
-    ]
-  },
-  {
-    title: "الدعم الفني",
-    icon: MessageSquare,
-    path: "/admin/platform-settings/support",
-    description: "إدارة طلبات الدعم الفني",
-    subItems: [
-      {
-        title: "التذاكر الجديدة",
-        path: "/admin/platform-settings/support/new",
-        icon: HelpCircle
-      },
-      {
-        title: "التذاكر المفتوحة",
-        path: "/admin/platform-settings/support/open",
-        icon: MessageSquare
-      }
-    ]
-  },
-  {
-    title: "إعدادات عامة",
-    icon: Settings2,
-    path: "/admin/platform-settings/general",
-    description: "إدارة إعدادات المنصة",
-    subItems: [
-      {
-        title: "إعدادات الأمان",
-        path: "/admin/platform-settings/general/security",
-        icon: ShieldCheck
-      },
-      {
-        title: "إعدادات المدفوعات",
-        path: "/admin/platform-settings/general/payments",
-        icon: Wallet
+        title: "تقارير مالية",
+        path: "/admin/platform-settings/reports/financial",
+        icon: PieChart,
+        description: "التقارير المالية"
       }
     ]
   }

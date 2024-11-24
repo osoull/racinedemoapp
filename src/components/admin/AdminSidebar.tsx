@@ -3,6 +3,7 @@ import { LogOut } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
+import { platformSettingsItems } from "./menu/platformItems"
 import { 
   LayoutDashboard, 
   Users, 
@@ -62,7 +63,8 @@ const menuItems = [
     title: "إعدادات المنصة",
     icon: Settings,
     path: "/admin/settings",
-    description: "إعدادات عامة للمنصة"
+    description: "إعدادات عامة للمنصة",
+    subItems: platformSettingsItems
   }
 ]
 
@@ -79,6 +81,29 @@ export const AdminSidebar = () => {
               {...item}
               isActive={location.pathname === item.path}
             />
+            {item.subItems && (
+              <div className="mr-4 border-r pr-4 pt-1">
+                {item.subItems.map((subItem) => (
+                  <div key={subItem.path}>
+                    <SidebarItem
+                      {...subItem}
+                      isActive={location.pathname === subItem.path}
+                    />
+                    {subItem.subItems && (
+                      <div className="mr-4 border-r pr-4 pt-1">
+                        {subItem.subItems.map((nestedItem) => (
+                          <SidebarItem
+                            key={nestedItem.path}
+                            {...nestedItem}
+                            isActive={location.pathname === nestedItem.path}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </nav>
