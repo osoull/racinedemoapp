@@ -11,7 +11,8 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
-type SelectableUserType = "investor" | "project_owner" | "borrower";
+type UserType = "investor" | "admin" | "borrower" | "investment_manager";
+type SelectableUserType = Extract<UserType, "investor" | "borrower">;
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
@@ -50,6 +51,9 @@ export function Auth() {
           break
         case "admin":
           navigate("/admin")
+          break
+        case "investment_manager":
+          navigate("/investment-manager")
           break
         default:
           navigate("/")
