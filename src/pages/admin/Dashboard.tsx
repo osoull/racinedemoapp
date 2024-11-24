@@ -10,6 +10,7 @@ import CommissionManagement from "@/components/admin/CommissionManagement"
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
 import BankDetails from "@/components/admin/BankDetails"
 import SupportTools from "@/components/admin/SupportTools"
+import { TransactionManagement } from "@/components/admin/transaction/TransactionManagement"
 import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -48,7 +49,7 @@ export default function AdminDashboard() {
           <Route index element={<DashboardOverview />} />
           <Route path="users" element={<UserManagement />} />
           <Route path="projects" element={<ProjectManagement />} />
-          <Route path="transactions" element={<DashboardOverview />} />
+          <Route path="transactions" element={<TransactionManagement />} />
           <Route path="compliance" element={<KYCManagement />} />
           <Route path="commissions" element={<CommissionManagement />} />
           <Route path="bank" element={<BankDetails />} />
