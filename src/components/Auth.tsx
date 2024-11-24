@@ -8,14 +8,15 @@ import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
+import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
-type AuthStep = "selection" | "signup" | "signin";
+type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState<"investor" | "project_owner">("investor")
+  const [userType, setUserType] = useState<"investor" | "project_owner" | "borrower">("investor")
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -49,6 +50,9 @@ export function Auth() {
         case "admin":
           navigate("/admin")
           break
+        case "borrower":
+          navigate("/borrower")
+          break
         default:
           navigate("/")
       }
@@ -67,9 +71,11 @@ export function Auth() {
     }
   }
 
-  const handleUserTypeSelect = (type: "investor" | "project_owner" | "login") => {
+  const handleUserTypeSelect = (type: "investor" | "project_owner" | "borrower" | "login") => {
     if (type === "login") {
       setStep("signin")
+    } else if (type === "borrower") {
+      setStep("borrower_signup")
     } else {
       setUserType(type)
       setStep("signup")
@@ -89,6 +95,17 @@ export function Auth() {
       <div className="flex min-h-[80vh] items-center justify-center flex-col">
         <SignUpForm 
           userType={userType}
+          onBack={() => setStep("signin")}
+          onSuccess={() => setStep("signin")}
+        />
+      </div>
+    )
+  }
+
+  if (step === "borrower_signup") {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center flex-col">
+        <BorrowerSignUpForm 
           onBack={() => setStep("signin")}
           onSuccess={() => setStep("signin")}
         />

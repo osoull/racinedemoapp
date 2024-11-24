@@ -9,6 +9,65 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      borrower_kyc: {
+        Row: {
+          annual_revenue: number | null
+          bank_account_details: Json | null
+          company_registration_date: string | null
+          company_registration_number: string | null
+          company_website: string | null
+          created_at: string | null
+          id: string
+          industry_sector: string | null
+          legal_representative_id: string | null
+          legal_representative_name: string | null
+          number_of_employees: number | null
+          tax_identification_number: string | null
+          updated_at: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          annual_revenue?: number | null
+          bank_account_details?: Json | null
+          company_registration_date?: string | null
+          company_registration_number?: string | null
+          company_website?: string | null
+          created_at?: string | null
+          id: string
+          industry_sector?: string | null
+          legal_representative_id?: string | null
+          legal_representative_name?: string | null
+          number_of_employees?: number | null
+          tax_identification_number?: string | null
+          updated_at?: string | null
+          verification_status?: string | null
+        }
+        Update: {
+          annual_revenue?: number | null
+          bank_account_details?: Json | null
+          company_registration_date?: string | null
+          company_registration_number?: string | null
+          company_website?: string | null
+          created_at?: string | null
+          id?: string
+          industry_sector?: string | null
+          legal_representative_id?: string | null
+          legal_representative_name?: string | null
+          number_of_employees?: number | null
+          tax_identification_number?: string | null
+          updated_at?: string | null
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "borrower_kyc_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       commissions: {
         Row: {
           commission_id: string
