@@ -10,6 +10,7 @@ import InvestorDashboard from "@/pages/investor/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import InvestorsPage from "@/pages/admin/investors"
+import ProjectsListPage from "@/pages/investor/projects"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
@@ -71,10 +72,19 @@ function App() {
                   <Route path="/" element={<Auth />} />
                   
                   <Route
-                    path="/investor/*"
+                    path="/investor"
                     element={
                       <PrivateRoute allowedRoles={["investor"]}>
                         <InvestorDashboard />
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/investor/projects"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <ProjectsListPage />
                       </PrivateRoute>
                     }
                   />
