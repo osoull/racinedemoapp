@@ -2,7 +2,6 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw } from "lucide-react"
 import { WalletTransactions } from "@/components/admin/transaction/WalletTransactions"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -10,15 +9,16 @@ import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { DepositDialog } from "./DepositDialog"
 
 export function WalletOverview() {
   const { user } = useAuth()
   const { toast } = useToast()
   const [amount, setAmount] = useState("")
-  const [isDepositOpen, setIsDepositOpen] = useState(false)
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
 
-  const { data: transactions, isLoading } = useQuery({
+  const { data: transactions, isLoading, refetch } = useQuery({
     queryKey: ["transactions", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -40,42 +40,13 @@ export function WalletOverview() {
     enabled: !!user?.id
   })
 
-  const handleDeposit = async () => {
-    try {
-      const { error } = await supabase
-        .from("transactions")
-        .insert({
-          user_id: user?.id,
-          amount: Number(amount),
-          type: "deposit",
-          status: "pending"
-        })
-
-      if (error) throw error
-
-      toast({
-        title: "تم إرسال طلب الإيداع",
-        description: "سيتم مراجعة طلبك وتحديث حالته قريباً"
-      })
-      setIsDepositOpen(false)
-      setAmount("")
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إرسال طلب الإيداع",
-        variant: "destructive"
-      })
-    }
-  }
-
   const handleWithdraw = async () => {
     try {
       const { error } = await supabase
         .from("transactions")
         .insert({
-          user_id: user?.id,
-          amount: Number(amount),
           type: "withdrawal",
+          amount: Number(amount),
           status: "pending"
         })
 
@@ -87,6 +58,7 @@ export function WalletOverview() {
       })
       setIsWithdrawOpen(false)
       setAmount("")
+      refetch()
     } catch (error) {
       toast({
         title: "خطأ",
@@ -117,33 +89,7 @@ export function WalletOverview() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Dialog open={isDepositOpen} onOpenChange={setIsDepositOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <ArrowDownLeft className="ml-2 h-4 w-4" />
-                  إيداع
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>إيداع رصيد</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label>المبلغ</Label>
-                    <Input
-                      type="number"
-                      placeholder="أدخل المبلغ"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                    />
-                  </div>
-                  <Button onClick={handleDeposit} className="w-full">
-                    تأكيد الإيداع
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <DepositDialog onSuccess={refetch} />
 
             <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
               <DialogTrigger asChild>
