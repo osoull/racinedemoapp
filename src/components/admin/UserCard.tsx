@@ -27,16 +27,16 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
   ].filter(Boolean).join(" ");
 
   return (
-    <Card className="w-full p-4 transition-all hover:shadow-md bg-gradient-to-l from-primary-50/50 to-transparent border-primary-100">
+    <Card className="w-full p-4 transition-all hover:shadow-md dark:bg-gray-800/50 dark:hover:bg-gray-800/70 dark:border-gray-700 bg-gradient-to-l from-primary-50/50 to-transparent border-primary-100">
       <div className="flex flex-col gap-3">
         {/* Header Section */}
         <div className="flex items-start justify-between w-full">
           <div className="flex items-center gap-3 flex-grow">
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary text-base font-semibold shrink-0">
+            <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center text-primary dark:text-primary-200 text-base font-semibold shrink-0">
               {fullName.charAt(0).toUpperCase()}
             </div>
             <div className="space-y-0.5 text-right min-w-0 flex-grow">
-              <h3 className="text-base font-semibold truncate">{fullName}</h3>
+              <h3 className="text-base font-semibold truncate dark:text-white">{fullName}</h3>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Mail className="h-3.5 w-3.5 shrink-0" />
                 <span className="truncate">{user.email}</span>
@@ -48,8 +48,8 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
             <EditUserDialog user={user} onSave={onEdit} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="h-8 w-8 border-primary-200 hover:bg-primary-100/50">
-                  <UserCog className="h-4 w-4 text-primary-600" />
+                <Button variant="outline" size="icon" className="h-8 w-8 border-primary-200 hover:bg-primary-100/50 dark:border-primary-700 dark:hover:bg-primary-900/50">
+                  <UserCog className="h-4 w-4 text-primary-600 dark:text-primary-300" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
@@ -76,7 +76,7 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
         </div>
 
         {/* Status Section */}
-        <div className="flex gap-2 items-center justify-end border-t border-primary-100 pt-3">
+        <div className="flex gap-2 items-center justify-end border-t border-primary-100 dark:border-primary-800/50 pt-3">
           <KycStatusLabel status={user.kyc_status} />
           <UserTypeLabel type={user.user_type} />
         </div>
