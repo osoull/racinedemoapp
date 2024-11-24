@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { CreditCard, Building2, Copy, AlertCircle } from "lucide-react"
+import { CreditCard, Building2, Copy, AlertCircle, ArrowDownLeft } from "lucide-react"
 import { useBankDetails } from "@/hooks/useBankDetails"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -40,8 +40,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
       if (error) throw error
 
       toast({
-        title: "تم استلام طلب الإيداع بنجاح",
-        description: "سيتم تحديث رصيدك تلقائياً بمجرد استلام وتأكيد التحويل البنكي"
+        title: "تم تسجيل طلب الإيداع بنجاح",
+        description: "يرجى إتمام التحويل البنكي باستخدام المعلومات المقدمة. سيتم تحديث رصيدك خلال يوم عمل واحد بعد استلام التحويل."
       })
       setIsOpen(false)
       setAmount("")
@@ -67,6 +67,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button>
+          <ArrowDownLeft className="ml-2 h-4 w-4" />
           إيداع رصيد
         </Button>
       </DialogTrigger>
@@ -98,21 +99,21 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
             </TabsList>
 
             <TabsContent value="bank" className="space-y-4">
-              <Alert>
+              <Alert variant="info" className="bg-blue-50">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  بعد إتمام التحويل البنكي، سيتم مراجعة العملية وتحديث رصيدك تلقائياً خلال يوم عمل واحد
+                  يرجى استخدام المعلومات البنكية أدناه لإتمام التحويل. سيتم تحديث رصيدك تلقائياً خلال يوم عمل واحد بعد استلام وتأكيد التحويل.
                 </AlertDescription>
               </Alert>
 
               {isLoading ? (
                 <div>جاري تحميل معلومات الحساب...</div>
               ) : bankDetails ? (
-                <div className="rounded-lg border p-4 space-y-4">
+                <div className="rounded-lg border p-4 space-y-4 bg-gray-50">
                   <div className="space-y-2">
                     <Label className="text-sm text-muted-foreground">اسم البنك</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <span>{bankDetails.bank_name}</span>
+                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                      <span className="font-medium">{bankDetails.bank_name}</span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -125,8 +126,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
 
                   <div className="space-y-2">
                     <Label className="text-sm text-muted-foreground">اسم الحساب</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <span>{bankDetails.account_name}</span>
+                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                      <span className="font-medium">{bankDetails.account_name}</span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -139,8 +140,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
 
                   <div className="space-y-2">
                     <Label className="text-sm text-muted-foreground">رمز السويفت (SWIFT)</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <span className="font-mono">{bankDetails.swift}</span>
+                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                      <span className="font-mono font-medium">{bankDetails.swift}</span>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -153,8 +154,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
 
                   <div className="space-y-2">
                     <Label className="text-sm text-muted-foreground">رقم الآيبان (IBAN)</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg">
-                      <span className="font-mono">{bankDetails.iban}</span>
+                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                      <span className="font-mono font-medium">{bankDetails.iban}</span>
                       <Button
                         variant="ghost"
                         size="icon"
