@@ -55,12 +55,6 @@ const menuItems = [
     description: "إدارة العمولات والرسوم"
   },
   {
-    title: "الحساب البنكي",
-    icon: Building2,
-    path: "/admin/bank",
-    description: "إدارة الحساب البنكي"
-  },
-  {
     title: "متطلبات CMA",
     icon: ScrollText,
     path: "/admin/cma",

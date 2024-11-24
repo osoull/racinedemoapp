@@ -30,12 +30,11 @@ export default function PlatformSettings() {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="general">عام</TabsTrigger>
-            <TabsTrigger value="commissions">العمولات</TabsTrigger>
             <TabsTrigger value="bank">الحساب البنكي</TabsTrigger>
+            <TabsTrigger value="commissions">العمولات</TabsTrigger>
             <TabsTrigger value="compliance">الامتثال</TabsTrigger>
-            <TabsTrigger value="reports">التقارير</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">
@@ -43,21 +42,16 @@ export default function PlatformSettings() {
             {/* General settings content */}
           </TabsContent>
 
-          <TabsContent value="commissions">
-            <CommissionManagement />
-          </TabsContent>
-
           <TabsContent value="bank">
             <BankDetails />
           </TabsContent>
 
-          <TabsContent value="compliance">
-            <ComplianceAudit tab="cma" />
+          <TabsContent value="commissions">
+            <CommissionManagement />
           </TabsContent>
 
-          <TabsContent value="reports">
-            <h3 className="text-lg font-semibold mb-4">التقارير</h3>
-            {/* Reports content */}
+          <TabsContent value="compliance">
+            <ComplianceAudit tab="cma" />
           </TabsContent>
         </Tabs>
       </CardContent>

@@ -8,7 +8,6 @@ import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import CommissionManagement from "@/components/admin/CommissionManagement"
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
-import BankDetails from "@/components/admin/BankDetails"
 import SupportTools from "@/components/admin/SupportTools"
 import { TransactionManagement } from "@/components/admin/transaction/TransactionManagement"
 import { useAuth } from "@/contexts/AuthContext"
@@ -52,11 +51,10 @@ export default function AdminDashboard() {
           <Route path="transactions" element={<TransactionManagement />} />
           <Route path="compliance" element={<KYCManagement />} />
           <Route path="commissions" element={<CommissionManagement />} />
-          <Route path="bank" element={<BankDetails />} />
           <Route path="cma" element={<ComplianceAudit />} />
           <Route path="reports" element={<DashboardOverview />} />
           <Route path="support" element={<SupportTools />} />
-          <Route path="settings" element={<PlatformSettings />} />
+          <Route path="settings/*" element={<PlatformSettings />} />
         </Routes>
       </div>
     </DashboardLayout>
