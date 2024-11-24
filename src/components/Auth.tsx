@@ -12,6 +12,7 @@ import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 type UserType = "investor" | "project_owner" | "borrower" | "admin" | "investment_manager";
+type SelectableUserType = Extract<UserType, "investor" | "project_owner" | "borrower">;
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
@@ -69,7 +70,7 @@ export function Auth() {
     }
   }
 
-  const handleUserTypeSelect = (type: UserType | "login") => {
+  const handleUserTypeSelect = (type: SelectableUserType | "login") => {
     if (type === "login") {
       setStep("signin")
     } else if (type === "borrower") {
