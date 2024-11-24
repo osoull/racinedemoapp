@@ -6,39 +6,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
-
-interface BankAccountDetails {
-  bank_name: string;
-  account_number: string;
-  iban: string;
-}
-
-interface KYCData {
-  company_registration_date: string;
-  company_registration_number: string;
-  tax_identification_number: string;
-  legal_representative_name: string;
-  legal_representative_id: string;
-  annual_revenue: string;
-  number_of_employees: string;
-  industry_sector: string;
-  company_website: string;
-  bank_account_details: BankAccountDetails;
-}
+import { BankAccountDetails, KYCFormData } from "@/types/kyc"
 
 export function BorrowerKYCForm() {
   const { user } = useAuth()
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [kycData, setKycData] = useState<KYCData>({
+  const [kycData, setKycData] = useState<KYCFormData>({
+    id: user?.id || '',
     company_registration_date: "",
     company_registration_number: "",
     tax_identification_number: "",
     legal_representative_name: "",
     legal_representative_id: "",
-    annual_revenue: "",
-    number_of_employees: "",
+    annual_revenue: 0,
+    number_of_employees: 0,
     industry_sector: "",
     company_website: "",
     bank_account_details: {
@@ -49,7 +32,9 @@ export function BorrowerKYCForm() {
   })
 
   useEffect(() => {
-    loadKYCData()
+    if (user) {
+      loadKYCData()
+    }
   }, [user])
 
   const loadKYCData = async () => {
@@ -67,9 +52,9 @@ export function BorrowerKYCForm() {
       if (data) {
         setKycData({
           ...data,
-          annual_revenue: data.annual_revenue?.toString() || "",
-          number_of_employees: data.number_of_employees?.toString() || "",
-          bank_account_details: data.bank_account_details || {
+          annual_revenue: Number(data.annual_revenue) || 0,
+          number_of_employees: Number(data.number_of_employees) || 0,
+          bank_account_details: data.bank_account_details as BankAccountDetails || {
             bank_name: "",
             account_number: "",
             iban: ""
@@ -96,10 +81,8 @@ export function BorrowerKYCForm() {
       const { error } = await supabase
         .from("borrower_kyc")
         .upsert({
-          id: user?.id,
           ...kycData,
-          annual_revenue: Number(kycData.annual_revenue),
-          number_of_employees: Number(kycData.number_of_employees),
+          bank_account_details: kycData.bank_account_details as unknown as Json,
           updated_at: new Date().toISOString(),
         })
 
