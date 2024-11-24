@@ -6,15 +6,11 @@ import { Upload, FileCheck2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-interface RegulatoryReport {
-  id: string;
-  title: string;
-  file_url: string;
-  upload_date: string;
-}
+type RegulatoryReport = Database["public"]["Tables"]["regulatory_reports"]["Row"];
 
 export function RegulatoryReports() {
   const { toast } = useToast();
@@ -31,7 +27,7 @@ export function RegulatoryReports() {
         .order('upload_date', { ascending: false });
 
       if (error) throw error;
-      return data as RegulatoryReport[];
+      return data;
     }
   });
 
@@ -64,7 +60,6 @@ export function RegulatoryReports() {
         .insert({
           title: title,
           file_url: filePath,
-          upload_date: new Date().toISOString(),
         });
 
       if (dbError) throw dbError;

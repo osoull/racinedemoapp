@@ -565,6 +565,30 @@ export type Database = {
           },
         ]
       }
+      regulatory_reports: {
+        Row: {
+          created_at: string
+          file_url: string
+          id: string
+          title: string
+          upload_date: string
+        }
+        Insert: {
+          created_at?: string
+          file_url: string
+          id?: string
+          title: string
+          upload_date?: string
+        }
+        Update: {
+          created_at?: string
+          file_url?: string
+          id?: string
+          title?: string
+          upload_date?: string
+        }
+        Relationships: []
+      }
       risk_ratings: {
         Row: {
           created_at: string
