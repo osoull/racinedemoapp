@@ -1,16 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   FileCheck2, 
   Scale, 
-  Building2, 
-  AlertCircle,
-  FileText,
-  Users
+  Building2,
+  Users,
+  FileText
 } from "lucide-react";
+import { ShariaCompliance } from "./compliance/ShariaCompliance";
+import { CmaCompliance } from "./compliance/CmaCompliance";
+import { KycCompliance } from "./compliance/KycCompliance";
+import { ComplianceReports } from "./compliance/ComplianceReports";
 
 const ComplianceAudit = () => {
   const { data: projects } = useQuery({
@@ -80,150 +82,19 @@ const ComplianceAudit = () => {
           </TabsList>
 
           <TabsContent value="sharia">
-            <Card>
-              <CardHeader>
-                <CardTitle>الامتثال الشرعي</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <section className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">المراجعة الشرعية للمشاريع</h3>
-                    <ScrollArea className="h-[200px] rounded-md border p-4">
-                      {projects?.map((project) => (
-                        <div key={project.id} className="flex items-center justify-between py-2 border-b">
-                          <div>
-                            <p className="font-medium">{project.title}</p>
-                            <p className="text-sm text-muted-foreground">
-                              حالة المراجعة: {project.status === 'approved' ? 'معتمد' : 'قيد المراجعة'}
-                            </p>
-                          </div>
-                          {project.status !== 'approved' && (
-                            <AlertCircle className="h-5 w-5 text-yellow-500" />
-                          )}
-                        </div>
-                      ))}
-                    </ScrollArea>
-                  </section>
-
-                  <section className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">تقارير المراقب الشرعي</h3>
-                    <div className="grid gap-4">
-                      <Card>
-                        <CardContent className="p-4">
-                          <p className="font-medium">التقرير الشهري - شعبان 1445</p>
-                          <p className="text-sm text-muted-foreground">تاريخ الإصدار: 15/08/1445</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </section>
-                </div>
-              </CardContent>
-            </Card>
+            <ShariaCompliance projects={projects || []} />
           </TabsContent>
 
           <TabsContent value="cma">
-            <Card>
-              <CardHeader>
-                <CardTitle>متطلبات هيئة السوق المالية</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <section className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">تراخيص منصة التمويل الجماعي</h3>
-                    <div className="grid gap-4">
-                      <div className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <p className="font-medium">ترخيص نشاط التمويل الجماعي</p>
-                          <p className="text-sm text-muted-foreground">صالح حتى: 30/12/1445</p>
-                        </div>
-                        <FileCheck2 className="h-5 w-5 text-green-500" />
-                      </div>
-                    </div>
-                  </section>
-
-                  <section className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">التقارير الرقابية</h3>
-                    <ScrollArea className="h-[200px] rounded-md border p-4">
-                      <div className="space-y-4">
-                        <div className="p-4 border rounded-lg">
-                          <p className="font-medium">تقرير الربع الأول 1445</p>
-                          <p className="text-sm text-muted-foreground">تم الرفع بتاريخ: 01/04/1445</p>
-                        </div>
-                      </div>
-                    </ScrollArea>
-                  </section>
-                </div>
-              </CardContent>
-            </Card>
+            <CmaCompliance />
           </TabsContent>
 
           <TabsContent value="kyc">
-            <Card>
-              <CardHeader>
-                <CardTitle>التحقق من هوية العملاء</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <section className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">طلبات التحقق الجديدة</h3>
-                    <ScrollArea className="h-[300px] rounded-md border p-4">
-                      {users?.map((user) => (
-                        <div key={user.id} className="flex items-center justify-between py-2 border-b">
-                          <div>
-                            <p className="font-medium">{formatUserName(user)}</p>
-                            <p className="text-sm text-muted-foreground">
-                              حالة التحقق: {user.kyc_status === 'approved' ? 'مكتمل' : 'قيد المراجعة'}
-                            </p>
-                          </div>
-                          {user.kyc_status === 'pending' && (
-                            <AlertCircle className="h-5 w-5 text-yellow-500" />
-                          )}
-                        </div>
-                      ))}
-                    </ScrollArea>
-                  </section>
-                </div>
-              </CardContent>
-            </Card>
+            <KycCompliance users={users || []} formatUserName={formatUserName} />
           </TabsContent>
 
           <TabsContent value="reports">
-            <Card>
-              <CardHeader>
-                <CardTitle>التقارير الدورية</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <section className="border rounded-lg p-4">
-                    <h3 className="font-semibold mb-2">تقارير الامتثال</h3>
-                    <div className="grid gap-4">
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">تقرير مكافحة غسل الأموال</p>
-                              <p className="text-sm text-muted-foreground">الربع الأول 1445</p>
-                            </div>
-                            <FileText className="h-5 w-5" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                      <Card>
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">تقرير المخاطر التشغيلية</p>
-                              <p className="text-sm text-muted-foreground">الربع الأول 1445</p>
-                            </div>
-                            <FileText className="h-5 w-5" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </section>
-                </div>
-              </CardContent>
-            </Card>
+            <ComplianceReports />
           </TabsContent>
         </Tabs>
       </CardContent>
