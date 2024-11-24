@@ -17,6 +17,9 @@ type Project = Tables<"projects"> & {
     middle_name: string | null;
     last_name: string | null;
   };
+  risk_rating?: {
+    rating: string;
+  } | null;
 };
 
 export interface ProjectManagementProps {
@@ -36,7 +39,8 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
         .from("projects")
         .select(`
           *,
-          owner:profiles(first_name, middle_name, last_name)
+          owner:profiles(first_name, middle_name, last_name),
+          risk_rating:risk_ratings(rating)
         `);
 
       if (filter) {

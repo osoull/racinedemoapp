@@ -1,10 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ProjectForm } from "./ProjectForm";
 import { Tables } from "@/integrations/supabase/types";
+import { RiskRatingBadge } from "./project/RiskRatingBadge";
+import { RiskRatingManager } from "./project/RiskRatingManager";
 
 type Project = Tables<"projects"> & {
   owner?: {
@@ -12,6 +11,9 @@ type Project = Tables<"projects"> & {
     middle_name: string | null;
     last_name: string | null;
   };
+  risk_rating?: {
+    rating: string;
+  } | null;
 };
 
 interface ProjectCardProps {
@@ -21,67 +23,48 @@ interface ProjectCardProps {
   canEdit: boolean;
 }
 
-const formatOwnerName = (owner: Project['owner']) => {
-  if (!owner) return 'غير معروف';
-  return [owner.first_name, owner.middle_name, owner.last_name]
-    .filter(Boolean)
-    .join(' ') || 'غير معروف';
-};
-
 export const ProjectCard = ({ project, onEdit, onDelete, canEdit }: ProjectCardProps) => {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex justify-between items-start">
-          <div className="space-y-2">
-            <h3 className="font-semibold text-lg">{project.title}</h3>
-            <p className="text-sm text-gray-500">
-              صاحب المشروع: {formatOwnerName(project.owner)}
-            </p>
-            <div className="flex items-center gap-2">
-              <Badge variant={
-                project.status === 'approved' ? 'secondary' :
-                project.status === 'rejected' ? 'destructive' :
-                'default'
-              }>
-                {project.status}
-              </Badge>
-              <p className="text-sm text-gray-500">
-                الهدف: {project.funding_goal} ريال
-              </p>
-              {project.current_funding && (
-                <p className="text-sm text-gray-500">
-                  التمويل الحالي: {project.current_funding} ريال
-                </p>
-              )}
-            </div>
-            {project.description && (
-              <p className="text-sm text-gray-600">{project.description}</p>
-            )}
-          </div>
-          {canEdit && (
-            <div className="flex gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={onEdit}>
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <ProjectForm project={project} onSuccess={onEdit} />
-                </DialogContent>
-              </Dialog>
-              <Button 
-                variant="destructive" 
-                size="icon"
-                onClick={onDelete}
-              >
-                <Trash2 className="h-4 w-4" />
+    <Card className="p-6">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="font-semibold text-lg mb-1">{project.title}</h3>
+          <p className="text-sm text-muted-foreground">{project.description}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {project.risk_rating && (
+            <RiskRatingBadge rating={project.risk_rating.rating} />
+          )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                تقييم المخاطر
               </Button>
-            </div>
+            </DialogTrigger>
+            <DialogContent>
+              <RiskRatingManager projectId={project.id} />
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+      
+      <div className="flex justify-between items-center mt-4">
+        <div className="space-x-2 rtl:space-x-reverse">
+          {canEdit && (
+            <>
+              <Button variant="outline" size="sm" onClick={onEdit}>
+                تعديل
+              </Button>
+              <Button variant="destructive" size="sm" onClick={onDelete}>
+                حذف
+              </Button>
+            </>
           )}
         </div>
-      </CardContent>
+        <div className="text-sm text-muted-foreground">
+          {project.owner?.first_name} {project.owner?.last_name}
+        </div>
+      </div>
     </Card>
   );
 };
