@@ -63,6 +63,12 @@ export default function BankDetails() {
 
   const handleSave = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        throw new Error('User not authenticated')
+      }
+
       const { error } = await supabase
         .from('bank_accounts')
         .upsert({ 
@@ -71,6 +77,7 @@ export default function BankDetails() {
           swift: editedDetails.swift,
           iban: editedDetails.iban,
           is_primary: true,
+          user_id: user.id,
           updated_at: new Date().toISOString()
         })
 
