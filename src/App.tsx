@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { NotificationsProvider } from "@/contexts/NotificationsContext"
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
@@ -51,12 +51,8 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
     return <div>Loading...</div>
   }
 
-  if (!user) {
-    return <Navigate to="/" replace />
-  }
-
-  if (!userType || !allowedRoles.includes(userType)) {
-    return <Navigate to="/" replace />
+  if (!user || !userType || !allowedRoles.includes(userType)) {
+    return <Auth />
   }
 
   return <>{children}</>
@@ -70,11 +66,8 @@ function App() {
           <BrowserRouter>
             <div className="min-h-screen bg-background">
               <Routes>
-                {/* Public routes */}
-                <Route path="/signin" element={<Navigate to="/" replace />} />
                 <Route path="/" element={<Auth />} />
-
-                {/* Protected routes */}
+                
                 <Route
                   path="/investor/*"
                   element={
@@ -128,9 +121,6 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-
-                {/* Catch-all redirect */}
-                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
               <Toaster />
             </div>
