@@ -38,7 +38,11 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
               </SheetContent>
             </Sheet>
             
-            <img src="/logo.svg" alt="Racine Logo" className="h-8" />
+            <img 
+              src="/logo.svg" 
+              alt="راسين" 
+              className="h-8"
+            />
           </div>
           
           <div className="flex items-center gap-4">
