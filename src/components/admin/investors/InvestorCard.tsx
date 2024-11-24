@@ -27,7 +27,7 @@ export function InvestorCard({ investor }: InvestorCardProps) {
             <Badge variant={investor.investor_type === "qualified" ? "default" : "secondary"}>
               {investor.investor_type === "qualified" ? "مستثمر مؤهل" : "مستثمر أساسي"}
             </Badge>
-            <Badge variant={investor.kyc_status === "verified" ? "default" : "secondary"}>
+            <Badge variant={investor.kyc_status === "verified" ? "success" : "warning"}>
               {investor.kyc_status === "verified" ? "KYC مكتمل" : "KYC معلق"}
             </Badge>
           </div>
