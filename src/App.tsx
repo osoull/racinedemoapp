@@ -37,7 +37,6 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
         .single()
 
       if (error) {
-        console.error('Error fetching user type:', error)
         setIsLoading(false)
         return
       }
@@ -58,7 +57,7 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
   }
 
   if (!userType || !allowedRoles.includes(userType)) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/signin" replace />
   }
 
   return <>{children}</>
@@ -93,7 +92,6 @@ function AppContent() {
         .single()
 
       if (error) {
-        console.error('Error fetching user type:', error)
         return
       }
 
