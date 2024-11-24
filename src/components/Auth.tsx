@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/components/ui/use-toast"
 
 export function Auth() {
   const [email, setEmail] = useState("")
@@ -14,20 +15,31 @@ export function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
   const { signIn, signUp } = useAuth()
   const navigate = useNavigate()
+  const { toast } = useToast()
 
   const handleSubmit = async (action: "signin" | "signup") => {
     try {
       if (action === "signin") {
         await signIn(email, password)
         
+        // Get the user and their profile after sign in
         const { data: { user } } = await supabase.auth.getUser()
-        const { data: profile } = await supabase
+        if (!user) {
+          throw new Error("No user found after sign in")
+        }
+
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('user_type')
-          .eq('id', user?.id)
+          .eq('id', user.id)
           .single()
 
+        if (profileError) {
+          throw profileError
+        }
+
         if (profile?.user_type) {
+          // Redirect based on user type
           switch (profile.user_type) {
             case "project_owner":
               navigate("/project-owner")
@@ -42,12 +54,26 @@ export function Auth() {
               navigate("/")
           }
         }
+
+        toast({
+          title: "تم تسجيل الدخول بنجاح",
+          description: "مرحباً بك في لوحة التحكم",
+        })
       } else {
         await signUp(email, password, userType)
         setIsSignUp(false)
+        toast({
+          title: "تم إنشاء الحساب بنجاح",
+          description: "يرجى تسجيل الدخول للمتابعة",
+        })
       }
     } catch (error) {
       console.error("Auth error:", error)
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تسجيل الدخول",
+        variant: "destructive",
+      })
     }
   }
 
