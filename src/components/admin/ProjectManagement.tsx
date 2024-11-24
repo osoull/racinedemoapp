@@ -41,7 +41,10 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           *,
           owner:profiles(first_name, middle_name, last_name),
           risk_rating:risk_ratings(rating)
-        `);
+        `)
+        .limit(1)
+        .single()
+        .maybeSingle();
 
       if (filter) {
         query.eq('status', filter);
@@ -49,7 +52,14 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Project[];
+      
+      // Transform the data to match our Project type
+      const transformedData = data ? {
+        ...data,
+        risk_rating: data.risk_rating?.[0] || null
+      } : null;
+
+      return transformedData as Project;
     },
   });
 
@@ -111,15 +121,15 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           <div>جاري التحميل...</div>
         ) : (
           <div className="space-y-4">
-            {projects?.map((project) => (
+            {projects && (
               <ProjectCard
-                key={project.id}
-                project={project}
-                onEdit={() => setEditingProject(project)}
-                onDelete={() => deleteProjectMutation.mutate(project.id)}
-                canEdit={user?.id === project.owner_id}
+                key={projects.id}
+                project={projects}
+                onEdit={() => setEditingProject(projects)}
+                onDelete={() => deleteProjectMutation.mutate(projects.id)}
+                canEdit={user?.id === projects.owner_id}
               />
-            ))}
+            )}
           </div>
         )}
       </CardContent>
