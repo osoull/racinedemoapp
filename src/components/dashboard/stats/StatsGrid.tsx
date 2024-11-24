@@ -37,28 +37,36 @@ export function StatsGrid() {
 
   const items = [
     {
-      title: "المشاريع النشطة",
+      title: "التقارير",
       value: stats?.projects || 0,
       icon: Briefcase,
-      trend: { value: 12, isPositive: true }
+      trend: { value: 8.3, isPositive: true },
+      bgColor: "bg-yellow-50",
+      iconColor: "text-yellow-600"
     },
     {
-      title: "إجمالي التمويل",
+      title: "المشاريع النشطة",
       value: `${(stats?.totalFunding || 0).toLocaleString()} ريال`,
       icon: Wallet,
-      trend: { value: 8, isPositive: true }
+      trend: { value: 12.5, isPositive: true },
+      bgColor: "bg-violet-50",
+      iconColor: "text-violet-600"
     },
     {
-      title: "المستثمرون",
+      title: "إجمالي المستثمرين",
       value: stats?.investors || 0,
       icon: Users,
-      trend: { value: 15, isPositive: true }
+      trend: { value: 15.2, isPositive: true },
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600"
     },
     {
-      title: "معدل النمو",
-      value: `${stats?.growth || 0}%`,
+      title: "إجمالي التمويلات",
+      value: "2.8 مليون ريال",
       icon: TrendingUp,
-      trend: { value: 5, isPositive: true }
+      trend: { value: 4.1, isPositive: true },
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600"
     }
   ]
 
@@ -67,17 +75,14 @@ export function StatsGrid() {
       {items.map((item) => (
         <Card key={item.title} className="p-6 hover:shadow-lg transition-all">
           <div className="flex items-center justify-between">
-            <div className="rounded-xl bg-primary-50 p-3">
-              <item.icon className="h-5 w-5 text-primary" />
+            <div className={`rounded-xl ${item.bgColor} p-3`}>
+              <item.icon className={`h-5 w-5 ${item.iconColor}`} />
             </div>
             {item.trend && (
               <div className={`flex items-center gap-1 text-sm ${
                 item.trend.isPositive ? 'text-green-600' : 'text-red-600'
               }`}>
-                <span>{item.trend.value}%</span>
-                <span className="text-xs">
-                  {item.trend.isPositive ? '↑' : '↓'}
-                </span>
+                <span>+{item.trend.value}%</span>
               </div>
             )}
           </div>

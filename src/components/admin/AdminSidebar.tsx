@@ -8,16 +8,16 @@ import {
   LayoutDashboard,
   Settings,
   LogOut,
-  Menu
+  Menu,
+  FileText,
+  Eye,
+  FileCheck,
+  Cog
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-} from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 
 const menuItems = [
   {
@@ -30,35 +30,35 @@ const menuItems = [
     title: "المستخدمين",
     icon: Users,
     path: "/admin/users",
-    description: "إدارة المستخدمين والأدوار"
+    description: "إدارة المستخدمين"
   },
   {
     title: "المشاريع",
     icon: Briefcase,
     path: "/admin/projects",
-    description: "إدارة المشاريع والتمويل"
+    description: "إدارة المشاريع"
   },
   {
-    title: "العمولات",
-    icon: Wallet,
-    path: "/admin/commissions",
-    description: "إدارة العمولات والمدفوعات"
+    title: "التقارير",
+    icon: FileText,
+    path: "/admin/reports",
+    description: "تقارير النظام"
   },
   {
-    title: "الامتثال",
-    icon: ShieldCheck,
-    path: "/admin/compliance",
-    description: "مراجعة وثائق KYC"
+    title: "التحقق من الهوية",
+    icon: Eye,
+    path: "/admin/identity",
+    description: "التحقق من الهوية"
   },
   {
-    title: "الدعم",
-    icon: HeadphonesIcon,
-    path: "/admin/support",
-    description: "إدارة تذاكر الدعم"
+    title: "طلبات الترقية",
+    icon: FileCheck,
+    path: "/admin/upgrade",
+    description: "طلبات الترقية"
   },
   {
     title: "الإعدادات",
-    icon: Settings,
+    icon: Cog,
     path: "/admin/settings",
     description: "إعدادات النظام"
   }
@@ -71,7 +71,7 @@ const SidebarContent = () => {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex h-16 items-center border-b px-6">
-        <h2 className="text-xl font-bold text-primary">راسين للاستثمار</h2>
+        <img src="/logo.svg" alt="Racine Logo" className="h-8" />
       </div>
       <nav className="flex-1 space-y-1 p-4">
         {menuItems.map((item) => (
