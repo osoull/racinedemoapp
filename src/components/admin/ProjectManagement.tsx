@@ -57,7 +57,6 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
     },
   });
 
-  // Real-time subscription
   useEffect(() => {
     const channel = supabase
       .channel('public:projects')
@@ -70,11 +69,10 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
           
-          // Afficher une notification pour les nouveaux projets
           if (payload.eventType === 'INSERT') {
             toast({
-              title: "Nouveau projet",
-              description: `Un nouveau projet a été créé: ${payload.new.title}`,
+              title: "مشروع جديد",
+              description: `تم إنشاء مشروع جديد: ${payload.new.title}`,
             });
           }
         }
@@ -134,7 +132,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div>جاري التحميل...</div>
+          <div className="flex items-center justify-center h-32">جاري التحميل...</div>
         ) : (
           <div className="space-y-4">
             {projects.map((project) => (

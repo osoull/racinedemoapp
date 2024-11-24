@@ -48,7 +48,7 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
   }, [user])
 
   if (loading || isLoading) {
-    return <div>Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen">جاري التحميل...</div>
   }
 
   if (!user || !userType || !allowedRoles.includes(userType)) {
@@ -64,7 +64,7 @@ function App() {
       <AuthProvider>
         <NotificationsProvider>
           <BrowserRouter>
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen bg-background font-messiri" dir="rtl">
               <Routes>
                 <Route path="/" element={<Auth />} />
                 
