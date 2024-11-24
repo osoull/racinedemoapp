@@ -18,7 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload } from "lucide-react";
+import { DocumentUpload } from "./project/DocumentUpload";
 
 const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
@@ -54,7 +54,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
       title: project?.title || "",
       description: project?.description || "",
       funding_goal: project?.funding_goal || 0,
-      min_investment: 10000, // Default minimum investment
+      min_investment: 10000,
       classification: project?.classification as any || "تمويل مشاريع طرف ثاني",
     },
   });
@@ -129,32 +129,6 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
     } else {
       createProjectMutation.mutate(values);
     }
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
-    if (!e.target.files || !e.target.files[0]) return;
-    
-    const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('project-documents')
-      .upload(filePath, file);
-
-    if (uploadError) {
-      toast({
-        title: "خطأ في رفع الملف",
-        description: "حدث خطأ أثناء محاولة رفع الملف",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "تم رفع الملف بنجاح",
-    });
   };
 
   return (
@@ -255,36 +229,24 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
         <div className="space-y-4">
           <h3 className="font-semibold">المستندات المطلوبة *</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border rounded-lg p-4 space-y-2">
-              <p className="text-sm font-medium">عرض تقديمي للمشروع</p>
-              <p className="text-sm text-muted-foreground">يرجى رفع الملف بصيغة PDF</p>
-              <label className="flex items-center gap-2 px-4 py-2 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-colors">
-                <Upload className="h-4 w-4" />
-                <span className="text-sm">رفع الملف</span>
-                <input
-                  type="file"
-                  accept=".pdf"
-                  className="hidden"
-                  onChange={(e) => handleFileUpload(e, 'presentation')}
-                />
-              </label>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <DocumentUpload
+              title="عرض تقديمي للمشروع"
+              description="يرجى رفع الملف بصيغة PDF"
+              type="presentation"
+            />
 
-            <div className="border rounded-lg p-4 space-y-2">
-              <p className="text-sm font-medium">دراسة الجدوى</p>
-              <p className="text-sm text-muted-foreground">يرجى رفع الملف بصيغة PDF</p>
-              <label className="flex items-center gap-2 px-4 py-2 bg-secondary/10 rounded-lg cursor-pointer hover:bg-secondary/20 transition-colors">
-                <Upload className="h-4 w-4" />
-                <span className="text-sm">رفع الملف</span>
-                <input
-                  type="file"
-                  accept=".pdf"
-                  className="hidden"
-                  onChange={(e) => handleFileUpload(e, 'feasibility')}
-                />
-              </label>
-            </div>
+            <DocumentUpload
+              title="دراسة الجدوى"
+              description="يرجى رفع الملف بصيغة PDF"
+              type="feasibility"
+            />
+
+            <DocumentUpload
+              title="التقرير المالي"
+              description="يرجى رفع الملف بصيغة PDF"
+              type="financial"
+            />
           </div>
         </div>
 
