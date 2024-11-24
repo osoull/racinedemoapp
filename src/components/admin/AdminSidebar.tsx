@@ -72,9 +72,6 @@ export const AdminSidebar = () => {
 
   return (
     <div className="flex h-full flex-col bg-white">
-      <div className="flex h-16 items-center border-b px-6">
-        <img src="/logo.svg" alt="Racine Logo" className="h-8" />
-      </div>
       <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
         {menuItems.map((item) => (
           <div key={item.path} className="space-y-1">
