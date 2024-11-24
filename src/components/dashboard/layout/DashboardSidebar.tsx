@@ -67,7 +67,7 @@ export function DashboardSidebar() {
       <div className="flex h-16 items-center border-b px-6">
         <img 
           src="/logo.svg" 
-          alt="راسين" 
+          alt="رسين" 
           className="h-8"
         />
       </div>

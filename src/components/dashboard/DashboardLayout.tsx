@@ -40,7 +40,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
             
             <img 
               src="/logo.svg" 
-              alt="راسين" 
+              alt="رسين" 
               className="h-8"
             />
           </div>
