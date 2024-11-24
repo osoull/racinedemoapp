@@ -12,7 +12,11 @@ import {
   PieChart,
   MessageSquare,
   Wallet,
-  Building2
+  Building2,
+  ScrollText,
+  GraduationCap,
+  FileCheck,
+  BadgeCheck
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
@@ -61,6 +65,24 @@ const menuItems = [
     icon: ShieldCheck,
     path: "/admin/compliance",
     description: "مراقبة الامتثال والتدقيق"
+  },
+  {
+    title: "التحقق من الهوية",
+    icon: BadgeCheck,
+    path: "/admin/kyc",
+    description: "إدارة طلبات التحقق من الهوية"
+  },
+  {
+    title: "المراجعة الشرعية",
+    icon: GraduationCap,
+    path: "/admin/sharia",
+    description: "مراجعة توافق المشاريع مع الشريعة"
+  },
+  {
+    title: "متطلبات هيئة السوق المالية",
+    icon: FileCheck,
+    path: "/admin/cma",
+    description: "إدارة متطلبات هيئة السوق المالية"
   },
   {
     title: "الدعم الفني",
