@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/contexts/AuthContext"
 import { ArrowRight } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 type SignUpFormProps = {
   userType: "investor" | "project_owner";
@@ -14,16 +16,24 @@ type SignUpFormProps = {
 
 export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
   const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
   const [password, setPassword] = useState("")
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
+  const [acceptTerms, setAcceptTerms] = useState(false)
   const { signUp } = useAuth()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!acceptTerms) {
+      toast({
+        title: "خطأ",
+        description: "يجب الموافقة على الشروط والأحكام",
+        variant: "destructive",
+      })
+      return
+    }
     try {
-      await signUp(email, password, userType)
+      await signUp(email, password, userType, { phone })
       toast({
         title: "تم إنشاء الحساب بنجاح",
         description: "يرجى تسجيل الدخول للمتابعة",
@@ -49,7 +59,9 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
           <ArrowRight className="h-4 w-4 ml-2" />
           رجوع
         </Button>
-        <CardTitle>إنشاء حساب {userType === "investor" ? "مستثمر" : "طالب تمويل"}</CardTitle>
+        <CardTitle>
+          {userType === "project_owner" ? "التسجيل كطالب تمويل" : "التسجيل كمستثمر"}
+        </CardTitle>
         <CardDescription>
           قم بإدخال بياناتك لإنشاء حساب
         </CardDescription>
@@ -58,23 +70,21 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Input
-              placeholder="الاسم الأول"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-            <Input
-              placeholder="اسم العائلة"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-            <Input
               type="email"
               placeholder="البريد الإلكتروني"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              dir="rtl"
+            />
+            <Input
+              type="tel"
+              placeholder="رقم الجوال"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              dir="rtl"
+              pattern="05[0-9]{8}"
             />
             <Input
               type="password"
@@ -82,10 +92,26 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              dir="rtl"
             />
           </div>
+          
+          <div className="flex items-center space-x-2 space-x-reverse">
+            <Checkbox 
+              id="terms" 
+              checked={acceptTerms}
+              onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+            />
+            <Label 
+              htmlFor="terms" 
+              className="text-sm text-muted-foreground cursor-pointer"
+            >
+              أوافق على الشروط والأحكام
+            </Label>
+          </div>
+
           <Button type="submit" className="w-full">
-            إنشاء حساب
+            تسجيل
           </Button>
         </form>
       </CardContent>
