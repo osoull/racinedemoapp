@@ -41,7 +41,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg"
               alt="رسين"
-              className="h-13 ml-2" // Augmenté de h-10 à h-13
+              className="h-18 ml-2" // Augmenté de h-10 à h-18
             />
           </div>
           
