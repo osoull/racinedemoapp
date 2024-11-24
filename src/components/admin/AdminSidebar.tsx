@@ -22,6 +22,12 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
+    title: "إدارة المستثمرين",
+    icon: Users,
+    path: "/admin/investors",
+    description: "إدارة المستثمرين"
+  },
+  {
     title: "المشاريع",
     icon: FileText,
     path: "/admin/projects",
