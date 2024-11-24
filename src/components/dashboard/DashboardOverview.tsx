@@ -17,18 +17,8 @@ export function DashboardOverview() {
       <section>
         <div className="grid gap-12">
           {/* Chart Section */}
-          <Card className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="text-lg font-semibold">تحليل التمويل</h3>
-              <select className="text-sm border rounded-md px-3 py-2">
-                <option value="week">آخر 7 أيام</option>
-                <option value="month">آخر 30 يوم</option>
-                <option value="year">هذه السنة</option>
-              </select>
-            </div>
-            <div className="h-[300px]">
-              <FundingChart />
-            </div>
+          <Card className="p-6">
+            <FundingChart />
           </Card>
 
           {/* Projects and Activity Section */}

@@ -78,18 +78,15 @@ export function FundingChart() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">تحليل التمويل</h3>
-        <select 
-          className="text-sm border rounded-md px-2 py-1"
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-        >
-          <option value="week">آخر 7 أيام</option>
-          <option value="month">آخر 30 يوم</option>
-          <option value="year">هذه السنة</option>
-        </select>
-      </div>
+      <select 
+        className="text-sm border rounded-md px-2 py-1"
+        value={timeRange}
+        onChange={(e) => setTimeRange(e.target.value)}
+      >
+        <option value="week">آخر 7 أيام</option>
+        <option value="month">آخر 30 يوم</option>
+        <option value="year">هذه السنة</option>
+      </select>
 
       <Tabs defaultValue="timeline" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">
