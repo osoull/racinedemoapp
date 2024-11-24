@@ -23,7 +23,7 @@ export interface ProjectManagementProps {
   filter?: string;
 }
 
-const ProjectManagement: React.FC<ProjectManagementProps> = ({ filter }) => {
+const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
