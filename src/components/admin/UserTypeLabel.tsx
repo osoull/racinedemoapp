@@ -8,13 +8,13 @@ export function UserTypeLabel({ type }: UserTypeLabelProps) {
   const getUserTypeColor = (type: string | null) => {
     switch (type) {
       case 'admin':
-        return 'bg-red-500';
+        return 'bg-purple-500';
       case 'investment_manager':
         return 'bg-blue-500';
       case 'investor':
         return 'bg-green-500';
       case 'project_owner':
-        return 'bg-purple-500';
+        return 'bg-orange-500';
       default:
         return 'bg-gray-500';
     }
