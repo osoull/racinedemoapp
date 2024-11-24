@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { BackButton } from "@/components/BackButton"
+import { AvatarUpload } from "@/components/AvatarUpload"
 
 export default function Profile() {
   const { user } = useAuth()
@@ -111,6 +112,9 @@ export default function Profile() {
           <CardTitle className="text-2xl">الملف الشخصي</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-8">
+            <AvatarUpload />
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="first_name" className="text-sm font-medium">

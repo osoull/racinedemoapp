@@ -14,7 +14,7 @@ import { LogOut, Settings, User } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function UserNav() {
-  const { user, signOut } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
 
   return (
@@ -22,7 +22,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src="/placeholder.svg" alt={user?.email || ""} />
+            <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email || ""} />
             <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
