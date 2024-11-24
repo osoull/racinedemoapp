@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card"
-import { Briefcase, Users, Wallet, TrendingUp } from "lucide-react"
+import { Briefcase, Users, Wallet, TrendingUp, ArrowUp, ArrowDown } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
@@ -10,26 +10,31 @@ export function StatsGrid() {
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats", user?.id],
     queryFn: async () => {
-      const { data: projects } = await supabase
+      const { data: projectsCount } = await supabase
         .from("projects")
         .select("count")
         .eq("status", "active")
 
-      const { data: investments } = await supabase
+      const { data: investmentsSum } = await supabase
         .from("investments")
         .select("sum(amount)")
         .eq("status", "confirmed")
 
-      const { data: users } = await supabase
+      const { data: investorsCount } = await supabase
         .from("profiles")
         .select("count")
         .eq("user_type", "investor")
 
+      const { data: transactionsSum } = await supabase
+        .from("transactions")
+        .select("sum(amount)")
+        .eq("status", "completed")
+
       return {
-        projects: projects?.[0]?.count || 0,
-        totalFunding: investments?.[0]?.sum || 0,
-        investors: users?.[0]?.count || 0,
-        growth: 24 // Example static value
+        projects: projectsCount?.[0]?.count || 0,
+        totalFunding: investmentsSum?.[0]?.sum || 0,
+        investors: investorsCount?.[0]?.count || 0,
+        transactions: transactionsSum?.[0]?.sum || 0
       }
     },
     enabled: !!user?.id
@@ -37,36 +42,36 @@ export function StatsGrid() {
 
   const items = [
     {
-      title: "التقارير",
+      title: "المشاريع النشطة",
       value: stats?.projects || 0,
       icon: Briefcase,
-      trend: { value: 8.3, isPositive: true },
-      bgColor: "bg-yellow-50",
-      iconColor: "text-yellow-600"
-    },
-    {
-      title: "المشاريع النشطة",
-      value: `${(stats?.totalFunding || 0).toLocaleString()} ريال`,
-      icon: Wallet,
       trend: { value: 12.5, isPositive: true },
-      bgColor: "bg-violet-50",
-      iconColor: "text-violet-600"
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600"
     },
     {
-      title: "إجمالي المستثمرين",
-      value: stats?.investors || 0,
-      icon: Users,
-      trend: { value: 15.2, isPositive: true },
+      title: "إجمالي التمويل",
+      value: `${((stats?.totalFunding || 0) / 1000000).toFixed(1)} مليون ريال`,
+      icon: Wallet,
+      trend: { value: 8.3, isPositive: true },
       bgColor: "bg-blue-50",
       iconColor: "text-blue-600"
     },
     {
-      title: "إجمالي التمويلات",
-      value: "2.8 مليون ريال",
-      icon: TrendingUp,
-      trend: { value: 4.1, isPositive: true },
+      title: "المستثمرين النشطين",
+      value: stats?.investors || 0,
+      icon: Users,
+      trend: { value: 15.2, isPositive: true },
       bgColor: "bg-green-50",
       iconColor: "text-green-600"
+    },
+    {
+      title: "حجم المعاملات",
+      value: `${((stats?.transactions || 0) / 1000000).toFixed(1)} مليون ريال`,
+      icon: TrendingUp,
+      trend: { value: 4.1, isPositive: false },
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600"
     }
   ]
 
@@ -82,7 +87,12 @@ export function StatsGrid() {
               <div className={`flex items-center gap-1 text-sm ${
                 item.trend.isPositive ? 'text-green-600' : 'text-red-600'
               }`}>
-                <span>+{item.trend.value}%</span>
+                {item.trend.isPositive ? (
+                  <ArrowUp className="h-4 w-4" />
+                ) : (
+                  <ArrowDown className="h-4 w-4" />
+                )}
+                <span>{item.trend.value}%</span>
               </div>
             )}
           </div>

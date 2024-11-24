@@ -29,23 +29,38 @@ export function FundingChart() {
   })
 
   return (
-    <Card className="col-span-2">
+    <Card>
       <CardHeader>
         <CardTitle>تطور التمويل</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data || []}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
+              <XAxis 
+                dataKey="month" 
+                axisLine={false}
+                tickLine={false}
+                className="text-xs"
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                className="text-xs"
+                tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+              />
+              <Tooltip 
+                formatter={(value: number) => [`${(value / 1000000).toFixed(1)}M ريال`, "التمويل"]}
+                labelFormatter={(label) => `شهر ${label}`}
+              />
               <Line 
                 type="monotone" 
                 dataKey="amount" 
                 stroke="#6E59A5" 
                 strokeWidth={2}
+                dot={{ fill: "#6E59A5", strokeWidth: 2 }}
+                activeDot={{ r: 6, fill: "#6E59A5" }}
               />
             </LineChart>
           </ResponsiveContainer>
