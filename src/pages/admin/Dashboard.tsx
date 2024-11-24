@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
-import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import PlatformSettings from "@/components/admin/PlatformSettings"
@@ -45,7 +44,6 @@ export default function AdminDashboard() {
 
         <Routes>
           <Route index element={<DashboardOverview />} />
-          <Route path="users" element={<UserManagement />} />
           <Route path="projects" element={<ProjectManagement />} />
           <Route path="transactions" element={<TransactionManagement />} />
           <Route path="compliance" element={<KYCManagement />} />

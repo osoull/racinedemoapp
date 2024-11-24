@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { 
   LayoutDashboard, 
-  Users, 
   FileText,
   Settings,
   Shield,
@@ -20,12 +19,6 @@ const menuItems = [
     icon: LayoutDashboard,
     path: "/admin",
     description: "لوحة المعلومات والإحصائيات"
-  },
-  {
-    title: "المستخدمين",
-    icon: Users,
-    path: "/admin/users",
-    description: "إدارة المستخدمين"
   },
   {
     title: "المشاريع",
@@ -61,7 +54,7 @@ const menuItems = [
     title: "الإعدادات",
     icon: Settings,
     path: "/admin/settings",
-    description: "إعدادات عامة للمنصة"
+    description: "إعدادات المنصة وإدارة المستخدمين"
   }
 ]
 

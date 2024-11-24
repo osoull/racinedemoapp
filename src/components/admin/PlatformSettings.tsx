@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import CommissionManagement from "./CommissionManagement"
 import ComplianceAudit from "./ComplianceAudit"
 import BankDetails from "./BankDetails"
+import UserManagement from "./UserManagement"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 
@@ -16,7 +17,6 @@ export default function PlatformSettings() {
     if (path && path !== "platform-settings") {
       setActiveTab(path)
     } else {
-      // Set default tab to "general" when loading the page
       setActiveTab("general")
       navigate("/admin/settings/general", { replace: true })
     }
@@ -34,10 +34,11 @@ export default function PlatformSettings() {
       </CardHeader>
       <CardContent>
         <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="compliance">متطلبات CMA</TabsTrigger>
             <TabsTrigger value="commissions">العمولات</TabsTrigger>
             <TabsTrigger value="bank">الحساب البنكي</TabsTrigger>
+            <TabsTrigger value="users">المستخدمين</TabsTrigger>
             <TabsTrigger value="general">عام</TabsTrigger>
           </TabsList>
 
@@ -56,6 +57,10 @@ export default function PlatformSettings() {
 
           <TabsContent value="compliance">
             <ComplianceAudit tab="cma" />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UserManagement />
           </TabsContent>
         </Tabs>
       </CardContent>
