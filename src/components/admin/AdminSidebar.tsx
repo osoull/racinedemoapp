@@ -12,7 +12,11 @@ import {
   Shield,
   PieChart,
   Briefcase,
-  Wallet
+  Wallet,
+  Scale,
+  BookOpen,
+  Settings2,
+  HelpCircle
 } from "lucide-react"
 
 const menuItems = [
@@ -61,8 +65,34 @@ const menuItems = [
   {
     title: "إعدادات المنصة",
     icon: Settings,
-    path: "/admin/settings",
-    description: "إعدادات عامة للمنصة"
+    path: "/admin/platform-settings",
+    description: "إعدادات عامة للمنصة",
+    subItems: [
+      {
+        title: "العمولات",
+        icon: Scale,
+        path: "/admin/platform-settings/commissions",
+        description: "إدارة العمولات والرسوم"
+      },
+      {
+        title: "الحساب البنكي",
+        icon: Wallet,
+        path: "/admin/platform-settings/bank",
+        description: "إدارة معلومات الحساب البنكي"
+      },
+      {
+        title: "الامتثال",
+        icon: Shield,
+        path: "/admin/platform-settings/compliance",
+        description: "إدارة متطلبات الامتثال"
+      },
+      {
+        title: "التقارير",
+        icon: FileText,
+        path: "/admin/platform-settings/reports",
+        description: "إدارة التقارير"
+      }
+    ]
   }
 ]
 
@@ -77,8 +107,20 @@ export const AdminSidebar = () => {
           <div key={item.path} className="space-y-1">
             <SidebarItem
               {...item}
-              isActive={location.pathname === item.path}
+              isActive={location.pathname === item.path || 
+                (item.subItems?.some(subItem => location.pathname === subItem.path) ?? false)}
             />
+            {item.subItems && (
+              <div className="mr-6 border-r pr-2 pt-1">
+                {item.subItems.map((subItem) => (
+                  <SidebarItem
+                    key={subItem.path}
+                    {...subItem}
+                    isActive={location.pathname === subItem.path}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </nav>

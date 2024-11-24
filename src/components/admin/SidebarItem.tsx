@@ -8,6 +8,12 @@ interface SidebarItemProps {
   path: string
   description: string
   isActive: boolean
+  subItems?: {
+    title: string
+    icon: LucideIcon
+    path: string
+    description: string
+  }[]
 }
 
 export const SidebarItem = ({ title, icon: Icon, path, description, isActive }: SidebarItemProps) => {
