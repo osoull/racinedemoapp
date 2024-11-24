@@ -10,9 +10,12 @@ import CommissionManagement from "@/components/admin/CommissionManagement"
 import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
+import { useLocation } from "react-router-dom"
 
 export default function AdminDashboard() {
   const { user } = useAuth()
+  const location = useLocation()
+  const isOverviewPage = location.pathname === "/admin"
 
   const { data: profile } = useQuery({
     queryKey: ['profile', user?.id],
@@ -30,11 +33,13 @@ export default function AdminDashboard() {
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-8">
-        <div className="p-6 bg-white rounded-lg shadow-sm border">
-          <h2 className="text-2xl font-bold mb-6">
-            {profile?.first_name ? `مرحباً بك ${profile.first_name} في لوحة التحكم` : 'مرحباً بك في لوحة التحكم'}
-          </h2>
-        </div>
+        {isOverviewPage && profile?.first_name && (
+          <div className="p-6 bg-white rounded-lg shadow-sm border">
+            <h2 className="text-2xl font-bold">
+              مرحباً بك {profile.first_name} في لوحة التحكم
+            </h2>
+          </div>
+        )}
 
         <Routes>
           <Route index element={<DashboardOverview />} />
