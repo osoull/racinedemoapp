@@ -4,6 +4,7 @@ import CommissionManagement from "./CommissionManagement"
 import ComplianceAudit from "./ComplianceAudit"
 import BankDetails from "./BankDetails"
 import UserManagement from "./UserManagement"
+import GeneralSettings from "./settings/GeneralSettings"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 
@@ -43,8 +44,7 @@ export default function PlatformSettings() {
           </TabsList>
 
           <TabsContent value="general">
-            <h3 className="text-lg font-semibold mb-4">الإعدادات العامة</h3>
-            {/* General settings content */}
+            <GeneralSettings />
           </TabsContent>
 
           <TabsContent value="bank">
