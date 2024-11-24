@@ -11,6 +11,12 @@ export default function GeneralSettings() {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    platform_name: '',
+    maintenance_mode: false,
+    support_email: '',
+    require_2fa: false
+  })
 
   const { data: settings } = useQuery({
     queryKey: ['platform-settings', 'general'],
@@ -21,10 +27,20 @@ export default function GeneralSettings() {
         .eq('category', 'general')
       
       if (error) throw error
-      return data?.reduce((acc: any, setting) => {
+      const settingsMap = data?.reduce((acc: any, setting) => {
         acc[setting.setting_key] = setting.setting_value
         return acc
       }, {}) || {}
+
+      // Update form data with fetched settings
+      setFormData({
+        platform_name: settingsMap.platform_name || '',
+        maintenance_mode: settingsMap.maintenance_mode || false,
+        support_email: settingsMap.support_email || '',
+        require_2fa: settingsMap.require_2fa || false
+      })
+
+      return settingsMap
     }
   })
 
@@ -71,42 +87,37 @@ export default function GeneralSettings() {
     setIsLoading(true)
     try {
       await updateSetting.mutateAsync({ key, value })
+      setFormData(prev => ({ ...prev, [key]: value }))
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handle2FAChange = async (checked: boolean) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setIsLoading(true)
+    
     try {
-      // Update platform settings
-      await updateSetting.mutateAsync({ key: 'require_2fa', value: checked })
-      
-      toast({
-        title: "تم التحديث",
-        description: checked 
-          ? "تم تفعيل المصادقة الثنائية للمستخدمين الجدد" 
-          : "تم تعطيل المصادقة الثنائية للمستخدمين الجدد",
-      })
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث إعدادات المصادقة الثنائية",
-        variant: "destructive",
-      })
+      // Update all settings at once
+      await Promise.all([
+        updateSetting.mutateAsync({ key: 'platform_name', value: formData.platform_name }),
+        updateSetting.mutateAsync({ key: 'maintenance_mode', value: formData.maintenance_mode }),
+        updateSetting.mutateAsync({ key: 'support_email', value: formData.support_email }),
+        updateSetting.mutateAsync({ key: 'require_2fa', value: formData.require_2fa })
+      ])
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
           <Label>اسم المنصة</Label>
           <Input
-            defaultValue={settings?.platform_name}
-            onBlur={(e) => handleSave('platform_name', e.target.value)}
+            value={formData.platform_name}
+            onChange={(e) => setFormData(prev => ({ ...prev, platform_name: e.target.value }))}
           />
         </div>
 
@@ -118,8 +129,8 @@ export default function GeneralSettings() {
             </p>
           </div>
           <Switch
-            checked={settings?.maintenance_mode}
-            onCheckedChange={(checked) => handleSave('maintenance_mode', checked)}
+            checked={formData.maintenance_mode}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, maintenance_mode: checked }))}
           />
         </div>
 
@@ -127,8 +138,8 @@ export default function GeneralSettings() {
           <Label>البريد الإلكتروني للدعم</Label>
           <Input
             type="email"
-            defaultValue={settings?.support_email}
-            onBlur={(e) => handleSave('support_email', e.target.value)}
+            value={formData.support_email}
+            onChange={(e) => setFormData(prev => ({ ...prev, support_email: e.target.value }))}
           />
         </div>
 
@@ -140,16 +151,16 @@ export default function GeneralSettings() {
             </p>
           </div>
           <Switch
-            checked={settings?.require_2fa}
-            onCheckedChange={handle2FAChange}
+            checked={formData.require_2fa}
+            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, require_2fa: checked }))}
             disabled={isLoading}
           />
         </div>
       </div>
 
-      <Button disabled={isLoading} className="w-full">
+      <Button type="submit" disabled={isLoading} className="w-full">
         {isLoading ? "جاري الحفظ..." : "حفظ التغييرات"}
       </Button>
-    </div>
+    </form>
   )
 }
