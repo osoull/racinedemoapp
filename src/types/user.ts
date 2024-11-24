@@ -8,18 +8,19 @@ export interface User {
   kyc_status?: string;
   created_at?: string;
   updated_at?: string;
-}
-
-export type UserType = User['user_type'];
-
-export interface Profile extends User {
   phone?: string;
   address?: string;
   national_id?: string;
-  profile_completed?: boolean;
   company_name?: string;
   commercial_register?: string;
   business_type?: string;
   business_address?: string;
   business_description?: string;
+  profile_completed?: boolean;
+}
+
+export type UserType = User['user_type'];
+
+export interface Profile extends User {
+  avatar_url?: string | null;
 }
