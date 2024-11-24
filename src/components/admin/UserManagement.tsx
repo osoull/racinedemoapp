@@ -117,11 +117,11 @@ export default function UserManagement() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full" dir="rtl">
-        <TabsList className="w-full justify-end mb-6">
-          <TabsTrigger value="all">جميع المستخدمين</TabsTrigger>
-          <TabsTrigger value="investor">المستثمرون</TabsTrigger>
-          <TabsTrigger value="investment_manager">مدراء الاستثمار</TabsTrigger>
-          <TabsTrigger value="admin">المشرفون</TabsTrigger>
+        <TabsList className="flex justify-end w-full mb-6 bg-muted/50 p-1 rounded-lg">
+          <TabsTrigger value="admin" className="flex-1">المشرفون</TabsTrigger>
+          <TabsTrigger value="investment_manager" className="flex-1">مدراء الاستثمار</TabsTrigger>
+          <TabsTrigger value="investor" className="flex-1">المستثمرون</TabsTrigger>
+          <TabsTrigger value="all" className="flex-1">جميع المستخدمين</TabsTrigger>
         </TabsList>
 
         <UserList

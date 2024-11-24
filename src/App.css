@@ -40,3 +40,13 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Ajout des styles pour les onglets RTL */
+[dir="rtl"] .tabs-list {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .tab-trigger {
+  margin-left: 0;
+  margin-right: 1px;
+}
