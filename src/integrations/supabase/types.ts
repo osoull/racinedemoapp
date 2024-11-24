@@ -9,6 +9,110 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bank_accounts: {
+        Row: {
+          account_name: string
+          account_number: string | null
+          bank_name: string
+          created_at: string | null
+          iban: string
+          id: string
+          is_primary: boolean | null
+          status: string | null
+          swift: string | null
+          updated_at: string | null
+          user_id: string
+          verification_date: string | null
+        }
+        Insert: {
+          account_name: string
+          account_number?: string | null
+          bank_name: string
+          created_at?: string | null
+          iban: string
+          id?: string
+          is_primary?: boolean | null
+          status?: string | null
+          swift?: string | null
+          updated_at?: string | null
+          user_id: string
+          verification_date?: string | null
+        }
+        Update: {
+          account_name?: string
+          account_number?: string | null
+          bank_name?: string
+          created_at?: string | null
+          iban?: string
+          id?: string
+          is_primary?: boolean | null
+          status?: string | null
+          swift?: string | null
+          updated_at?: string | null
+          user_id?: string
+          verification_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_transactions: {
+        Row: {
+          bank_account_id: string | null
+          bank_status: string | null
+          created_at: string | null
+          id: string
+          reference_number: string | null
+          transaction_id: string | null
+          updated_at: string | null
+          verification_date: string | null
+          verification_notes: string | null
+        }
+        Insert: {
+          bank_account_id?: string | null
+          bank_status?: string | null
+          created_at?: string | null
+          id?: string
+          reference_number?: string | null
+          transaction_id?: string | null
+          updated_at?: string | null
+          verification_date?: string | null
+          verification_notes?: string | null
+        }
+        Update: {
+          bank_account_id?: string | null
+          bank_status?: string | null
+          created_at?: string | null
+          id?: string
+          reference_number?: string | null
+          transaction_id?: string | null
+          updated_at?: string | null
+          verification_date?: string | null
+          verification_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_transactions_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       borrower_kyc: {
         Row: {
           annual_revenue: number | null
