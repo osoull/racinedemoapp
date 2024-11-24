@@ -103,6 +103,15 @@ function App() {
                 />
 
                 <Route
+                  path="/admin/investors"
+                  element={
+                    <PrivateRoute allowedRoles={["admin"]}>
+                      <InvestorsPage />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
                   path="/profile"
                   element={
                     <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
