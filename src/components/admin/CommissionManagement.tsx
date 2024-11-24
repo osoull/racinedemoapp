@@ -2,13 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Tables } from "@/integrations/supabase/types"
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import { CommissionCard } from "./commission/CommissionCard"
+import { useEffect } from "react"
+import { useToast } from "@/components/ui/use-toast"
 
 type Commission = Tables<"commissions">
 
 const CommissionManagement = () => {
   const queryClient = useQueryClient()
+  const { toast } = useToast()
 
   const { data: commissions, isLoading } = useQuery({
     queryKey: ["commissions"],
@@ -23,20 +25,42 @@ const CommissionManagement = () => {
     },
   })
 
-  useRealtimeSubscription(
-    "commissions",
-    {
-      onUpdate: () => {
-        queryClient.invalidateQueries({ queryKey: ["commissions"] })
-      },
-      onInsert: () => {
-        queryClient.invalidateQueries({ queryKey: ["commissions"] })
-      },
-      onDelete: () => {
-        queryClient.invalidateQueries({ queryKey: ["commissions"] })
-      }
+  // Configuration de la souscription en temps réel
+  useEffect(() => {
+    const channel = supabase
+      .channel('commission-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'commissions'
+        },
+        (payload) => {
+          // Mise à jour optimiste du cache
+          if (payload.eventType === 'UPDATE') {
+            queryClient.setQueryData(['commissions'], (oldData: Commission[] | undefined) => {
+              if (!oldData) return oldData
+              return oldData.map(commission => 
+                commission.commission_id === payload.new.commission_id 
+                  ? payload.new as Commission
+                  : commission
+              )
+            })
+
+            toast({
+              title: "تم تحديث العمولة",
+              description: "تم تحديث معدل العمولة بنجاح",
+            })
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
     }
-  )
+  }, [queryClient, toast])
 
   const getArabicCommissionType = (type: string) => {
     switch (type) {

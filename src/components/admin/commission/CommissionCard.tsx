@@ -30,19 +30,17 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
         })
         .eq("commission_id", commission.commission_id)
         .select()
+        .single()
 
       if (error) {
         console.error("Erreur lors de la mise à jour:", error)
         throw error
       }
 
-      if (!data || data.length === 0) {
-        throw new Error("Aucune donnée n'a été mise à jour")
-      }
-
-      return data[0]
+      return data
     },
     onSuccess: (updatedCommission) => {
+      // Mise à jour optimiste du cache
       queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
         if (!oldData) return [updatedCommission]
         return oldData.map(commission => 
