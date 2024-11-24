@@ -47,6 +47,8 @@ const CommissionManagement = () => {
         return "عمولة المستثمر الأساسي"
       case "qualified_investor_fee":
         return "عمولة المستثمر المؤهل"
+      case "funding_request":
+        return "رسوم طلب التمويل"
       default:
         return type
     }

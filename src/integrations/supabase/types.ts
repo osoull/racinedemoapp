@@ -397,6 +397,7 @@ export type Database = {
           email: string | null
           first_name: string
           id: string
+          investor_type: string | null
           kyc_status: string | null
           last_name: string
           middle_name: string | null
@@ -418,6 +419,7 @@ export type Database = {
           email?: string | null
           first_name: string
           id: string
+          investor_type?: string | null
           kyc_status?: string | null
           last_name: string
           middle_name?: string | null
@@ -439,6 +441,7 @@ export type Database = {
           email?: string | null
           first_name?: string
           id?: string
+          investor_type?: string | null
           kyc_status?: string | null
           last_name?: string
           middle_name?: string | null
