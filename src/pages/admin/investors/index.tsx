@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { InvestorList } from "@/components/admin/investors/InvestorList"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from "lucide-react"
 
 export default function InvestorsPage() {
@@ -28,7 +27,7 @@ export default function InvestorsPage() {
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">إدارة المستثمرين</h2>
+          <h2 className="text-3xl font-bold tracking-tight">المستثمرون</h2>
           <p className="text-muted-foreground">
             إدارة وتتبع جميع المستثمرين في المنصة
           </p>
@@ -44,14 +43,7 @@ export default function InvestorsPage() {
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : (
-              <Tabs defaultValue="all" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-8">
-                  <TabsTrigger value="all">جميع المستثمرين</TabsTrigger>
-                  <TabsTrigger value="basic">المستثمرون الأساسيون</TabsTrigger>
-                  <TabsTrigger value="qualified">المستثمرون المؤهلون</TabsTrigger>
-                </TabsList>
-                <InvestorList investors={investors || []} />
-              </Tabs>
+              <InvestorList investors={investors || []} />
             )}
           </CardContent>
         </Card>
