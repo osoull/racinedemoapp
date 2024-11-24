@@ -4,10 +4,17 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
 
+interface StatsData {
+  projects: number
+  totalFunding: number
+  investors: number
+  transactions: number
+}
+
 export function StatsGrid() {
   const { user } = useAuth()
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<StatsData>({
     queryKey: ["dashboard-stats", user?.id],
     queryFn: async () => {
       const { data: projectsCount } = await supabase
@@ -31,10 +38,10 @@ export function StatsGrid() {
         .eq("status", "completed")
 
       return {
-        projects: projectsCount?.[0]?.count || 0,
-        totalFunding: investmentsSum?.[0]?.sum || 0,
-        investors: investorsCount?.[0]?.count || 0,
-        transactions: transactionsSum?.[0]?.sum || 0
+        projects: Number(projectsCount?.[0]?.count || 0),
+        totalFunding: Number(investmentsSum?.[0]?.sum || 0),
+        investors: Number(investorsCount?.[0]?.count || 0),
+        transactions: Number(transactionsSum?.[0]?.sum || 0)
       }
     },
     enabled: !!user?.id
@@ -51,7 +58,7 @@ export function StatsGrid() {
     },
     {
       title: "إجمالي التمويل",
-      value: `${((stats?.totalFunding || 0) / 1000000).toFixed(1)} مليون ريال`,
+      value: `${((Number(stats?.totalFunding) || 0) / 1000000).toFixed(1)} مليون ريال`,
       icon: Wallet,
       trend: { value: 8.3, isPositive: true },
       bgColor: "bg-blue-50",
@@ -67,7 +74,7 @@ export function StatsGrid() {
     },
     {
       title: "حجم المعاملات",
-      value: `${((stats?.transactions || 0) / 1000000).toFixed(1)} مليون ريال`,
+      value: `${((Number(stats?.transactions) || 0) / 1000000).toFixed(1)} مليون ريال`,
       icon: TrendingUp,
       trend: { value: 4.1, isPositive: false },
       bgColor: "bg-orange-50",
