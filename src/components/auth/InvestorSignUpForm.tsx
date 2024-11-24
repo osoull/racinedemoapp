@@ -24,7 +24,13 @@ export function InvestorSignUpForm({ onBack, onSuccess }: InvestorSignUpFormProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signUp(email, password, "investor", { investor_type: investorType });
+      await signUp(email, password, {
+        first_name: firstName,
+        last_name: lastName,
+        user_type: "investor",
+        investor_type: investorType
+      });
+      
       toast({
         title: "تم إنشاء الحساب بنجاح",
         description: "يرجى تسجيل الدخول للمتابعة",
