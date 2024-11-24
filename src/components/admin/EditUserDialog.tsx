@@ -5,16 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Edit2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-
-type User = {
-  id: string;
-  email: string;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
-  user_type: string | null;
-  kyc_status: string | null;
-};
+import { User } from "@/types/user";
 
 type EditUserDialogProps = {
   user: User;
