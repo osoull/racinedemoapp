@@ -11,6 +11,7 @@ import {
   FileSearch,
   Building,
   UserCog,
+  Building2,
 } from "lucide-react";
 
 export const businessMenuItems = [
@@ -32,9 +33,9 @@ export const businessMenuItems = [
         icon: UserCog
       },
       {
-        title: "أصحاب المشاريع",
-        path: "/admin/users/project-owners",
-        icon: Briefcase
+        title: "طالبي التمويل",
+        path: "/admin/users/borrowers",
+        icon: Building2
       }
     ]
   },

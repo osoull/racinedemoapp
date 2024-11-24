@@ -44,12 +44,12 @@ export default function AdminDashboard() {
         <Routes>
           <Route index element={<DashboardOverview />} />
           <Route path="users" element={<UserManagement />} />
-          <Route path="users/investors" element={<UserManagement />} />
-          <Route path="users/project-owners" element={<UserManagement />} />
+          <Route path="users/investors" element={<UserManagement userType="investor" />} />
+          <Route path="users/borrowers" element={<UserManagement userType="borrower" />} />
           <Route path="projects" element={<ProjectManagement />} />
-          <Route path="projects/new" element={<ProjectManagement />} />
-          <Route path="projects/active" element={<ProjectManagement />} />
-          <Route path="projects/completed" element={<ProjectManagement />} />
+          <Route path="projects/new" element={<ProjectManagement filter="pending" />} />
+          <Route path="projects/active" element={<ProjectManagement filter="active" />} />
+          <Route path="projects/completed" element={<ProjectManagement filter="completed" />} />
           <Route path="kyc" element={<ComplianceAudit tab="kyc" />} />
           <Route path="sharia" element={<ComplianceAudit tab="sharia" />} />
           <Route path="platform-settings" element={<PlatformSettings />} />

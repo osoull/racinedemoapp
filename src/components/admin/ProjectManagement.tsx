@@ -32,7 +32,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { user } = useAuth();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
-  const { data: projects, isLoading } = useQuery({
+  const { data: projects = [], isLoading } = useQuery({
     queryKey: ["admin-projects", filter],
     queryFn: async () => {
       let query = supabase
@@ -50,7 +50,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
       const { data, error } = await query;
       if (error) throw error;
       
-      return data.map(project => ({
+      return (data || []).map(project => ({
         ...project,
         risk_rating: project.risk_rating?.[0] || null
       })) as Project[];
@@ -115,15 +115,15 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           <div>جاري التحميل...</div>
         ) : (
           <div className="space-y-4">
-            {projects && (
+            {projects.map((project) => (
               <ProjectCard
-                key={projects.id}
-                project={projects}
-                onEdit={() => setEditingProject(projects)}
-                onDelete={() => deleteProjectMutation.mutate(projects.id)}
-                canEdit={user?.id === projects.owner_id}
+                key={project.id}
+                project={project}
+                onEdit={() => setEditingProject(project)}
+                onDelete={() => deleteProjectMutation.mutate(project.id)}
+                canEdit={user?.id === project.owner_id}
               />
-            )}
+            ))}
           </div>
         )}
       </CardContent>
