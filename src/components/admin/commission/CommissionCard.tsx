@@ -1,64 +1,67 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
+import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { Tables } from "@/integrations/supabase/types"
 
-type Commission = Tables<"commissions">;
+type Commission = Tables<"commissions">
 
 interface CommissionCardProps {
-  commission: Commission;
-  getArabicCommissionType: (type: string) => string;
+  commission: Commission
+  getArabicCommissionType: (type: string) => string
 }
 
 export const CommissionCard = ({ commission, getArabicCommissionType }: CommissionCardProps) => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = useState(false);
-  const [newRate, setNewRate] = useState(commission.rate.toString());
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
+  const [isEditing, setIsEditing] = useState(false)
+  const [newRate, setNewRate] = useState(commission.rate.toString())
 
   const updateCommissionMutation = useMutation({
     mutationFn: async (newRate: number) => {
       const { error } = await supabase
         .from("commissions")
-        .update({ rate: newRate })
-        .eq("commission_id", commission.commission_id);
+        .update({ 
+          rate: newRate,
+          updated_at: new Date().toISOString()
+        })
+        .eq("commission_id", commission.commission_id)
 
-      if (error) throw error;
+      if (error) throw error
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      queryClient.invalidateQueries({ queryKey: ["commissions"] })
       toast({
         title: "تم التحديث",
         description: "تم تحديث معدل العمولة بنجاح",
-      });
-      setIsEditing(false);
+      })
+      setIsEditing(false)
     },
     onError: (error) => {
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث معدل العمولة",
         variant: "destructive",
-      });
-      console.error("Error updating commission rate:", error);
+      })
+      console.error("Error updating commission rate:", error)
     },
-  });
+  })
 
   const handleSave = () => {
-    const rateNumber = parseFloat(newRate);
+    const rateNumber = parseFloat(newRate)
     if (isNaN(rateNumber) || rateNumber < 0 || rateNumber > 100) {
       toast({
         title: "خطأ",
         description: "يرجى إدخال نسبة صحيحة بين 0 و 100",
         variant: "destructive",
-      });
-      return;
+      })
+      return
     }
-    updateCommissionMutation.mutate(rateNumber);
-  };
+    updateCommissionMutation.mutate(rateNumber)
+  }
 
   return (
     <Card>
@@ -97,8 +100,8 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setIsEditing(false);
-                    setNewRate(commission.rate.toString());
+                    setIsEditing(false)
+                    setNewRate(commission.rate.toString())
                   }}
                   className="mr-2"
                 >
@@ -117,5 +120,5 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}

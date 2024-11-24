@@ -16,6 +16,7 @@ const CommissionManagement = () => {
       const { data, error } = await supabase
         .from("commissions")
         .select("*")
+        .order('commission_type', { ascending: true })
 
       if (error) throw error
       return data as Commission[]
