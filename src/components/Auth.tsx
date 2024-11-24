@@ -2,71 +2,61 @@ import { useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { UserTypeSelection } from "./auth/UserTypeSelection"
+import { SignUpForm } from "./auth/SignUpForm"
+
+type AuthStep = "selection" | "signup" | "signin";
 
 export function Auth() {
+  const [step, setStep] = useState<AuthStep>("selection")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState<string>("investor")
-  const [isSignUp, setIsSignUp] = useState(false)
-  const { signIn, signUp } = useAuth()
+  const [userType, setUserType] = useState<"investor" | "project_owner">("investor")
+  const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  const handleSubmit = async (action: "signin" | "signup") => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
     try {
-      if (action === "signin") {
-        const { error } = await signIn(email, password)
-        if (error) throw error
-        
-        // Get the user after sign in
-        const { data: { user }, error: userError } = await supabase.auth.getUser()
-        if (userError) throw userError
-        if (!user) throw new Error("No user found after sign in")
+      const { error } = await signIn(email, password)
+      if (error) throw error
+      
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError) throw userError
+      if (!user) throw new Error("No user found after sign in")
 
-        // Get user type from profiles table
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('user_type')
-          .eq('id', user.id)
-          .single()
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
 
-        if (profileError) throw profileError
-        if (!profile) throw new Error("No profile found")
+      if (profileError) throw profileError
+      if (!profile) throw new Error("No profile found")
 
-        console.log('User profile after signin:', profile)
-
-        // Redirect based on user type
-        switch (profile.user_type) {
-          case "project_owner":
-            navigate("/project-owner")
-            break
-          case "investor":
-            navigate("/investor")
-            break
-          case "admin":
-            navigate("/admin")
-            break
-          default:
-            navigate("/")
-        }
-
-        toast({
-          title: "تم تسجيل الدخول بنجاح",
-          description: "مرحباً بك في لوحة التحكم",
-        })
-      } else {
-        await signUp(email, password, userType)
-        setIsSignUp(false)
-        toast({
-          title: "تم إنشاء الحساب بنجاح",
-          description: "يرجى تسجيل الدخول للمتابعة",
-        })
+      switch (profile.user_type) {
+        case "project_owner":
+          navigate("/project-owner")
+          break
+        case "investor":
+          navigate("/investor")
+          break
+        case "admin":
+          navigate("/admin")
+          break
+        default:
+          navigate("/")
       }
+
+      toast({
+        title: "تم تسجيل الدخول بنجاح",
+        description: "مرحباً بك في لوحة التحكم",
+      })
     } catch (error) {
       console.error("Auth error:", error)
       toast({
@@ -75,6 +65,35 @@ export function Auth() {
         variant: "destructive",
       })
     }
+  }
+
+  const handleUserTypeSelect = (type: "investor" | "project_owner" | "login") => {
+    if (type === "login") {
+      setStep("signin")
+    } else {
+      setUserType(type)
+      setStep("signup")
+    }
+  }
+
+  if (step === "selection") {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center">
+        <UserTypeSelection onSelect={handleUserTypeSelect} />
+      </div>
+    )
+  }
+
+  if (step === "signup") {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center flex-col">
+        <SignUpForm 
+          userType={userType}
+          onBack={() => setStep("selection")}
+          onSuccess={() => setStep("signin")}
+        />
+      </div>
+    )
   }
 
   return (
@@ -86,63 +105,40 @@ export function Auth() {
       />
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>{isSignUp ? "إنشاء حساب جديد" : "مرحباً بك"}</CardTitle>
+          <CardTitle>مرحباً بك</CardTitle>
           <CardDescription>
-            {isSignUp ? "قم بإدخال بياناتك لإنشاء حساب" : "قم بتسجيل الدخول للمتابعة"}
+            قم بتسجيل الدخول للمتابعة
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Input
-              type="email"
-              placeholder="البريد الإلكتروني"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Input
-              type="password"
-              placeholder="كلمة المرور"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {isSignUp && (
-              <Select value={userType} onValueChange={setUserType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر نوع المستخدم" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="investor">مستثمر</SelectItem>
-                  <SelectItem value="project_owner">طالب تمويل</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button 
-            className="w-full" 
-            onClick={() => handleSubmit(isSignUp ? "signup" : "signin")}
-          >
-            {isSignUp ? "إنشاء حساب" : "تسجيل الدخول"}
-          </Button>
-          <div className="text-sm text-muted-foreground text-center">
-            {isSignUp ? (
+        <CardContent>
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                type="password"
+                placeholder="كلمة المرور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              تسجيل الدخول
+            </Button>
+            <div className="text-sm text-muted-foreground text-center">
               <button 
-                onClick={() => setIsSignUp(false)}
-                className="text-primary hover:underline"
-              >
-                لديك حساب بالفعل؟ قم بتسجيل الدخول
-              </button>
-            ) : (
-              <button 
-                onClick={() => setIsSignUp(true)}
+                onClick={() => setStep("selection")}
                 className="text-primary hover:underline"
               >
                 ليس لديك حساب؟ قم بإنشاء حساب جديد
               </button>
-            )}
-          </div>
-        </CardFooter>
+            </div>
+          </form>
+        </CardContent>
       </Card>
     </div>
   )
