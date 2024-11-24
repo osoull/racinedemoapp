@@ -65,6 +65,11 @@
   html {
     direction: rtl;
   }
+
+  /* Logo styles for dark mode */
+  .dark svg {
+    @apply invert brightness-200;
+  }
 }
 
 @layer components {
