@@ -7,6 +7,7 @@ import { Wallet, Activity, FileText, Users, TrendingUp } from "lucide-react"
 import { StatCard } from "@/components/dashboard/StatCard"
 import { ActivityFeed } from "@/components/dashboard/activity/ActivityFeed"
 import { FundingChart } from "@/components/dashboard/charts/FundingChart"
+import { DashboardNav } from "@/components/dashboard/DashboardNav"
 
 const InvestorDashboard = () => {
   const { user } = useAuth()
@@ -33,7 +34,7 @@ const InvestorDashboard = () => {
   const expectedReturn = totalInvestment * 0.15 // 15% expected return for demonstration
 
   return (
-    <DashboardLayout>
+    <DashboardLayout sidebar={<DashboardNav />}>
       <div className="space-y-4 lg:space-y-6">
         {/* Stats Overview */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
