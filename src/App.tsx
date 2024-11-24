@@ -93,7 +93,7 @@ function App() {
                     path="/investor/portfolio"
                     element={
                       <PrivateRoute allowedRoles={["investor"]}>
-                        <div>Portfolio Page</div>
+                        <Portfolio />
                       </PrivateRoute>
                     }
                   />
