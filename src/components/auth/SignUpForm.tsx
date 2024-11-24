@@ -33,7 +33,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
       return
     }
     try {
-      await signUp(email, password, userType, { phone })
+      await signUp(email, password, userType)
       toast({
         title: "تم إنشاء الحساب بنجاح",
         description: "يرجى تسجيل الدخول للمتابعة",
