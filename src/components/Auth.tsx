@@ -12,7 +12,7 @@ import { SignUpForm } from "./auth/SignUpForm"
 type AuthStep = "selection" | "signup" | "signin";
 
 export function Auth() {
-  const [step, setStep] = useState<AuthStep>("selection")
+  const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState<"investor" | "project_owner">("investor")
@@ -89,7 +89,7 @@ export function Auth() {
       <div className="flex min-h-[80vh] items-center justify-center flex-col">
         <SignUpForm 
           userType={userType}
-          onBack={() => setStep("selection")}
+          onBack={() => setStep("signin")}
           onSuccess={() => setStep("signin")}
         />
       </div>
