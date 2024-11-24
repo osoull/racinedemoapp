@@ -36,6 +36,20 @@ const InvestorDashboard = () => {
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-4 lg:space-y-6">
+        <div className="flex items-center gap-4 mb-4">
+          <img 
+            src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
+            alt="Raseen Logo" 
+            className="h-8 object-contain dark:hidden" 
+          />
+          <img 
+            src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+            alt="Raseen Logo" 
+            className="h-8 object-contain hidden dark:block" 
+          />
+          <h1 className="text-2xl font-bold text-foreground">لوحة تحكم المستثمر</h1>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             icon={TrendingUp}

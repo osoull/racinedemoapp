@@ -37,9 +37,21 @@ export default function AdminDashboard() {
       <div className="space-y-8">
         {isOverviewPage && profile?.first_name && (
           <div className="p-6 bg-card rounded-lg shadow-sm border">
-            <h2 className="text-2xl font-bold text-foreground">
-              مرحباً بك {profile.first_name}
-            </h2>
+            <div className="flex items-center gap-4 mb-4">
+              <img 
+                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
+                alt="Raseen Logo" 
+                className="h-8 object-contain dark:hidden" 
+              />
+              <img 
+                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+                alt="Raseen Logo" 
+                className="h-8 object-contain hidden dark:block" 
+              />
+              <h2 className="text-2xl font-bold text-foreground">
+                مرحباً بك {profile.first_name}
+              </h2>
+            </div>
           </div>
         )}
 

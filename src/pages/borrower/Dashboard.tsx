@@ -18,7 +18,19 @@ export default function BorrowerDashboard() {
   return (
     <DashboardLayout sidebar={<BorrowerSidebar />}>
       <div className="container mx-auto py-8">
-        <h1 className="text-2xl font-bold mb-8 text-foreground">لوحة تحكم المقترض</h1>
+        <div className="flex items-center gap-4 mb-8">
+          <img 
+            src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
+            alt="Raseen Logo" 
+            className="h-8 object-contain dark:hidden" 
+          />
+          <img 
+            src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+            alt="Raseen Logo" 
+            className="h-8 object-contain hidden dark:block" 
+          />
+          <h1 className="text-2xl font-bold text-foreground">لوحة تحكم المقترض</h1>
+        </div>
         <div className="bg-card rounded-lg shadow-sm">
           <BorrowerKYCForm />
         </div>
