@@ -16,18 +16,18 @@ export const SidebarItem = ({ title, icon: Icon, path, description, isActive }: 
       to={path}
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all",
-        "group relative hover:bg-primary/5",
-        isActive && "bg-primary/10 text-primary font-medium"
+        "group relative hover:bg-primary/5 dark:hover:bg-primary/10",
+        isActive && "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground font-medium"
       )}
     >
       <Icon className={cn(
         "h-5 w-5",
-        isActive ? "text-primary" : "text-gray-500 group-hover:text-primary"
+        isActive ? "text-primary dark:text-primary-foreground" : "text-muted-foreground group-hover:text-primary dark:group-hover:text-primary-foreground"
       )} />
       <div className="flex-1">
         <p className="text-sm leading-none mb-1">{title}</p>
         <p className={cn(
-          "text-xs text-gray-500",
+          "text-xs text-muted-foreground",
           "opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         )}>
           {description}

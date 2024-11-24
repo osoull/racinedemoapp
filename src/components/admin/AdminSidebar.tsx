@@ -76,7 +76,7 @@ export const AdminSidebar = () => {
   const { signOut } = useAuth()
 
   return (
-    <div className="flex h-full flex-col bg-white">
+    <div className="flex h-full flex-col bg-background border-l">
       <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
         {menuItems.map((item) => (
           <SidebarItem
@@ -89,7 +89,7 @@ export const AdminSidebar = () => {
       <div className="border-t p-4">
         <Button 
           variant="ghost" 
-          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
           onClick={() => signOut?.()}
         >
           <LogOut className="ml-2 h-5 w-5" />
