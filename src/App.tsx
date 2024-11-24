@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { NotificationsProvider } from "@/contexts/NotificationsContext"
+import { ThemeProvider } from "@/components/ui/theme"
 import { Routes, Route } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
@@ -62,81 +63,83 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <NotificationsProvider>
-          <BrowserRouter>
-            <div className="min-h-screen bg-background font-messiri" dir="rtl">
-              <Routes>
-                <Route path="/" element={<Auth />} />
-                
-                <Route
-                  path="/investor/*"
-                  element={
-                    <PrivateRoute allowedRoles={["investor"]}>
-                      <InvestorDashboard />
-                    </PrivateRoute>
-                  }
-                />
+      <ThemeProvider defaultTheme="system" storageKey="app-theme">
+        <AuthProvider>
+          <NotificationsProvider>
+            <BrowserRouter>
+              <div className="min-h-screen bg-background font-messiri" dir="rtl">
+                <Routes>
+                  <Route path="/" element={<Auth />} />
+                  
+                  <Route
+                    path="/investor/*"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <InvestorDashboard />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/project-owner/*"
-                  element={
-                    <PrivateRoute allowedRoles={["project_owner"]}>
-                      <ProjectOwnerDashboard />
-                    </PrivateRoute>
-                  }
-                />
+                  <Route
+                    path="/project-owner/*"
+                    element={
+                      <PrivateRoute allowedRoles={["project_owner"]}>
+                        <ProjectOwnerDashboard />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/borrower/*"
-                  element={
-                    <PrivateRoute allowedRoles={["borrower"]}>
-                      <BorrowerDashboard />
-                    </PrivateRoute>
-                  }
-                />
+                  <Route
+                    path="/borrower/*"
+                    element={
+                      <PrivateRoute allowedRoles={["borrower"]}>
+                        <BorrowerDashboard />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/admin/*"
-                  element={
-                    <PrivateRoute allowedRoles={["admin"]}>
-                      <AdminDashboard />
-                    </PrivateRoute>
-                  }
-                />
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <PrivateRoute allowedRoles={["admin"]}>
+                        <AdminDashboard />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/admin/investors"
-                  element={
-                    <PrivateRoute allowedRoles={["admin"]}>
-                      <InvestorsPage />
-                    </PrivateRoute>
-                  }
-                />
+                  <Route
+                    path="/admin/investors"
+                    element={
+                      <PrivateRoute allowedRoles={["admin"]}>
+                        <InvestorsPage />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/profile"
-                  element={
-                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
-                      <Profile />
-                    </PrivateRoute>
-                  }
-                />
+                  <Route
+                    path="/profile"
+                    element={
+                      <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
+                        <Profile />
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/settings"
-                  element={
-                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
-                      <Settings />
-                    </PrivateRoute>
-                  }
-                />
-              </Routes>
-              <Toaster />
-            </div>
-          </BrowserRouter>
-        </NotificationsProvider>
-      </AuthProvider>
+                  <Route
+                    path="/settings"
+                    element={
+                      <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
+                        <Settings />
+                      </PrivateRoute>
+                    }
+                  />
+                </Routes>
+                <Toaster />
+              </div>
+            </BrowserRouter>
+          </NotificationsProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }
