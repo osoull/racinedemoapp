@@ -20,22 +20,31 @@ type Project = Tables<"projects"> & {
   };
 };
 
-const ProjectManagement = () => {
+interface ProjectManagementProps {
+  filter?: string;
+}
+
+const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   const { data: projects, isLoading } = useQuery({
-    queryKey: ["admin-projects"],
+    queryKey: ["admin-projects", filter],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const query = supabase
         .from("projects")
         .select(`
           *,
           owner:profiles(first_name, middle_name, last_name)
         `);
 
+      if (filter) {
+        query.eq('status', filter);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as Project[];
     },

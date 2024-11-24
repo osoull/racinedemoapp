@@ -1,13 +1,11 @@
-export type UserType = "investor" | "project_owner" | "investment_manager" | "admin";
-
-export interface Profile {
+export interface User {
   id: string;
-  email: string | null;
-  first_name: string | null;
-  middle_name: string | null;
-  last_name: string | null;
-  user_type: UserType | null;
-  kyc_status: string | null;
-  national_id: string | null;
+  email: string;
+  first_name: string;
+  last_name: string;
+  user_type: 'investor' | 'project_owner' | 'admin' | 'investment_manager';
+  kyc_status?: string;
   created_at: string;
 }
+
+export type UserType = User['user_type'];
