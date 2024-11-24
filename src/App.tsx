@@ -12,14 +12,45 @@ import AdminDashboard from "@/pages/admin/Dashboard"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/integrations/supabase/client"
+import { useEffect, useState } from "react"
 import "./App.css"
 
 const queryClient = new QueryClient()
 
 function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) {
   const { user, loading } = useAuth()
+  const [userType, setUserType] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  if (loading) {
+  useEffect(() => {
+    async function getUserType() {
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+
+      if (error) {
+        console.error('Error fetching user type:', error)
+        setIsLoading(false)
+        return
+      }
+
+      console.log('Profile data:', profile)
+      setUserType(profile?.user_type)
+      setIsLoading(false)
+    }
+
+    getUserType()
+  }, [user])
+
+  if (loading || isLoading) {
     return <div>Loading...</div>
   }
 
@@ -27,11 +58,7 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
     return <Navigate to="/" replace />
   }
 
-  // Check user type from profiles table
-  const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
-  console.log('Current user type:', userType)
-  
-  if (!allowedRoles.includes(userType)) {
+  if (!userType || !allowedRoles.includes(userType)) {
     console.log('Access denied. User type:', userType, 'Allowed roles:', allowedRoles)
     return <Navigate to="/" replace />
   }
@@ -55,11 +82,33 @@ function App() {
 
 function AppContent() {
   const { user } = useAuth()
+  const [userType, setUserType] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function getUserType() {
+      if (!user) return
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+
+      if (error) {
+        console.error('Error fetching user type:', error)
+        return
+      }
+
+      console.log('Profile data for redirect:', profile)
+      setUserType(profile?.user_type)
+    }
+
+    getUserType()
+  }, [user])
 
   const getDashboardRoute = () => {
-    if (!user) return "/"
+    if (!user || !userType) return "/"
     
-    const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
     console.log('Redirecting to dashboard for user type:', userType)
     
     switch (userType) {

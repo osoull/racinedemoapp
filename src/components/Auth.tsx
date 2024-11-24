@@ -23,17 +23,25 @@ export function Auth() {
         const { error } = await signIn(email, password)
         if (error) throw error
         
-        // Get the user and their profile after sign in
+        // Get the user after sign in
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError) throw userError
         if (!user) throw new Error("No user found after sign in")
 
-        // Get user type from metadata
-        const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
-        console.log('User type after signin:', userType)
+        // Get user type from profiles table
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('id', user.id)
+          .single()
+
+        if (profileError) throw profileError
+        if (!profile) throw new Error("No profile found")
+
+        console.log('User profile after signin:', profile)
 
         // Redirect based on user type
-        switch (userType) {
+        switch (profile.user_type) {
           case "project_owner":
             navigate("/project-owner")
             break
