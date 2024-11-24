@@ -6,8 +6,6 @@ import { NotificationsProvider } from "@/contexts/NotificationsContext"
 import Footer from "@/components/Footer"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
-import AdminDashboard from "@/pages/admin/Dashboard"
-import InvestmentManagerDashboard from "@/pages/InvestmentManagerDashboard"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
 import Profile from "@/pages/Profile"
@@ -39,10 +37,6 @@ function App() {
     
     const userType = user.user_metadata?.user_type
     switch (userType) {
-      case "admin":
-        return "/admin"
-      case "investment_manager":
-        return "/investment-manager"
       case "project_owner":
         return "/project-owner"
       case "investor":
@@ -62,22 +56,6 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Auth />} />
                   <Route
-                    path="/admin/*"
-                    element={
-                      <PrivateRoute allowedRoles={["admin"]}>
-                        <AdminDashboard />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
-                    path="/investment-manager/*"
-                    element={
-                      <PrivateRoute allowedRoles={["investment_manager"]}>
-                        <InvestmentManagerDashboard />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
                     path="/investor/*"
                     element={
                       <PrivateRoute allowedRoles={["investor"]}>
@@ -96,7 +74,7 @@ function App() {
                   <Route
                     path="/profile"
                     element={
-                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor", "project_owner"]}>
+                      <PrivateRoute allowedRoles={["investor", "project_owner"]}>
                         <Profile />
                       </PrivateRoute>
                     }
@@ -104,7 +82,7 @@ function App() {
                   <Route
                     path="/settings"
                     element={
-                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor", "project_owner"]}>
+                      <PrivateRoute allowedRoles={["investor", "project_owner"]}>
                         <Settings />
                       </PrivateRoute>
                     }
