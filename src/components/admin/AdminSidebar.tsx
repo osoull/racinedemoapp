@@ -22,7 +22,7 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "إدارة المستثمرين",
+    title: "المستثمرين",
     icon: Users,
     path: "/admin/investors",
     description: "إدارة المستثمرين"
