@@ -12,10 +12,27 @@ import {
 import { useAuth } from "@/contexts/AuthContext"
 import { LogOut, Settings, User } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 export function UserNav() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    enabled: !!user,
+  })
 
   const handleSignOut = async () => {
     await signOut()
@@ -27,7 +44,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email || ""} />
+            <AvatarImage src={profile?.avatar_url} alt={user?.email || ""} />
             <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
