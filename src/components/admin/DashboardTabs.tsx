@@ -5,7 +5,6 @@ import UserManagement from "./UserManagement"
 import ProjectManagement from "./ProjectManagement"
 import CommissionManagement from "./CommissionManagement"
 import ComplianceAudit from "./ComplianceAudit"
-import ContentManagement from "./ContentManagement"
 import SupportTools from "./SupportTools"
 
 interface StatCardProps {
@@ -75,7 +74,6 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
         {currentPath === "/admin/projects" && <ProjectManagement />}
         {currentPath === "/admin/commissions" && <CommissionManagement />}
         {currentPath === "/admin/compliance" && <ComplianceAudit />}
-        {currentPath === "/admin/content" && <ContentManagement />}
         {currentPath === "/admin/support" && <SupportTools />}
       </div>
     </div>
