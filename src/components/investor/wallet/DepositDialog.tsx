@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { CreditCard, Building2, Copy, AlertCircle, ArrowDownLeft } from "lucide-react"
 import { useBankDetails } from "@/hooks/useBankDetails"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2 } from "lucide-react"
 
 interface DepositDialogProps {
   onSuccess?: () => void;
@@ -18,7 +19,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
   const [amount, setAmount] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const { toast } = useToast()
-  const { data: bankDetails, isLoading } = useBankDetails()
+  const { data: bankDetails, isLoading, error } = useBankDetails()
 
   const handleCardDeposit = async () => {
     toast({
@@ -107,7 +108,16 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
               </Alert>
 
               {isLoading ? (
-                <div>جاري تحميل معلومات الحساب...</div>
+                <div className="flex items-center justify-center p-4">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : error ? (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    حدث خطأ أثناء تحميل المعلومات البنكية
+                  </AlertDescription>
+                </Alert>
               ) : bankDetails ? (
                 <div className="rounded-lg border p-4 space-y-4 bg-gray-50">
                   <div className="space-y-2">
@@ -167,7 +177,12 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
                   </div>
                 </div>
               ) : (
-                <div>لا توجد معلومات بنكية متاحة</div>
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    لا توجد معلومات بنكية متاحة
+                  </AlertDescription>
+                </Alert>
               )}
               <Button onClick={handleBankTransfer} className="w-full">
                 تأكيد التحويل البنكي
