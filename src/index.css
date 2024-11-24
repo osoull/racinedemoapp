@@ -71,6 +71,18 @@
     @apply text-white;
   }
 
+  /* Ensure icons in buttons and interactive elements are visible in dark mode */
+  .dark button svg,
+  .dark a svg,
+  .dark .interactive-icon svg {
+    @apply text-white hover:text-primary-200;
+  }
+
+  /* Ensure muted icons are slightly dimmed but still visible */
+  .dark .text-muted-foreground svg {
+    @apply text-white/70 hover:text-white;
+  }
+
   /* Filter styles for dark mode */
   .dark select,
   .dark input[type="text"],
