@@ -38,10 +38,17 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
               </SheetContent>
             </Sheet>
             
+            {/* Logo - Light mode */}
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg"
               alt="رسين"
-              className="h-16" 
+              className="h-8 object-contain dark:hidden" 
+            />
+            {/* Logo - Dark mode */}
+            <img 
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full-white.svg"
+              alt="رسين"
+              className="h-8 object-contain hidden dark:block" 
             />
           </div>
           
