@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { UserPlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type CreateUserDialogProps = {
   onUserCreated: () => void;
@@ -20,24 +21,39 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
   const [lastName, setLastName] = useState("");
   const [userType, setUserType] = useState("investor");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      // 1. Create the user in auth.users
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             first_name: firstName,
             last_name: lastName,
-            user_type: userType,
+            user_type: userType, // This will be used by the handle_new_user trigger
           },
         },
       });
 
       if (signUpError) throw signUpError;
+
+      // 2. Update the profile with additional information
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          user_type: userType,
+          email: email,
+        })
+        .eq('id', authData.user?.id);
+
+      if (updateError) throw updateError;
 
       toast({
         title: "نجاح",
@@ -53,6 +69,7 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
       setFirstName("");
       setLastName("");
       setUserType("investor");
+
     } catch (error) {
       toast({
         title: "خطأ",
