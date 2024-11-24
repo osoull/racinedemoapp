@@ -49,8 +49,8 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
               <TableCell>{transaction.amount.toLocaleString()} ريال</TableCell>
               <TableCell>
                 <Badge variant={
-                  transaction.status === 'completed' ? 'success' :
-                  transaction.status === 'pending' ? 'warning' : 'destructive'
+                  transaction.status === 'completed' ? 'default' :
+                  transaction.status === 'pending' ? 'secondary' : 'destructive'
                 }>
                   {transaction.status === 'completed' ? 'مكتمل' :
                    transaction.status === 'pending' ? 'قيد المعالجة' : 'ملغي'}
