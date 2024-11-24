@@ -61,11 +61,11 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
-            <User className="ml-2 h-4 w-4" />
+            <User className="ml-2 h-4 w-4 dark:text-white" />
             <span>الملف الشخصي</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
-            <Settings className="ml-2 h-4 w-4" />
+            <Settings className="ml-2 h-4 w-4 dark:text-white" />
             <span>الإعدادات</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
