@@ -39,12 +39,12 @@ const InvestorDashboard = () => {
         <div className="flex items-center gap-4 mb-4">
           <img 
             src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-            alt="Raseen Logo" 
+            alt="رسين"
             className="h-8 object-contain dark:hidden" 
           />
           <img 
             src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-            alt="Raseen Logo" 
+            alt="رسين"
             className="h-8 object-contain hidden dark:block" 
           />
           <h1 className="text-2xl font-bold text-foreground">لوحة تحكم المستثمر</h1>
