@@ -1,5 +1,5 @@
 import { UserCard } from "./UserCard";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User } from "@/types/user";
 
 type UserListProps = {
@@ -30,20 +30,27 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
 
   return (
     <div className="w-full space-y-6" dir="rtl">
-      <Tabs defaultValue="all">
-        <TabsContent value="all" className="mt-4 sm:mt-6 w-full">
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="all">جميع المستخدمين</TabsTrigger>
+          <TabsTrigger value="investor">المستثمرون</TabsTrigger>
+          <TabsTrigger value="investment_manager">مديرو الاستثمار</TabsTrigger>
+          <TabsTrigger value="admin">المشرفون</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all">
           <UserGrid filteredUsers={users || []} />
         </TabsContent>
 
-        <TabsContent value="investor" className="mt-4 sm:mt-6 w-full">
+        <TabsContent value="investor">
           <UserGrid filteredUsers={filterUsersByType("investor")} />
         </TabsContent>
 
-        <TabsContent value="investment_manager" className="mt-4 sm:mt-6 w-full">
+        <TabsContent value="investment_manager">
           <UserGrid filteredUsers={filterUsersByType("investment_manager")} />
         </TabsContent>
 
-        <TabsContent value="admin" className="mt-4 sm:mt-6 w-full">
+        <TabsContent value="admin">
           <UserGrid filteredUsers={filterUsersByType("admin")} />
         </TabsContent>
       </Tabs>
