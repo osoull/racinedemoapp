@@ -8,6 +8,8 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import InvestmentManagerDashboard from "@/pages/InvestmentManagerDashboard"
+import InvestorDashboard from "@/pages/investor/Dashboard"
+import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
@@ -30,6 +32,26 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
 }
 
 function App() {
+  const { user } = useAuth()
+
+  const getDashboardRoute = () => {
+    if (!user) return "/"
+    
+    const userType = user.user_metadata?.user_type
+    switch (userType) {
+      case "admin":
+        return "/admin"
+      case "investment_manager":
+        return "/investment-manager"
+      case "project_owner":
+        return "/project-owner"
+      case "investor":
+        return "/investor"
+      default:
+        return "/"
+    }
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -48,7 +70,7 @@ function App() {
                     }
                   />
                   <Route
-                    path="/investment-manager"
+                    path="/investment-manager/*"
                     element={
                       <PrivateRoute allowedRoles={["investment_manager"]}>
                         <InvestmentManagerDashboard />
@@ -56,9 +78,25 @@ function App() {
                     }
                   />
                   <Route
+                    path="/investor/*"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <InvestorDashboard />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/project-owner/*"
+                    element={
+                      <PrivateRoute allowedRoles={["project_owner"]}>
+                        <ProjectOwnerDashboard />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
                     path="/profile"
                     element={
-                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor"]}>
+                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor", "project_owner"]}>
                         <Profile />
                       </PrivateRoute>
                     }
@@ -66,11 +104,12 @@ function App() {
                   <Route
                     path="/settings"
                     element={
-                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor"]}>
+                      <PrivateRoute allowedRoles={["admin", "investment_manager", "investor", "project_owner"]}>
                         <Settings />
                       </PrivateRoute>
                     }
                   />
+                  <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
                 </Routes>
               </main>
               <Footer />
