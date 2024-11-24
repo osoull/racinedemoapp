@@ -3,10 +3,11 @@ import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
-import { BankAccountDetails, KYCFormData } from "@/types/kyc"
+import { CompanyInfoSection } from "./kyc/CompanyInfoSection"
+import { BankDetailsSection } from "./kyc/BankDetailsSection"
+import { KYCFormData } from "@/types/kyc"
 
 export function BorrowerKYCForm() {
   const { user } = useAuth()
@@ -54,7 +55,7 @@ export function BorrowerKYCForm() {
           ...data,
           annual_revenue: Number(data.annual_revenue) || 0,
           number_of_employees: Number(data.number_of_employees) || 0,
-          bank_account_details: data.bank_account_details as BankAccountDetails || {
+          bank_account_details: data.bank_account_details as any || {
             bank_name: "",
             account_number: "",
             iban: ""
@@ -84,7 +85,7 @@ export function BorrowerKYCForm() {
           ...kycData,
           annual_revenue: Number(kycData.annual_revenue),
           number_of_employees: Number(kycData.number_of_employees),
-          bank_account_details: kycData.bank_account_details,
+          bank_account_details: kycData.bank_account_details as any,
           updated_at: new Date().toISOString(),
         })
 
@@ -121,131 +122,8 @@ export function BorrowerKYCForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">تاريخ تسجيل الشركة</label>
-              <Input
-                type="date"
-                value={kycData.company_registration_date}
-                onChange={(e) => setKycData({ ...kycData, company_registration_date: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">رقم السجل التجاري</label>
-              <Input
-                value={kycData.company_registration_number}
-                onChange={(e) => setKycData({ ...kycData, company_registration_number: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">الرقم الضريبي</label>
-              <Input
-                value={kycData.tax_identification_number}
-                onChange={(e) => setKycData({ ...kycData, tax_identification_number: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">اسم الممثل القانوني</label>
-              <Input
-                value={kycData.legal_representative_name}
-                onChange={(e) => setKycData({ ...kycData, legal_representative_name: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">رقم هوية الممثل القانوني</label>
-              <Input
-                value={kycData.legal_representative_id}
-                onChange={(e) => setKycData({ ...kycData, legal_representative_id: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">الإيرادات السنوية</label>
-              <Input
-                type="number"
-                value={kycData.annual_revenue}
-                onChange={(e) => setKycData({ ...kycData, annual_revenue: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">عدد الموظفين</label>
-              <Input
-                type="number"
-                value={kycData.number_of_employees}
-                onChange={(e) => setKycData({ ...kycData, number_of_employees: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">القطاع</label>
-              <Input
-                value={kycData.industry_sector}
-                onChange={(e) => setKycData({ ...kycData, industry_sector: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">الموقع الإلكتروني</label>
-              <Input
-                type="url"
-                value={kycData.company_website}
-                onChange={(e) => setKycData({ ...kycData, company_website: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="font-semibold">معلومات الحساب البنكي</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">اسم البنك</label>
-                <Input
-                  value={kycData.bank_account_details.bank_name}
-                  onChange={(e) => setKycData({
-                    ...kycData,
-                    bank_account_details: {
-                      ...kycData.bank_account_details,
-                      bank_name: e.target.value
-                    }
-                  })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">رقم الحساب</label>
-                <Input
-                  value={kycData.bank_account_details.account_number}
-                  onChange={(e) => setKycData({
-                    ...kycData,
-                    bank_account_details: {
-                      ...kycData.bank_account_details,
-                      account_number: e.target.value
-                    }
-                  })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">IBAN</label>
-                <Input
-                  value={kycData.bank_account_details.iban}
-                  onChange={(e) => setKycData({
-                    ...kycData,
-                    bank_account_details: {
-                      ...kycData.bank_account_details,
-                      iban: e.target.value
-                    }
-                  })}
-                />
-              </div>
-            </div>
-          </div>
-
+          <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
+          <BankDetailsSection kycData={kycData} setKycData={setKycData} />
           <Button type="submit" disabled={saving}>
             {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
             حفظ المعلومات

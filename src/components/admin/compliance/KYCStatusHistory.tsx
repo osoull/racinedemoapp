@@ -5,6 +5,12 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface KYCHistoryEntry {
   id: string;
+  user_id: string | null;
+  old_status: string | null;
+  new_status: string | null;
+  changed_by: string | null;
+  notes: string | null;
+  created_at: string | null;
   user: {
     first_name: string;
     last_name: string;
@@ -13,9 +19,6 @@ interface KYCHistoryEntry {
     first_name: string;
     last_name: string;
   } | null;
-  old_status: string;
-  new_status: string;
-  created_at: string;
 }
 
 export function KYCStatusHistory() {
@@ -38,7 +41,7 @@ export function KYCStatusHistory() {
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data
+      return data as KYCHistoryEntry[]
     }
   })
 
@@ -66,7 +69,7 @@ export function KYCStatusHistory() {
                   بواسطة: {entry.admin?.first_name} {entry.admin?.last_name}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {new Date(entry.created_at).toLocaleString('ar-SA')}
+                  {new Date(entry.created_at || '').toLocaleString('ar-SA')}
                 </p>
               </div>
             ))}
