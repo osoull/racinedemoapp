@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import BorrowerDashboard from "@/pages/borrower/Dashboard";
 import SubmitProject from "@/pages/borrower/SubmitProject";
@@ -26,7 +25,7 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<SignIn />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/borrower/dashboard" element={<BorrowerDashboard />} />
             <Route path="/borrower/submit-project" element={<SubmitProject />} />
