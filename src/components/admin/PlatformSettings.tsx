@@ -15,8 +15,12 @@ export default function PlatformSettings() {
     const path = location.pathname.split("/").pop()
     if (path && path !== "platform-settings") {
       setActiveTab(path)
+    } else {
+      // Set default tab to "general" when loading the page
+      setActiveTab("general")
+      navigate("/admin/settings/general", { replace: true })
     }
-  }, [location])
+  }, [location, navigate])
 
   const handleTabChange = (value: string) => {
     setActiveTab(value)
@@ -29,12 +33,12 @@ export default function PlatformSettings() {
         <CardTitle>إعدادات المنصة</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <Tabs dir="rtl" value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="general">عام</TabsTrigger>
-            <TabsTrigger value="bank">الحساب البنكي</TabsTrigger>
-            <TabsTrigger value="commissions">العمولات</TabsTrigger>
             <TabsTrigger value="compliance">متطلبات CMA</TabsTrigger>
+            <TabsTrigger value="commissions">العمولات</TabsTrigger>
+            <TabsTrigger value="bank">الحساب البنكي</TabsTrigger>
+            <TabsTrigger value="general">عام</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">
