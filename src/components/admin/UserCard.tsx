@@ -34,32 +34,32 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
     .join(" ");
 
   return (
-    <Card className="p-4">
-      <div className="flex flex-col space-y-4">
+    <Card className="p-3 sm:p-4 transition-all hover:shadow-md">
+      <div className="flex flex-col space-y-3 sm:space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex flex-col">
-            <h3 className="font-semibold">{fullName}</h3>
-            <div className="flex items-center text-sm text-gray-500">
-              <Mail className="ml-2 h-4 w-4" />
-              {user.email}
+            <h3 className="text-sm sm:text-base font-semibold">{fullName}</h3>
+            <div className="flex items-center text-xs sm:text-sm text-gray-500 mt-1">
+              <Mail className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2" />
+              <span className="truncate">{user.email}</span>
             </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex space-x-1 sm:space-x-2">
             <EditUserDialog user={user} onSave={onEdit} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
                   <UserCog className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onUpdateType(user.id, "investor")}>
+              <DropdownMenuContent align="end" className="w-48 sm:w-56">
+                <DropdownMenuItem onClick={() => onUpdateType(user.id, "investor")} className="text-xs sm:text-sm">
                   تعيين كمستثمر
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onUpdateType(user.id, "investment_manager")}>
+                <DropdownMenuItem onClick={() => onUpdateType(user.id, "investment_manager")} className="text-xs sm:text-sm">
                   تعيين كمدير استثمار
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onUpdateType(user.id, "admin")}>
+                <DropdownMenuItem onClick={() => onUpdateType(user.id, "admin")} className="text-xs sm:text-sm">
                   تعيين كمشرف
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -67,13 +67,14 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
             <Button
               variant="destructive"
               size="icon"
+              className="h-8 w-8 sm:h-9 sm:w-9"
               onClick={() => onDelete(user)}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           <UserTypeLabel type={user.user_type} />
           <KycStatusLabel status={user.kyc_status} />
         </div>

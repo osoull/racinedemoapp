@@ -14,63 +14,37 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
     return users?.filter(user => user.user_type === type) || [];
   };
 
+  const UserGrid = ({ filteredUsers }: { filteredUsers: User[] }) => (
+    <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {filteredUsers.map((user) => (
+        <UserCard
+          key={user.id}
+          user={user}
+          onDelete={onDelete}
+          onUpdateType={onUpdateType}
+          onEdit={onEdit}
+        />
+      ))}
+    </div>
+  );
+
   return (
-    <>
-      <TabsContent value="all" className="mt-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {users?.map((user) => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onDelete={onDelete}
-              onUpdateType={onUpdateType}
-              onEdit={onEdit}
-            />
-          ))}
-        </div>
+    <div className="space-y-6">
+      <TabsContent value="all" className="mt-4 sm:mt-6">
+        <UserGrid filteredUsers={users || []} />
       </TabsContent>
 
-      <TabsContent value="investor" className="mt-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filterUsersByType("investor").map((user) => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onDelete={onDelete}
-              onUpdateType={onUpdateType}
-              onEdit={onEdit}
-            />
-          ))}
-        </div>
+      <TabsContent value="investor" className="mt-4 sm:mt-6">
+        <UserGrid filteredUsers={filterUsersByType("investor")} />
       </TabsContent>
 
-      <TabsContent value="investment_manager" className="mt-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filterUsersByType("investment_manager").map((user) => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onDelete={onDelete}
-              onUpdateType={onUpdateType}
-              onEdit={onEdit}
-            />
-          ))}
-        </div>
+      <TabsContent value="investment_manager" className="mt-4 sm:mt-6">
+        <UserGrid filteredUsers={filterUsersByType("investment_manager")} />
       </TabsContent>
 
-      <TabsContent value="admin" className="mt-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filterUsersByType("admin").map((user) => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onDelete={onDelete}
-              onUpdateType={onUpdateType}
-              onEdit={onEdit}
-            />
-          ))}
-        </div>
+      <TabsContent value="admin" className="mt-4 sm:mt-6">
+        <UserGrid filteredUsers={filterUsersByType("admin")} />
       </TabsContent>
-    </>
+    </div>
   );
 }

@@ -15,14 +15,14 @@ interface StatCardProps {
 }
 
 const StatCard = ({ icon: Icon, title, value, className }: StatCardProps) => (
-  <Card className={`p-4 sm:p-6 transition-all hover:shadow-md ${className}`}>
-    <div className="flex items-center gap-3 sm:gap-4">
+  <Card className={`p-3 sm:p-4 lg:p-6 transition-all hover:shadow-md ${className}`}>
+    <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
       <div className="rounded-full bg-primary/10 p-2 sm:p-3">
-        <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+        <Icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
       </div>
       <div>
         <p className="text-xs sm:text-sm text-gray-500">{title}</p>
-        <p className="text-lg sm:text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-base sm:text-lg lg:text-2xl font-bold text-gray-900">{value}</p>
       </div>
     </div>
   </Card>
@@ -70,22 +70,34 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
       
       <div className="p-3 sm:p-4 lg:p-6">
         <Tabs defaultValue="overview" className="w-full space-y-4">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 bg-muted p-1 rounded-lg">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-primary-50">
+          <TabsList className="w-full flex flex-wrap gap-2 bg-muted p-1 rounded-lg">
+            <TabsTrigger 
+              value="overview" 
+              className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
+            >
               <Users className="h-4 w-4 mr-2" />
-              نظرة عامة
+              <span className="hidden sm:inline">نظرة عامة</span>
             </TabsTrigger>
-            <TabsTrigger value="projects" className="data-[state=active]:bg-primary-50">
+            <TabsTrigger 
+              value="projects" 
+              className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
+            >
               <Briefcase className="h-4 w-4 mr-2" />
-              المشاريع
+              <span className="hidden sm:inline">المشاريع</span>
             </TabsTrigger>
-            <TabsTrigger value="investments" className="data-[state=active]:bg-primary-50">
+            <TabsTrigger 
+              value="investments" 
+              className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
+            >
               <Activity className="h-4 w-4 mr-2" />
-              الاستثمارات
+              <span className="hidden sm:inline">الاستثمارات</span>
             </TabsTrigger>
-            <TabsTrigger value="funding" className="data-[state=active]:bg-primary-50">
+            <TabsTrigger 
+              value="funding" 
+              className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
+            >
               <Wallet className="h-4 w-4 mr-2" />
-              التمويل
+              <span className="hidden sm:inline">التمويل</span>
             </TabsTrigger>
           </TabsList>
 
