@@ -7,7 +7,6 @@ import { ThemeProvider } from "@/components/ui/theme"
 import { Routes, Route } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
-import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import InvestorsPage from "@/pages/admin/investors"
@@ -81,15 +80,6 @@ function App() {
                   />
 
                   <Route
-                    path="/project-owner/*"
-                    element={
-                      <PrivateRoute allowedRoles={["project_owner"]}>
-                        <ProjectOwnerDashboard />
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
                     path="/borrower/*"
                     element={
                       <PrivateRoute allowedRoles={["borrower"]}>
@@ -119,7 +109,7 @@ function App() {
                   <Route
                     path="/profile"
                     element={
-                      <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
+                      <PrivateRoute allowedRoles={["investor", "admin", "borrower"]}>
                         <Profile />
                       </PrivateRoute>
                     }
@@ -128,7 +118,7 @@ function App() {
                   <Route
                     path="/settings"
                     element={
-                      <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
+                      <PrivateRoute allowedRoles={["investor", "admin", "borrower"]}>
                         <Settings />
                       </PrivateRoute>
                     }
