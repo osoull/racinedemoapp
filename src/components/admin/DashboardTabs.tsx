@@ -15,14 +15,14 @@ interface StatCardProps {
 }
 
 const StatCard = ({ icon: Icon, title, value, className }: StatCardProps) => (
-  <Card className={`p-6 ${className}`}>
-    <div className="flex items-center gap-4">
-      <div className="rounded-full bg-primary/10 p-3">
-        <Icon className="h-6 w-6 text-primary" />
+  <Card className={`p-4 sm:p-6 transition-all hover:shadow-md ${className}`}>
+    <div className="flex items-center gap-3 sm:gap-4">
+      <div className="rounded-full bg-primary/10 p-2 sm:p-3">
+        <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
       </div>
       <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-xs sm:text-sm text-gray-500">{title}</p>
+        <p className="text-lg sm:text-2xl font-bold text-gray-900">{value}</p>
       </div>
     </div>
   </Card>
@@ -44,7 +44,7 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
   return (
     <div className="rounded-lg border bg-white shadow-sm">
       {isOverview && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
           <StatCard
             icon={Users}
             title="إجمالي المستخدمين"
@@ -68,13 +68,36 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
         </div>
       )}
       
-      <div className="p-6">
-        {currentPath === "/admin" && <UserManagement />}
-        {currentPath === "/admin/users" && <UserManagement />}
-        {currentPath === "/admin/projects" && <ProjectManagement />}
-        {currentPath === "/admin/commissions" && <CommissionManagement />}
-        {currentPath === "/admin/compliance" && <ComplianceAudit />}
-        {currentPath === "/admin/support" && <SupportTools />}
+      <div className="p-3 sm:p-4 lg:p-6">
+        <Tabs defaultValue="overview" className="w-full space-y-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 bg-muted p-1 rounded-lg">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-primary-50">
+              <Users className="h-4 w-4 mr-2" />
+              نظرة عامة
+            </TabsTrigger>
+            <TabsTrigger value="projects" className="data-[state=active]:bg-primary-50">
+              <Briefcase className="h-4 w-4 mr-2" />
+              المشاريع
+            </TabsTrigger>
+            <TabsTrigger value="investments" className="data-[state=active]:bg-primary-50">
+              <Activity className="h-4 w-4 mr-2" />
+              الاستثمارات
+            </TabsTrigger>
+            <TabsTrigger value="funding" className="data-[state=active]:bg-primary-50">
+              <Wallet className="h-4 w-4 mr-2" />
+              التمويل
+            </TabsTrigger>
+          </TabsList>
+
+          <div className="mt-4 space-y-4">
+            {currentPath === "/admin" && <UserManagement />}
+            {currentPath === "/admin/users" && <UserManagement />}
+            {currentPath === "/admin/projects" && <ProjectManagement />}
+            {currentPath === "/admin/commissions" && <CommissionManagement />}
+            {currentPath === "/admin/compliance" && <ComplianceAudit />}
+            {currentPath === "/admin/support" && <SupportTools />}
+          </div>
+        </Tabs>
       </div>
     </div>
   )
