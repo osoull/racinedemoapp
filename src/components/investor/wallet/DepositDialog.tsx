@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { CreditCard, Building2, Copy } from "lucide-react"
+import { CreditCard, Building2, Copy, AlertCircle } from "lucide-react"
 import { useBankDetails } from "@/hooks/useBankDetails"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface DepositDialogProps {
   onSuccess?: () => void;
@@ -39,8 +40,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
       if (error) throw error
 
       toast({
-        title: "تم إرسال طلب الإيداع",
-        description: "سيتم مراجعة التحويل وتحديث رصيدك قريباً"
+        title: "تم استلام طلب الإيداع بنجاح",
+        description: "سيتم تحديث رصيدك تلقائياً بمجرد استلام وتأكيد التحويل البنكي"
       })
       setIsOpen(false)
       setAmount("")
@@ -97,6 +98,13 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
             </TabsList>
 
             <TabsContent value="bank" className="space-y-4">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  بعد إتمام التحويل البنكي، سيتم مراجعة العملية وتحديث رصيدك تلقائياً خلال يوم عمل واحد
+                </AlertDescription>
+              </Alert>
+
               {isLoading ? (
                 <div>جاري تحميل معلومات الحساب...</div>
               ) : bankDetails ? (
