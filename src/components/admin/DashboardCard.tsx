@@ -33,19 +33,19 @@ const DashboardCard = ({
   return (
     <Card 
       className={cn(
-        "dashboard-card cursor-pointer",
+        "dashboard-card cursor-pointer group",
         loading && "animate-pulse",
         className
       )}
       onClick={handleClick}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center gap-4">
-          <div className="rounded-xl bg-primary-50 p-3">
+          <div className="rounded-xl bg-primary-50 p-3 group-hover:bg-primary-100 transition-colors">
             <Icon className="h-6 w-6 text-primary" />
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-1">{title}</h3>
+          <div className="flex-1 space-y-2">
+            <h3 className="text-lg font-semibold">{title}</h3>
             <p className="text-sm text-muted-foreground">{description}</p>
             {value && (
               <p className="text-xl font-bold text-primary mt-2">{value}</p>

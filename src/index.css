@@ -33,7 +33,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased min-h-screen;
   }
 
   /* RTL Support */
@@ -56,11 +56,18 @@
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2 shadow-sm;
   }
 
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1 rounded-xl border bg-card p-6;
+  .dashboard-card {
+    @apply rounded-xl border bg-card p-4 sm:p-6 shadow-card hover:shadow-card-hover transition-all duration-200;
   }
 
-  /* Navigation styles */
+  .dashboard-stat-card {
+    @apply dashboard-card flex flex-col gap-4 animate-scale-in;
+  }
+
+  .dashboard-content-card {
+    @apply dashboard-card p-4 sm:p-6 lg:p-8;
+  }
+
   .nav-link {
     @apply flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-primary hover:bg-primary-50;
   }
@@ -69,17 +76,37 @@
     @apply bg-primary-100 text-primary font-medium;
   }
 
-  /* Tabs styles */
   .custom-tab {
     @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground;
   }
 
-  .dashboard-card {
-    @apply rounded-xl border bg-card p-6 shadow-sm hover:shadow-md transition-all duration-200;
-  }
-
-  /* Footer styles */
   .footer-link {
     @apply transition-colors hover:text-primary;
+  }
+
+  /* Responsive Grid Layout */
+  .dashboard-grid {
+    @apply grid gap-4 sm:gap-6 md:gap-8;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
+
+  /* Card Header Styles */
+  .card-header {
+    @apply flex items-center justify-between mb-4 sm:mb-6;
+  }
+
+  /* Card Content Styles */
+  .card-content {
+    @apply space-y-4;
+  }
+
+  /* Stat Value Styles */
+  .stat-value {
+    @apply text-2xl sm:text-3xl font-bold text-primary;
+  }
+
+  /* Stat Label Styles */
+  .stat-label {
+    @apply text-sm sm:text-base text-gray-500;
   }
 }
