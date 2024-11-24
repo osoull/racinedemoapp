@@ -8,6 +8,7 @@ import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
+import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import InvestorsPage from "@/pages/admin/investors"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
@@ -87,6 +88,15 @@ function App() {
                 />
 
                 <Route
+                  path="/borrower/*"
+                  element={
+                    <PrivateRoute allowedRoles={["borrower"]}>
+                      <BorrowerDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
                   path="/admin/*"
                   element={
                     <PrivateRoute allowedRoles={["admin"]}>
@@ -107,7 +117,7 @@ function App() {
                 <Route
                   path="/profile"
                   element={
-                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
+                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
                       <Profile />
                     </PrivateRoute>
                   }
@@ -116,7 +126,7 @@ function App() {
                 <Route
                   path="/settings"
                   element={
-                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
+                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin", "borrower"]}>
                       <Settings />
                     </PrivateRoute>
                   }
