@@ -1,10 +1,15 @@
 import { Routes, Route } from "react-router-dom"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
+import UserManagement from "@/components/admin/UserManagement"
+import ProjectManagement from "@/components/admin/ProjectManagement"
+import ComplianceAudit from "@/components/admin/ComplianceAudit"
+import PlatformSettings from "@/components/admin/PlatformSettings"
+import CommissionManagement from "@/components/admin/CommissionManagement"
 import {
   Users,
   Briefcase,
@@ -110,7 +115,6 @@ export default function AdminDashboard() {
 
         <Routes>
           <Route index element={<DashboardOverview />} />
-          {/* Business Features Routes */}
           <Route path="users" element={<UserManagement />} />
           <Route path="users/investors" element={<UserManagement filter="investor" />} />
           <Route path="users/project-owners" element={<UserManagement filter="project_owner" />} />
@@ -120,7 +124,6 @@ export default function AdminDashboard() {
           <Route path="projects/completed" element={<ProjectManagement filter="completed" />} />
           <Route path="kyc" element={<ComplianceAudit tab="kyc" />} />
           <Route path="sharia" element={<ComplianceAudit tab="sharia" />} />
-          {/* Platform Settings Routes */}
           <Route path="platform-settings" element={<PlatformSettings />} />
           <Route path="platform-settings/commissions" element={<CommissionManagement />} />
           <Route path="platform-settings/cma" element={<ComplianceAudit tab="cma" />} />

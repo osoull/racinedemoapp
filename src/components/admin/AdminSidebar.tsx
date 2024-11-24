@@ -3,53 +3,64 @@ import { LogOut } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
+import { 
+  LayoutDashboard, 
+  Users, 
+  FileText,
+  Settings,
+  MessageSquare,
+  Shield,
+  PieChart,
+  Briefcase,
+  Wallet
+} from "lucide-react"
 
 const menuItems = [
   {
     title: "نظرة عامة",
-    icon: "LayoutDashboard",
+    icon: LayoutDashboard,
     path: "/admin",
     description: "لوحة المعلومات والإحصائيات"
   },
   {
     title: "المستخدمين",
-    icon: "Users",
+    icon: Users,
     path: "/admin/users",
     description: "إدارة المستخدمين"
   },
   {
     title: "المشاريع",
-    icon: "Briefcase",
+    icon: Briefcase,
     path: "/admin/projects",
     description: "إدارة المشاريع"
   },
   {
     title: "المعاملات المالية",
-    icon: "Wallet",
+    icon: Wallet,
     path: "/admin/transactions",
     description: "متابعة المعاملات"
   },
   {
     title: "التحقق والامتثال",
-    icon: "Shield",
+    icon: Shield,
     path: "/admin/compliance",
     description: "إدارة التحقق والامتثال"
   },
   {
     title: "التقارير",
-    icon: "FileText",
+    icon: PieChart,
     path: "/admin/reports",
     description: "تقارير وإحصائيات"
   },
   {
     title: "الدعم الفني",
-    icon: "MessageSquare",
+    icon: MessageSquare,
     path: "/admin/support",
     description: "إدارة طلبات الدعم"
   },
   {
     title: "إعدادات المنصة",
-    icon: "Settings",
+    icon: Settings,
     path: "/admin/settings",
     description: "إعدادات عامة للمنصة"
   }
