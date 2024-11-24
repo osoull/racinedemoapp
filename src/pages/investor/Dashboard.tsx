@@ -12,16 +12,16 @@ import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 const InvestorDashboard = () => {
   const { user } = useAuth()
 
-  const { data: investments } = useQuery({
-    queryKey: ["investments", user?.id],
+  const { data: projects } = useQuery({
+    queryKey: ["projects", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("investments")
+        .from("projects")
         .select(`
           *,
-          project:projects(*)
+          investments(*)
         `)
-        .eq("investor_id", user?.id)
+        .eq("owner_id", user?.id)
       
       if (error) throw error
       return data
@@ -29,102 +29,50 @@ const InvestorDashboard = () => {
     enabled: !!user?.id
   })
 
-  const totalInvestment = investments?.reduce((sum, inv) => sum + (inv.amount || 0), 0) || 0
-  const activeProjects = investments?.filter(inv => inv.project.status === 'active').length || 0
-  const expectedReturn = totalInvestment * 0.15 // 15% expected return for demonstration
+  const totalFunding = projects?.reduce((sum, proj) => sum + (proj.current_funding || 0), 0) || 0
+  const activeProjects = projects?.filter(proj => proj.status === 'active').length || 0
+  const totalInvestors = projects?.reduce((sum, proj) => sum + (proj.investments?.length || 0), 0) || 0
 
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-4 lg:space-y-6">
-        {/* Stats Overview */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            icon={Wallet}
-            title="إجمالي الاستثمارات"
-            value={`${totalInvestment.toLocaleString()} ريال`}
+            icon={TrendingUp}
+            title="إجمالي التمويل"
+            value={`${totalFunding.toLocaleString()} ريال`}
             trend={{ value: 8.2, isPositive: true }}
-            iconBgColor="bg-purple-50"
-            iconColor="text-purple-600"
           />
           <StatCard
             icon={Activity}
-            title="المشاريع النشطة"
-            value={activeProjects}
+            title="عدد المستثمرين"
+            value={totalInvestors}
             trend={{ value: 12.5, isPositive: true }}
-            iconBgColor="bg-blue-50"
-            iconColor="text-blue-600"
-          />
-          <StatCard
-            icon={TrendingUp}
-            title="العائد المتوقع"
-            value={`${expectedReturn.toLocaleString()} ريال`}
-            trend={{ value: 15.2, isPositive: true }}
-            iconBgColor="bg-green-50"
-            iconColor="text-green-600"
           />
           <StatCard
             icon={FileText}
-            title="المشاريع المكتملة"
-            value={investments?.filter(inv => inv.project.status === 'completed').length || 0}
+            title="المشاريع النشطة"
+            value={activeProjects}
+            trend={{ value: 15.2, isPositive: true }}
+          />
+          <StatCard
+            icon={Wallet}
+            title="نسبة النجاح"
+            value="85%"
             trend={{ value: 4.1, isPositive: true }}
-            iconBgColor="bg-orange-50"
-            iconColor="text-orange-600"
           />
         </div>
 
-        {/* Charts and Activity */}
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card className="p-4 lg:p-6">
-            <h3 className="text-lg font-semibold mb-4">تحليل الاستثمارات</h3>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="p-6 bg-card">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">تحليل الاستثمارات</h3>
             <FundingChart />
           </Card>
-          <Card className="p-4 lg:p-6">
-            <h3 className="text-lg font-semibold mb-4">النشاط الأخير</h3>
+          <Card className="p-6 bg-card">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">النشاط الأخير</h3>
             <ActivityFeed />
           </Card>
         </div>
-
-        {/* Active Investments */}
-        <Card className="p-4 lg:p-6">
-          <h3 className="text-lg font-semibold mb-4">استثماراتي النشطة</h3>
-          <div className="space-y-3">
-            {investments?.filter(inv => inv.project.status === 'active')
-              .map((investment) => (
-                <Card key={investment.investment_id} className="p-3 hover:shadow-md transition-all">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">{investment.project.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {investment.project.description}
-                      </p>
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium">{investment.amount.toLocaleString()} ريال</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(investment.created_at).toLocaleDateString('ar-SA')}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>نسبة التمويل</span>
-                      <span>
-                        {Math.round((investment.project.current_funding / investment.project.funding_goal) * 100)}%
-                      </span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary transition-all"
-                        style={{ 
-                          width: `${Math.round((investment.project.current_funding / investment.project.funding_goal) * 100)}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Card>
-              ))}
-          </div>
-        </Card>
       </div>
     </DashboardLayout>
   )

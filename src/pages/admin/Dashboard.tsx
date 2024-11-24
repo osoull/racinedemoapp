@@ -36,8 +36,8 @@ export default function AdminDashboard() {
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-8">
         {isOverviewPage && profile?.first_name && (
-          <div className="p-6 bg-white rounded-lg shadow-sm border">
-            <h2 className="text-2xl font-bold">
+          <div className="p-6 bg-card rounded-lg shadow-sm border">
+            <h2 className="text-2xl font-bold text-foreground">
               مرحباً بك {profile.first_name}
             </h2>
           </div>
