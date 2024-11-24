@@ -3,12 +3,15 @@ import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import { ProjectCard } from "@/components/dashboard/projects/ProjectCard"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { Loader2 } from "lucide-react"
+import { Loader2, Search } from "lucide-react"
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import { useToast } from "@/components/ui/use-toast"
+import { Input } from "@/components/ui/input"
+import { useState } from "react"
 
 export default function ProjectsListPage() {
   const { toast } = useToast()
+  const [searchQuery, setSearchQuery] = useState("")
   
   const { data: projects, isLoading, refetch } = useQuery({
     queryKey: ["active-projects"],
@@ -53,6 +56,11 @@ export default function ProjectsListPage() {
     }
   })
 
+  const filteredProjects = projects?.filter(project => 
+    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    project.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-6">
@@ -63,13 +71,23 @@ export default function ProjectsListPage() {
           </p>
         </div>
 
+        <div className="relative">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="ابحث عن المشاريع..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
         {isLoading ? (
           <div className="flex items-center justify-center h-96">
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects?.map((project) => (
+            {filteredProjects?.map((project) => (
               <ProjectCard
                 key={project.id}
                 title={project.title}
@@ -81,6 +99,11 @@ export default function ProjectsListPage() {
                 projectId={project.id}
               />
             ))}
+            {filteredProjects?.length === 0 && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                لم يتم العثور على مشاريع تطابق معايير البحث
+              </div>
+            )}
           </div>
         )}
       </div>
