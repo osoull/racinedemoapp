@@ -61,7 +61,7 @@ const ProjectOwnerDashboard = () => {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <Button onClick={() => navigate("/project-owner/new-project")}>
+          <Button onClick={() => navigate("/project-owner/submit-project")}>
             <Plus className="h-4 w-4 ml-2" />
             مشروع جديد
           </Button>
