@@ -34,6 +34,57 @@ const investorManagementItems = [
   }
 ];
 
+const projectManagementItems = [
+  {
+    title: "المشاريع الجديدة",
+    path: "/admin/projects/new",
+    icon: FileText,
+    description: "إدارة المشاريع الجديدة"
+  },
+  {
+    title: "المشاريع النشطة",
+    path: "/admin/projects/active",
+    icon: FileSpreadsheet,
+    description: "متابعة المشاريع النشطة"
+  },
+  {
+    title: "المشاريع المكتملة",
+    path: "/admin/projects/completed",
+    icon: FileCheck,
+    description: "عرض المشاريع المكتملة"
+  }
+];
+
+const transactionItems = [
+  {
+    title: "الإيداعات",
+    path: "/admin/transactions/deposits",
+    icon: Banknote,
+    description: "إدارة الإيداعات"
+  },
+  {
+    title: "السحوبات",
+    path: "/admin/transactions/withdrawals",
+    icon: Wallet,
+    description: "إدارة السحوبات"
+  }
+];
+
+const complianceItems = [
+  {
+    title: "التحقق من الهوية",
+    path: "/admin/compliance/kyc",
+    icon: FileSearch,
+    description: "إدارة عمليات KYC"
+  },
+  {
+    title: "المراجعة الشرعية",
+    path: "/admin/compliance/sharia",
+    icon: Building,
+    description: "إدارة المراجعة الشرعية"
+  }
+];
+
 export const businessMenuItems = [
   {
     title: "نظرة عامة",
@@ -52,18 +103,21 @@ export const businessMenuItems = [
     title: "إدارة المشاريع",
     icon: Briefcase,
     path: "/admin/projects",
-    description: "مراجعة وإدارة المشاريع المقدمة"
+    description: "مراجعة وإدارة المشاريع المقدمة",
+    subItems: projectManagementItems
   },
   {
     title: "المعاملات المالية",
     icon: Wallet,
     path: "/admin/transactions",
-    description: "متابعة وإدارة المعاملات المالية"
+    description: "متابعة وإدارة المعاملات المالية",
+    subItems: transactionItems
   },
   {
     title: "التحقق والامتثال",
     icon: GraduationCap,
     path: "/admin/compliance",
-    description: "إدارة التحقق والامتثال"
+    description: "إدارة التحقق والامتثال",
+    subItems: complianceItems
   }
 ];
