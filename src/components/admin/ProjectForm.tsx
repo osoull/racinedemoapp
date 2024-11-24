@@ -62,14 +62,27 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
         min_investment: values.min_investment,
         classification: values.classification,
         owner_id: user?.id,
+        status: 'pending',
       };
       
-      const { error } = await supabase.from("projects").insert(projectData);
+      const { data, error } = await supabase.from("projects").insert(projectData).select().single();
       if (error) throw error;
+
+      // Créer une notification pour les administrateurs
+      const { error: notifError } = await supabase.from("notifications").insert({
+        title: "مشروع جديد بانتظار المراجعة",
+        message: `تم تقديم مشروع جديد: ${values.title}`,
+        user_id: user?.id,
+      });
+      
+      if (notifError) console.error("Error creating notification:", notifError);
+      
+      return data;
     },
     onSuccess: () => {
       toast({
-        title: "تم إنشاء المشروع بنجاح",
+        title: "تم إرسال طلب المشروع بنجاح",
+        description: "سيتم مراجعة طلبك من قبل فريق الإدارة"
       });
       queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
       onSuccess?.();
