@@ -1,105 +1,45 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { 
-  FileCheck2, 
-  Scale, 
-  Building2,
-  Users,
-  FileText
-} from "lucide-react";
-import { ShariaCompliance } from "./compliance/ShariaCompliance";
-import { CmaCompliance } from "./compliance/CmaCompliance";
-import { KycCompliance } from "./compliance/KycCompliance";
-import { ComplianceReports } from "./compliance/ComplianceReports";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FileCheck2 } from "lucide-react";
 
-const ComplianceAudit = () => {
-  const { data: projects } = useQuery({
-    queryKey: ["projects-compliance"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("projects")
-        .select(`
-          *,
-          project_documents (*)
-        `);
-      
-      if (error) throw error;
-      return data;
-    },
-  });
+interface ComplianceAuditProps {
+  tab?: string;
+}
 
-  const { data: users } = useQuery({
-    queryKey: ["users-compliance"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(`
-          *,
-          kyc_documents (*)
-        `);
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const formatUserName = (user: any) => {
-    if (!user) return 'غير معروف';
-    return [user.first_name, user.middle_name, user.last_name]
-      .filter(Boolean)
-      .join(' ') || 'غير معروف';
-  };
-
+export default function ComplianceAudit({ tab = "cma" }: ComplianceAuditProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Scale className="h-6 w-6" />
-          الامتثال والتدقيق
-        </CardTitle>
+        <CardTitle>متطلبات هيئة السوق المالية</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="sharia" className="space-y-4">
-          <TabsList className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 h-auto gap-4">
-            <TabsTrigger value="sharia" className="data-[state=active]:bg-primary/10">
-              <FileCheck2 className="h-4 w-4 ml-2" />
-              الامتثال الشرعي
-            </TabsTrigger>
-            <TabsTrigger value="cma" className="data-[state=active]:bg-primary/10">
-              <Building2 className="h-4 w-4 ml-2" />
-              هيئة السوق المالية
-            </TabsTrigger>
-            <TabsTrigger value="kyc" className="data-[state=active]:bg-primary/10">
-              <Users className="h-4 w-4 ml-2" />
-              التحقق من العملاء
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="data-[state=active]:bg-primary/10">
-              <FileText className="h-4 w-4 ml-2" />
-              التقارير الدورية
-            </TabsTrigger>
-          </TabsList>
+        <div className="space-y-4">
+          <section className="border rounded-lg p-4">
+            <h3 className="font-semibold mb-2">تراخيص منصة التمويل الجماعي</h3>
+            <div className="grid gap-4">
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div>
+                  <p className="font-medium">ترخيص نشاط التمويل الجماعي</p>
+                  <p className="text-sm text-muted-foreground">صالح حتى: 30/12/1445</p>
+                </div>
+                <FileCheck2 className="h-5 w-5 text-green-500" />
+              </div>
+            </div>
+          </section>
 
-          <TabsContent value="sharia">
-            <ShariaCompliance projects={projects || []} />
-          </TabsContent>
-
-          <TabsContent value="cma">
-            <CmaCompliance />
-          </TabsContent>
-
-          <TabsContent value="kyc">
-            <KycCompliance users={users || []} formatUserName={formatUserName} />
-          </TabsContent>
-
-          <TabsContent value="reports">
-            <ComplianceReports />
-          </TabsContent>
-        </Tabs>
+          <section className="border rounded-lg p-4">
+            <h3 className="font-semibold mb-2">التقارير الرقابية</h3>
+            <ScrollArea className="h-[200px] rounded-md border p-4">
+              <div className="space-y-4">
+                <div className="p-4 border rounded-lg">
+                  <p className="font-medium">تقرير الربع الأول 1445</p>
+                  <p className="text-sm text-muted-foreground">تم الرفع بتاريخ: 01/04/1445</p>
+                </div>
+              </div>
+            </ScrollArea>
+          </section>
+        </div>
       </CardContent>
     </Card>
   );
 };
-
-export default ComplianceAudit;

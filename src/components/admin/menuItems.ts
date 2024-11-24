@@ -191,29 +191,6 @@ export const platformSettingsItems = [
     ]
   },
   {
-    title: "متطلبات هيئة السوق المالية",
-    icon: FileCheck,
-    path: "/admin/platform-settings/cma",
-    description: "إدارة متطلبات هيئة السوق المالية",
-    subItems: [
-      {
-        title: "التراخيص",
-        path: "/admin/platform-settings/cma/licenses",
-        icon: Building
-      },
-      {
-        title: "التقارير الرقابية",
-        path: "/admin/platform-settings/cma/reports",
-        icon: FileText
-      },
-      {
-        title: "الامتثال",
-        path: "/admin/platform-settings/cma/compliance",
-        icon: ShieldCheck
-      }
-    ]
-  },
-  {
     title: "الدعم الفني",
     icon: MessageSquare,
     path: "/admin/platform-settings/support",
