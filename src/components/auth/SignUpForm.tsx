@@ -119,6 +119,15 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
             <Button type="submit" className="w-full">
               تسجيل
             </Button>
+
+            <div className="text-sm text-muted-foreground text-center">
+              <button 
+                onClick={onBack}
+                className="text-primary hover:underline"
+              >
+                لديك حساب؟ سجل دخول
+              </button>
+            </div>
           </form>
         </CardContent>
       </Card>
