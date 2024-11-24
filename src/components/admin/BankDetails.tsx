@@ -8,6 +8,41 @@ import { Input } from "@/components/ui/input"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 
+const BankDetailsField = ({ 
+  label, 
+  value, 
+  isEditing, 
+  onChange, 
+  onCopy 
+}: { 
+  label: string
+  value: string
+  isEditing: boolean
+  onChange?: (value: string) => void
+  onCopy: () => void
+}) => (
+  <div className="space-y-2">
+    <label className="text-sm font-medium text-muted-foreground">{label}</label>
+    {isEditing ? (
+      <Input
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+      />
+    ) : (
+      <div className="flex items-center justify-between p-3 border rounded-lg">
+        <span className="font-mono">{value}</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onCopy}
+        >
+          <Copy className="h-4 w-4" />
+        </Button>
+      </div>
+    )}
+  </div>
+)
+
 export default function BankDetails() {
   const { toast } = useToast()
   const { user } = useAuth()
@@ -33,7 +68,7 @@ export default function BankDetails() {
         .from('platform_settings')
         .update({ 
           setting_value: editedDetails,
-          last_updated_by: user?.id
+          updated_at: new Date().toISOString()
         })
         .eq('setting_key', 'platform_bank_details')
 
@@ -94,101 +129,34 @@ export default function BankDetails() {
       <CardContent>
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">اسم البنك</label>
-              {isEditing ? (
-                <Input
-                  value={editedDetails.bank_name}
-                  onChange={(e) => setEditedDetails({
-                    ...editedDetails,
-                    bank_name: e.target.value
-                  })}
-                />
-              ) : (
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <span>{bankDetails?.bank_name}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => copyToClipboard(bankDetails?.bank_name || "")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">اسم الحساب</label>
-              {isEditing ? (
-                <Input
-                  value={editedDetails.account_name}
-                  onChange={(e) => setEditedDetails({
-                    ...editedDetails,
-                    account_name: e.target.value
-                  })}
-                />
-              ) : (
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <span>{bankDetails?.account_name}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => copyToClipboard(bankDetails?.account_name || "")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">رمز السويفت (SWIFT)</label>
-              {isEditing ? (
-                <Input
-                  value={editedDetails.swift}
-                  onChange={(e) => setEditedDetails({
-                    ...editedDetails,
-                    swift: e.target.value
-                  })}
-                />
-              ) : (
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <span className="font-mono">{bankDetails?.swift}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => copyToClipboard(bankDetails?.swift || "")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">رقم الآيبان (IBAN)</label>
-              {isEditing ? (
-                <Input
-                  value={editedDetails.iban}
-                  onChange={(e) => setEditedDetails({
-                    ...editedDetails,
-                    iban: e.target.value
-                  })}
-                />
-              ) : (
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <span className="font-mono">{bankDetails?.iban}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => copyToClipboard(bankDetails?.iban || "")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </div>
+            <BankDetailsField
+              label="اسم البنك"
+              value={isEditing ? editedDetails.bank_name : bankDetails?.bank_name || ""}
+              isEditing={isEditing}
+              onChange={(value) => setEditedDetails({ ...editedDetails, bank_name: value })}
+              onCopy={() => copyToClipboard(bankDetails?.bank_name || "")}
+            />
+            <BankDetailsField
+              label="اسم الحساب"
+              value={isEditing ? editedDetails.account_name : bankDetails?.account_name || ""}
+              isEditing={isEditing}
+              onChange={(value) => setEditedDetails({ ...editedDetails, account_name: value })}
+              onCopy={() => copyToClipboard(bankDetails?.account_name || "")}
+            />
+            <BankDetailsField
+              label="رمز السويفت (SWIFT)"
+              value={isEditing ? editedDetails.swift : bankDetails?.swift || ""}
+              isEditing={isEditing}
+              onChange={(value) => setEditedDetails({ ...editedDetails, swift: value })}
+              onCopy={() => copyToClipboard(bankDetails?.swift || "")}
+            />
+            <BankDetailsField
+              label="رقم الآيبان (IBAN)"
+              value={isEditing ? editedDetails.iban : bankDetails?.iban || ""}
+              isEditing={isEditing}
+              onChange={(value) => setEditedDetails({ ...editedDetails, iban: value })}
+              onCopy={() => copyToClipboard(bankDetails?.iban || "")}
+            />
           </div>
         </div>
       </CardContent>
