@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
+import { useEffect } from "react"
 
 export interface BankDetailsData {
   bank_name: string
@@ -19,7 +20,7 @@ const isBankDetailsData = (data: unknown): data is BankDetailsData => {
 }
 
 export function useBankDetails() {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['platform_bank_details'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,4 +40,28 @@ export function useBankDetails() {
       return bankDetails
     }
   })
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('platform_settings_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'platform_settings',
+          filter: 'setting_key=eq.platform_bank_details'
+        },
+        () => {
+          query.refetch()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [query])
+
+  return query
 }
