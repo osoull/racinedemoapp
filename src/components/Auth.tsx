@@ -11,7 +11,7 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
-type UserType = "investor" | "project_owner" | "borrower";
+type UserType = "investor" | "borrower";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
@@ -42,17 +42,14 @@ export function Auth() {
       if (!profile) throw new Error("No profile found")
 
       switch (profile.user_type) {
-        case "project_owner":
-          navigate("/project-owner")
+        case "borrower":
+          navigate("/borrower")
           break
         case "investor":
           navigate("/investor")
           break
         case "admin":
           navigate("/admin")
-          break
-        case "borrower":
-          navigate("/borrower")
           break
         default:
           navigate("/")

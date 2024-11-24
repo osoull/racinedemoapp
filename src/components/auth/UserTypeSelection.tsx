@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { UserCircle2, Building2, LogIn, Briefcase } from "lucide-react"
+import { UserCircle2, Building2, LogIn } from "lucide-react"
 
-type UserType = "investor" | "project_owner" | "borrower";
+type UserType = "investor" | "borrower";
 type SelectionType = UserType | "login";
 
 interface UserTypeSelectionProps {
@@ -34,26 +34,13 @@ export function UserTypeSelection({ onSelect }: UserTypeSelectionProps) {
 
         <Card 
           className="cursor-pointer hover:border-primary transition-colors"
-          onClick={() => onSelect("project_owner")}
+          onClick={() => onSelect("borrower")}
         >
           <CardContent className="p-6 text-center space-y-4">
             <Building2 className="w-12 h-12 mx-auto text-primary" />
             <div>
               <h3 className="font-semibold text-lg">طالب تمويل</h3>
               <p className="text-sm text-muted-foreground">احصل على تمويل لمشروعك</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="cursor-pointer hover:border-primary transition-colors"
-          onClick={() => onSelect("borrower")}
-        >
-          <CardContent className="p-6 text-center space-y-4">
-            <Briefcase className="w-12 h-12 mx-auto text-primary" />
-            <div>
-              <h3 className="font-semibold text-lg">مقترض</h3>
-              <p className="text-sm text-muted-foreground">تمويل للشركات</p>
             </div>
           </CardContent>
         </Card>
@@ -72,5 +59,5 @@ export function UserTypeSelection({ onSelect }: UserTypeSelectionProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }

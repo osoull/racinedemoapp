@@ -4,7 +4,7 @@ export interface User {
   first_name: string;
   middle_name?: string | null;
   last_name: string;
-  user_type: 'investor' | 'project_owner' | 'admin' | 'investment_manager';
+  user_type: 'investor' | 'borrower' | 'admin' | 'investment_manager';
   kyc_status?: string;
   created_at?: string;
   updated_at?: string;
