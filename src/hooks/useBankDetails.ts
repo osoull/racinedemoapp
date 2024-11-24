@@ -8,6 +8,16 @@ export interface BankDetailsData {
   iban: string
 }
 
+const isBankDetailsData = (data: unknown): data is BankDetailsData => {
+  if (!data || typeof data !== 'object') return false
+  
+  const bankDetails = data as Record<string, unknown>
+  return typeof bankDetails.bank_name === 'string' &&
+         typeof bankDetails.account_name === 'string' &&
+         typeof bankDetails.swift === 'string' &&
+         typeof bankDetails.iban === 'string'
+}
+
 export function useBankDetails() {
   return useQuery({
     queryKey: ['platform_bank_details'],
@@ -20,10 +30,9 @@ export function useBankDetails() {
 
       if (error) throw error
       
-      const bankDetails = data.setting_value as BankDetailsData
+      const bankDetails = data.setting_value
       
-      if (!bankDetails.bank_name || !bankDetails.account_name || 
-          !bankDetails.swift || !bankDetails.iban) {
+      if (!isBankDetailsData(bankDetails)) {
         throw new Error('Invalid bank details format')
       }
       
