@@ -20,8 +20,8 @@ export function Auth() {
   const handleSubmit = async (action: "signin" | "signup") => {
     try {
       if (action === "signin") {
-        const { error: signInError } = await signIn(email, password)
-        if (signInError) throw signInError
+        const { error } = await signIn(email, password)
+        if (error) throw error
         
         // Get the user and their profile after sign in
         const { data: { user }, error: userError } = await supabase.auth.getUser()
