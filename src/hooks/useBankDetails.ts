@@ -10,11 +10,18 @@ export interface BankDetailsData {
 
 export function useBankDetails() {
   const query = useQuery({
-    queryKey: ['platform_bank_accounts'],
+    queryKey: ['bank_accounts'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        throw new Error('User not authenticated')
+      }
+
       const { data, error } = await supabase
         .from('bank_accounts')
         .select('*')
+        .eq('user_id', user.id)
         .eq('is_primary', true)
         .single()
 
@@ -23,16 +30,12 @@ export function useBankDetails() {
         throw new Error('Failed to load bank details')
       }
       
-      if (!data) {
-        throw new Error('No bank details found')
-      }
-      
-      return {
+      return data ? {
         bank_name: data.bank_name,
         account_name: data.account_name,
         swift: data.swift || '',
         iban: data.iban
-      }
+      } : null
     }
   })
 
