@@ -128,6 +128,7 @@ function AppContent() {
         </Routes>
       </main>
       <Footer />
+      <Toaster />
     </div>
   )
 }

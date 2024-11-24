@@ -34,6 +34,9 @@ export function Auth() {
             case "investor":
               navigate("/investor")
               break
+            case "admin":
+              navigate("/admin")
+              break
             default:
               navigate("/")
           }
