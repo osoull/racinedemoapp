@@ -38,7 +38,7 @@ export default function AdminDashboard() {
         {isOverviewPage && profile?.first_name && (
           <div className="p-6 bg-white rounded-lg shadow-sm border">
             <h2 className="text-2xl font-bold">
-              مرحباً بك {profile.first_name} في لوحة التحكم
+              مرحباً بك {profile.first_name}
             </h2>
           </div>
         )}
