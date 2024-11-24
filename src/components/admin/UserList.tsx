@@ -29,20 +29,20 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
   );
 
   return (
-    <div className="w-full space-y-6 px-4 sm:px-6 lg:px-8">
-      <TabsContent value="all" className="mt-4 sm:mt-6">
+    <div className="w-full space-y-6">
+      <TabsContent value="all" className="mt-4 sm:mt-6 w-full">
         <UserGrid filteredUsers={users || []} />
       </TabsContent>
 
-      <TabsContent value="investor" className="mt-4 sm:mt-6">
+      <TabsContent value="investor" className="mt-4 sm:mt-6 w-full">
         <UserGrid filteredUsers={filterUsersByType("investor")} />
       </TabsContent>
 
-      <TabsContent value="investment_manager" className="mt-4 sm:mt-6">
+      <TabsContent value="investment_manager" className="mt-4 sm:mt-6 w-full">
         <UserGrid filteredUsers={filterUsersByType("investment_manager")} />
       </TabsContent>
 
-      <TabsContent value="admin" className="mt-4 sm:mt-6">
+      <TabsContent value="admin" className="mt-4 sm:mt-6 w-full">
         <UserGrid filteredUsers={filterUsersByType("admin")} />
       </TabsContent>
     </div>

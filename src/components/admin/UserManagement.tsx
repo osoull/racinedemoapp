@@ -110,14 +110,14 @@ export default function UserManagement() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="dashboard-content-card w-full">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">إدارة المستخدمين</h2>
         <CreateUserDialog onUserCreated={handleUserCreated} />
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="w-full justify-start mb-6">
           <TabsTrigger value="all">جميع المستخدمين</TabsTrigger>
           <TabsTrigger value="investor">المستثمرون</TabsTrigger>
           <TabsTrigger value="investment_manager">مدراء الاستثمار</TabsTrigger>
