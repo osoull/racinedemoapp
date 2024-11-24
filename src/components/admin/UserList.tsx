@@ -15,7 +15,7 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
   };
 
   const UserGrid = ({ filteredUsers }: { filteredUsers: User[] }) => (
-    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full">
+    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 w-full">
       {filteredUsers.map((user) => (
         <UserCard
           key={user.id}
@@ -29,20 +29,20 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
   );
 
   return (
-    <div className="w-full space-y-6">
-      <TabsContent value="all" className="mt-4 sm:mt-6 w-full">
+    <div className="w-full space-y-6 px-4 sm:px-6 lg:px-8">
+      <TabsContent value="all" className="mt-4 sm:mt-6">
         <UserGrid filteredUsers={users || []} />
       </TabsContent>
 
-      <TabsContent value="investor" className="mt-4 sm:mt-6 w-full">
+      <TabsContent value="investor" className="mt-4 sm:mt-6">
         <UserGrid filteredUsers={filterUsersByType("investor")} />
       </TabsContent>
 
-      <TabsContent value="investment_manager" className="mt-4 sm:mt-6 w-full">
+      <TabsContent value="investment_manager" className="mt-4 sm:mt-6">
         <UserGrid filteredUsers={filterUsersByType("investment_manager")} />
       </TabsContent>
 
-      <TabsContent value="admin" className="mt-4 sm:mt-6 w-full">
+      <TabsContent value="admin" className="mt-4 sm:mt-6">
         <UserGrid filteredUsers={filterUsersByType("admin")} />
       </TabsContent>
     </div>

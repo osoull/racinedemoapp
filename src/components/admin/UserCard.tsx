@@ -27,17 +27,17 @@ export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps
   ].filter(Boolean).join(" ");
 
   return (
-    <Card className="w-full p-4 transition-all hover:shadow-md">
+    <Card className="w-full h-full p-4 transition-all hover:shadow-md">
       <div className="flex flex-col space-y-4">
         <div className="flex items-start justify-between">
-          <div className="flex flex-col">
-            <h3 className="text-base font-semibold">{fullName}</h3>
+          <div className="flex flex-col flex-grow min-w-0">
+            <h3 className="text-base font-semibold truncate">{fullName}</h3>
             <div className="flex items-center text-sm text-gray-500 mt-1">
-              <Mail className="h-4 w-4 ml-2" />
+              <Mail className="h-4 w-4 ml-2 flex-shrink-0" />
               <span className="truncate">{user.email}</span>
             </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex gap-2 flex-shrink-0">
             <EditUserDialog user={user} onSave={onEdit} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
