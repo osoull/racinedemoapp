@@ -42,7 +42,6 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
         return
       }
 
-      console.log('Profile data:', profile)
       setUserType(profile?.user_type)
       setIsLoading(false)
     }
@@ -55,11 +54,10 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
   }
 
   if (!user) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/signin" replace />
   }
 
   if (!userType || !allowedRoles.includes(userType)) {
-    console.log('Access denied. User type:', userType, 'Allowed roles:', allowedRoles)
     return <Navigate to="/" replace />
   }
 
@@ -99,7 +97,6 @@ function AppContent() {
         return
       }
 
-      console.log('Profile data for redirect:', profile)
       setUserType(profile?.user_type)
     }
 
@@ -107,9 +104,7 @@ function AppContent() {
   }, [user])
 
   const getDashboardRoute = () => {
-    if (!user || !userType) return "/"
-    
-    console.log('Redirecting to dashboard for user type:', userType)
+    if (!user || !userType) return "/signin"
     
     switch (userType) {
       case "project_owner":
@@ -119,7 +114,7 @@ function AppContent() {
       case "admin":
         return "/admin"
       default:
-        return "/"
+        return "/signin"
     }
   }
 
@@ -127,8 +122,9 @@ function AppContent() {
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
         <Routes>
-          {/* Public route */}
-          <Route path="/" element={<Auth />} />
+          {/* Public routes */}
+          <Route path="/signin" element={<Auth />} />
+          <Route path="/" element={<Navigate to="/signin" replace />} />
 
           {/* Protected routes */}
           <Route
