@@ -79,10 +79,11 @@ export default function GeneralSettings() {
   const handle2FAChange = async (checked: boolean) => {
     setIsLoading(true)
     try {
-      // Update Supabase auth settings
-      const { error: authError } = await supabase.auth.admin.updateConfig({
-        config: {
-          enable_mfa: checked
+      // Update Supabase auth settings using the correct admin API
+      const { error: authError } = await supabase.auth.admin.setConfig({
+        mfa: {
+          enabled: checked,
+          default_enabled: checked
         }
       })
       
