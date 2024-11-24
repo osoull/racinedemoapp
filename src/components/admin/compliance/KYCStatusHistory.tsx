@@ -14,11 +14,11 @@ interface KYCHistoryEntry {
   user: {
     first_name: string;
     last_name: string;
-  } | null;
+  };
   admin: {
     first_name: string;
     last_name: string;
-  } | null;
+  };
 }
 
 export function KYCStatusHistory() {
@@ -41,7 +41,13 @@ export function KYCStatusHistory() {
         .order('created_at', { ascending: false })
       
       if (error) throw error
-      return data as KYCHistoryEntry[]
+      
+      // Transform the data to match KYCHistoryEntry type
+      return (data as any[]).map(entry => ({
+        ...entry,
+        user: entry.user?.[0] || { first_name: 'Unknown', last_name: 'User' },
+        admin: entry.admin?.[0] || { first_name: 'Unknown', last_name: 'Admin' }
+      }))
     }
   })
 
@@ -60,13 +66,13 @@ export function KYCStatusHistory() {
             {history?.map((entry) => (
               <div key={entry.id} className="border-b pb-2">
                 <p className="font-medium">
-                  {entry.user?.first_name} {entry.user?.last_name}
+                  {entry.user.first_name} {entry.user.last_name}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   تم تغيير الحالة من {entry.old_status} إلى {entry.new_status}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  بواسطة: {entry.admin?.first_name} {entry.admin?.last_name}
+                  بواسطة: {entry.admin.first_name} {entry.admin.last_name}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {new Date(entry.created_at || '').toLocaleString('ar-SA')}

@@ -11,7 +11,7 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
-type UserType = "investor" | "project_owner" | "borrower";
+type UserType = "investor" | "project_owner" | "borrower" | "admin" | "investment_manager";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
