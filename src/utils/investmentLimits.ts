@@ -7,38 +7,11 @@ export type InvestmentLimits = {
 };
 
 export const getInvestmentLimits = async (): Promise<InvestmentLimits> => {
-  const { data: settings, error } = await supabase
-    .from('platform_settings')
-    .select('setting_key, setting_value')
-    .in('setting_key', [
-      'min_investment_amount',
-      'basic_investor_single_project_limit',
-      'basic_investor_annual_limit'
-    ]);
-
-  if (error) throw error;
-
-  const limits: InvestmentLimits = {
-    minAmount: 1000, // Default value
-    basicInvestorProjectLimit: 20000, // Default value
-    basicInvestorAnnualLimit: 100000, // Default value
+  return {
+    minAmount: 1000,
+    basicInvestorProjectLimit: 20000,
+    basicInvestorAnnualLimit: 100000,
   };
-
-  settings?.forEach(setting => {
-    switch (setting.setting_key) {
-      case 'min_investment_amount':
-        limits.minAmount = Number(setting.setting_value);
-        break;
-      case 'basic_investor_single_project_limit':
-        limits.basicInvestorProjectLimit = Number(setting.setting_value);
-        break;
-      case 'basic_investor_annual_limit':
-        limits.basicInvestorAnnualLimit = Number(setting.setting_value);
-        break;
-    }
-  });
-
-  return limits;
 };
 
 export const validateInvestmentAmount = async (

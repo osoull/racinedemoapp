@@ -9,7 +9,6 @@ import { useToast } from "@/components/ui/use-toast"
 import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 type UserType = "investor" | "admin" | "borrower" | "investment_manager";
