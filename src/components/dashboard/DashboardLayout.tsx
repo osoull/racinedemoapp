@@ -38,9 +38,11 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
               </SheetContent>
             </Sheet>
             
-            <svg width="160" height="40" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
-              <text x="10" y="35" font-family="Arial" font-size="38" font-weight="bold" fill="#1E40AF">رسين</text>
-            </svg>
+            <img 
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg"
+              alt="رسين"
+              className="h-8 ml-2"
+            />
           </div>
           
           <div className="flex items-center gap-4">

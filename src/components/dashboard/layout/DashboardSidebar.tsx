@@ -65,9 +65,11 @@ export function DashboardSidebar() {
   return (
     <div className="h-screen w-64 bg-white border-l fixed top-0 right-0">
       <div className="flex h-16 items-center border-b px-6">
-        <svg width="120" height="30" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <text x="10" y="35" font-family="Arial" font-size="32" font-weight="bold" fill="#1E40AF">رسين</text>
-        </svg>
+        <img 
+          src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg"
+          alt="رسين"
+          className="h-6"
+        />
       </div>
       <div className="flex flex-col justify-between h-[calc(100vh-4rem)]">
         <nav className="space-y-1 p-4">
