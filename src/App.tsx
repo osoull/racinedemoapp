@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
-import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard";
-import SubmitProject from "@/pages/project-owner/SubmitProject";
+import BorrowerDashboard from "@/pages/borrower/Dashboard";
+import SubmitProject from "@/pages/borrower/SubmitProject";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement";
 import InvestorManagement from "@/components/admin/investor/InvestorManagement";
@@ -28,8 +28,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/project-owner/dashboard" element={<ProjectOwnerDashboard />} />
-            <Route path="/project-owner/submit-project" element={<SubmitProject />} />
+            <Route path="/borrower/dashboard" element={<BorrowerDashboard />} />
+            <Route path="/borrower/submit-project" element={<SubmitProject />} />
             <Route path="/admin" element={<ProtectedRoute userType="admin"><AdminDashboard /></ProtectedRoute>}>
               <Route path="borrowers" element={<BorrowerManagement />} />
               <Route path="investors" element={<InvestorManagement />} />
