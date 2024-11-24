@@ -1,11 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, Briefcase, Wallet, Activity } from "lucide-react"
+import { Users, Briefcase, Wallet, Activity, ShieldCheck } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import UserManagement from "./UserManagement"
 import ProjectManagement from "./ProjectManagement"
 import CommissionManagement from "./CommissionManagement"
 import ComplianceAudit from "./ComplianceAudit"
 import SupportTools from "./SupportTools"
+import { StatsGrid } from "@/components/dashboard/stats/StatsGrid"
+import { ActivityFeed } from "@/components/dashboard/activity/ActivityFeed"
 
 interface StatCardProps {
   icon: any
@@ -44,27 +46,26 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
   return (
     <div className="rounded-lg border bg-card">
       {isOverview && (
-        <div className="grid gap-6 p-6 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            icon={Users}
-            title="إجمالي المستخدمين"
-            value={stats?.totalUsers || 0}
-          />
-          <StatCard
-            icon={Briefcase}
-            title="المشاريع النشطة"
-            value={stats?.totalProjects || 0}
-          />
-          <StatCard
-            icon={Activity}
-            title="الاستثمارات"
-            value={stats?.totalInvestments || 0}
-          />
-          <StatCard
-            icon={Wallet}
-            title="إجمالي التمويل"
-            value={`${stats?.totalFunding.toLocaleString()} ريال`}
-          />
+        <div className="space-y-6 p-6">
+          <StatsGrid />
+          
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">نظرة عامة على المشاريع</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">المشاريع النشطة</span>
+                  <span className="font-medium">{stats?.totalProjects || 0}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">إجمالي التمويل</span>
+                  <span className="font-medium">{stats?.totalFunding?.toLocaleString()} ريال</span>
+                </div>
+              </div>
+            </Card>
+            
+            <ActivityFeed />
+          </div>
         </div>
       )}
       
@@ -76,7 +77,7 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
               className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
             >
               <Users className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">نظرة عامة</span>
+              <span className="hidden sm:inline">المستخدمين</span>
             </TabsTrigger>
             <TabsTrigger 
               value="projects" 
@@ -86,28 +87,34 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
               <span className="hidden sm:inline">المشاريع</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="investments" 
+              value="compliance" 
               className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
             >
-              <Activity className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">الاستثمارات</span>
+              <ShieldCheck className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">الامتثال</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="funding" 
+              value="commissions" 
               className="flex-1 min-w-[120px] data-[state=active]:bg-primary-50"
             >
               <Wallet className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">التمويل</span>
+              <span className="hidden sm:inline">العمولات</span>
             </TabsTrigger>
           </TabsList>
 
           <div className="mt-6">
-            {currentPath === "/admin" && <UserManagement />}
-            {currentPath === "/admin/users" && <UserManagement />}
-            {currentPath === "/admin/projects" && <ProjectManagement />}
-            {currentPath === "/admin/commissions" && <CommissionManagement />}
-            {currentPath === "/admin/compliance" && <ComplianceAudit />}
-            {currentPath === "/admin/support" && <SupportTools />}
+            <TabsContent value="overview">
+              <UserManagement />
+            </TabsContent>
+            <TabsContent value="projects">
+              <ProjectManagement />
+            </TabsContent>
+            <TabsContent value="compliance">
+              <ComplianceAudit />
+            </TabsContent>
+            <TabsContent value="commissions">
+              <CommissionManagement />
+            </TabsContent>
           </div>
         </Tabs>
       </div>
