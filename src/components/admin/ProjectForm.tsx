@@ -47,10 +47,14 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
   const createProjectMutation = useMutation({
     mutationFn: async (values: ProjectFormValues) => {
-      const { error } = await supabase.from("projects").insert({
-        ...values,
+      const projectData = {
+        title: values.title,
+        description: values.description,
+        funding_goal: values.funding_goal,
         owner_id: user?.id,
-      });
+      };
+      
+      const { error } = await supabase.from("projects").insert(projectData);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -72,9 +76,15 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
   const updateProjectMutation = useMutation({
     mutationFn: async (values: ProjectFormValues) => {
+      const projectData = {
+        title: values.title,
+        description: values.description,
+        funding_goal: values.funding_goal,
+      };
+      
       const { error } = await supabase
         .from("projects")
-        .update(values)
+        .update(projectData)
         .eq("id", project?.id);
       if (error) throw error;
     },
