@@ -11,11 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { UserCard } from './UserCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, UserCog, Users } from 'lucide-react';
 import { UserList } from './UserList';
+import { CreateUserDialog } from './CreateUserDialog';
 
 export type User = {
   id: string;
@@ -151,6 +152,8 @@ export default function UserManagement() {
 
   return (
     <div className="container mx-auto p-6" dir="rtl">
+      <CreateUserDialog onUserCreated={() => queryClient.invalidateQueries({ queryKey: ['users'] })} />
+      
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="all">
