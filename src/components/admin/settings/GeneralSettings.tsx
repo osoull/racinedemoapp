@@ -61,7 +61,8 @@ export default function GeneralSettings() {
     const descriptions: Record<string, string> = {
       platform_name: "اسم المنصة",
       maintenance_mode: "وضع الصيانة",
-      support_email: "البريد الإلكتروني للدعم"
+      support_email: "البريد الإلكتروني للدعم",
+      require_2fa: "تفعيل المصادقة الثنائية للمستخدمين"
     }
     return descriptions[key]
   }
@@ -70,6 +71,38 @@ export default function GeneralSettings() {
     setIsLoading(true)
     try {
       await updateSetting.mutateAsync({ key, value })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handle2FAChange = async (checked: boolean) => {
+    setIsLoading(true)
+    try {
+      // Update Supabase auth settings
+      const { error: authError } = await supabase.auth.admin.updateConfig({
+        config: {
+          enable_mfa: checked
+        }
+      })
+      
+      if (authError) throw authError
+
+      // Update platform settings
+      await updateSetting.mutateAsync({ key: 'require_2fa', value: checked })
+      
+      toast({
+        title: "تم التحديث",
+        description: checked 
+          ? "تم تفعيل المصادقة الثنائية للمستخدمين الجدد" 
+          : "تم تعطيل المصادقة الثنائية للمستخدمين الجدد",
+      })
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث إعدادات المصادقة الثنائية",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -105,6 +138,20 @@ export default function GeneralSettings() {
             type="email"
             defaultValue={settings?.support_email}
             onBlur={(e) => handleSave('support_email', e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label>المصادقة الثنائية</Label>
+            <p className="text-sm text-muted-foreground">
+              تفعيل المصادقة الثنائية للمستخدمين الجدد
+            </p>
+          </div>
+          <Switch
+            checked={settings?.require_2fa}
+            onCheckedChange={handle2FAChange}
+            disabled={isLoading}
           />
         </div>
       </div>
