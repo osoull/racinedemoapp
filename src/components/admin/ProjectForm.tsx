@@ -18,7 +18,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DocumentUpload } from "./project/DocumentUpload";
+import { ProjectDocumentUpload } from "./project/ProjectDocumentUpload";
+import { ProjectClassification } from "./project/ProjectClassification";
+import { ProjectFunding } from "./project/ProjectFunding";
 
 const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
@@ -133,7 +135,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" dir="rtl">
         <FormField
           control={form.control}
           name="title"
@@ -141,38 +143,15 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
             <FormItem>
               <FormLabel>عنوان المشروع *</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} className="text-right" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="classification"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>تصنيف المشروع *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر تصنيف المشروع" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="تمويل مشاريع طرف ثاني">تمويل مشاريع طرف ثاني</SelectItem>
-                  <SelectItem value="تمويل الفواتير">تمويل الفواتير</SelectItem>
-                  <SelectItem value="تمويل رأس المال العامل">تمويل رأس المال العامل</SelectItem>
-                  <SelectItem value="تمويل التوسع">تمويل التوسع</SelectItem>
-                  <SelectItem value="تمويل المشاريع العقارية">تمويل المشاريع العقارية</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        <ProjectClassification control={form.control} />
+        
         <FormField
           control={form.control}
           name="description"
@@ -180,69 +159,32 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
             <FormItem>
               <FormLabel>وصف المشروع *</FormLabel>
               <FormControl>
-                <Textarea {...field} className="min-h-[100px]" />
+                <Textarea {...field} className="min-h-[100px] text-right" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="funding_goal"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>المبلغ المستهدف *</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    {...field} 
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="min_investment"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>الحد الأدنى للاستثمار *</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    {...field} 
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                  />
-                </FormControl>
-                <p className="text-sm text-muted-foreground">الحد الأدنى المسموح به: 10000 ريال</p>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <ProjectFunding control={form.control} />
 
         <div className="space-y-4">
           <h3 className="font-semibold">المستندات المطلوبة *</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <DocumentUpload
+            <ProjectDocumentUpload
               title="عرض تقديمي للمشروع"
               description="يرجى رفع الملف بصيغة PDF"
               type="presentation"
             />
 
-            <DocumentUpload
+            <ProjectDocumentUpload
               title="دراسة الجدوى"
               description="يرجى رفع الملف بصيغة PDF"
               type="feasibility"
             />
 
-            <DocumentUpload
+            <ProjectDocumentUpload
               title="التقرير المالي"
               description="يرجى رفع الملف بصيغة PDF"
               type="financial"
