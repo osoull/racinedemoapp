@@ -15,8 +15,8 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center justify-between px-4 lg:px-6">
-          <div className="flex gap-4 md:gap-6">
+        <div className="flex h-14 items-center justify-between px-6">
+          <div className="flex gap-4">
             <h2 className="text-lg font-semibold tracking-tight">لوحة التحكم</h2>
           </div>
           <UserNav />
@@ -25,14 +25,14 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="hidden w-56 shrink-0 border-l md:block">
+        <aside className="w-56 shrink-0 border-l">
           <div className="sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto px-4">
             <DashboardNav />
           </div>
         </aside>
 
         {/* Main Content */}
-        <main className={cn("flex-1 px-4 py-6 lg:px-6", className)}>
+        <main className={cn("flex-1 px-6 py-6", className)}>
           {children}
         </main>
       </div>

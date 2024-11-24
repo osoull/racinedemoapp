@@ -14,6 +14,7 @@ import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
+import { MobileMessage } from "@/components/MobileMessage"
 import "./App.css"
 
 const queryClient = new QueryClient()
@@ -80,6 +81,16 @@ function App() {
 function AppContent() {
   const { user } = useAuth()
   const [userType, setUserType] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     async function getUserType() {
@@ -100,6 +111,10 @@ function AppContent() {
 
     getUserType()
   }, [user])
+
+  if (isMobile) {
+    return <MobileMessage />
+  }
 
   const getDashboardRoute = () => {
     if (!user || !userType) return "/"
