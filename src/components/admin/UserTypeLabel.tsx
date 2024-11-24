@@ -13,6 +13,8 @@ export function UserTypeLabel({ type }: UserTypeLabelProps) {
         return 'bg-blue-500';
       case 'investor':
         return 'bg-green-500';
+      case 'project_owner':
+        return 'bg-purple-500';
       default:
         return 'bg-gray-500';
     }
@@ -26,6 +28,8 @@ export function UserTypeLabel({ type }: UserTypeLabelProps) {
         return 'مدير استثمار';
       case 'investor':
         return 'مستثمر';
+      case 'project_owner':
+        return 'طالب تمويل';
       default:
         return 'غير محدد';
     }

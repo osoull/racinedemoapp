@@ -129,6 +129,7 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="investor">مستثمر</SelectItem>
+                <SelectItem value="project_owner">طالب تمويل</SelectItem>
                 <SelectItem value="investment_manager">مدير استثمار</SelectItem>
                 <SelectItem value="admin">مشرف</SelectItem>
               </SelectContent>
