@@ -26,13 +26,20 @@ export default function GeneralSettings() {
         .select('*')
         .eq('category', 'general')
       
-      if (error) throw error
+      if (error) {
+        toast({
+          title: "خطأ",
+          description: "حدث خطأ أثناء تحميل الإعدادات",
+          variant: "destructive",
+        })
+        throw error
+      }
+
       const settingsMap = data?.reduce((acc: any, setting) => {
         acc[setting.setting_key] = setting.setting_value
         return acc
       }, {}) || {}
 
-      // Update form data with fetched settings
       setFormData({
         platform_name: settingsMap.platform_name || '',
         maintenance_mode: settingsMap.maintenance_mode || false,
@@ -53,6 +60,8 @@ export default function GeneralSettings() {
           setting_value: value,
           category: 'general',
           description: getSettingDescription(key)
+        }, {
+          onConflict: 'setting_key,category'
         })
       
       if (error) throw error
@@ -64,7 +73,8 @@ export default function GeneralSettings() {
         description: "تم تحديث الإعدادات بنجاح",
       })
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Error updating setting:', error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء حفظ الإعدادات",
@@ -83,28 +93,31 @@ export default function GeneralSettings() {
     return descriptions[key]
   }
 
-  const handleSave = async (key: string, value: any) => {
-    setIsLoading(true)
-    try {
-      await updateSetting.mutateAsync({ key, value })
-      setFormData(prev => ({ ...prev, [key]: value }))
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
     try {
-      // Update all settings at once
       await Promise.all([
-        updateSetting.mutateAsync({ key: 'platform_name', value: formData.platform_name }),
-        updateSetting.mutateAsync({ key: 'maintenance_mode', value: formData.maintenance_mode }),
-        updateSetting.mutateAsync({ key: 'support_email', value: formData.support_email }),
-        updateSetting.mutateAsync({ key: 'require_2fa', value: formData.require_2fa })
+        updateSetting.mutateAsync({ 
+          key: 'platform_name', 
+          value: formData.platform_name 
+        }),
+        updateSetting.mutateAsync({ 
+          key: 'maintenance_mode', 
+          value: formData.maintenance_mode 
+        }),
+        updateSetting.mutateAsync({ 
+          key: 'support_email', 
+          value: formData.support_email 
+        }),
+        updateSetting.mutateAsync({ 
+          key: 'require_2fa', 
+          value: formData.require_2fa 
+        })
       ])
+    } catch (error) {
+      console.error('Error saving settings:', error)
     } finally {
       setIsLoading(false)
     }
