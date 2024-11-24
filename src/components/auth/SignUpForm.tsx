@@ -49,72 +49,79 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
   }
 
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <Button 
-          variant="ghost" 
-          className="w-fit mb-4" 
-          onClick={onBack}
-        >
-          <ArrowRight className="h-4 w-4 ml-2" />
-          رجوع
-        </Button>
-        <CardTitle>
-          {userType === "project_owner" ? "التسجيل كطالب تمويل" : "التسجيل كمستثمر"}
-        </CardTitle>
-        <CardDescription>
-          قم بإدخال بياناتك لإنشاء حساب
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Input
-              type="email"
-              placeholder="البريد الإلكتروني"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              dir="rtl"
-            />
-            <Input
-              type="tel"
-              placeholder="رقم الجوال"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              dir="rtl"
-              pattern="05[0-9]{8}"
-            />
-            <Input
-              type="password"
-              placeholder="كلمة المرور"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              dir="rtl"
-            />
-          </div>
-          
-          <div className="flex items-center space-x-2 space-x-reverse">
-            <Checkbox 
-              id="terms" 
-              checked={acceptTerms}
-              onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-            />
-            <Label 
-              htmlFor="terms" 
-              className="text-sm text-muted-foreground cursor-pointer"
-            >
-              أوافق على الشروط والأحكام
-            </Label>
-          </div>
-
-          <Button type="submit" className="w-full">
-            تسجيل
+    <>
+      <img 
+        src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F8fefc08ff6352b1f82851d81737a6460.cdn.bubble.io%2Ff1729676645537x190880546208797250%2Flogo-horizontal-full.png" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
+      />
+      <Card className="w-[350px]">
+        <CardHeader>
+          <Button 
+            variant="ghost" 
+            className="w-fit mb-4" 
+            onClick={onBack}
+          >
+            <ArrowRight className="h-4 w-4 ml-2" />
+            رجوع
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+          <CardTitle>
+            {userType === "project_owner" ? "التسجيل كطالب تمويل" : "التسجيل كمستثمر"}
+          </CardTitle>
+          <CardDescription>
+            قم بإدخال بياناتك لإنشاء حساب
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                dir="rtl"
+              />
+              <Input
+                type="tel"
+                placeholder="رقم الجوال"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                dir="rtl"
+                pattern="05[0-9]{8}"
+              />
+              <Input
+                type="password"
+                placeholder="كلمة المرور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                dir="rtl"
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2 space-x-reverse">
+              <Checkbox 
+                id="terms" 
+                checked={acceptTerms}
+                onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+              />
+              <Label 
+                htmlFor="terms" 
+                className="text-sm text-muted-foreground cursor-pointer"
+              >
+                أوافق على الشروط والأحكام
+              </Label>
+            </div>
+
+            <Button type="submit" className="w-full">
+              تسجيل
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </>
   )
 }
