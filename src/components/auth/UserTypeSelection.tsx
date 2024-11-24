@@ -13,7 +13,7 @@ export function UserTypeSelection({ onSelect }: UserTypeSelectionProps) {
   return (
     <div className="space-y-8 w-full max-w-3xl px-4">
       <img 
-        src="https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F8fefc08ff6352b1f82851d81737a6460.cdn.bubble.io%2Ff1729676645537x190880546208797250%2Flogo-horizontal-full.png" 
+        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg" 
         alt="Raseen Logo" 
         className="w-64 md:w-72 lg:w-80 mx-auto object-contain" 
       />
