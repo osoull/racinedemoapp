@@ -14,7 +14,6 @@ import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
 import { MobileMessage } from "@/components/MobileMessage"
-import UserManagement from "@/components/admin/UserManagement"
 
 const queryClient = new QueryClient()
 
@@ -94,21 +93,11 @@ function App() {
                   }
                 />
 
-                {/* Admin routes */}
                 <Route
-                  path="/admin"
+                  path="/admin/*"
                   element={
                     <PrivateRoute allowedRoles={["admin"]}>
                       <AdminDashboard />
-                    </PrivateRoute>
-                  }
-                />
-
-                <Route
-                  path="/admin/users"
-                  element={
-                    <PrivateRoute allowedRoles={["admin"]}>
-                      <UserManagement />
                     </PrivateRoute>
                   }
                 />

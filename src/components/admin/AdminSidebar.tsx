@@ -25,7 +25,7 @@ const menuItems = [
     title: "المستخدمين",
     icon: Users,
     path: "/admin/users",
-    description: "إدارة حسابات المستخدمين"
+    description: "إدارة المستخدمين"
   },
   {
     title: "المشاريع",
