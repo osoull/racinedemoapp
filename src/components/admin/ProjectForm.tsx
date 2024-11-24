@@ -2,31 +2,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProjectDocumentUpload } from "./project/ProjectDocumentUpload";
 import { ProjectClassification } from "./project/ProjectClassification";
-import { ProjectFunding } from "./project/ProjectFunding";
+import { ProjectInvestmentLimits } from "./project/ProjectInvestmentLimits";
 
 const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
   description: z.string().min(1, "وصف المشروع مطلوب"),
-  funding_goal: z.number().min(1, "المبلغ المستهدف يجب أن يكون أكبر من 0"),
-  min_investment: z.number().min(1, "الحد الأدنى للاستثمار يجب أن يكون أكبر من 0"),
+  funding_goal: z.number().min(1000, "المبلغ المستهدف يجب أن يكون أكبر من 1000 ريال"),
+  min_investment: z.number().min(1000, "الحد الأدنى للاستثمار يجب أن يكون أكبر من 1000 ريال"),
   classification: z.enum([
     'تمويل مشاريع طرف ثاني',
     'تمويل الفواتير',
@@ -56,7 +46,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
       title: project?.title || "",
       description: project?.description || "",
       funding_goal: project?.funding_goal || 0,
-      min_investment: 10000,
+      min_investment: 1000,
       classification: project?.classification as any || "تمويل مشاريع طرف ثاني",
     },
   });
@@ -166,7 +156,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
           )}
         />
 
-        <ProjectFunding control={form.control} />
+        <ProjectInvestmentLimits control={form.control} />
 
         <div className="space-y-4">
           <h3 className="font-semibold">المستندات المطلوبة *</h3>
