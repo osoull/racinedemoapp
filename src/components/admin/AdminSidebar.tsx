@@ -10,7 +10,8 @@ import {
   Shield,
   Wallet,
   PieChart,
-  MessageSquare
+  MessageSquare,
+  Users
 } from "lucide-react"
 
 const menuItems = [
@@ -25,6 +26,12 @@ const menuItems = [
     icon: FileText,
     path: "/admin/projects",
     description: "إدارة المشاريع"
+  },
+  {
+    title: "المقترضين",
+    icon: Users,
+    path: "/admin/borrowers",
+    description: "إدارة المقترضين"
   },
   {
     title: "المعاملات",
