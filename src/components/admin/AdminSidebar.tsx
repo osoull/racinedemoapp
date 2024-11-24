@@ -3,67 +3,7 @@ import { LogOut } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
-import { 
-  LayoutDashboard, 
-  FileText,
-  Settings,
-  Shield,
-  Wallet,
-  PieChart,
-  MessageSquare,
-  Users
-} from "lucide-react"
-
-const menuItems = [
-  {
-    title: "نظرة عامة",
-    icon: LayoutDashboard,
-    path: "/admin",
-    description: "لوحة المعلومات والإحصائيات"
-  },
-  {
-    title: "المشاريع",
-    icon: FileText,
-    path: "/admin/projects",
-    description: "إدارة المشاريع"
-  },
-  {
-    title: "المقترضين",
-    icon: Users,
-    path: "/admin/borrowers",
-    description: "إدارة المقترضين"
-  },
-  {
-    title: "المعاملات",
-    icon: Wallet,
-    path: "/admin/transactions",
-    description: "إدارة المعاملات المالية"
-  },
-  {
-    title: "التحقق والامتثال",
-    icon: Shield,
-    path: "/admin/compliance",
-    description: "إدارة التحقق والامتثال"
-  },
-  {
-    title: "التقارير",
-    icon: PieChart,
-    path: "/admin/reports",
-    description: "تقارير وإحصائيات"
-  },
-  {
-    title: "الدعم الفني",
-    icon: MessageSquare,
-    path: "/admin/support",
-    description: "إدارة طلبات الدعم"
-  },
-  {
-    title: "الإعدادات",
-    icon: Settings,
-    path: "/admin/settings",
-    description: "إعدادات المنصة وإدارة المستخدمين"
-  }
-]
+import { businessMenuItems } from "./menu/businessItems"
 
 export const AdminSidebar = () => {
   const location = useLocation()
@@ -72,11 +12,12 @@ export const AdminSidebar = () => {
   return (
     <div className="flex h-full flex-col bg-white">
       <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
-        {menuItems.map((item) => (
+        {businessMenuItems.map((item) => (
           <SidebarItem
             key={item.path}
             {...item}
             isActive={location.pathname === item.path}
+            subItems={item.subItems}
           />
         ))}
       </nav>
