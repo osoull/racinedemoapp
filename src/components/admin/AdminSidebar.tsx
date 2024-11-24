@@ -10,7 +10,6 @@ import {
   Settings,
   Shield,
   Wallet,
-  Percent,
   PieChart,
   MessageSquare
 } from "lucide-react"
@@ -45,12 +44,6 @@ const menuItems = [
     icon: Shield,
     path: "/admin/compliance",
     description: "إدارة التحقق والامتثال"
-  },
-  {
-    title: "العمولات",
-    icon: Percent,
-    path: "/admin/commissions",
-    description: "إدارة العمولات والرسوم"
   },
   {
     title: "التقارير",

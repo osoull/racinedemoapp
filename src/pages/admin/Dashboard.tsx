@@ -6,7 +6,6 @@ import UserManagement from "@/components/admin/UserManagement"
 import ProjectManagement from "@/components/admin/ProjectManagement"
 import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import PlatformSettings from "@/components/admin/PlatformSettings"
-import CommissionManagement from "@/components/admin/CommissionManagement"
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
 import SupportTools from "@/components/admin/SupportTools"
 import { TransactionManagement } from "@/components/admin/transaction/TransactionManagement"
@@ -50,7 +49,6 @@ export default function AdminDashboard() {
           <Route path="projects" element={<ProjectManagement />} />
           <Route path="transactions" element={<TransactionManagement />} />
           <Route path="compliance" element={<KYCManagement />} />
-          <Route path="commissions" element={<CommissionManagement />} />
           <Route path="reports" element={<DashboardOverview />} />
           <Route path="support" element={<SupportTools />} />
           <Route path="settings/*" element={<PlatformSettings />} />
