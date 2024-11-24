@@ -103,7 +103,7 @@ function App() {
                 />
 
                 <Route
-                  path="/admin/investors"
+                  path="/admin/investors/*"
                   element={
                     <PrivateRoute allowedRoles={["admin"]}>
                       <InvestorsPage />

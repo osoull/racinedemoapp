@@ -18,17 +18,20 @@ const investorManagementItems = [
   {
     title: "جميع المستثمرين",
     path: "/admin/investors",
-    icon: Users
+    icon: Users,
+    description: "عرض وإدارة جميع المستثمرين"
   },
   {
     title: "المستثمرون المؤهلون",
-    path: "/admin/investors?type=qualified",
-    icon: UserCog
+    path: "/admin/investors/qualified",
+    icon: UserCog,
+    description: "إدارة المستثمرين المؤهلين"
   },
   {
     title: "المستثمرون الأساسيون",
-    path: "/admin/investors?type=basic",
-    icon: Users
+    path: "/admin/investors/basic",
+    icon: Users,
+    description: "إدارة المستثمرين الأساسيين"
   }
 ];
 
