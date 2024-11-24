@@ -27,8 +27,10 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
     return <Navigate to="/" replace />
   }
 
-  // Check user type from user metadata
+  // Check user type from profiles table
   const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
+  console.log('Current user type:', userType)
+  
   if (!allowedRoles.includes(userType)) {
     console.log('Access denied. User type:', userType, 'Allowed roles:', allowedRoles)
     return <Navigate to="/" replace />
@@ -57,9 +59,8 @@ function AppContent() {
   const getDashboardRoute = () => {
     if (!user) return "/"
     
-    // Check both user_metadata and app_metadata for user_type
     const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
-    console.log('Current user type:', userType)
+    console.log('Redirecting to dashboard for user type:', userType)
     
     switch (userType) {
       case "project_owner":
@@ -77,10 +78,10 @@ function AppContent() {
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
         <Routes>
-          {/* Auth page */}
+          {/* Public route */}
           <Route path="/" element={<Auth />} />
 
-          {/* Investor Dashboard */}
+          {/* Protected routes */}
           <Route
             path="/investor/*"
             element={
@@ -90,7 +91,6 @@ function AppContent() {
             }
           />
 
-          {/* Project Owner Dashboard */}
           <Route
             path="/project-owner/*"
             element={
@@ -100,7 +100,6 @@ function AppContent() {
             }
           />
 
-          {/* Admin Dashboard */}
           <Route
             path="/admin/*"
             element={
@@ -110,7 +109,6 @@ function AppContent() {
             }
           />
 
-          {/* Common pages */}
           <Route
             path="/profile"
             element={
@@ -119,6 +117,7 @@ function AppContent() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/settings"
             element={
@@ -128,7 +127,7 @@ function AppContent() {
             }
           />
 
-          {/* Default redirect */}
+          {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
         </Routes>
       </main>
