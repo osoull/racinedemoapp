@@ -8,7 +8,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-primary/10 to-background py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
               رسين للاستثمار
             </h1>

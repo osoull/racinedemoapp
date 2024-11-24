@@ -1,7 +1,5 @@
-import { Routes, Route } from "react-router-dom";
 import { useRealtimeSync } from "./hooks/useRealtimeSync";
 import { Toaster } from "@/components/ui/toaster";
-import Index from "./pages/Index";
 
 function App() {
   // Enable real-time sync
@@ -9,9 +7,7 @@ function App() {
 
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Index />} />
-      </Routes>
+      <div>Your app content goes here...</div>
       <Toaster />
     </>
   );
