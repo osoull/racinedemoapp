@@ -327,6 +327,39 @@ export type Database = {
           },
         ]
       }
+      platform_licenses: {
+        Row: {
+          created_at: string
+          expiry_date: string
+          id: string
+          issue_date: string
+          license_number: string
+          license_type: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expiry_date: string
+          id?: string
+          issue_date: string
+          license_number: string
+          license_type: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expiry_date?: string
+          id?: string
+          issue_date?: string
+          license_number?: string
+          license_type?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       platform_settings: {
         Row: {
           category: string
