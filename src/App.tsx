@@ -1,51 +1,135 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/contexts/AuthContext";
-import Dashboard from "@/pages/Dashboard";
-import BorrowerDashboard from "@/pages/borrower/Dashboard";
-import SubmitProject from "@/pages/borrower/SubmitProject";
-import AdminDashboard from "@/pages/admin/Dashboard";
-import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement";
-import InvestorManagement from "@/components/admin/investor/InvestorManagement";
-import ProjectManagement from "@/components/admin/ProjectManagement";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import SignIn from "@/pages/auth/SignIn";
-import SignUp from "@/pages/auth/SignUp";
-import BorrowerSignUp from "@/pages/auth/BorrowerSignUp";
-import InvestorSignUp from "@/pages/auth/InvestorSignUp";
-import BorrowerKYC from "@/pages/borrower/KYC";
-import InvestorKYC from "@/pages/investor/KYC";
+import { BrowserRouter } from "react-router-dom"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Toaster } from "@/components/ui/toaster"
+import { AuthProvider } from "@/contexts/AuthContext"
+import { NotificationsProvider } from "@/contexts/NotificationsContext"
+import { Routes, Route, Navigate } from "react-router-dom"
+import { Auth } from "@/components/Auth"
+import InvestorDashboard from "@/pages/investor/Dashboard"
+import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
+import AdminDashboard from "@/pages/admin/Dashboard"
+import Profile from "@/pages/Profile"
+import Settings from "@/pages/Settings"
+import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/integrations/supabase/client"
+import { useEffect, useState } from "react"
+import { MobileMessage } from "@/components/MobileMessage"
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
+
+function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) {
+  const { user, loading } = useAuth()
+  const [userType, setUserType] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function getUserType() {
+      if (!user) {
+        setIsLoading(false)
+        return
+      }
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+
+      if (error) {
+        setIsLoading(false)
+        return
+      }
+
+      setUserType(profile?.user_type)
+      setIsLoading(false)
+    }
+
+    getUserType()
+  }, [user])
+
+  if (loading || isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!user) {
+    return <Navigate to="/" replace />
+  }
+
+  if (!userType || !allowedRoles.includes(userType)) {
+    return <Navigate to="/" replace />
+  }
+
+  return <>{children}</>
+}
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<SignIn />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/borrower/dashboard" element={<BorrowerDashboard />} />
-            <Route path="/borrower/submit-project" element={<SubmitProject />} />
-            <Route path="/admin" element={<ProtectedRoute userType="admin"><AdminDashboard /></ProtectedRoute>}>
-              <Route path="borrowers" element={<BorrowerManagement />} />
-              <Route path="investors" element={<InvestorManagement />} />
-              <Route path="projects" element={<ProjectManagement />} />
-            </Route>
-            <Route path="/auth/signin" element={<SignIn />} />
-            <Route path="/auth/signup" element={<SignUp />} />
-            <Route path="/auth/signup/borrower" element={<BorrowerSignUp />} />
-            <Route path="/auth/signup/investor" element={<InvestorSignUp />} />
-            <Route path="/borrower/kyc" element={<ProtectedRoute userType="borrower"><BorrowerKYC /></ProtectedRoute>} />
-            <Route path="/investor/kyc" element={<ProtectedRoute userType="investor"><InvestorKYC /></ProtectedRoute>} />
-          </Routes>
-        </Router>
-        <Toaster />
+        <NotificationsProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-background">
+              <Routes>
+                {/* Public routes */}
+                <Route path="/signin" element={<Navigate to="/" replace />} />
+                <Route path="/" element={<Auth />} />
+
+                {/* Protected routes */}
+                <Route
+                  path="/investor/*"
+                  element={
+                    <PrivateRoute allowedRoles={["investor"]}>
+                      <InvestorDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/project-owner/*"
+                  element={
+                    <PrivateRoute allowedRoles={["project_owner"]}>
+                      <ProjectOwnerDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/admin/*"
+                  element={
+                    <PrivateRoute allowedRoles={["admin"]}>
+                      <AdminDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
+                      <Profile />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/settings"
+                  element={
+                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
+                      <Settings />
+                    </PrivateRoute>
+                  }
+                />
+
+                {/* Catch-all redirect */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+              <Toaster />
+            </div>
+          </BrowserRouter>
+        </NotificationsProvider>
       </AuthProvider>
     </QueryClientProvider>
-  );
+  )
 }
 
-export default App;
+export default App
