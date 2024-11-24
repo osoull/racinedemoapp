@@ -22,18 +22,34 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
 
   const updateCommissionMutation = useMutation({
     mutationFn: async (newRate: number) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("commissions")
         .update({ 
           rate: newRate,
           updated_at: new Date().toISOString()
         })
         .eq("commission_id", commission.commission_id)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error("Erreur lors de la mise à jour:", error)
+        throw error
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error("Aucune donnée n'a été mise à jour")
+      }
+
+      return data[0]
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["commissions"] })
+    onSuccess: (updatedCommission) => {
+      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
+        if (!oldData) return [updatedCommission]
+        return oldData.map(commission => 
+          commission.commission_id === updatedCommission.commission_id ? updatedCommission : commission
+        )
+      })
+      
       toast({
         title: "تم التحديث",
         description: "تم تحديث معدل العمولة بنجاح",
