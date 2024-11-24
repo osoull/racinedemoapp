@@ -3,35 +3,61 @@ import { LogOut } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
-import { businessMenuItems, platformSettingsItems } from "./menuItems"
+
+const menuItems = [
+  {
+    title: "نظرة عامة",
+    icon: "LayoutDashboard",
+    path: "/admin",
+    description: "لوحة المعلومات والإحصائيات"
+  },
+  {
+    title: "المستخدمين",
+    icon: "Users",
+    path: "/admin/users",
+    description: "إدارة المستخدمين"
+  },
+  {
+    title: "المشاريع",
+    icon: "Briefcase",
+    path: "/admin/projects",
+    description: "إدارة المشاريع"
+  },
+  {
+    title: "المعاملات المالية",
+    icon: "Wallet",
+    path: "/admin/transactions",
+    description: "متابعة المعاملات"
+  },
+  {
+    title: "التحقق والامتثال",
+    icon: "Shield",
+    path: "/admin/compliance",
+    description: "إدارة التحقق والامتثال"
+  },
+  {
+    title: "التقارير",
+    icon: "FileText",
+    path: "/admin/reports",
+    description: "تقارير وإحصائيات"
+  },
+  {
+    title: "الدعم الفني",
+    icon: "MessageSquare",
+    path: "/admin/support",
+    description: "إدارة طلبات الدعم"
+  },
+  {
+    title: "إعدادات المنصة",
+    icon: "Settings",
+    path: "/admin/settings",
+    description: "إعدادات عامة للمنصة"
+  }
+]
 
 export const AdminSidebar = () => {
   const location = useLocation()
   const { signOut } = useAuth()
-
-  const renderMenuItem = (item: any) => {
-    const isActive = location.pathname === item.path
-    
-    return (
-      <div key={item.path} className="space-y-1">
-        <SidebarItem
-          {...item}
-          isActive={isActive}
-        />
-        {item.subItems && isActive && (
-          <div className="mr-4 border-r pr-4 pt-2">
-            {item.subItems.map((subItem: any) => (
-              <SidebarItem
-                key={subItem.path}
-                {...subItem}
-                isActive={location.pathname === subItem.path}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    )
-  }
 
   return (
     <div className="flex h-full flex-col bg-white">
@@ -39,21 +65,14 @@ export const AdminSidebar = () => {
         <img src="/logo.svg" alt="Racine Logo" className="h-8" />
       </div>
       <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
-        {/* Business Features */}
-        <div className="mb-6">
-          <h3 className="px-3 text-sm font-semibold text-gray-500 mb-2">
-            الوظائف الأساسية
-          </h3>
-          {businessMenuItems.map(renderMenuItem)}
-        </div>
-
-        {/* Platform Settings */}
-        <div>
-          <h3 className="px-3 text-sm font-semibold text-gray-500 mb-2">
-            إعدادات المنصة
-          </h3>
-          {platformSettingsItems.map(renderMenuItem)}
-        </div>
+        {menuItems.map((item) => (
+          <div key={item.path} className="space-y-1">
+            <SidebarItem
+              {...item}
+              isActive={location.pathname === item.path}
+            />
+          </div>
+        ))}
       </nav>
       <div className="border-t p-4">
         <Button 

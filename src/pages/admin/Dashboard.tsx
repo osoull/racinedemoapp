@@ -1,33 +1,125 @@
 import { Routes, Route } from "react-router-dom"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import UserManagement from "@/components/admin/UserManagement"
-import ProjectManagement from "@/components/admin/ProjectManagement"
-import CommissionManagement from "@/components/admin/CommissionManagement"
-import ComplianceAudit from "@/components/admin/ComplianceAudit"
-import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
-import PlatformSettings from "@/components/admin/PlatformSettings"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
+import {
+  Users,
+  Briefcase,
+  Wallet,
+  Shield,
+  FileText,
+  MessageSquare,
+  Settings,
+} from "lucide-react"
 
 export default function AdminDashboard() {
+  const navigate = useNavigate()
+
+  const quickActions = [
+    {
+      title: "المستخدمين",
+      icon: Users,
+      path: "/admin/users",
+      description: "إدارة المستخدمين والصلاحيات",
+      color: "bg-blue-100"
+    },
+    {
+      title: "المشاريع",
+      icon: Briefcase,
+      path: "/admin/projects",
+      description: "إدارة وتتبع المشاريع",
+      color: "bg-green-100"
+    },
+    {
+      title: "المعاملات",
+      icon: Wallet,
+      path: "/admin/transactions",
+      description: "متابعة المعاملات المالية",
+      color: "bg-purple-100"
+    },
+    {
+      title: "التحقق",
+      icon: Shield,
+      path: "/admin/compliance",
+      description: "إدارة التحقق والامتثال",
+      color: "bg-yellow-100"
+    },
+    {
+      title: "التقارير",
+      icon: FileText,
+      path: "/admin/reports",
+      description: "عرض وتحليل التقارير",
+      color: "bg-pink-100"
+    },
+    {
+      title: "الدعم",
+      icon: MessageSquare,
+      path: "/admin/support",
+      description: "إدارة طلبات الدعم الفني",
+      color: "bg-indigo-100"
+    }
+  ]
+
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-8">
+        <div className="p-6 bg-white rounded-lg shadow-sm border">
+          <h2 className="text-2xl font-bold mb-6">مرحباً بك في لوحة التحكم</h2>
+          
+          <Tabs defaultValue="quick-actions" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="quick-actions">الوصول السريع</TabsTrigger>
+              <TabsTrigger value="recent">النشاطات الأخيرة</TabsTrigger>
+              <TabsTrigger value="stats">الإحصائيات</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="quick-actions" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {quickActions.map((action) => (
+                  <Card 
+                    key={action.path}
+                    className="p-6 hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => navigate(action.path)}
+                  >
+                    <div className="flex items-start space-x-4 space-x-reverse">
+                      <div className={`p-3 rounded-lg ${action.color}`}>
+                        <action.icon className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold mb-1">{action.title}</h3>
+                        <p className="text-sm text-gray-500">{action.description}</p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="recent">
+              {/* Recent activities content */}
+            </TabsContent>
+
+            <TabsContent value="stats">
+              {/* Statistics content */}
+            </TabsContent>
+          </Tabs>
+        </div>
+
         <Routes>
           <Route index element={<DashboardOverview />} />
-          
           {/* Business Features Routes */}
           <Route path="users" element={<UserManagement />} />
           <Route path="users/investors" element={<UserManagement filter="investor" />} />
           <Route path="users/project-owners" element={<UserManagement filter="project_owner" />} />
-          
           <Route path="projects" element={<ProjectManagement />} />
           <Route path="projects/new" element={<ProjectManagement filter="pending" />} />
           <Route path="projects/active" element={<ProjectManagement filter="active" />} />
           <Route path="projects/completed" element={<ProjectManagement filter="completed" />} />
-          
           <Route path="kyc" element={<ComplianceAudit tab="kyc" />} />
           <Route path="sharia" element={<ComplianceAudit tab="sharia" />} />
-          
           {/* Platform Settings Routes */}
           <Route path="platform-settings" element={<PlatformSettings />} />
           <Route path="platform-settings/commissions" element={<CommissionManagement />} />

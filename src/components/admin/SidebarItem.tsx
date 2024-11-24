@@ -33,9 +33,6 @@ export const SidebarItem = ({ title, icon: Icon, path, description, isActive }: 
           {description}
         </p>
       </div>
-      {isActive && (
-        <div className="absolute right-0 top-0 h-full w-1 bg-primary rounded-l-lg" />
-      )}
     </Link>
   )
 }
