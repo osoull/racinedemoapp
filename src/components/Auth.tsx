@@ -123,9 +123,14 @@ export function Auth() {
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
       <img 
-        src="/logo.svg" 
+        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg" 
         alt="Raseen Logo" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain dark:hidden" 
+      />
+      <img 
+        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
       />
       <Card className="w-[350px]">
         <CardHeader>

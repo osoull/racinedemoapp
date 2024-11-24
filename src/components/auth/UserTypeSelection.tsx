@@ -15,7 +15,12 @@ export function UserTypeSelection({ onSelect }: UserTypeSelectionProps) {
       <img 
         src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg" 
         alt="Raseen Logo" 
-        className="w-64 md:w-72 lg:w-80 mx-auto object-contain" 
+        className="w-64 md:w-72 lg:w-80 mx-auto object-contain dark:hidden" 
+      />
+      <img 
+        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mx-auto object-contain hidden dark:block" 
       />
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
