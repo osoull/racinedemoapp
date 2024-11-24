@@ -20,10 +20,11 @@ export function Auth() {
       if (action === "signin") {
         await signIn(email, password)
         
+        const { data: { user } } = await supabase.auth.getUser()
         const { data: profile } = await supabase
           .from('profiles')
           .select('user_type')
-          .eq('id', (await supabase.auth.getUser()).data.user?.id)
+          .eq('id', user?.id)
           .single()
 
         if (profile?.user_type) {
@@ -46,7 +47,7 @@ export function Auth() {
         setIsSignUp(false)
       }
     } catch (error) {
-      // Error is handled in AuthContext
+      console.error("Auth error:", error)
     }
   }
 
