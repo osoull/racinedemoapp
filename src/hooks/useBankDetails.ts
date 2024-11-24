@@ -29,16 +29,25 @@ export function useBankDetails() {
         .eq('setting_key', 'platform_bank_details')
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Error fetching bank details:', error)
+        throw new Error('Failed to load bank details')
+      }
+      
+      if (!data?.setting_value) {
+        throw new Error('No bank details found')
+      }
       
       const bankDetails = data.setting_value
       
       if (!isBankDetailsData(bankDetails)) {
+        console.error('Invalid bank details format:', bankDetails)
         throw new Error('Invalid bank details format')
       }
       
       return bankDetails
-    }
+    },
+    retry: 2
   })
 
   useEffect(() => {

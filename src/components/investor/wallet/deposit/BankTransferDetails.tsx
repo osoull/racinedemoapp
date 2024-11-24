@@ -25,18 +25,18 @@ export function BankTransferDetails({ bankDetails, isLoading, error }: BankTrans
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <Loader2 className="h-6 w-6 animate-spin" />
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <Alert variant="destructive">
+      <Alert variant="destructive" className="my-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          حدث خطأ أثناء تحميل المعلومات البنكية
+          حدث خطأ أثناء تحميل المعلومات البنكية. يرجى المحاولة مرة أخرى لاحقاً.
         </AlertDescription>
       </Alert>
     )
@@ -44,72 +44,39 @@ export function BankTransferDetails({ bankDetails, isLoading, error }: BankTrans
 
   if (!bankDetails) {
     return (
-      <Alert>
+      <Alert className="my-4">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          لا توجد معلومات بنكية متاحة
+          لم يتم العثور على معلومات بنكية. يرجى التواصل مع الدعم الفني.
         </AlertDescription>
       </Alert>
     )
   }
 
+  const bankFields = [
+    { label: "اسم البنك", value: bankDetails.bank_name },
+    { label: "اسم الحساب", value: bankDetails.account_name },
+    { label: "رمز السويفت (SWIFT)", value: bankDetails.swift },
+    { label: "رقم الآيبان (IBAN)", value: bankDetails.iban }
+  ]
+
   return (
     <div className="rounded-lg border p-4 space-y-4 bg-gray-50">
-      <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">اسم البنك</Label>
-        <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-          <span className="font-medium">{bankDetails.bank_name}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => copyToClipboard(bankDetails.bank_name)}
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
+      {bankFields.map((field) => (
+        <div key={field.label} className="space-y-2">
+          <Label className="text-sm text-muted-foreground">{field.label}</Label>
+          <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
+            <span className="font-medium">{field.value}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => copyToClipboard(field.value)}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">اسم الحساب</Label>
-        <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-          <span className="font-medium">{bankDetails.account_name}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => copyToClipboard(bankDetails.account_name)}
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">رمز السويفت (SWIFT)</Label>
-        <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-          <span className="font-mono font-medium">{bankDetails.swift}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => copyToClipboard(bankDetails.swift)}
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">رقم الآيبان (IBAN)</Label>
-        <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-          <span className="font-mono font-medium">{bankDetails.iban}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => copyToClipboard(bankDetails.iban)}
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      ))}
     </div>
   )
 }
