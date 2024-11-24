@@ -22,7 +22,7 @@ type UserCardProps = {
 export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps) {
   const fullName = [
     user.first_name,
-    user.middle_name || "",
+    user.middle_name,
     user.last_name
   ].filter(Boolean).join(" ");
 
