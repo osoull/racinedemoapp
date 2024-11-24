@@ -308,6 +308,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          classification: string
           created_at: string
           current_funding: number | null
           description: string | null
@@ -319,6 +320,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          classification: string
           created_at?: string
           current_funding?: number | null
           description?: string | null
@@ -330,6 +332,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          classification?: string
           created_at?: string
           current_funding?: number | null
           description?: string | null
