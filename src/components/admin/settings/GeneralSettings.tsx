@@ -61,9 +61,7 @@ export default function GeneralSettings() {
     const descriptions: Record<string, string> = {
       platform_name: "اسم المنصة",
       maintenance_mode: "وضع الصيانة",
-      support_email: "البريد الإلكتروني للدعم",
-      min_investment: "الحد الأدنى للاستثمار",
-      max_projects: "الحد الأقصى للمشاريع النشطة"
+      support_email: "البريد الإلكتروني للدعم"
     }
     return descriptions[key]
   }
@@ -107,24 +105,6 @@ export default function GeneralSettings() {
             type="email"
             defaultValue={settings?.support_email}
             onBlur={(e) => handleSave('support_email', e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label>الحد الأدنى للاستثمار (ريال)</Label>
-          <Input
-            type="number"
-            defaultValue={settings?.min_investment}
-            onBlur={(e) => handleSave('min_investment', Number(e.target.value))}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label>الحد الأقصى للمشاريع النشطة</Label>
-          <Input
-            type="number"
-            defaultValue={settings?.max_projects}
-            onBlur={(e) => handleSave('max_projects', Number(e.target.value))}
           />
         </div>
       </div>
