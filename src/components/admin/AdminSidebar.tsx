@@ -2,17 +2,11 @@ import { useLocation } from "react-router-dom"
 import { 
   Users, 
   Briefcase, 
-  Wallet,
+  Scale,
   ShieldCheck,
-  HeadphonesIcon,
-  LayoutDashboard,
   Settings,
   LogOut,
   Menu,
-  FileText,
-  Eye,
-  FileCheck,
-  Cog
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
@@ -21,46 +15,28 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 
 const menuItems = [
   {
-    title: "لوحة التحكم",
-    icon: LayoutDashboard,
-    path: "/admin",
-    description: "نظرة عامة على النظام"
-  },
-  {
-    title: "المستخدمين",
+    title: "إدارة المستخدمين",
     icon: Users,
     path: "/admin/users",
-    description: "إدارة المستخدمين"
+    description: "إدارة حسابات المستثمرين وأصحاب المشاريع"
   },
   {
-    title: "المشاريع",
+    title: "إدارة المشاريع",
     icon: Briefcase,
     path: "/admin/projects",
-    description: "إدارة المشاريع"
+    description: "مراجعة وإدارة المشاريع المقدمة"
   },
   {
-    title: "التقارير",
-    icon: FileText,
-    path: "/admin/reports",
-    description: "تقارير النظام"
+    title: "إدارة العمولات",
+    icon: Scale,
+    path: "/admin/commissions",
+    description: "تكوين وتتبع العمولات"
   },
   {
-    title: "التحقق من الهوية",
-    icon: Eye,
-    path: "/admin/identity",
-    description: "التحقق من الهوية"
-  },
-  {
-    title: "طلبات الترقية",
-    icon: FileCheck,
-    path: "/admin/upgrade",
-    description: "طلبات الترقية"
-  },
-  {
-    title: "الإعدادات",
-    icon: Cog,
-    path: "/admin/settings",
-    description: "إعدادات النظام"
+    title: "الامتثال والتدقيق",
+    icon: ShieldCheck,
+    path: "/admin/compliance",
+    description: "مراقبة الامتثال والتدقيق"
   }
 ]
 

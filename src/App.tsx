@@ -8,6 +8,7 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
+import AdminDashboard from "@/pages/admin/Dashboard"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
@@ -60,6 +61,8 @@ function AppContent() {
         return "/project-owner"
       case "investor":
         return "/investor"
+      case "admin":
+        return "/admin"
       default:
         return "/"
     }
@@ -92,11 +95,21 @@ function AppContent() {
             }
           />
 
+          {/* Dashboard Admin */}
+          <Route
+            path="/admin/*"
+            element={
+              <PrivateRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
+
           {/* Pages communes */}
           <Route
             path="/profile"
             element={
-              <PrivateRoute allowedRoles={["investor", "project_owner"]}>
+              <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
                 <Profile />
               </PrivateRoute>
             }
@@ -104,7 +117,7 @@ function AppContent() {
           <Route
             path="/settings"
             element={
-              <PrivateRoute allowedRoles={["investor", "project_owner"]}>
+              <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
                 <Settings />
               </PrivateRoute>
             }
