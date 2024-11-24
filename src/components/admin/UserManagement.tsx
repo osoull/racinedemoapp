@@ -1,6 +1,10 @@
+import { User } from "@/types/user";
+
 interface UserManagementProps {
   filter?: string;
 }
+
+export type { User }; // Export the User type for other components
 
 export default function UserManagement({ filter }: UserManagementProps) {
   return (
@@ -36,5 +40,5 @@ export default function UserManagement({ filter }: UserManagementProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

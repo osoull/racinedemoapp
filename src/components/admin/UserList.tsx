@@ -1,6 +1,6 @@
 import { UserCard } from "./UserCard";
 import { TabsContent } from "@/components/ui/tabs";
-import { User } from "./UserManagement";
+import { User } from "@/types/user";
 
 type UserListProps = {
   users: User[] | undefined;
