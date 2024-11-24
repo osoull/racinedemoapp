@@ -11,14 +11,13 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
-type UserType = "investor" | "project_owner" | "borrower" | "admin" | "investment_manager";
-type SelectableUserType = Extract<UserType, "investor" | "project_owner" | "borrower">;
+type SelectableUserType = "investor" | "project_owner" | "borrower";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState<UserType>("investor")
+  const [userType, setUserType] = useState<SelectableUserType>("investor")
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
