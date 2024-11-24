@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { NotificationsProvider } from "@/contexts/NotificationsContext"
-import Footer from "@/components/Footer"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
@@ -15,7 +14,6 @@ import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
 import { MobileMessage } from "@/components/MobileMessage"
-import "./App.css"
 
 const queryClient = new QueryClient()
 
@@ -70,128 +68,67 @@ function App() {
       <AuthProvider>
         <NotificationsProvider>
           <BrowserRouter>
-            <AppContent />
+            <div className="min-h-screen bg-background">
+              <Routes>
+                {/* Public routes */}
+                <Route path="/signin" element={<Navigate to="/" replace />} />
+                <Route path="/" element={<Auth />} />
+
+                {/* Protected routes */}
+                <Route
+                  path="/investor/*"
+                  element={
+                    <PrivateRoute allowedRoles={["investor"]}>
+                      <InvestorDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/project-owner/*"
+                  element={
+                    <PrivateRoute allowedRoles={["project_owner"]}>
+                      <ProjectOwnerDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/admin/*"
+                  element={
+                    <PrivateRoute allowedRoles={["admin"]}>
+                      <AdminDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
+                      <Profile />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/settings"
+                  element={
+                    <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
+                      <Settings />
+                    </PrivateRoute>
+                  }
+                />
+
+                {/* Catch-all redirect */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+              <Toaster />
+            </div>
           </BrowserRouter>
         </NotificationsProvider>
       </AuthProvider>
     </QueryClientProvider>
-  )
-}
-
-function AppContent() {
-  const { user } = useAuth()
-  const [userType, setUserType] = useState<string | null>(null)
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024)
-    }
-
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  useEffect(() => {
-    async function getUserType() {
-      if (!user) return
-
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single()
-
-      if (error) {
-        return
-      }
-
-      setUserType(profile?.user_type)
-    }
-
-    getUserType()
-  }, [user])
-
-  if (isMobile) {
-    return <MobileMessage />
-  }
-
-  const getDashboardRoute = () => {
-    if (!user || !userType) return "/"
-    
-    switch (userType) {
-      case "project_owner":
-        return "/project-owner"
-      case "investor":
-        return "/investor"
-      case "admin":
-        return "/admin"
-      default:
-        return "/"
-    }
-  }
-
-  return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1">
-        <Routes>
-          {/* Public routes */}
-          <Route path="/signin" element={<Navigate to="/" replace />} />
-          <Route path="/" element={<Auth />} />
-
-          {/* Protected routes */}
-          <Route
-            path="/investor/*"
-            element={
-              <PrivateRoute allowedRoles={["investor"]}>
-                <InvestorDashboard />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/project-owner/*"
-            element={
-              <PrivateRoute allowedRoles={["project_owner"]}>
-                <ProjectOwnerDashboard />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/*"
-            element={
-              <PrivateRoute allowedRoles={["admin"]}>
-                <AdminDashboard />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/settings"
-            element={
-              <PrivateRoute allowedRoles={["investor", "project_owner", "admin"]}>
-                <Settings />
-              </PrivateRoute>
-            }
-          />
-
-          {/* Catch-all redirect */}
-          <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
-        </Routes>
-      </main>
-      <Footer />
-      <Toaster />
-    </div>
   )
 }
 
