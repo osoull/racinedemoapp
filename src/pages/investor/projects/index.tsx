@@ -4,24 +4,52 @@ import { ProjectCard } from "@/components/dashboard/projects/ProjectCard"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
-import { Card } from "@/components/ui/card"
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
+import { useToast } from "@/components/ui/use-toast"
 
-export default function ExploreProjectsPage() {
-  const { data: projects, isLoading } = useQuery({
-    queryKey: ["projects"],
+export default function ProjectsListPage() {
+  const { toast } = useToast()
+  
+  const { data: projects, isLoading, refetch } = useQuery({
+    queryKey: ["active-projects"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("projects")
         .select(`
           *,
           owner: profiles(first_name, last_name),
-          risk_ratings(*)
+          risk_ratings(rating)
         `)
         .eq("status", "active")
         .order("created_at", { ascending: false })
 
       if (error) throw error
       return data
+    }
+  })
+
+  // Subscribe to real-time updates
+  useRealtimeSubscription("projects", {
+    onInsert: () => {
+      refetch()
+      toast({
+        title: "مشروع جديد",
+        description: "تم إضافة مشروع جديد للقائمة"
+      })
+    },
+    onUpdate: () => {
+      refetch()
+      toast({
+        title: "تحديث المشروع",
+        description: "تم تحديث بيانات المشروع"
+      })
+    },
+    onDelete: () => {
+      refetch()
+      toast({
+        title: "حذف المشروع",
+        description: "تم إزالة المشروع من القائمة"
+      })
     }
   })
 
@@ -49,7 +77,7 @@ export default function ExploreProjectsPage() {
                 progress={(project.current_funding / project.funding_goal) * 100}
                 status={project.status}
                 fundingGoal={project.funding_goal}
-                currentFunding={project.current_funding}
+                currentFunding={project.current_funding || 0}
                 projectId={project.id}
               />
             ))}
