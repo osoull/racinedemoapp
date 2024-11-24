@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useBankDetails } from "@/hooks/useBankDetails"
 import { Input } from "@/components/ui/input"
+import { supabase } from "@/integrations/supabase/client"
 
 const BankDetailsField = ({ 
   label, 
