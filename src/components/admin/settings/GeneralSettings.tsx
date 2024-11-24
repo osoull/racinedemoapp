@@ -79,18 +79,6 @@ export default function GeneralSettings() {
   const handle2FAChange = async (checked: boolean) => {
     setIsLoading(true)
     try {
-      // Update Supabase auth settings using the management API
-      const { error: authError } = await supabase.auth.updateUser({
-        factors: {
-          totp: {
-            enabled: checked,
-            preferred: checked
-          }
-        }
-      })
-      
-      if (authError) throw authError
-
       // Update platform settings
       await updateSetting.mutateAsync({ key: 'require_2fa', value: checked })
       
