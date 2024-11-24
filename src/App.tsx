@@ -35,6 +35,20 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
 }
 
 function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <NotificationsProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </NotificationsProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  )
+}
+
+function AppContent() {
   const { user } = useAuth()
 
   const getDashboardRoute = () => {
@@ -52,65 +66,56 @@ function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <NotificationsProvider>
-          <BrowserRouter>
-            <div className="flex min-h-screen flex-col">
-              <main className="flex-1">
-                <Routes>
-                  {/* Page d'authentification */}
-                  <Route path="/" element={<Auth />} />
+    <div className="flex min-h-screen flex-col">
+      <main className="flex-1">
+        <Routes>
+          {/* Page d'authentification */}
+          <Route path="/" element={<Auth />} />
 
-                  {/* Dashboard Investisseur */}
-                  <Route
-                    path="/investor/*"
-                    element={
-                      <PrivateRoute allowedRoles={["investor"]}>
-                        <InvestorDashboard />
-                      </PrivateRoute>
-                    }
-                  />
+          {/* Dashboard Investisseur */}
+          <Route
+            path="/investor/*"
+            element={
+              <PrivateRoute allowedRoles={["investor"]}>
+                <InvestorDashboard />
+              </PrivateRoute>
+            }
+          />
 
-                  {/* Dashboard Propriétaire de Projet */}
-                  <Route
-                    path="/project-owner/*"
-                    element={
-                      <PrivateRoute allowedRoles={["project_owner"]}>
-                        <ProjectOwnerDashboard />
-                      </PrivateRoute>
-                    }
-                  />
+          {/* Dashboard Propriétaire de Projet */}
+          <Route
+            path="/project-owner/*"
+            element={
+              <PrivateRoute allowedRoles={["project_owner"]}>
+                <ProjectOwnerDashboard />
+              </PrivateRoute>
+            }
+          />
 
-                  {/* Pages communes */}
-                  <Route
-                    path="/profile"
-                    element={
-                      <PrivateRoute allowedRoles={["investor", "project_owner"]}>
-                        <Profile />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
-                    path="/settings"
-                    element={
-                      <PrivateRoute allowedRoles={["investor", "project_owner"]}>
-                        <Settings />
-                      </PrivateRoute>
-                    }
-                  />
+          {/* Pages communes */}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute allowedRoles={["investor", "project_owner"]}>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute allowedRoles={["investor", "project_owner"]}>
+                <Settings />
+              </PrivateRoute>
+            }
+          />
 
-                  {/* Redirection par défaut */}
-                  <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-            <Toaster />
-          </BrowserRouter>
-        </NotificationsProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+          {/* Redirection par défaut */}
+          <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
   )
 }
 
