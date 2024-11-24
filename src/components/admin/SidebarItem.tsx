@@ -7,6 +7,7 @@ interface SubItem {
   title: string
   path: string
   icon: LucideIcon
+  description?: string
 }
 
 interface SidebarItemProps {

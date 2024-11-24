@@ -27,7 +27,7 @@ export const AdminSidebar = () => {
           className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
           onClick={() => signOut?.()}
         >
-          <LogOut className="ml-2 h-5 w-5" />
+          <LogOut className="mr-2 h-5 w-5" />
           تسجيل الخروج
         </Button>
       </div>
