@@ -19,7 +19,7 @@ type Project = Tables<"projects"> & {
   };
 };
 
-interface ProjectManagementProps {
+export interface ProjectManagementProps {
   filter?: string;
 }
 
