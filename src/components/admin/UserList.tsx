@@ -29,7 +29,7 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
   );
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6" dir="rtl">
       <TabsContent value="all" className="mt-4 sm:mt-6 w-full">
         <UserGrid filteredUsers={users || []} />
       </TabsContent>
