@@ -44,7 +44,7 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
   const isOverview = currentPath === "/admin"
 
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="min-h-screen w-full bg-card">
       {isOverview && (
         <div className="space-y-6 p-6">
           <StatsGrid />

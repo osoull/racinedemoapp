@@ -6,10 +6,9 @@ const AdminDashboard = () => {
   const location = useLocation()
 
   return (
-    <DashboardLayout>
-      <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
+    <DashboardLayout className="p-0">
+      <div className="w-full">
         {location.pathname === "/admin" && <DashboardOverview />}
-        {/* Add other routes content here */}
       </div>
     </DashboardLayout>
   )

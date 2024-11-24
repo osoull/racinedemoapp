@@ -32,10 +32,8 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         </aside>
 
         {/* Main Content */}
-        <main className={cn("flex-1 p-4 md:p-8", className)}>
-          <div className="mx-auto max-w-7xl">
-            {children}
-          </div>
+        <main className={cn("flex-1", className)}>
+          {children}
         </main>
       </div>
     </div>
