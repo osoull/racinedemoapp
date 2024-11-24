@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { UserList } from './UserList';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateUserDialog } from './CreateUserDialog';
@@ -27,6 +27,29 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
       return data as User[];
     }
   });
+
+  // Configuration de la synchronisation en temps réel
+  useEffect(() => {
+    const channel = supabase
+      .channel('profiles-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles'
+        },
+        () => {
+          // Actualiser les données à chaque changement
+          queryClient.invalidateQueries({ queryKey: ['users'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const deleteUserMutation = useMutation({
     mutationFn: async (user: User) => {
