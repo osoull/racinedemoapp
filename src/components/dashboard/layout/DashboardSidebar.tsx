@@ -5,12 +5,11 @@ import { useAuth } from "@/contexts/AuthContext"
 import { 
   LayoutDashboard, 
   Users, 
-  Briefcase, 
-  Wallet,
+  FileText,
   Settings,
   MessageSquare,
-  Shield,
-  PieChart,
+  Clock,
+  HelpCircle,
   LogOut
 } from "lucide-react"
 
@@ -18,7 +17,6 @@ interface NavItem {
   title: string
   href: string
   icon: any
-  roles: string[]
 }
 
 const items: NavItem[] = [
@@ -26,94 +24,81 @@ const items: NavItem[] = [
     title: "نظرة عامة",
     href: "/dashboard",
     icon: LayoutDashboard,
-    roles: ["admin", "investment_manager", "investor", "project_owner"],
   },
   {
     title: "المستخدمين",
-    href: "/admin/users",
+    href: "/users",
     icon: Users,
-    roles: ["admin"],
   },
   {
     title: "المشاريع",
     href: "/projects",
-    icon: Briefcase,
-    roles: ["admin", "investment_manager", "project_owner"],
-  },
-  {
-    title: "الاستثمارات",
-    href: "/investments",
-    icon: Wallet,
-    roles: ["admin", "investment_manager", "investor"],
+    icon: FileText,
   },
   {
     title: "التقارير",
     href: "/reports",
-    icon: PieChart,
-    roles: ["admin", "investment_manager"],
+    icon: Clock,
   },
   {
     title: "الامتثال",
     href: "/compliance",
-    icon: Shield,
-    roles: ["admin"],
+    icon: MessageSquare,
   },
   {
     title: "الدعم",
     href: "/support",
-    icon: MessageSquare,
-    roles: ["admin", "investment_manager", "investor", "project_owner"],
+    icon: HelpCircle,
   },
   {
     title: "الإعدادات",
     href: "/settings",
     icon: Settings,
-    roles: ["admin", "investment_manager", "investor", "project_owner"],
   },
 ]
 
 export function DashboardSidebar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, signOut } = useAuth()
-
-  const filteredItems = items.filter(item => 
-    item.roles.includes(user?.user_metadata?.user_type || '')
-  )
+  const { signOut } = useAuth()
 
   return (
     <div className="h-screen w-64 bg-white border-l fixed top-0 right-0">
       <div className="flex h-16 items-center border-b px-6">
         <img 
           src="/logo.svg" 
-          alt="Raseen Logo" 
+          alt="Logo" 
           className="h-8"
         />
       </div>
-      <nav className="space-y-1 p-4">
-        {filteredItems.map((item) => (
-          <Button
-            key={item.href}
-            variant={location.pathname === item.href ? "secondary" : "ghost"}
-            className={cn(
-              "w-full justify-start gap-2",
-              location.pathname === item.href && "bg-primary/10 text-primary hover:bg-primary/20"
-            )}
-            onClick={() => navigate(item.href)}
+      <div className="flex flex-col justify-between h-[calc(100vh-4rem)]">
+        <nav className="space-y-1 p-4">
+          {items.map((item) => (
+            <Button
+              key={item.href}
+              variant={location.pathname === item.href ? "secondary" : "ghost"}
+              className={cn(
+                "w-full justify-start gap-2 mb-1",
+                location.pathname === item.href && "bg-primary/10 text-primary hover:bg-primary/20"
+              )}
+              onClick={() => navigate(item.href)}
+            >
+              <item.icon className="h-4 w-4 ml-2" />
+              {item.title}
+            </Button>
+          ))}
+        </nav>
+        <div className="p-4 border-t">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-50"
+            onClick={() => signOut?.()}
           >
-            <item.icon className="h-4 w-4" />
-            {item.title}
+            <LogOut className="h-4 w-4 ml-2" />
+            تسجيل الخروج
           </Button>
-        ))}
-        <Button 
-          variant="ghost" 
-          className="w-full justify-start gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 mt-4"
-          onClick={() => signOut?.()}
-        >
-          <LogOut className="h-4 w-4" />
-          تسجيل الخروج
-        </Button>
-      </nav>
+        </div>
+      </div>
     </div>
   )
 }
