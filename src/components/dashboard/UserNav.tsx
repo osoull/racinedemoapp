@@ -14,8 +14,13 @@ import { LogOut, Settings, User } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function UserNav() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate("/")
+  }
 
   return (
     <DropdownMenu>
@@ -48,7 +53,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="ml-2 h-4 w-4" />
           <span>تسجيل الخروج</span>
         </DropdownMenuItem>
