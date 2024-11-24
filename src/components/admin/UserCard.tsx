@@ -20,9 +20,11 @@ type UserCardProps = {
 };
 
 export function UserCard({ user, onDelete, onUpdateType, onEdit }: UserCardProps) {
-  const fullName = [user.first_name, user.middle_name, user.last_name]
-    .filter(Boolean)
-    .join(" ");
+  const fullName = [
+    user.first_name,
+    user.middle_name || "",
+    user.last_name
+  ].filter(Boolean).join(" ");
 
   return (
     <Card className="p-3 sm:p-4 transition-all hover:shadow-md">
