@@ -9,16 +9,19 @@ import { useToast } from "@/components/ui/use-toast"
 import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 type UserType = "investor" | "admin" | "borrower" | "investment_manager";
 type SelectableUserType = Extract<UserType, "investor" | "borrower">;
+type InvestorType = "basic" | "qualified";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState<SelectableUserType>("investor")
+  const [investorType, setInvestorType] = useState<InvestorType>("basic")
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -35,7 +38,7 @@ export function Auth() {
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('user_type')
+        .select('user_type, investor_type')
         .eq('id', user.id)
         .single()
 
@@ -97,6 +100,7 @@ export function Auth() {
       <div className="flex min-h-[80vh] items-center justify-center flex-col">
         <SignUpForm 
           userType={userType}
+          investorType={investorType}
           onBack={() => setStep("signin")}
           onSuccess={() => setStep("signin")}
         />
