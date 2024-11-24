@@ -64,12 +64,15 @@ export default function BankDetails() {
   const handleSave = async () => {
     try {
       const { error } = await supabase
-        .from('platform_settings')
-        .update({ 
-          setting_value: editedDetails,
+        .from('bank_accounts')
+        .upsert({ 
+          bank_name: editedDetails.bank_name,
+          account_name: editedDetails.account_name,
+          swift: editedDetails.swift,
+          iban: editedDetails.iban,
+          is_primary: true,
           updated_at: new Date().toISOString()
         })
-        .eq('setting_key', 'platform_bank_details')
 
       if (error) throw error
 

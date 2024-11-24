@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { useEffect } from "react"
 
 export interface BankDetailsData {
   bank_name: string
@@ -9,24 +8,14 @@ export interface BankDetailsData {
   iban: string
 }
 
-const isBankDetailsData = (data: unknown): data is BankDetailsData => {
-  if (!data || typeof data !== 'object') return false
-  
-  const bankDetails = data as Record<string, unknown>
-  return typeof bankDetails.bank_name === 'string' &&
-         typeof bankDetails.account_name === 'string' &&
-         typeof bankDetails.swift === 'string' &&
-         typeof bankDetails.iban === 'string'
-}
-
 export function useBankDetails() {
   const query = useQuery({
-    queryKey: ['platform_bank_details'],
+    queryKey: ['platform_bank_accounts'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('platform_settings')
-        .select('setting_value')
-        .eq('setting_key', 'platform_bank_details')
+        .from('bank_accounts')
+        .select('*')
+        .eq('is_primary', true)
         .single()
 
       if (error) {
@@ -34,43 +23,18 @@ export function useBankDetails() {
         throw new Error('Failed to load bank details')
       }
       
-      if (!data?.setting_value) {
+      if (!data) {
         throw new Error('No bank details found')
       }
       
-      const bankDetails = data.setting_value
-      
-      if (!isBankDetailsData(bankDetails)) {
-        console.error('Invalid bank details format:', bankDetails)
-        throw new Error('Invalid bank details format')
+      return {
+        bank_name: data.bank_name,
+        account_name: data.account_name,
+        swift: data.swift || '',
+        iban: data.iban
       }
-      
-      return bankDetails
-    },
-    retry: 2
-  })
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('platform_settings_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'platform_settings',
-          filter: 'setting_key=eq.platform_bank_details'
-        },
-        () => {
-          query.refetch()
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
     }
-  }, [query])
+  })
 
   return query
 }
