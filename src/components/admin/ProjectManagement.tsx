@@ -144,9 +144,9 @@ const ProjectCard = ({
             </p>
             <div className="flex items-center gap-2">
               <Badge variant={
-                project.status === 'approved' ? 'success' :
+                project.status === 'approved' ? 'secondary' :
                 project.status === 'rejected' ? 'destructive' :
-                'secondary'
+                'default'
               }>
                 {project.status}
               </Badge>

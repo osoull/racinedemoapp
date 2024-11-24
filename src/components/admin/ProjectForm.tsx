@@ -21,7 +21,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
   description: z.string().optional(),
-  funding_goal: z.string().transform(Number),
+  funding_goal: z.number().min(1, "هدف التمويل يجب أن يكون أكبر من 0"),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -41,18 +41,16 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
     defaultValues: {
       title: project?.title || "",
       description: project?.description || "",
-      funding_goal: project?.funding_goal?.toString() || "",
+      funding_goal: project?.funding_goal || 0,
     },
   });
 
   const createProjectMutation = useMutation({
     mutationFn: async (values: ProjectFormValues) => {
-      const { error } = await supabase.from("projects").insert([
-        {
-          ...values,
-          owner_id: user?.id,
-        },
-      ]);
+      const { error } = await supabase.from("projects").insert({
+        ...values,
+        owner_id: user?.id,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -143,7 +141,11 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
             <FormItem>
               <FormLabel>هدف التمويل (ريال)</FormLabel>
               <FormControl>
-                <Input type="number" {...field} />
+                <Input 
+                  type="number" 
+                  {...field} 
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
