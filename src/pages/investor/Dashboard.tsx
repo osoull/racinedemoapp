@@ -34,9 +34,9 @@ const InvestorDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-4 lg:space-y-6">
         {/* Stats Overview */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={Wallet}
             title="إجمالي الاستثمارات"
@@ -72,54 +72,58 @@ const InvestorDashboard = () => {
         </div>
 
         {/* Charts and Activity */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <FundingChart />
-          <ActivityFeed />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card className="p-4 lg:p-6">
+            <h3 className="text-lg font-semibold mb-4">تحليل الاستثمارات</h3>
+            <FundingChart />
+          </Card>
+          <Card className="p-4 lg:p-6">
+            <h3 className="text-lg font-semibold mb-4">النشاط الأخير</h3>
+            <ActivityFeed />
+          </Card>
         </div>
 
         {/* Active Investments */}
-        <div className="grid gap-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">استثماراتي النشطة</h3>
-            <div className="space-y-4">
-              {investments?.filter(inv => inv.project.status === 'active')
-                .map((investment) => (
-                  <Card key={investment.investment_id} className="p-4 hover:shadow-md transition-all">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium">{investment.project.title}</h4>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {investment.project.description}
-                        </p>
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-medium">{investment.amount.toLocaleString()} ريال</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(investment.created_at).toLocaleDateString('ar-SA')}
-                        </p>
-                      </div>
+        <Card className="p-4 lg:p-6">
+          <h3 className="text-lg font-semibold mb-4">استثماراتي النشطة</h3>
+          <div className="space-y-3">
+            {investments?.filter(inv => inv.project.status === 'active')
+              .map((investment) => (
+                <Card key={investment.investment_id} className="p-3 hover:shadow-md transition-all">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium">{investment.project.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {investment.project.description}
+                      </p>
                     </div>
-                    <div className="mt-4">
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>نسبة التمويل</span>
-                        <span>
-                          {Math.round((investment.project.current_funding / investment.project.funding_goal) * 100)}%
-                        </span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-primary transition-all"
-                          style={{ 
-                            width: `${Math.round((investment.project.current_funding / investment.project.funding_goal) * 100)}%`
-                          }}
-                        />
-                      </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium">{investment.amount.toLocaleString()} ريال</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(investment.created_at).toLocaleDateString('ar-SA')}
+                      </p>
                     </div>
-                  </Card>
-                ))}
-            </div>
-          </Card>
-        </div>
+                  </div>
+                  <div className="mt-3">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>نسبة التمويل</span>
+                      <span>
+                        {Math.round((investment.project.current_funding / investment.project.funding_goal) * 100)}%
+                      </span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary transition-all"
+                        style={{ 
+                          width: `${Math.round((investment.project.current_funding / investment.project.funding_goal) * 100)}%`
+                        }}
+                      />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+          </div>
+        </Card>
       </div>
     </DashboardLayout>
   )
