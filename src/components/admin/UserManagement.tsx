@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUsers } from '@/hooks/useUsers';
 import { DashboardLayout } from '../dashboard/DashboardLayout';
 import { AdminSidebar } from './AdminSidebar';
+import { User } from '@/types/user';
 
 interface UserManagementProps {
   userType?: 'investor' | 'borrower';
@@ -29,6 +30,10 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
     queryClient.invalidateQueries({ queryKey: ['users'] });
   };
 
+  const handleDelete = (user: User) => {
+    deleteUser(user.id);
+  };
+
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
       <Card>
@@ -39,7 +44,7 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
         <CardContent>
           <UserList 
             users={users} 
-            onDelete={deleteUser} 
+            onDelete={handleDelete}
             onUpdateType={handleUpdateType}
             onEdit={handleEdit}
           />
