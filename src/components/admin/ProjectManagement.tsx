@@ -4,8 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ProjectForm } from "./ProjectForm";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
@@ -56,35 +55,6 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
       })) as Project[];
     },
   });
-
-  // Real-time subscription
-  useEffect(() => {
-    const channel = supabase
-      .channel('public:projects')
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'projects' 
-        }, 
-        (payload) => {
-          queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-          
-          // Afficher une notification pour les nouveaux projets
-          if (payload.eventType === 'INSERT') {
-            toast({
-              title: "Nouveau projet",
-              description: `Un nouveau projet a été créé: ${payload.new.title}`,
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient, toast]);
 
   const deleteProjectMutation = useMutation({
     mutationFn: async (projectId: string) => {
