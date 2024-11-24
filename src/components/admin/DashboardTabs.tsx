@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Users, Briefcase, Wallet, Activity, ShieldCheck } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import UserManagement from "./UserManagement"
 import ProjectManagement from "./ProjectManagement"
 import CommissionManagement from "./CommissionManagement"
