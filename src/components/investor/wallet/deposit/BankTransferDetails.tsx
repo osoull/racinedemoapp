@@ -61,12 +61,12 @@ export function BankTransferDetails({ bankDetails, isLoading, error }: BankTrans
   ]
 
   return (
-    <div className="rounded-lg border p-4 space-y-4 bg-gray-50">
+    <div className="rounded-lg border p-4 space-y-4 bg-muted/50">
       {bankFields.map((field) => (
         <div key={field.label} className="space-y-2">
           <Label className="text-sm text-muted-foreground">{field.label}</Label>
-          <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-            <span className="font-medium">{field.value}</span>
+          <div className="flex items-center justify-between p-3 border rounded-lg bg-background">
+            <span className="font-mono text-muted-foreground">{field.value}</span>
             <Button
               variant="ghost"
               size="icon"

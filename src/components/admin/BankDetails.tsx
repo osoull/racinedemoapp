@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { useBankDetails } from "@/hooks/useBankDetails"
 import { Input } from "@/components/ui/input"
-import { useAuth } from "@/contexts/AuthContext"
-import { supabase } from "@/integrations/supabase/client"
 
 const BankDetailsField = ({ 
   label, 
@@ -27,10 +25,11 @@ const BankDetailsField = ({
       <Input
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        className="font-mono"
       />
     ) : (
-      <div className="flex items-center justify-between p-3 border rounded-lg">
-        <span className="font-mono">{value}</span>
+      <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/50">
+        <span className="font-mono text-muted-foreground">{value}</span>
         <Button
           variant="ghost"
           size="icon"
@@ -45,7 +44,6 @@ const BankDetailsField = ({
 
 export default function BankDetails() {
   const { toast } = useToast()
-  const { user } = useAuth()
   const { data: bankDetails, isLoading, refetch } = useBankDetails()
   const [isEditing, setIsEditing] = useState(false)
   const [editedDetails, setEditedDetails] = useState({
@@ -106,10 +104,10 @@ export default function BankDetails() {
   }
 
   return (
-    <Card>
+    <Card className="bg-gradient-to-br from-card/50 to-card border-primary/20">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-primary">
             <Building2 className="h-5 w-5" />
             الحساب البنكي
           </CardTitle>
@@ -128,7 +126,7 @@ export default function BankDetails() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <BankDetailsField
               label="اسم البنك"
               value={isEditing ? editedDetails.bank_name : bankDetails?.bank_name || ""}
