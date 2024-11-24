@@ -11,12 +11,13 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
+type UserType = "investor" | "project_owner" | "borrower";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState<"investor" | "project_owner" | "borrower">("investor")
+  const [userType, setUserType] = useState<UserType>("investor")
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -71,7 +72,7 @@ export function Auth() {
     }
   }
 
-  const handleUserTypeSelect = (type: "investor" | "project_owner" | "borrower" | "login") => {
+  const handleUserTypeSelect = (type: UserType | "login") => {
     if (type === "login") {
       setStep("signin")
     } else if (type === "borrower") {

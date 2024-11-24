@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
+import { AdminSidebar } from "@/components/admin/AdminSidebar"
 
 export default function BorrowerDashboard() {
   const { user } = useAuth()
@@ -15,7 +16,7 @@ export default function BorrowerDashboard() {
   }, [user, navigate])
 
   return (
-    <DashboardLayout>
+    <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="container mx-auto py-8">
         <h1 className="text-2xl font-bold mb-8">لوحة تحكم المقترض</h1>
         <BorrowerKYCForm />

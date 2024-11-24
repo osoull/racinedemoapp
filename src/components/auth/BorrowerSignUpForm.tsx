@@ -33,10 +33,7 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
       return
     }
     try {
-      await signUp(email, password, "borrower", {
-        company_name: companyName,
-        commercial_register: commercialRegister,
-      })
+      await signUp(email, password, "borrower")
       toast({
         title: "تم إنشاء الحساب بنجاح",
         description: "يرجى تسجيل الدخول للمتابعة",

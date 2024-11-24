@@ -35,31 +35,25 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { data: projects, isLoading } = useQuery({
     queryKey: ["admin-projects", filter],
     queryFn: async () => {
-      const query = supabase
+      let query = supabase
         .from("projects")
         .select(`
           *,
           owner:profiles(first_name, middle_name, last_name),
           risk_rating:risk_ratings(rating)
-        `)
-        .limit(1)
-        .single()
-        .maybeSingle();
+        `);
 
       if (filter) {
-        query.eq('status', filter);
+        query = query.eq('status', filter);
       }
 
       const { data, error } = await query;
       if (error) throw error;
       
-      // Transform the data to match our Project type
-      const transformedData = data ? {
-        ...data,
-        risk_rating: data.risk_rating?.[0] || null
-      } : null;
-
-      return transformedData as Project;
+      return data.map(project => ({
+        ...project,
+        risk_rating: project.risk_rating?.[0] || null
+      })) as Project[];
     },
   });
 

@@ -7,12 +7,31 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 
+interface BankAccountDetails {
+  bank_name: string;
+  account_number: string;
+  iban: string;
+}
+
+interface KYCData {
+  company_registration_date: string;
+  company_registration_number: string;
+  tax_identification_number: string;
+  legal_representative_name: string;
+  legal_representative_id: string;
+  annual_revenue: string;
+  number_of_employees: string;
+  industry_sector: string;
+  company_website: string;
+  bank_account_details: BankAccountDetails;
+}
+
 export function BorrowerKYCForm() {
   const { user } = useAuth()
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [kycData, setKycData] = useState({
+  const [kycData, setKycData] = useState<KYCData>({
     company_registration_date: "",
     company_registration_number: "",
     tax_identification_number: "",
