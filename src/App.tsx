@@ -8,12 +8,12 @@ import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import ProjectOwnerDashboard from "@/pages/project-owner/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
+import InvestorsPage from "@/pages/admin/investors"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
-import { MobileMessage } from "@/components/MobileMessage"
 
 const queryClient = new QueryClient()
 
@@ -98,6 +98,15 @@ function App() {
                   element={
                     <PrivateRoute allowedRoles={["admin"]}>
                       <AdminDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/admin/investors"
+                  element={
+                    <PrivateRoute allowedRoles={["admin"]}>
+                      <InvestorsPage />
                     </PrivateRoute>
                   }
                 />

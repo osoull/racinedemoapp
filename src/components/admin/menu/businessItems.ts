@@ -14,6 +14,24 @@ import {
   Building2,
 } from "lucide-react";
 
+const investorManagementItems = [
+  {
+    title: "جميع المستثمرين",
+    path: "/admin/investors",
+    icon: Users
+  },
+  {
+    title: "المستثمرون المؤهلون",
+    path: "/admin/investors?type=qualified",
+    icon: UserCog
+  },
+  {
+    title: "المستثمرون الأساسيون",
+    path: "/admin/investors?type=basic",
+    icon: Users
+  }
+];
+
 export const businessMenuItems = [
   {
     title: "نظرة عامة",
@@ -22,22 +40,11 @@ export const businessMenuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "إدارة المستخدمين",
+    title: "إدارة المستثمرين",
     icon: Users,
-    path: "/admin/users",
-    description: "إدارة حسابات المستثمرين وأصحاب المشاريع",
-    subItems: [
-      {
-        title: "المستثمرون",
-        path: "/admin/users/investors",
-        icon: UserCog
-      },
-      {
-        title: "طالبي التمويل",
-        path: "/admin/users/borrowers",
-        icon: Building2
-      }
-    ]
+    path: "/admin/investors",
+    description: "إدارة حسابات المستثمرين",
+    subItems: investorManagementItems
   },
   {
     title: "إدارة المشاريع",
