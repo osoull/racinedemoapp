@@ -20,13 +20,13 @@ export function Auth() {
   const handleSubmit = async (action: "signin" | "signup") => {
     try {
       if (action === "signin") {
-        await signIn(email, password)
+        const { error: signInError } = await signIn(email, password)
+        if (signInError) throw signInError
         
         // Get the user and their profile after sign in
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
-          throw new Error("No user found after sign in")
-        }
+        const { data: { user }, error: userError } = await supabase.auth.getUser()
+        if (userError) throw userError
+        if (!user) throw new Error("No user found after sign in")
 
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
@@ -34,25 +34,25 @@ export function Auth() {
           .eq('id', user.id)
           .single()
 
-        if (profileError) {
-          throw profileError
-        }
+        if (profileError) throw profileError
+        if (!profile) throw new Error("No profile found")
 
-        if (profile?.user_type) {
-          // Redirect based on user type
-          switch (profile.user_type) {
-            case "project_owner":
-              navigate("/project-owner")
-              break
-            case "investor":
-              navigate("/investor")
-              break
-            case "admin":
-              navigate("/admin")
-              break
-            default:
-              navigate("/")
-          }
+        console.log('User profile:', profile)
+        console.log('User type:', profile.user_type)
+
+        // Redirect based on user type
+        switch (profile.user_type) {
+          case "project_owner":
+            navigate("/project-owner")
+            break
+          case "investor":
+            navigate("/investor")
+            break
+          case "admin":
+            navigate("/admin")
+            break
+          default:
+            navigate("/")
         }
 
         toast({

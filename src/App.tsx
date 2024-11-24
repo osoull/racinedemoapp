@@ -27,8 +27,10 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
     return <Navigate to="/" replace />
   }
 
-  const userType = user.user_metadata?.user_type
+  // Check user type from user metadata
+  const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
   if (!allowedRoles.includes(userType)) {
+    console.log('Access denied. User type:', userType, 'Allowed roles:', allowedRoles)
     return <Navigate to="/" replace />
   }
 
@@ -55,7 +57,10 @@ function AppContent() {
   const getDashboardRoute = () => {
     if (!user) return "/"
     
-    const userType = user.user_metadata?.user_type
+    // Check both user_metadata and app_metadata for user_type
+    const userType = user.user_metadata?.user_type || user.app_metadata?.user_type
+    console.log('Current user type:', userType)
+    
     switch (userType) {
       case "project_owner":
         return "/project-owner"
@@ -72,10 +77,10 @@ function AppContent() {
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
         <Routes>
-          {/* Page d'authentification */}
+          {/* Auth page */}
           <Route path="/" element={<Auth />} />
 
-          {/* Dashboard Investisseur */}
+          {/* Investor Dashboard */}
           <Route
             path="/investor/*"
             element={
@@ -85,7 +90,7 @@ function AppContent() {
             }
           />
 
-          {/* Dashboard Propriétaire de Projet */}
+          {/* Project Owner Dashboard */}
           <Route
             path="/project-owner/*"
             element={
@@ -95,7 +100,7 @@ function AppContent() {
             }
           />
 
-          {/* Dashboard Admin */}
+          {/* Admin Dashboard */}
           <Route
             path="/admin/*"
             element={
@@ -105,7 +110,7 @@ function AppContent() {
             }
           />
 
-          {/* Pages communes */}
+          {/* Common pages */}
           <Route
             path="/profile"
             element={
@@ -123,7 +128,7 @@ function AppContent() {
             }
           />
 
-          {/* Redirection par défaut */}
+          {/* Default redirect */}
           <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
         </Routes>
       </main>
