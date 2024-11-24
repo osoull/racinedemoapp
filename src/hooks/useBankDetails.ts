@@ -20,10 +20,8 @@ export function useBankDetails() {
 
       if (error) throw error
       
-      // Add type validation to ensure the data matches our interface
-      const bankDetails = data.setting_value as unknown as BankDetailsData
+      const bankDetails = data.setting_value as BankDetailsData
       
-      // Validate that all required fields are present
       if (!bankDetails.bank_name || !bankDetails.account_name || 
           !bankDetails.swift || !bankDetails.iban) {
         throw new Error('Invalid bank details format')

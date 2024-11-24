@@ -1,18 +1,17 @@
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { CreditCard, Building2, Copy, AlertCircle, ArrowDownLeft } from "lucide-react"
+import { CreditCard, Building2, AlertCircle, ArrowDownLeft } from "lucide-react"
 import { useBankDetails } from "@/hooks/useBankDetails"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2 } from "lucide-react"
+import { BankTransferDetails } from "./deposit/BankTransferDetails"
+import { AmountInput } from "./deposit/AmountInput"
 
 interface DepositDialogProps {
-  onSuccess?: () => void;
+  onSuccess?: () => void
 }
 
 export function DepositDialog({ onSuccess }: DepositDialogProps) {
@@ -56,14 +55,6 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     }
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    toast({
-      title: "تم النسخ",
-      description: "تم نسخ النص إلى الحافظة"
-    })
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -77,15 +68,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
           <DialogTitle>إيداع رصيد</DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
-          <div className="space-y-2">
-            <Label>المبلغ</Label>
-            <Input
-              type="number"
-              placeholder="أدخل المبلغ"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
-          </div>
+          <AmountInput amount={amount} setAmount={setAmount} />
 
           <Tabs defaultValue="bank">
             <TabsList className="grid w-full grid-cols-2">
@@ -107,83 +90,12 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
                 </AlertDescription>
               </Alert>
 
-              {isLoading ? (
-                <div className="flex items-center justify-center p-4">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                </div>
-              ) : error ? (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    حدث خطأ أثناء تحميل المعلومات البنكية
-                  </AlertDescription>
-                </Alert>
-              ) : bankDetails ? (
-                <div className="rounded-lg border p-4 space-y-4 bg-gray-50">
-                  <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">اسم البنك</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                      <span className="font-medium">{bankDetails.bank_name}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => copyToClipboard(bankDetails.bank_name)}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">اسم الحساب</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                      <span className="font-medium">{bankDetails.account_name}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => copyToClipboard(bankDetails.account_name)}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">رمز السويفت (SWIFT)</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                      <span className="font-mono font-medium">{bankDetails.swift}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => copyToClipboard(bankDetails.swift)}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-sm text-muted-foreground">رقم الآيبان (IBAN)</Label>
-                    <div className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                      <span className="font-mono font-medium">{bankDetails.iban}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => copyToClipboard(bankDetails.iban)}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <Alert>
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    لا توجد معلومات بنكية متاحة
-                  </AlertDescription>
-                </Alert>
-              )}
+              <BankTransferDetails 
+                bankDetails={bankDetails}
+                isLoading={isLoading}
+                error={error}
+              />
+              
               <Button onClick={handleBankTransfer} className="w-full">
                 تأكيد التحويل البنكي
               </Button>
