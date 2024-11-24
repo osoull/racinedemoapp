@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
 type SignUpFormProps = {
-  userType: "investor" | "project_owner";
+  userType: "investor" | "project_owner" | "borrower";
   onBack: () => void;
   onSuccess: () => void;
 }
