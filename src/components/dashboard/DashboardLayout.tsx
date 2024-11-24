@@ -12,7 +12,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
   const { user } = useAuth()
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
@@ -23,15 +23,19 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
         </div>
       </header>
 
-      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_1fr] md:gap-6 lg:grid-cols-[240px_1fr] lg:gap-10">
+      <div className="flex">
         {/* Sidebar */}
-        <aside className="fixed top-20 z-30 -mr-2 hidden h-[calc(100vh-5rem)] w-full shrink-0 overflow-y-auto border-l md:sticky md:block">
-          <DashboardNav />
+        <aside className="hidden w-64 shrink-0 border-l md:block">
+          <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+            <DashboardNav />
+          </div>
         </aside>
 
         {/* Main Content */}
-        <main className={cn("flex w-full flex-col overflow-hidden", className)}>
-          {children}
+        <main className={cn("flex-1 p-4 md:p-8", className)}>
+          <div className="mx-auto max-w-7xl">
+            {children}
+          </div>
         </main>
       </div>
     </div>

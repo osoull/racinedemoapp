@@ -10,7 +10,7 @@ interface StatsCardProps {
 
 function StatsCard({ title, value, description, icon: Icon }: StatsCardProps) {
   return (
-    <Card className="dashboard-stat-card">
+    <Card className="p-6 transition-all hover:shadow-lg">
       <div className="flex items-center gap-4">
         <div className="rounded-xl bg-primary-50 p-3">
           <Icon className="h-6 w-6 text-primary" />
@@ -29,8 +29,8 @@ function StatsCard({ title, value, description, icon: Icon }: StatsCardProps) {
 
 export function DashboardOverview() {
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-8">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="إجمالي المستخدمين"
           value="2,340"
@@ -57,13 +57,13 @@ export function DashboardOverview() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="dashboard-content-card col-span-4">
+      <div className="grid gap-6 lg:grid-cols-7">
+        <Card className="p-6 lg:col-span-4">
           <h3 className="font-semibold mb-4">النشاط الأخير</h3>
           {/* Add activity content here */}
         </Card>
 
-        <Card className="dashboard-content-card col-span-3">
+        <Card className="p-6 lg:col-span-3">
           <h3 className="font-semibold mb-4">المشاريع القادمة</h3>
           {/* Add upcoming projects content here */}
         </Card>

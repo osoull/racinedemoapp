@@ -15,14 +15,14 @@ interface StatCardProps {
 }
 
 const StatCard = ({ icon: Icon, title, value, className }: StatCardProps) => (
-  <Card className={`p-3 sm:p-4 lg:p-6 transition-all hover:shadow-md ${className}`}>
-    <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-      <div className="rounded-full bg-primary/10 p-2 sm:p-3">
-        <Icon className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
+  <Card className={`p-6 transition-all hover:shadow-lg ${className}`}>
+    <div className="flex items-center gap-4">
+      <div className="rounded-xl bg-primary-50 p-3">
+        <Icon className="h-6 w-6 text-primary" />
       </div>
       <div>
-        <p className="text-xs sm:text-sm text-gray-500">{title}</p>
-        <p className="text-base sm:text-lg lg:text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-sm text-muted-foreground">{title}</p>
+        <p className="text-2xl font-bold">{value}</p>
       </div>
     </div>
   </Card>
@@ -42,9 +42,9 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
   const isOverview = currentPath === "/admin"
 
   return (
-    <div className="rounded-lg border bg-white shadow-sm">
+    <div className="rounded-lg border bg-card">
       {isOverview && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 lg:p-6">
+        <div className="grid gap-6 p-6 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={Users}
             title="إجمالي المستخدمين"
@@ -68,8 +68,8 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
         </div>
       )}
       
-      <div className="p-3 sm:p-4 lg:p-6">
-        <Tabs defaultValue="overview" className="w-full space-y-4">
+      <div className="p-6">
+        <Tabs defaultValue="overview" className="w-full space-y-6">
           <TabsList className="w-full flex flex-wrap gap-2 bg-muted p-1 rounded-lg">
             <TabsTrigger 
               value="overview" 
@@ -101,7 +101,7 @@ export const DashboardTabs = ({ stats, currentPath }: DashboardTabsProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="mt-4 space-y-4">
+          <div className="mt-6">
             {currentPath === "/admin" && <UserManagement />}
             {currentPath === "/admin/users" && <UserManagement />}
             {currentPath === "/admin/projects" && <ProjectManagement />}
