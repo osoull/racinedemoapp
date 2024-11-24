@@ -26,7 +26,7 @@ export default function BankDetails() {
 
       if (error) throw error
       
-      // Explicitly cast the JSON data to BankDetailsData
+      // First cast to unknown, then to BankDetailsData to ensure type safety
       const bankData = data.setting_value as unknown as BankDetailsData
       return bankData
     }
