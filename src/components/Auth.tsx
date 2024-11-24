@@ -37,14 +37,16 @@ export function Auth() {
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('user_type, investor_type')
+        .select('user_type')
         .eq('id', user.id)
         .single()
 
       if (profileError) throw profileError
       if (!profile) throw new Error("No profile found")
 
-      switch (profile.user_type) {
+      const userType = profile.user_type as UserType
+
+      switch (userType) {
         case "borrower":
           navigate("/borrower")
           break
