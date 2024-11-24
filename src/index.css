@@ -70,6 +70,13 @@
   .dark svg {
     @apply text-white;
   }
+
+  /* Filter styles for dark mode */
+  .dark select,
+  .dark input[type="text"],
+  .dark input[type="search"] {
+    @apply bg-card text-foreground border-border;
+  }
 }
 
 @layer components {
