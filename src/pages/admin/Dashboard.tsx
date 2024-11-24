@@ -51,7 +51,6 @@ export default function AdminDashboard() {
           <Route path="transactions" element={<TransactionManagement />} />
           <Route path="compliance" element={<KYCManagement />} />
           <Route path="commissions" element={<CommissionManagement />} />
-          <Route path="cma" element={<ComplianceAudit />} />
           <Route path="reports" element={<DashboardOverview />} />
           <Route path="support" element={<SupportTools />} />
           <Route path="settings/*" element={<PlatformSettings />} />

@@ -10,9 +10,7 @@ import {
   Settings,
   Shield,
   Wallet,
-  Building2,
   Percent,
-  ScrollText,
   PieChart,
   MessageSquare
 } from "lucide-react"
@@ -53,12 +51,6 @@ const menuItems = [
     icon: Percent,
     path: "/admin/commissions",
     description: "إدارة العمولات والرسوم"
-  },
-  {
-    title: "متطلبات CMA",
-    icon: ScrollText,
-    path: "/admin/cma",
-    description: "متطلبات هيئة السوق المالية"
   },
   {
     title: "التقارير",
