@@ -4,7 +4,6 @@ import {
   Briefcase, 
   Wallet,
   ShieldCheck,
-  FileText,
   HeadphonesIcon,
   LayoutDashboard,
   Settings,
@@ -50,12 +49,6 @@ const menuItems = [
     icon: ShieldCheck,
     path: "/admin/compliance",
     description: "مراجعة وثائق KYC"
-  },
-  {
-    title: "المحتوى",
-    icon: FileText,
-    path: "/admin/content",
-    description: "إدارة محتوى المنصة"
   },
   {
     title: "الدعم",
