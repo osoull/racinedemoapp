@@ -1,0 +1,63 @@
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+export function KYCStatusHistory() {
+  const { data: history, isLoading } = useQuery({
+    queryKey: ['kyc-history'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('kyc_status_history')
+        .select(`
+          *,
+          user:user_id (
+            first_name,
+            last_name
+          ),
+          admin:changed_by (
+            first_name,
+            last_name
+          )
+        `)
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      return data
+    }
+  })
+
+  if (isLoading) {
+    return <div>جاري التحميل...</div>
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>سجل التغييرات</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ScrollArea className="h-[300px]">
+          <div className="space-y-4">
+            {history?.map((entry) => (
+              <div key={entry.id} className="border-b pb-2">
+                <p className="font-medium">
+                  {entry.user?.first_name} {entry.user?.last_name}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  تم تغيير الحالة من {entry.old_status} إلى {entry.new_status}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  بواسطة: {entry.admin?.first_name} {entry.admin?.last_name}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(entry.created_at).toLocaleString('ar-SA')}
+                </p>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  )
+}

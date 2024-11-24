@@ -137,6 +137,62 @@ export type Database = {
           },
         ]
       }
+      investor_kyc: {
+        Row: {
+          annual_income: number | null
+          bank_account_details: Json | null
+          created_at: string | null
+          date_of_birth: string | null
+          employer: string | null
+          id: string
+          investment_experience: string | null
+          national_id_number: string | null
+          occupation: string | null
+          risk_tolerance: string | null
+          source_of_funds: string | null
+          updated_at: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          annual_income?: number | null
+          bank_account_details?: Json | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          employer?: string | null
+          id: string
+          investment_experience?: string | null
+          national_id_number?: string | null
+          occupation?: string | null
+          risk_tolerance?: string | null
+          source_of_funds?: string | null
+          updated_at?: string | null
+          verification_status?: string | null
+        }
+        Update: {
+          annual_income?: number | null
+          bank_account_details?: Json | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          employer?: string | null
+          id?: string
+          investment_experience?: string | null
+          national_id_number?: string | null
+          occupation?: string | null
+          risk_tolerance?: string | null
+          source_of_funds?: string | null
+          updated_at?: string | null
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investor_kyc_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kyc_documents: {
         Row: {
           created_at: string
@@ -146,6 +202,9 @@ export type Database = {
           status: string | null
           updated_at: string
           user_id: string | null
+          verification_notes: string | null
+          verified_at: string | null
+          verified_by: string | null
         }
         Insert: {
           created_at?: string
@@ -155,6 +214,9 @@ export type Database = {
           status?: string | null
           updated_at?: string
           user_id?: string | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Update: {
           created_at?: string
@@ -164,10 +226,65 @@ export type Database = {
           status?: string | null
           updated_at?: string
           user_id?: string | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "kyc_documents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kyc_documents_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kyc_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          new_status: string | null
+          notes: string | null
+          old_status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_status?: string | null
+          notes?: string | null
+          old_status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_status?: string | null
+          notes?: string | null
+          old_status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kyc_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kyc_status_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
