@@ -7,10 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { UserPlus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 type CreateUserDialogProps = {
-  onUserCreated: () => void;
+  onUserCreated?: () => void;
 };
 
 export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
@@ -20,8 +20,9 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [userType, setUserType] = useState("investor");
+  const [investorType, setInvestorType] = useState("basic");
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +36,8 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
           data: {
             first_name: firstName,
             last_name: lastName,
-            user_type: userType, // This will be used by the handle_new_user trigger
+            user_type: userType,
+            investor_type: userType === "investor" ? investorType : undefined,
           },
         },
       });
@@ -50,6 +52,7 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
           last_name: lastName,
           user_type: userType,
           email: email,
+          investor_type: userType === "investor" ? investorType : undefined,
         })
         .eq('id', authData.user?.id);
 
@@ -60,8 +63,11 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
         description: "تم إنشاء المستخدم بنجاح",
       });
       
+      // Invalidate and refetch users query
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      
       setOpen(false);
-      onUserCreated();
+      if (onUserCreated) onUserCreated();
       
       // Reset form
       setEmail("");
@@ -69,6 +75,7 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
       setFirstName("");
       setLastName("");
       setUserType("investor");
+      setInvestorType("basic");
 
     } catch (error) {
       toast({
@@ -152,6 +159,21 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
               </SelectContent>
             </Select>
           </div>
+
+          {userType === "investor" && (
+            <div className="space-y-2">
+              <Label htmlFor="investorType">نوع المستثمر</Label>
+              <Select value={investorType} onValueChange={setInvestorType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="اختر نوع المستثمر" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="basic">مستثمر أساسي</SelectItem>
+                  <SelectItem value="qualified">مستثمر مؤهل</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="flex justify-end space-x-2">
             <Button type="submit">إنشاء المستخدم</Button>

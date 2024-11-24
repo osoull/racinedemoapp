@@ -1,6 +1,9 @@
 import { UserCard } from "./UserCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User } from "@/types/user";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 type UserListProps = {
   users: User[] | undefined;
@@ -10,6 +13,31 @@ type UserListProps = {
 };
 
 export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProps) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Set up realtime subscription
+    const channel = supabase
+      .channel('profiles-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles'
+        },
+        () => {
+          // Invalidate and refetch users query when changes occur
+          queryClient.invalidateQueries({ queryKey: ['users'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const filterUsersByType = (type: string | null) => {
     if (!type) return users || [];
     return users?.filter(user => user.user_type === type) || [];
