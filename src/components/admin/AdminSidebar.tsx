@@ -8,12 +8,13 @@ import {
   Users, 
   FileText,
   Settings,
-  MessageSquare,
   Shield,
   Wallet,
   Building2,
   Percent,
-  ScrollText
+  ScrollText,
+  PieChart,
+  MessageSquare
 } from "lucide-react"
 
 const menuItems = [
@@ -36,6 +37,12 @@ const menuItems = [
     description: "إدارة المشاريع"
   },
   {
+    title: "المعاملات",
+    icon: Wallet,
+    path: "/admin/transactions",
+    description: "إدارة المعاملات المالية"
+  },
+  {
     title: "التحقق والامتثال",
     icon: Shield,
     path: "/admin/compliance",
@@ -54,13 +61,25 @@ const menuItems = [
     description: "إدارة الحساب البنكي"
   },
   {
-    title: "متطلبات هيئة السوق المالية",
+    title: "متطلبات CMA",
     icon: ScrollText,
     path: "/admin/cma",
-    description: "متابعة متطلبات CMA"
+    description: "متطلبات هيئة السوق المالية"
   },
   {
-    title: "إعدادات المنصة",
+    title: "التقارير",
+    icon: PieChart,
+    path: "/admin/reports",
+    description: "تقارير وإحصائيات"
+  },
+  {
+    title: "الدعم الفني",
+    icon: MessageSquare,
+    path: "/admin/support",
+    description: "إدارة طلبات الدعم"
+  },
+  {
+    title: "الإعدادات",
     icon: Settings,
     path: "/admin/settings",
     description: "إعدادات عامة للمنصة"
