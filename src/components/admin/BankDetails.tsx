@@ -1,36 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
 import { Building2, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-
-interface BankDetailsData {
-  bank_name: string;
-  account_name: string;
-  swift: string;
-  iban: string;
-}
+import { useBankDetails } from "@/hooks/useBankDetails"
 
 export default function BankDetails() {
   const { toast } = useToast()
-
-  const { data: bankDetails, isLoading } = useQuery({
-    queryKey: ['platform_bank_details'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('platform_settings')
-        .select('setting_value')
-        .eq('setting_key', 'platform_bank_details')
-        .single()
-
-      if (error) throw error
-      
-      // First cast to unknown, then to BankDetailsData to ensure type safety
-      const bankData = data.setting_value as unknown as BankDetailsData
-      return bankData
-    }
-  })
+  const { data: bankDetails, isLoading } = useBankDetails()
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)

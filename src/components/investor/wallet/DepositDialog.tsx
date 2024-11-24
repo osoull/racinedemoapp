@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { CreditCard, Building2 } from "lucide-react"
-import BankDetails from "@/components/admin/BankDetails"
+import { CreditCard, Building2, Copy } from "lucide-react"
+import { useBankDetails } from "@/hooks/useBankDetails"
 
 interface DepositDialogProps {
   onSuccess?: () => void;
@@ -17,9 +17,9 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
   const [amount, setAmount] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const { toast } = useToast()
+  const { data: bankDetails, isLoading } = useBankDetails()
 
   const handleCardDeposit = async () => {
-    // TODO: Implement Stripe integration
     toast({
       title: "قريباً",
       description: "سيتم إضافة خدمة الدفع بالبطاقة قريباً"
@@ -52,6 +52,14 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
         variant: "destructive"
       })
     }
+  }
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+    toast({
+      title: "تم النسخ",
+      description: "تم نسخ النص إلى الحافظة"
+    })
   }
 
   return (
@@ -89,9 +97,69 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
             </TabsList>
 
             <TabsContent value="bank" className="space-y-4">
-              <div className="rounded-lg border p-4 space-y-4">
-                <BankDetails />
-              </div>
+              {isLoading ? (
+                <div>جاري تحميل معلومات الحساب...</div>
+              ) : bankDetails ? (
+                <div className="rounded-lg border p-4 space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm text-muted-foreground">اسم البنك</Label>
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <span>{bankDetails.bank_name}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.bank_name)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm text-muted-foreground">اسم الحساب</Label>
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <span>{bankDetails.account_name}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.account_name)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm text-muted-foreground">رمز السويفت (SWIFT)</Label>
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <span className="font-mono">{bankDetails.swift}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.swift)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm text-muted-foreground">رقم الآيبان (IBAN)</Label>
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <span className="font-mono">{bankDetails.iban}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.iban)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div>لا توجد معلومات بنكية متاحة</div>
+              )}
               <Button onClick={handleBankTransfer} className="w-full">
                 تأكيد التحويل البنكي
               </Button>
