@@ -90,6 +90,42 @@ function App() {
                   />
 
                   <Route
+                    path="/investor/portfolio"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <div>Portfolio Page</div>
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/investor/reports"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <div>Reports Page</div>
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/investor/verification"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <div>Verification Page</div>
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/investor/support"
+                    element={
+                      <PrivateRoute allowedRoles={["investor"]}>
+                        <div>Support Page</div>
+                      </PrivateRoute>
+                    }
+                  />
+
+                  <Route
                     path="/borrower/*"
                     element={
                       <PrivateRoute allowedRoles={["borrower"]}>
