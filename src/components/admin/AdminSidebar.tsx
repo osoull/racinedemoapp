@@ -7,6 +7,12 @@ import {
   Settings,
   LogOut,
   Menu,
+  LayoutDashboard,
+  FileText,
+  PieChart,
+  MessageSquare,
+  Wallet,
+  Building2
 } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
@@ -14,6 +20,12 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 
 const menuItems = [
+  {
+    title: "نظرة عامة",
+    icon: LayoutDashboard,
+    path: "/admin",
+    description: "لوحة المعلومات والإحصائيات"
+  },
   {
     title: "إدارة المستخدمين",
     icon: Users,
@@ -33,10 +45,40 @@ const menuItems = [
     description: "تكوين وتتبع العمولات"
   },
   {
+    title: "التقارير",
+    icon: PieChart,
+    path: "/admin/reports",
+    description: "تقارير وإحصائيات المنصة"
+  },
+  {
+    title: "المعاملات المالية",
+    icon: Wallet,
+    path: "/admin/transactions",
+    description: "متابعة وإدارة المعاملات المالية"
+  },
+  {
     title: "الامتثال والتدقيق",
     icon: ShieldCheck,
     path: "/admin/compliance",
     description: "مراقبة الامتثال والتدقيق"
+  },
+  {
+    title: "الدعم الفني",
+    icon: MessageSquare,
+    path: "/admin/support",
+    description: "إدارة طلبات الدعم الفني"
+  },
+  {
+    title: "إعدادات المنصة",
+    icon: Building2,
+    path: "/admin/platform-settings",
+    description: "إدارة إعدادات المنصة"
+  },
+  {
+    title: "الإعدادات",
+    icon: Settings,
+    path: "/admin/settings",
+    description: "إعدادات الحساب"
   }
 ]
 
@@ -49,7 +91,7 @@ const SidebarContent = () => {
       <div className="flex h-16 items-center border-b px-6">
         <img src="/logo.svg" alt="Racine Logo" className="h-8" />
       </div>
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
         {menuItems.map((item) => (
           <SidebarItem
             key={item.path}
