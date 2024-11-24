@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Plus, TrendingUp, Users, Target, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { StatCard } from "@/components/dashboard/StatCard"
-import { ProjectOwnerSidebar } from "@/components/project-owner/ProjectOwnerSidebar"
+import { DashboardSidebar } from "@/components/dashboard/layout/DashboardSidebar"
 
 const ProjectOwnerDashboard = () => {
   const { user } = useAuth()
@@ -36,7 +36,7 @@ const ProjectOwnerDashboard = () => {
   const totalInvestors = projects?.reduce((sum, proj) => sum + (proj.investments?.length || 0), 0) || 0
 
   return (
-    <DashboardLayout sidebar={<ProjectOwnerSidebar />}>
+    <DashboardLayout sidebar={<DashboardSidebar />}>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-foreground">لوحة تحكم مالك المشروع</h1>
