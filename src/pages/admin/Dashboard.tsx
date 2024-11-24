@@ -8,6 +8,7 @@ import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import CommissionManagement from "@/components/admin/CommissionManagement"
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
+import BankDetails from "@/components/admin/BankDetails"
 import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -44,26 +45,13 @@ export default function AdminDashboard() {
 
         <Routes>
           <Route index element={<DashboardOverview />} />
-          
-          {/* User Management Routes */}
-          <Route path="users/investors" element={<UserManagement userType="investor" />} />
-          <Route path="users/borrowers" element={<UserManagement userType="borrower" />} />
-          
-          {/* Project Routes */}
+          <Route path="users" element={<UserManagement />} />
           <Route path="projects" element={<ProjectManagement />} />
-          
-          {/* Settings Routes */}
-          <Route path="settings" element={<PlatformSettings />} />
-          <Route path="settings/general" element={<PlatformSettings />} />
-          <Route path="settings/commissions" element={<CommissionManagement />} />
-          <Route path="settings/bank" element={<PlatformSettings />} />
-          <Route path="settings/kyc" element={<KYCManagement />} />
-          <Route path="settings/cma" element={<ComplianceAudit tab="cma" />} />
-          <Route path="settings/performance" element={<PlatformSettings />} />
-          <Route path="settings/financial" element={<PlatformSettings />} />
-          
-          {/* Compliance Routes */}
           <Route path="compliance" element={<KYCManagement />} />
+          <Route path="settings" element={<PlatformSettings />} />
+          <Route path="commissions" element={<CommissionManagement />} />
+          <Route path="bank" element={<BankDetails />} />
+          <Route path="cma" element={<ComplianceAudit />} />
         </Routes>
       </div>
     </DashboardLayout>

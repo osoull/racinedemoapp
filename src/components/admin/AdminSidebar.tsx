@@ -10,10 +10,10 @@ import {
   Settings,
   MessageSquare,
   Shield,
-  PieChart,
-  Briefcase,
   Wallet,
-  Building2
+  Building2,
+  Percent,
+  ScrollText
 } from "lucide-react"
 
 const menuItems = [
@@ -24,28 +24,16 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "المستثمرون",
-    icon: Wallet,
-    path: "/admin/users/investors",
-    description: "إدارة حسابات المستثمرين"
-  },
-  {
-    title: "المقترضون",
-    icon: Building2,
-    path: "/admin/users/borrowers",
-    description: "إدارة حسابات المقترضين"
+    title: "المستخدمين",
+    icon: Users,
+    path: "/admin/users",
+    description: "إدارة المستخدمين"
   },
   {
     title: "المشاريع",
-    icon: Briefcase,
+    icon: FileText,
     path: "/admin/projects",
     description: "إدارة المشاريع"
-  },
-  {
-    title: "المعاملات المالية",
-    icon: Wallet,
-    path: "/admin/transactions",
-    description: "متابعة المعاملات"
   },
   {
     title: "التحقق والامتثال",
@@ -54,16 +42,22 @@ const menuItems = [
     description: "إدارة التحقق والامتثال"
   },
   {
-    title: "التقارير",
-    icon: PieChart,
-    path: "/admin/reports",
-    description: "تقارير وإحصائيات"
+    title: "العمولات",
+    icon: Percent,
+    path: "/admin/commissions",
+    description: "إدارة العمولات والرسوم"
   },
   {
-    title: "الدعم الفني",
-    icon: MessageSquare,
-    path: "/admin/support",
-    description: "إدارة طلبات الدعم"
+    title: "الحساب البنكي",
+    icon: Building2,
+    path: "/admin/bank",
+    description: "إدارة الحساب البنكي"
+  },
+  {
+    title: "متطلبات هيئة السوق المالية",
+    icon: ScrollText,
+    path: "/admin/cma",
+    description: "متابعة متطلبات CMA"
   },
   {
     title: "إعدادات المنصة",
