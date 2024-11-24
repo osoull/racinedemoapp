@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import UserManagement from "@/components/admin/UserManagement"
@@ -10,6 +9,9 @@ import ProjectManagement from "@/components/admin/ProjectManagement"
 import ComplianceAudit from "@/components/admin/ComplianceAudit"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import CommissionManagement from "@/components/admin/CommissionManagement"
+import { useAuth } from "@/contexts/AuthContext"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 import {
   Users,
   Briefcase,
@@ -22,6 +24,20 @@ import {
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('first_name')
+        .eq('id', user?.id)
+        .single()
+      return data
+    },
+    enabled: !!user?.id
+  })
 
   const quickActions = [
     {
@@ -72,45 +88,29 @@ export default function AdminDashboard() {
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-8">
         <div className="p-6 bg-white rounded-lg shadow-sm border">
-          <h2 className="text-2xl font-bold mb-6">مرحباً بك في لوحة التحكم</h2>
+          <h2 className="text-2xl font-bold mb-6">
+            {profile?.first_name ? `مرحباً بك ${profile.first_name} في لوحة التحكم` : 'مرحباً بك في لوحة التحكم'}
+          </h2>
           
-          <Tabs defaultValue="quick-actions" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="quick-actions">الوصول السريع</TabsTrigger>
-              <TabsTrigger value="recent">النشاطات الأخيرة</TabsTrigger>
-              <TabsTrigger value="stats">الإحصائيات</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="quick-actions" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {quickActions.map((action) => (
-                  <Card 
-                    key={action.path}
-                    className="p-6 hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => navigate(action.path)}
-                  >
-                    <div className="flex items-start space-x-4 space-x-reverse">
-                      <div className={`p-3 rounded-lg ${action.color}`}>
-                        <action.icon className="h-6 w-6" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold mb-1">{action.title}</h3>
-                        <p className="text-sm text-gray-500">{action.description}</p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="recent">
-              {/* Recent activities content */}
-            </TabsContent>
-
-            <TabsContent value="stats">
-              {/* Statistics content */}
-            </TabsContent>
-          </Tabs>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {quickActions.map((action) => (
+              <Card 
+                key={action.path}
+                className="p-6 hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate(action.path)}
+              >
+                <div className="flex items-start space-x-4 space-x-reverse">
+                  <div className={`p-3 rounded-lg ${action.color}`}>
+                    <action.icon className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold mb-1">{action.title}</h3>
+                    <p className="text-sm text-gray-500">{action.description}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
 
         <Routes>
