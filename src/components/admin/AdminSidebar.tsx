@@ -3,7 +3,6 @@ import { LogOut } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
-import { platformSettingsItems } from "./menu/platformItems"
 import { 
   LayoutDashboard, 
   Users, 
@@ -13,7 +12,8 @@ import {
   Shield,
   PieChart,
   Briefcase,
-  Wallet
+  Wallet,
+  Building2
 } from "lucide-react"
 
 const menuItems = [
@@ -24,24 +24,16 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "المستخدمين",
-    icon: Users,
-    path: "/admin/users",
-    description: "إدارة المستخدمين",
-    subItems: [
-      {
-        title: "المستثمرون",
-        path: "/admin/users/investors",
-        icon: Wallet,
-        description: "إدارة حسابات المستثمرين"
-      },
-      {
-        title: "المقترضون",
-        path: "/admin/users/borrowers",
-        icon: Briefcase,
-        description: "إدارة حسابات المقترضين"
-      }
-    ]
+    title: "المستثمرون",
+    icon: Wallet,
+    path: "/admin/users/investors",
+    description: "إدارة حسابات المستثمرين"
+  },
+  {
+    title: "المقترضون",
+    icon: Building2,
+    path: "/admin/users/borrowers",
+    description: "إدارة حسابات المقترضين"
   },
   {
     title: "المشاريع",
@@ -77,8 +69,7 @@ const menuItems = [
     title: "إعدادات المنصة",
     icon: Settings,
     path: "/admin/settings",
-    description: "إعدادات عامة للمنصة",
-    subItems: platformSettingsItems
+    description: "إعدادات عامة للمنصة"
   }
 ]
 
@@ -90,35 +81,11 @@ export const AdminSidebar = () => {
     <div className="flex h-full flex-col bg-white">
       <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
         {menuItems.map((item) => (
-          <div key={item.path} className="space-y-1">
-            <SidebarItem
-              {...item}
-              isActive={location.pathname === item.path}
-            />
-            {item.subItems && (
-              <div className="mr-4 border-r pr-4 pt-1">
-                {item.subItems.map((subItem) => (
-                  <div key={subItem.path}>
-                    <SidebarItem
-                      {...subItem}
-                      isActive={location.pathname === subItem.path}
-                    />
-                    {subItem.subItems && (
-                      <div className="mr-4 border-r pr-4 pt-1">
-                        {subItem.subItems.map((nestedItem) => (
-                          <SidebarItem
-                            key={nestedItem.path}
-                            {...nestedItem}
-                            isActive={location.pathname === nestedItem.path}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <SidebarItem
+            key={item.path}
+            {...item}
+            isActive={location.pathname === item.path}
+          />
         ))}
       </nav>
       <div className="border-t p-4">

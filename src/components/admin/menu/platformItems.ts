@@ -15,59 +15,43 @@ export const platformSettingsItems = [
   {
     title: "عام",
     icon: Settings2,
-    path: "/admin/platform-settings/general",
+    path: "/admin/settings/general",
     description: "الإعدادات العامة للمنصة"
   },
   {
     title: "العمولات",
     icon: Percent,
-    path: "/admin/platform-settings/commissions",
+    path: "/admin/settings/commissions",
     description: "إدارة العمولات والرسوم"
   },
   {
     title: "الحساب البنكي",
     icon: Building2,
-    path: "/admin/platform-settings/bank",
+    path: "/admin/settings/bank",
     description: "إدارة الحسابات البنكية"
   },
   {
-    title: "الامتثال",
-    icon: Shield,
-    path: "/admin/platform-settings/compliance",
-    description: "إدارة الامتثال والتحقق",
-    subItems: [
-      {
-        title: "التحقق من الهوية",
-        path: "/admin/platform-settings/compliance/kyc",
-        icon: ShieldCheck,
-        description: "إدارة عمليات KYC"
-      },
-      {
-        title: "متطلبات هيئة السوق المالية",
-        path: "/admin/platform-settings/compliance/cma",
-        icon: ScrollText,
-        description: "متابعة متطلبات CMA"
-      }
-    ]
+    title: "التحقق من الهوية",
+    icon: ShieldCheck,
+    path: "/admin/settings/kyc",
+    description: "إدارة عمليات KYC"
   },
   {
-    title: "التقارير",
-    icon: FileText,
-    path: "/admin/platform-settings/reports",
-    description: "التقارير والإحصائيات",
-    subItems: [
-      {
-        title: "تقارير الأداء",
-        path: "/admin/platform-settings/reports/performance",
-        icon: BarChart,
-        description: "تقارير أداء المنصة"
-      },
-      {
-        title: "تقارير مالية",
-        path: "/admin/platform-settings/reports/financial",
-        icon: PieChart,
-        description: "التقارير المالية"
-      }
-    ]
+    title: "متطلبات هيئة السوق المالية",
+    icon: ScrollText,
+    path: "/admin/settings/cma",
+    description: "متابعة متطلبات CMA"
+  },
+  {
+    title: "تقارير الأداء",
+    icon: BarChart,
+    path: "/admin/settings/performance",
+    description: "تقارير أداء المنصة"
+  },
+  {
+    title: "تقارير مالية",
+    icon: PieChart,
+    path: "/admin/settings/financial",
+    description: "التقارير المالية"
   }
 ];
