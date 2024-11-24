@@ -10,7 +10,8 @@ type UserListProps = {
 };
 
 export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProps) {
-  const filterUsersByType = (type: string) => {
+  const filterUsersByType = (type: string | null) => {
+    if (!type) return users || [];
     return users?.filter(user => user.user_type === type) || [];
   };
 
@@ -36,10 +37,11 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
           <TabsTrigger value="investor">المستثمرون</TabsTrigger>
           <TabsTrigger value="investment_manager">مديرو الاستثمار</TabsTrigger>
           <TabsTrigger value="admin">المشرفون</TabsTrigger>
+          <TabsTrigger value="borrower">طالبو التمويل</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all">
-          <UserGrid filteredUsers={users || []} />
+          <UserGrid filteredUsers={filterUsersByType(null)} />
         </TabsContent>
 
         <TabsContent value="investor">
@@ -52,6 +54,10 @@ export function UserList({ users, onDelete, onUpdateType, onEdit }: UserListProp
 
         <TabsContent value="admin">
           <UserGrid filteredUsers={filterUsersByType("admin")} />
+        </TabsContent>
+
+        <TabsContent value="borrower">
+          <UserGrid filteredUsers={filterUsersByType("borrower")} />
         </TabsContent>
       </Tabs>
     </div>
