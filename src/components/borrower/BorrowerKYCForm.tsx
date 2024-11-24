@@ -82,7 +82,9 @@ export function BorrowerKYCForm() {
         .from("borrower_kyc")
         .upsert({
           ...kycData,
-          bank_account_details: kycData.bank_account_details as unknown as Json,
+          annual_revenue: Number(kycData.annual_revenue),
+          number_of_employees: Number(kycData.number_of_employees),
+          bank_account_details: kycData.bank_account_details,
           updated_at: new Date().toISOString(),
         })
 

@@ -3,8 +3,23 @@ import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+interface KYCHistoryEntry {
+  id: string;
+  user: {
+    first_name: string;
+    last_name: string;
+  } | null;
+  admin: {
+    first_name: string;
+    last_name: string;
+  } | null;
+  old_status: string;
+  new_status: string;
+  created_at: string;
+}
+
 export function KYCStatusHistory() {
-  const { data: history, isLoading } = useQuery({
+  const { data: history, isLoading } = useQuery<KYCHistoryEntry[]>({
     queryKey: ['kyc-history'],
     queryFn: async () => {
       const { data, error } = await supabase
