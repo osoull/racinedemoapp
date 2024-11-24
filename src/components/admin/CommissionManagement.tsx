@@ -1,57 +1,61 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-import { CommissionCard } from "./commission/CommissionCard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { Tables } from "@/integrations/supabase/types"
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
+import { CommissionCard } from "./commission/CommissionCard"
 
-type Commission = Tables<"commissions">;
+type Commission = Tables<"commissions">
 
 const CommissionManagement = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const { data: commissions, isLoading } = useQuery({
     queryKey: ["commissions"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("commissions")
-        .select("*");
+        .select("*")
 
-      if (error) throw error;
-      return data as Commission[];
+      if (error) throw error
+      return data as Commission[]
     },
-  });
+  })
 
   useRealtimeSubscription(
     "commissions",
     {
       onUpdate: () => {
-        queryClient.invalidateQueries({ queryKey: ["commissions"] });
+        queryClient.invalidateQueries({ queryKey: ["commissions"] })
       },
       onInsert: () => {
-        queryClient.invalidateQueries({ queryKey: ["commissions"] });
+        queryClient.invalidateQueries({ queryKey: ["commissions"] })
       },
       onDelete: () => {
-        queryClient.invalidateQueries({ queryKey: ["commissions"] });
+        queryClient.invalidateQueries({ queryKey: ["commissions"] })
       }
     }
-  );
+  )
 
   const getArabicCommissionType = (type: string) => {
     switch (type) {
-      case "wallet_deposit":
-        return "إيداع المحفظة";
-      case "funding_request":
-        return "طلب التمويل";
+      case "admin_fee":
+        return "عمولة الإدارة"
+      case "collection_fee":
+        return "عمولة التحصيل"
+      case "basic_investor_fee":
+        return "عمولة المستثمر الأساسي"
+      case "qualified_investor_fee":
+        return "عمولة المستثمر المؤهل"
       default:
-        return type;
+        return type
     }
-  };
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>إدارة العمولات</CardTitle>
+        <CardTitle>العمولات والرسوم</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -69,7 +73,7 @@ const CommissionManagement = () => {
         )}
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default CommissionManagement;
+export default CommissionManagement

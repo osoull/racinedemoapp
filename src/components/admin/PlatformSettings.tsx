@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import CommissionManagement from "./CommissionManagement"
 import ComplianceAudit from "./ComplianceAudit"
+import BankDetails from "./BankDetails"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 
@@ -29,9 +30,10 @@ export default function PlatformSettings() {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="general">عام</TabsTrigger>
             <TabsTrigger value="commissions">العمولات</TabsTrigger>
+            <TabsTrigger value="bank">الحساب البنكي</TabsTrigger>
             <TabsTrigger value="compliance">الامتثال</TabsTrigger>
             <TabsTrigger value="reports">التقارير</TabsTrigger>
           </TabsList>
@@ -43,6 +45,10 @@ export default function PlatformSettings() {
 
           <TabsContent value="commissions">
             <CommissionManagement />
+          </TabsContent>
+
+          <TabsContent value="bank">
+            <BankDetails />
           </TabsContent>
 
           <TabsContent value="compliance">
