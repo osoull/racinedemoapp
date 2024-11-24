@@ -5,6 +5,13 @@ import { Building2, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
+interface BankDetailsData {
+  bank_name: string;
+  account_name: string;
+  swift: string;
+  iban: string;
+}
+
 export default function BankDetails() {
   const { toast } = useToast()
 
@@ -18,7 +25,7 @@ export default function BankDetails() {
         .single()
 
       if (error) throw error
-      return data.setting_value
+      return data.setting_value as BankDetailsData
     }
   })
 
@@ -32,6 +39,10 @@ export default function BankDetails() {
 
   if (isLoading) {
     return <div>جاري التحميل...</div>
+  }
+
+  if (!bankDetails) {
+    return <div>لا توجد معلومات بنكية</div>
   }
 
   return (
@@ -48,11 +59,11 @@ export default function BankDetails() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">اسم البنك</label>
               <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span>{bankDetails?.bank_name}</span>
+                <span>{bankDetails.bank_name}</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => copyToClipboard(bankDetails?.bank_name)}
+                  onClick={() => copyToClipboard(bankDetails.bank_name)}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -62,11 +73,11 @@ export default function BankDetails() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">اسم الحساب</label>
               <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span>{bankDetails?.account_name}</span>
+                <span>{bankDetails.account_name}</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => copyToClipboard(bankDetails?.account_name)}
+                  onClick={() => copyToClipboard(bankDetails.account_name)}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -76,11 +87,11 @@ export default function BankDetails() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">رمز السويفت (SWIFT)</label>
               <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="font-mono">{bankDetails?.swift}</span>
+                <span className="font-mono">{bankDetails.swift}</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => copyToClipboard(bankDetails?.swift)}
+                  onClick={() => copyToClipboard(bankDetails.swift)}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -90,11 +101,11 @@ export default function BankDetails() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">رقم الآيبان (IBAN)</label>
               <div className="flex items-center justify-between p-3 border rounded-lg">
-                <span className="font-mono">{bankDetails?.iban}</span>
+                <span className="font-mono">{bankDetails.iban}</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => copyToClipboard(bankDetails?.iban)}
+                  onClick={() => copyToClipboard(bankDetails.iban)}
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
