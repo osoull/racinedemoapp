@@ -44,17 +44,31 @@ export default function AdminDashboard() {
 
         <Routes>
           <Route index element={<DashboardOverview />} />
+          
+          {/* User Management Routes */}
           <Route path="users" element={<UserManagement />} />
           <Route path="users/investors" element={<UserManagement userType="investor" />} />
           <Route path="users/borrowers" element={<UserManagement userType="borrower" />} />
+          
+          {/* Project Routes */}
           <Route path="projects" element={<ProjectManagement />} />
           <Route path="projects/new" element={<ProjectManagement filter="pending" />} />
           <Route path="projects/active" element={<ProjectManagement filter="active" />} />
           <Route path="projects/completed" element={<ProjectManagement filter="completed" />} />
-          <Route path="compliance" element={<KYCManagement />} />
+          
+          {/* Platform Settings Routes */}
           <Route path="platform-settings" element={<PlatformSettings />} />
+          <Route path="platform-settings/general" element={<PlatformSettings />} />
           <Route path="platform-settings/commissions" element={<CommissionManagement />} />
-          <Route path="platform-settings/cma" element={<ComplianceAudit tab="cma" />} />
+          <Route path="platform-settings/bank" element={<PlatformSettings />} />
+          <Route path="platform-settings/compliance/*" element={<ComplianceAudit />} />
+          <Route path="platform-settings/compliance/kyc" element={<KYCManagement />} />
+          <Route path="platform-settings/compliance/cma" element={<ComplianceAudit tab="cma" />} />
+          <Route path="platform-settings/reports/performance" element={<PlatformSettings />} />
+          <Route path="platform-settings/reports/financial" element={<PlatformSettings />} />
+          
+          {/* Compliance Routes */}
+          <Route path="compliance" element={<KYCManagement />} />
         </Routes>
       </div>
     </DashboardLayout>

@@ -27,7 +27,21 @@ const menuItems = [
     title: "المستخدمين",
     icon: Users,
     path: "/admin/users",
-    description: "إدارة المستخدمين"
+    description: "إدارة المستخدمين",
+    subItems: [
+      {
+        title: "المستثمرون",
+        path: "/admin/users/investors",
+        icon: Wallet,
+        description: "إدارة حسابات المستثمرين"
+      },
+      {
+        title: "المقترضون",
+        path: "/admin/users/borrowers",
+        icon: Briefcase,
+        description: "إدارة حسابات المقترضين"
+      }
+    ]
   },
   {
     title: "المشاريع",
