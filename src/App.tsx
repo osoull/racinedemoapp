@@ -26,6 +26,11 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
     return <Navigate to="/" replace />
   }
 
+  const userType = user.user_metadata?.user_type
+  if (!allowedRoles.includes(userType)) {
+    return <Navigate to="/" replace />
+  }
+
   return <>{children}</>
 }
 
@@ -54,7 +59,10 @@ function App() {
             <div className="flex min-h-screen flex-col">
               <main className="flex-1">
                 <Routes>
+                  {/* Page d'authentification */}
                   <Route path="/" element={<Auth />} />
+
+                  {/* Dashboard Investisseur */}
                   <Route
                     path="/investor/*"
                     element={
@@ -63,6 +71,8 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+
+                  {/* Dashboard Propriétaire de Projet */}
                   <Route
                     path="/project-owner/*"
                     element={
@@ -71,6 +81,8 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+
+                  {/* Pages communes */}
                   <Route
                     path="/profile"
                     element={
@@ -87,6 +99,8 @@ function App() {
                       </PrivateRoute>
                     }
                   />
+
+                  {/* Redirection par défaut */}
                   <Route path="*" element={<Navigate to={getDashboardRoute()} replace />} />
                 </Routes>
               </main>

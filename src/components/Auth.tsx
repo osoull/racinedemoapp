@@ -28,14 +28,11 @@ export function Auth() {
 
         if (profile?.user_type) {
           switch (profile.user_type) {
-            case "admin":
-              navigate("/admin")
-              break
-            case "investment_manager":
-              navigate("/investment-manager")
-              break
             case "project_owner":
               navigate("/project-owner")
+              break
+            case "investor":
+              navigate("/investor")
               break
             default:
               navigate("/")
@@ -86,8 +83,6 @@ export function Auth() {
                 <SelectContent>
                   <SelectItem value="investor">مستثمر</SelectItem>
                   <SelectItem value="project_owner">طالب تمويل</SelectItem>
-                  <SelectItem value="investment_manager">مدير استثمار</SelectItem>
-                  <SelectItem value="admin">مشرف</SelectItem>
                 </SelectContent>
               </Select>
             )}
