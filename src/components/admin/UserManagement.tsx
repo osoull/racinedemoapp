@@ -6,6 +6,7 @@ import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "@/types/user";
+import { Loader2 } from "lucide-react";
 
 interface UserManagementProps {
   userType?: 'investor' | 'borrower';
@@ -15,20 +16,29 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: users, isLoading } = useQuery({
-    queryKey: ['users'],
+  // Updated query to fetch all profiles
+  const { data: users, isLoading, error } = useQuery({
+    queryKey: ['users', userType],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      let query = supabase.from('profiles').select('*');
+      
+      // Only filter by userType if it's provided
+      if (userType) {
+        query = query.eq('user_type', userType);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+      
       return data as User[];
-    }
+    },
   });
 
-  // Configuration de la synchronisation en temps réel
+  // Set up realtime subscription
   useEffect(() => {
     const channel = supabase
       .channel('profiles-changes')
@@ -39,8 +49,8 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
           schema: 'public',
           table: 'profiles'
         },
-        () => {
-          // Actualiser les données à chaque changement
+        (payload) => {
+          console.log('Realtime update received:', payload);
           queryClient.invalidateQueries({ queryKey: ['users'] });
         }
       )
@@ -129,29 +139,21 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
     }
   });
 
-  const handleUserCreated = () => {
-    queryClient.invalidateQueries({ queryKey: ['users'] });
-  };
-
-  const handleDelete = (user: User) => {
-    if (window.confirm("هل أنت متأكد من حذف هذا المستخدم؟")) {
-      deleteUserMutation.mutate(user);
-    }
-  };
-
-  const handleUpdateType = (userId: string, newType: string) => {
-    updateUserTypeMutation.mutate({ userId, newType });
-  };
-
-  const handleEdit = (userId: string, updatedData: Partial<User>) => {
-    updateUserMutation.mutate({ userId, data: updatedData });
-  };
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="p-6 text-center text-red-500">
+          حدث خطأ أثناء تحميل المستخدمين
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="p-6">
-          جاري التحميل...
+        <CardContent className="p-6 flex justify-center items-center">
+          <Loader2 className="h-6 w-6 animate-spin" />
         </CardContent>
       </Card>
     );
@@ -161,14 +163,18 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>إدارة المستخدمين</CardTitle>
-        <CreateUserDialog onUserCreated={handleUserCreated} />
+        <CreateUserDialog onUserCreated={() => queryClient.invalidateQueries({ queryKey: ['users'] })} />
       </CardHeader>
       <CardContent>
         <UserList 
           users={users} 
-          onDelete={handleDelete}
-          onUpdateType={handleUpdateType}
-          onEdit={handleEdit}
+          onDelete={(user) => {
+            if (window.confirm("هل أنت متأكد من حذف هذا المستخدم؟")) {
+              deleteUserMutation.mutate(user);
+            }
+          }}
+          onUpdateType={(userId, newType) => updateUserTypeMutation.mutate({ userId, newType })}
+          onEdit={(userId, updatedData) => updateUserMutation.mutate({ userId, data: updatedData })}
         />
       </CardContent>
     </Card>
