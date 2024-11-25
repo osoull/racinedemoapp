@@ -66,8 +66,11 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
 
       if (error) throw error
 
-      toast.success(newStatus === 'completed' ? 'تم اعتماد المعاملة' : 'تم رفض المعاملة')
-      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      toast.success(
+        newStatus === 'completed' 
+          ? 'تم اعتماد المعاملة بنجاح' 
+          : 'تم رفض المعاملة بنجاح'
+      )
     } catch (error) {
       console.error('Error updating transaction:', error)
       toast.error('حدث خطأ أثناء تحديث حالة المعاملة')
@@ -117,6 +120,7 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
+                      variant="default"
                       onClick={() => handleUpdateStatus(transaction.id, 'completed')}
                     >
                       اعتماد
