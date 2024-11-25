@@ -12,7 +12,7 @@ export const BackButton = () => {
       className="mb-4 flex items-center gap-2"
     >
       <ChevronRight className="h-4 w-4" />
-      Précédent
+      السابق
     </Button>
   )
 }
