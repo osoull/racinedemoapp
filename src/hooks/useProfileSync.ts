@@ -10,6 +10,7 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
+  // Écouter les changements en temps réel
   useEffect(() => {
     if (!user) return
 
@@ -18,19 +19,22 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*', // Écouter tous les événements (INSERT, UPDATE, DELETE)
           schema: 'public',
           table: 'profiles',
           filter: `id=eq.${user.id}`,
         },
         async (payload) => {
+          console.log('Profile change detected:', payload)
           const updatedProfile = payload.new as Profile
-          onUpdate?.(updatedProfile)
           
-          // Invalider le cache pour forcer un rafraîchissement
+          // Mettre à jour le cache React Query
           await queryClient.invalidateQueries({
-            queryKey: ['profile', user.id]
+            queryKey: ['profile']
           })
+          
+          // Notifier le composant parent
+          onUpdate?.(updatedProfile)
           
           toast({
             title: "تم التحديث",
@@ -49,6 +53,8 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
     if (!user) throw new Error("User not authenticated")
 
     try {
+      console.log('Updating profile with:', updates)
+      
       const { data, error } = await supabase
         .from('profiles')
         .update(updates)
@@ -58,13 +64,21 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
 
       if (error) throw error
 
-      // Invalider le cache immédiatement après la mise à jour
+      console.log('Profile updated successfully:', data)
+
+      // Forcer une invalidation immédiate du cache
       await queryClient.invalidateQueries({
-        queryKey: ['profile', user.id]
+        queryKey: ['profile']
+      })
+
+      // Forcer un rafraîchissement des données
+      await queryClient.refetchQueries({
+        queryKey: ['profile']
       })
 
       return data
     } catch (error) {
+      console.error('Error updating profile:', error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث المعلومات",
