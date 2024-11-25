@@ -29,7 +29,7 @@ export function UserTypeSelection({ onSelect }: UserTypeSelectionProps) {
           <CardContent className="p-6 text-center space-y-4">
             <UserCircle2 className="w-12 h-12 mx-auto text-primary" />
             <div>
-              <h3 className="font-semibold text-lg">مستثمر أساسي</h3>
+              <h3 className="font-semibold text-lg">مستثمر</h3>
               <p className="text-sm text-muted-foreground">استثمر في المشاريع</p>
             </div>
           </CardContent>
