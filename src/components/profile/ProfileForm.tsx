@@ -7,22 +7,40 @@ import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useProfileSync } from "@/hooks/useProfileSync"
 import { Profile } from "@/types/user"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 export function ProfileForm() {
   const { user } = useAuth()
   const [saving, setSaving] = useState(false)
-  const [profile, setProfile] = useState<Profile>({} as Profile)
+  const [profile, setProfile] = useState<Partial<Profile>>({})
+  
+  const { data: initialProfile } = useQuery<Profile>({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
+        .single()
+
+      if (error) throw error
+      return data as Profile
+    },
+    enabled: !!user,
+  })
+
+  useEffect(() => {
+    if (initialProfile) {
+      setProfile(initialProfile)
+    }
+  }, [initialProfile])
+
   const { updateProfile } = useProfileSync((updatedProfile) => {
     if (updatedProfile) {
       setProfile(updatedProfile)
     }
   })
-
-  useEffect(() => {
-    if (user) {
-      setProfile(prev => ({ ...prev, id: user.id }))
-    }
-  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

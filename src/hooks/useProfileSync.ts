@@ -36,27 +36,28 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [user, onUpdate])
+  }, [user, onUpdate, toast])
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return
+    if (!user) throw new Error("User not authenticated")
 
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', user.id)
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id)
+      .select()
+      .single()
 
-      if (error) throw error
-
-    } catch (error) {
-      console.error('Error updating profile:', error)
+    if (error) {
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث المعلومات",
         variant: "destructive",
       })
+      throw error
     }
+
+    return data
   }
 
   return { updateProfile }
