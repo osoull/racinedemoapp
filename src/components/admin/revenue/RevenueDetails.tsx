@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { RevenueSummary } from "./RevenueSummary";
 import { RevenueTable } from "./RevenueTable";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
+import { TotalFeesCard } from "./TotalFeesCard";
 
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
@@ -65,46 +66,54 @@ export function RevenueDetails() {
   const totals = calculateTotals(revenueData);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>تفاصيل الإيرادات</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="summary" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="summary">ملخص</TabsTrigger>
-            <TabsTrigger value="monthly">تفاصيل شهرية</TabsTrigger>
-          </TabsList>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="col-span-full">
+          <TotalFeesCard />
+        </div>
+      </div>
 
-          <div className="mb-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>تفاصيل الإيرادات</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="summary" className="space-y-4">
             <TabsList>
-              <TabsTrigger
-                value="year"
-                onClick={() => setTimeframe("year")}
-                className={timeframe === "year" ? "bg-primary" : ""}
-              >
-                السنة الحالية
-              </TabsTrigger>
-              <TabsTrigger
-                value="last12"
-                onClick={() => setTimeframe("last12")}
-                className={timeframe === "last12" ? "bg-primary" : ""}
-              >
-                آخر 12 شهر
-              </TabsTrigger>
+              <TabsTrigger value="summary">ملخص</TabsTrigger>
+              <TabsTrigger value="monthly">تفاصيل شهرية</TabsTrigger>
             </TabsList>
-          </div>
 
-          <TabsContent value="summary">
-            <RevenueSummary totals={totals} />
-          </TabsContent>
+            <div className="mb-4">
+              <TabsList>
+                <TabsTrigger
+                  value="year"
+                  onClick={() => setTimeframe("year")}
+                  className={timeframe === "year" ? "bg-primary" : ""}
+                >
+                  السنة الحالية
+                </TabsTrigger>
+                <TabsTrigger
+                  value="last12"
+                  onClick={() => setTimeframe("last12")}
+                  className={timeframe === "last12" ? "bg-primary" : ""}
+                >
+                  آخر 12 شهر
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-          <TabsContent value="monthly">
-            <RevenueTable revenueData={revenueData || []} />
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+            <TabsContent value="summary">
+              <RevenueSummary totals={totals} />
+            </TabsContent>
+
+            <TabsContent value="monthly">
+              <RevenueTable revenueData={revenueData || []} />
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
