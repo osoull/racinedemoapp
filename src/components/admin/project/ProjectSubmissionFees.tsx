@@ -42,11 +42,6 @@ export const ProjectSubmissionFees = ({ amount }: ProjectSubmissionFeesProps) =>
       
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
-          <span>المبلغ المستهدف:</span>
-          <span>{formatCurrency(amount)}</span>
-        </div>
-        
-        <div className="flex justify-between">
           <span>رسوم الإدارة ({adminFee}%):</span>
           <span>{formatCurrency(calculatedAdminFee)}</span>
         </div>
