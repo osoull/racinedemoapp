@@ -42,8 +42,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     setIsLoading(true)
     try {
       const amountNumber = Number(amount)
-      const userType = user.user_type === 'investor' ? (user.investor_type || 'basic') : 'basic'
-      const fees = calculateFees(amountNumber, commissions || [], userType)
+      const fees = calculateFees(amountNumber, commissions || [], user.type)
       const totalAmount = amountNumber + fees.total
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
@@ -76,8 +75,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   }
 
   const amountNumber = Number(amount)
-  const userType = user?.user_type === 'investor' ? (user?.investor_type || 'basic') : 'basic'
-  const fees = calculateFees(amountNumber, commissions || [], userType)
+  const fees = calculateFees(amountNumber, commissions || [], user?.type)
   const totalAmount = amountNumber + fees.total
 
   return (
@@ -87,18 +85,24 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
           <span>المبلغ الأساسي:</span>
           <span>{formatCurrency(amountNumber)}</span>
         </div>
-        <div className="flex justify-between">
-          <span>رسوم الإدارة:</span>
-          <span>{formatCurrency(fees.admin)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>رسوم التحصيل:</span>
-          <span>{formatCurrency(fees.collection)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>رسوم المستثمر:</span>
-          <span>{formatCurrency(fees.investor)}</span>
-        </div>
+        {fees.admin > 0 && (
+          <div className="flex justify-between">
+            <span>رسوم الإدارة:</span>
+            <span>{formatCurrency(fees.admin)}</span>
+          </div>
+        )}
+        {fees.collection > 0 && (
+          <div className="flex justify-between">
+            <span>رسوم التحصيل:</span>
+            <span>{formatCurrency(fees.collection)}</span>
+          </div>
+        )}
+        {fees.investor > 0 && (
+          <div className="flex justify-between">
+            <span>رسوم المستثمر:</span>
+            <span>{formatCurrency(fees.investor)}</span>
+          </div>
+        )}
         <div className="flex justify-between font-bold border-t pt-2">
           <span>المبلغ الإجمالي:</span>
           <span>{formatCurrency(totalAmount)}</span>
