@@ -21,11 +21,12 @@ export function ProfileForm() {
   const { data: initialProfile, isLoading, error } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
-      console.log('Fetching profile for user:', user?.id)
+      if (!user?.id) throw new Error("No user ID")
+      
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single()
 
       if (error) {
@@ -33,47 +34,50 @@ export function ProfileForm() {
         throw error
       }
       
-      console.log('Fetched profile:', data)
       return data as Profile
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   })
 
   useEffect(() => {
     if (initialProfile) {
-      console.log('Setting initial profile:', initialProfile)
       setProfile(initialProfile)
     }
   }, [initialProfile])
 
-  const { updateProfile } = useProfileSync((updatedProfile) => {
-    console.log('Profile sync callback with:', updatedProfile)
-    if (updatedProfile) {
-      setProfile(updatedProfile)
-      queryClient.invalidateQueries({ queryKey: ["profile"] })
-    }
-  })
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!user?.id) {
+      toast({
+        title: "خطأ",
+        description: "يجب تسجيل الدخول أولاً",
+        variant: "destructive",
+      })
+      return
+    }
+
     setSaving(true)
     
     try {
-      console.log('Submitting profile update:', profile)
-      await updateProfile({
-        ...profile,
-        profile_completed: true
-      })
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          ...profile,
+          profile_completed: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+
+      if (updateError) throw updateError
+
+      await queryClient.invalidateQueries({ queryKey: ["profile"] })
       
       toast({
         title: "تم التحديث",
         description: "تم تحديث معلوماتك الشخصية بنجاح",
       })
-      
-      // Forcer un rafraîchissement des données
-      await queryClient.invalidateQueries({ queryKey: ["profile"] })
     } catch (error) {
-      console.error('Error in handleSubmit:', error)
+      console.error('Error updating profile:', error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث المعلومات",
@@ -114,6 +118,7 @@ export function ProfileForm() {
                 value={profile.first_name || ''}
                 onChange={(e) => setProfile({ ...profile, first_name: e.target.value })}
                 placeholder="أدخل اسمك الأول"
+                required
               />
             </div>
 
@@ -123,6 +128,7 @@ export function ProfileForm() {
                 value={profile.last_name || ''}
                 onChange={(e) => setProfile({ ...profile, last_name: e.target.value })}
                 placeholder="أدخل اسم عائلتك"
+                required
               />
             </div>
 
