@@ -19,7 +19,7 @@ interface ProjectFormStepsProps {
 
 export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) => {
   const [step, setStep] = useState(1);
-  const [projectData, setProjectData] = useState<any>(null);
+  const [projectData, setProjectData] = useState<any>(project || null);
   const { toast } = useToast();
   const { data: bankDetails, isLoading, error } = useBankDetails();
 
@@ -75,7 +75,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
             <span className="text-sm text-muted-foreground">الخطوة 1 من 2</span>
           </div>
           <ProjectDetails 
-            project={project}
+            project={projectData}
             onSubmit={handleProjectDetailsSubmit}
           />
         </div>
