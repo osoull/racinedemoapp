@@ -12,14 +12,14 @@ import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { Loader2 } from "lucide-react"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
-type UserType = "investor" | "admin" | "borrower" | "investment_manager";
-type SelectableUserType = Extract<UserType, "investor" | "borrower">;
+type UserType = "basic_investor" | "qualified_investor" | "admin" | "borrower" | "investment_manager";
+type SelectableUserType = Extract<UserType, "basic_investor" | "qualified_investor" | "borrower">;
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState<SelectableUserType>("investor")
+  const [userType, setUserType] = useState<SelectableUserType>("basic_investor")
   const [isLoading, setIsLoading] = useState(false)
   const { signIn } = useAuth()
   const navigate = useNavigate()
@@ -53,7 +53,8 @@ export function Auth() {
         case "borrower":
           navigate("/borrower")
           break
-        case "investor":
+        case "basic_investor":
+        case "qualified_investor":
           navigate("/investor")
           break
         case "admin":
