@@ -15,6 +15,7 @@ export function InvestorManagement() {
           investor_kyc (*)
         `)
         .eq("user_type", "investor")
+        .order('created_at', { ascending: false })
 
       if (error) throw error
       return data
@@ -35,7 +36,7 @@ export function InvestorManagement() {
         <CardTitle>إدارة المستثمرين</CardTitle>
       </CardHeader>
       <CardContent>
-        <InvestorList investors={investors} />
+        <InvestorList investors={investors || []} />
       </CardContent>
     </Card>
   )
