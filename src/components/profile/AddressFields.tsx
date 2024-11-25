@@ -16,7 +16,7 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           رقم المبنى <span className="text-red-500">*</span>
         </label>
         <Input
@@ -24,11 +24,12 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
           onChange={(e) => handleChange('street_number', e.target.value)}
           placeholder="أدخل رقم المبنى"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           اسم الشارع <span className="text-red-500">*</span>
         </label>
         <Input
@@ -36,11 +37,12 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
           onChange={(e) => handleChange('street_name', e.target.value)}
           placeholder="أدخل اسم الشارع"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           الرمز البريدي <span className="text-red-500">*</span>
         </label>
         <Input
@@ -48,11 +50,12 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
           onChange={(e) => handleChange('postal_code', e.target.value)}
           placeholder="أدخل الرمز البريدي"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           المدينة <span className="text-red-500">*</span>
         </label>
         <Input
@@ -60,18 +63,19 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
           onChange={(e) => handleChange('city', e.target.value)}
           placeholder="أدخل المدينة"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           البلد <span className="text-red-500">*</span>
         </label>
         <Select 
           value={profile.country || undefined}
           onValueChange={(value) => handleChange('country', value)}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="bg-background/50 border-muted-foreground/20 focus:border-primary">
             <SelectValue placeholder="اختر البلد" />
           </SelectTrigger>
           <SelectContent>

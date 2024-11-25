@@ -41,26 +41,39 @@ export function ProfileStatus() {
   }
 
   return (
-    <Card className="mb-8">
+    <Card className="mb-8 border-none bg-card/50 backdrop-blur-xl shadow-lg">
       <CardContent className="pt-6">
-        <div className="flex flex-wrap gap-4">
-          <div>
+        <div className="flex flex-wrap gap-6 justify-center">
+          <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">حالة الملف الشخصي</p>
-            <Badge variant={profile.profile_completed ? "default" : "secondary"}>
+            <Badge 
+              variant={profile.profile_completed ? "default" : "secondary"}
+              className="px-4 py-1 rounded-full"
+            >
               {profile.profile_completed ? "مكتمل" : "غير مكتمل"}
             </Badge>
           </div>
 
-          <div>
+          <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">نوع الحساب</p>
-            <Badge variant="outline">
+            <Badge 
+              variant="outline"
+              className="px-4 py-1 rounded-full"
+            >
               {getUserTypeLabel(profile.user_type)}
             </Badge>
           </div>
 
-          <div>
+          <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">حالة التحقق</p>
-            <Badge variant={profile.kyc_status === 'approved' ? "success" : "warning"}>
+            <Badge 
+              variant={profile.kyc_status === 'approved' ? "default" : "secondary"}
+              className={`px-4 py-1 rounded-full ${
+                profile.kyc_status === 'approved' 
+                  ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' 
+                  : ''
+              }`}
+            >
               {profile.kyc_status === 'approved' ? 'تم التحقق' : 'قيد المراجعة'}
             </Badge>
           </div>

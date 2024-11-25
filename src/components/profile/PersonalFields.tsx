@@ -14,7 +14,7 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           الاسم الأول <span className="text-red-500">*</span>
         </label>
         <Input
@@ -22,11 +22,12 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
           onChange={(e) => handleChange('first_name', e.target.value)}
           placeholder="أدخل اسمك الأول"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           اسم العائلة <span className="text-red-500">*</span>
         </label>
         <Input
@@ -34,11 +35,12 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
           onChange={(e) => handleChange('last_name', e.target.value)}
           placeholder="أدخل اسم عائلتك"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           رقم الهاتف <span className="text-red-500">*</span>
         </label>
         <Input
@@ -47,11 +49,12 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
           placeholder="أدخل رقم هاتفك"
           dir="ltr"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-medium">
+        <label className="text-sm font-medium text-foreground/80">
           رقم الهوية <span className="text-red-500">*</span>
         </label>
         <Input
@@ -60,6 +63,7 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
           placeholder="أدخل رقم هويتك"
           dir="ltr"
           required
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
         />
       </div>
     </div>

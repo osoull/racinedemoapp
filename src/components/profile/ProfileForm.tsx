@@ -140,17 +140,27 @@ export function ProfileForm() {
   }
 
   return (
-    <Card className="max-w-4xl mx-auto mt-8">
+    <Card className="max-w-4xl mx-auto mt-8 border-none bg-card/50 backdrop-blur-xl shadow-lg">
       <CardHeader>
-        <CardTitle>المعلومات الشخصية</CardTitle>
+        <CardTitle className="text-xl font-semibold">المعلومات الشخصية</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <PersonalFields profile={profile} setProfile={setProfile} />
-          <AddressFields profile={profile} setProfile={setProfile} />
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="bg-card/30 p-6 rounded-lg space-y-6">
+            <PersonalFields profile={profile} setProfile={setProfile} />
+          </div>
+          
+          <div className="bg-card/30 p-6 rounded-lg space-y-6">
+            <AddressFields profile={profile} setProfile={setProfile} />
+          </div>
 
           <div className="flex justify-end">
-            <Button type="submit" disabled={saving} size="lg">
+            <Button 
+              type="submit" 
+              disabled={saving} 
+              size="lg"
+              className="min-w-[200px] bg-primary/90 hover:bg-primary shadow-lg"
+            >
               {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               حفظ التغييرات
             </Button>
