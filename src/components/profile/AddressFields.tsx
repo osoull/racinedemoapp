@@ -63,9 +63,8 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
           البلد <span className="text-red-500">*</span>
         </label>
         <Select 
-          value={profile.country || 'SA'} 
+          defaultValue={profile.country || 'SA'}
           onValueChange={(value) => setProfile({ ...profile, country: value })}
-          required
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="اختر البلد" />
