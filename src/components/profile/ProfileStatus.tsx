@@ -18,8 +18,6 @@ export function ProfileStatus() {
         .single()
 
       if (error) throw error
-      
-      // Cast the response to ensure it matches the Profile type
       return data as Profile
     },
     enabled: !!user,
