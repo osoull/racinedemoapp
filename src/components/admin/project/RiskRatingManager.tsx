@@ -18,9 +18,9 @@ interface RiskRatingManagerProps {
 }
 
 export const RiskRatingManager = ({ projectId, onClose }: RiskRatingManagerProps) => {
-  const { riskRating, isLoading, updateRiskRating } = useRiskRating(projectId);
-  const [selectedRating, setSelectedRating] = useState<string>(riskRating?.rating || "");
-  const [description, setDescription] = useState<string>(riskRating?.description || "");
+  const { riskRating, riskDescription, isLoading, updateRiskRating } = useRiskRating(projectId);
+  const [selectedRating, setSelectedRating] = useState<string>(riskRating || "");
+  const [description, setDescription] = useState<string>(riskDescription || "");
 
   if (isLoading) {
     return (
