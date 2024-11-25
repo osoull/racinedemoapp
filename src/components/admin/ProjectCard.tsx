@@ -5,6 +5,9 @@ import { Tables } from "@/integrations/supabase/types";
 import { RiskRatingBadge } from "./project/RiskRatingBadge";
 import { RiskRatingManager } from "./project/RiskRatingManager";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Project = Tables<"projects"> & {
   owner?: {
@@ -22,10 +25,36 @@ interface ProjectCardProps {
   onEdit: () => void;
   onDelete: () => void;
   canEdit: boolean;
+  isAdmin: boolean;
 }
 
-export const ProjectCard = ({ project, onEdit, onDelete, canEdit }: ProjectCardProps) => {
+export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: ProjectCardProps) => {
   const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleApprove = async () => {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({ status: 'approved' })
+        .eq('id', project.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "تم اعتماد المشروع بنجاح",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+    } catch (error) {
+      toast({
+        title: "حدث خطأ",
+        description: "لم نتمكن من اعتماد المشروع",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Card className="p-6">
@@ -38,32 +67,41 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit }: ProjectCardP
           {project.risk_rating && (
             <RiskRatingBadge rating={project.risk_rating.rating} />
           )}
-          <Dialog open={isRatingOpen} onOpenChange={setIsRatingOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                تقييم المخاطر
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <RiskRatingManager 
-                projectId={project.id} 
-                onClose={() => setIsRatingOpen(false)}
-              />
-            </DialogContent>
-          </Dialog>
+          {isAdmin && (
+            <Dialog open={isRatingOpen} onOpenChange={setIsRatingOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  تقييم المخاطر
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <RiskRatingManager 
+                  projectId={project.id} 
+                  onClose={() => setIsRatingOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
       
       <div className="flex justify-between items-center mt-4">
         <div className="space-x-2 rtl:space-x-reverse">
-          {canEdit && (
+          {(canEdit || isAdmin) && (
             <>
               <Button variant="outline" size="sm" onClick={onEdit}>
                 تعديل
               </Button>
-              <Button variant="destructive" size="sm" onClick={onDelete}>
-                حذف
-              </Button>
+              {canEdit && (
+                <Button variant="destructive" size="sm" onClick={onDelete}>
+                  حذف
+                </Button>
+              )}
+              {isAdmin && project.status === 'pending' && (
+                <Button variant="default" size="sm" onClick={handleApprove}>
+                  اعتماد المشروع
+                </Button>
+              )}
             </>
           )}
         </div>

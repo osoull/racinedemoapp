@@ -31,6 +31,8 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { user } = useAuth();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
+  const isAdmin = user?.user_metadata?.user_type === 'admin' || user?.user_metadata?.user_type === 'investment_manager';
+
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ["admin-projects", filter],
     queryFn: async () => {
@@ -141,6 +143,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
                 onEdit={() => setEditingProject(project)}
                 onDelete={() => deleteProjectMutation.mutate(project.id)}
                 canEdit={user?.id === project.owner_id}
+                isAdmin={isAdmin}
               />
             ))}
           </div>
