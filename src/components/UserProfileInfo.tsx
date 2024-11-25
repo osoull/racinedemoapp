@@ -36,17 +36,88 @@ export function UserProfileInfo() {
               {profile?.last_name?.charAt(0)?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-4 w-full">
             <h2 className="text-xl font-semibold">
-              {profile.first_name} {profile.last_name}
+              {profile.first_name} {profile.middle_name} {profile.last_name}
             </h2>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">البريد الإلكتروني</p>
-              <p className="font-medium">{profile.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">تاريخ الانضمام</p>
-              <p className="font-medium">{format(new Date(profile.created_at), 'dd/MM/yyyy')}</p>
+
+            <div className="grid gap-3 text-right">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">البريد الإلكتروني</p>
+                <p className="font-medium">{profile.email}</p>
+              </div>
+
+              {profile.phone && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">رقم الهاتف</p>
+                  <p className="font-medium" dir="ltr">{profile.phone}</p>
+                </div>
+              )}
+
+              {profile.national_id && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">رقم الهوية</p>
+                  <p className="font-medium" dir="ltr">{profile.national_id}</p>
+                </div>
+              )}
+
+              {profile.street_number && profile.street_name && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">العنوان</p>
+                  <p className="font-medium">
+                    {profile.street_number} {profile.street_name}
+                    {profile.city && `, ${profile.city}`}
+                    {profile.postal_code && ` ${profile.postal_code}`}
+                    {profile.country && `, ${profile.country}`}
+                  </p>
+                </div>
+              )}
+
+              {profile.user_type === 'borrower' && (
+                <>
+                  {profile.company_name && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">اسم الشركة</p>
+                      <p className="font-medium">{profile.company_name}</p>
+                    </div>
+                  )}
+
+                  {profile.commercial_register && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">السجل التجاري</p>
+                      <p className="font-medium">{profile.commercial_register}</p>
+                    </div>
+                  )}
+
+                  {profile.business_type && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">نوع النشاط</p>
+                      <p className="font-medium">{profile.business_type}</p>
+                    </div>
+                  )}
+
+                  {profile.business_description && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">وصف النشاط</p>
+                      <p className="font-medium">{profile.business_description}</p>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {profile.user_type === 'investor' && profile.investor_type && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">نوع المستثمر</p>
+                  <p className="font-medium">
+                    {profile.investor_type === 'basic' ? 'مستثمر أساسي' : 'مستثمر مؤهل'}
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">تاريخ الانضمام</p>
+                <p className="font-medium">{format(new Date(profile.created_at), 'dd/MM/yyyy')}</p>
+              </div>
             </div>
           </div>
         </div>
