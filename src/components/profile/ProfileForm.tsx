@@ -41,9 +41,8 @@ export function ProfileForm() {
     }
   }, [initialProfile])
 
-  const validateRequiredFields = () => {
-    // Champs obligatoires pour tous les utilisateurs
-    const commonRequiredFields = {
+  const validatePersonalFields = () => {
+    const requiredPersonalFields = {
       first_name: 'الاسم الأول',
       last_name: 'اسم العائلة',
       phone: 'رقم الهاتف',
@@ -55,18 +54,33 @@ export function ProfileForm() {
       country: 'البلد'
     }
 
-    // Ne vérifie que les champs communs si l'utilisateur n'est pas un emprunteur
-    const fieldsToCheck = profile.user_type === 'borrower' 
-      ? {
-          ...commonRequiredFields,
-          company_name: 'اسم الشركة',
-          commercial_register: 'السجل التجاري',
-          business_type: 'نوع النشاط',
-          business_address: 'عنوان العمل'
-        }
-      : commonRequiredFields
+    const missingFields = Object.entries(requiredPersonalFields)
+      .filter(([key]) => !profile[key as keyof Profile])
+      .map(([_, label]) => label)
 
-    const missingFields = Object.entries(fieldsToCheck)
+    if (missingFields.length > 0) {
+      toast({
+        title: "خطأ",
+        description: `يرجى ملء الحقول التالية: ${missingFields.join('، ')}`,
+        variant: "destructive",
+      })
+      return false
+    }
+
+    return true
+  }
+
+  const validateBusinessFields = () => {
+    if (profile.user_type !== 'borrower') return true
+
+    const requiredBusinessFields = {
+      company_name: 'اسم الشركة',
+      commercial_register: 'السجل التجاري',
+      business_type: 'نوع النشاط',
+      business_address: 'عنوان العمل'
+    }
+
+    const missingFields = Object.entries(requiredBusinessFields)
       .filter(([key]) => !profile[key as keyof Profile])
       .map(([_, label]) => label)
 
@@ -94,18 +108,11 @@ export function ProfileForm() {
       return
     }
 
-    // Vérifier que le pays est bien défini
-    if (!profile.country) {
-      toast({
-        title: "خطأ",
-        description: "يرجى اختيار البلد",
-        variant: "destructive",
-      })
-      return
-    }
+    const isPersonalFieldsValid = validatePersonalFields()
+    if (!isPersonalFieldsValid) return
 
-    const isValid = validateRequiredFields()
-    if (!isValid) return
+    const isBusinessFieldsValid = validateBusinessFields()
+    if (!isBusinessFieldsValid) return
     
     setSaving(true)
     
