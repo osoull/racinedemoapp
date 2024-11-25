@@ -44,10 +44,10 @@ export function StatsGrid() {
       iconColor: "text-blue-600"
     },
     {
-      title: "حجم المعاملات",
-      value: formatCurrency(stats?.transactionVolume || 0),
+      title: "إجمالي الرسوم",
+      value: formatCurrency(stats?.totalFees || 0),
       icon: Wallet,
-      trend: { value: 4.1, isPositive: false },
+      trend: { value: 4.1, isPositive: true },
       bgColor: "bg-purple-50",
       iconColor: "text-purple-600"
     },
