@@ -12,6 +12,7 @@ import { BankTransferDetails } from "@/components/investor/wallet/deposit/BankTr
 import { supabase } from "@/integrations/supabase/client";
 import { useBankDetails } from "@/hooks/useBankDetails";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
@@ -23,6 +24,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   const [projectData, setProjectData] = useState<any>(project || null);
   const { toast } = useToast();
   const { data: bankDetails, isLoading, error } = useBankDetails();
+  const { user } = useAuth();
 
   const { data: commissions } = useQuery({
     queryKey: ["commissions"],
@@ -59,6 +61,15 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   };
 
   const handleBankTransfer = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "يجب تسجيل الدخول لإتمام العملية",
+      });
+      return;
+    }
+
     try {
       const totalFees = calculateTotalFees(projectData.funding_goal);
 
@@ -68,9 +79,10 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
           {
             amount: totalFees,
             type: 'deposit',
-            status: 'pending'
+            status: 'pending',
+            user_id: user.id // Add the user_id here
           }
-        ])
+        ]);
 
       if (transactionError) throw transactionError;
 
