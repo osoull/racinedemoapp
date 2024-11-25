@@ -59,7 +59,7 @@ const columns: ColumnDef<Borrower>[] = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <Button variant="ghost" size="sm">
+      <Button variant="ghost" size="sm" className="w-full text-right">
         عرض التفاصيل
       </Button>
     ),
@@ -90,7 +90,7 @@ export default function BorrowerManagement() {
 
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
-      <div className="space-y-6">
+      <div className="space-y-6" dir="rtl">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">إدارة المقترضين</h2>
           <p className="text-muted-foreground">
@@ -104,7 +104,7 @@ export default function BorrowerManagement() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab}>
-              <TabsList>
+              <TabsList className="justify-start">
                 <TabsTrigger value="all">الكل</TabsTrigger>
                 <TabsTrigger value="active">نشط</TabsTrigger>
                 <TabsTrigger value="pending">معلق</TabsTrigger>
