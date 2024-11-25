@@ -3,10 +3,12 @@ import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
 import { useToast } from "@/components/ui/use-toast"
 import { Profile } from "@/types/user"
+import { useQueryClient } from "@tanstack/react-query"
 
 export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
   const { user } = useAuth()
   const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (!user) return
@@ -21,9 +23,14 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
           table: 'profiles',
           filter: `id=eq.${user.id}`,
         },
-        (payload) => {
+        async (payload) => {
           const updatedProfile = payload.new as Profile
           onUpdate?.(updatedProfile)
+          
+          // Invalider le cache pour forcer un rafraîchissement
+          await queryClient.invalidateQueries({
+            queryKey: ['profile', user.id]
+          })
           
           toast({
             title: "تم التحديث",
@@ -36,19 +43,28 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [user, onUpdate, toast])
+  }, [user, onUpdate, toast, queryClient])
 
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) throw new Error("User not authenticated")
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id)
-      .select()
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .select()
+        .single()
 
-    if (error) {
+      if (error) throw error
+
+      // Invalider le cache immédiatement après la mise à jour
+      await queryClient.invalidateQueries({
+        queryKey: ['profile', user.id]
+      })
+
+      return data
+    } catch (error) {
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث المعلومات",
@@ -56,8 +72,6 @@ export const useProfileSync = (onUpdate?: (profile: Profile) => void) => {
       })
       throw error
     }
-
-    return data
   }
 
   return { updateProfile }

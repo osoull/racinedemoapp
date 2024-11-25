@@ -7,15 +7,18 @@ import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useProfileSync } from "@/hooks/useProfileSync"
 import { Profile } from "@/types/user"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/components/ui/use-toast"
 
 export function ProfileForm() {
   const { user } = useAuth()
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<Partial<Profile>>({})
+  const { toast } = useToast()
+  const queryClient = useQueryClient()
   
-  const { data: initialProfile } = useQuery<Profile>({
+  const { data: initialProfile, isLoading } = useQuery<Profile>({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -39,6 +42,7 @@ export function ProfileForm() {
   const { updateProfile } = useProfileSync((updatedProfile) => {
     if (updatedProfile) {
       setProfile(updatedProfile)
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] })
     }
   })
 
@@ -46,10 +50,31 @@ export function ProfileForm() {
     e.preventDefault()
     setSaving(true)
     try {
-      await updateProfile(profile)
+      await updateProfile({
+        ...profile,
+        profile_completed: true // Marquer le profil comme complété après la mise à jour
+      })
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث معلوماتك الشخصية بنجاح",
+      })
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث المعلومات",
+        variant: "destructive",
+      })
     } finally {
       setSaving(false)
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
   }
 
   return (
