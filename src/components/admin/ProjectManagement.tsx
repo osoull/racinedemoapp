@@ -25,6 +25,21 @@ export interface ProjectManagementProps {
   filter?: 'pending' | 'active' | 'completed' | 'rejected';
 }
 
+const getStatusInArabic = (status: string | undefined) => {
+  switch (status) {
+    case 'pending':
+      return 'قيد المراجعة';
+    case 'active':
+      return 'نشط';
+    case 'completed':
+      return 'مكتمل';
+    case 'rejected':
+      return 'مرفوض';
+    default:
+      return '';
+  }
+};
+
 const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -144,7 +159,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           <div className="flex items-center justify-center h-32">جاري التحميل...</div>
         ) : projects.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            لا توجد مشاريع {filter ? `بحالة ${filter}` : ''}
+            لا توجد مشاريع {filter ? `بحالة ${getStatusInArabic(filter)}` : ''}
           </div>
         ) : (
           <div className="space-y-4">
