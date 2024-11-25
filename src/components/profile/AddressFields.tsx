@@ -17,7 +17,7 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
         <Input
           value={profile.street_number || ''}
           onChange={(e) => setProfile({ ...profile, street_number: e.target.value })}
-          placeholder="أدخل رقم الشارع"
+          placeholder="أدخل رقم المبنى"
           required
         />
       </div>
