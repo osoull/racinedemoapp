@@ -2,6 +2,11 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@11.1.0?target=deno'
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
   apiVersion: '2022-11-15',
   httpClient: Stripe.createFetchHttpClient(),
@@ -10,6 +15,10 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
 const cryptoProvider = Stripe.createSubtleCryptoProvider()
 
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
   const signature = req.headers.get('Stripe-Signature')
   const body = await req.text()
   
@@ -23,6 +32,7 @@ serve(async (req) => {
       cryptoProvider
     )
   } catch (err) {
+    console.error('Error verifying webhook signature:', err)
     return new Response(err.message, { status: 400 })
   }
 
