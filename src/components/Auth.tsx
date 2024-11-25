@@ -10,6 +10,7 @@ import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { Loader2 } from "lucide-react"
+import { UserType } from "@/types/user"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 
