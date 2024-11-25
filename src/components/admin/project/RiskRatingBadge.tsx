@@ -1,28 +1,57 @@
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface RiskRatingBadgeProps {
   rating: string;
+  description?: string | null;
 }
 
-export const RiskRatingBadge = ({ rating }: RiskRatingBadgeProps) => {
-  const getColor = () => {
+export const RiskRatingBadge = ({ rating, description }: RiskRatingBadgeProps) => {
+  const getRatingInfo = () => {
     switch (rating) {
       case "A":
-        return "bg-green-500 hover:bg-green-600";
+        return {
+          color: "bg-green-500 hover:bg-green-600",
+          label: "مخاطر منخفضة"
+        };
       case "B":
-        return "bg-yellow-500 hover:bg-yellow-600";
+        return {
+          color: "bg-yellow-500 hover:bg-yellow-600",
+          label: "مخاطر متوسطة"
+        };
       case "C":
-        return "bg-orange-500 hover:bg-orange-600";
+        return {
+          color: "bg-orange-500 hover:bg-orange-600",
+          label: "مخاطر عالية"
+        };
       case "D":
-        return "bg-red-500 hover:bg-red-600";
+        return {
+          color: "bg-red-500 hover:bg-red-600",
+          label: "مخاطر مرتفعة جداً"
+        };
       default:
-        return "bg-gray-500 hover:bg-gray-600";
+        return {
+          color: "bg-gray-500 hover:bg-gray-600",
+          label: "غير محدد"
+        };
     }
   };
 
+  const { color, label } = getRatingInfo();
+
   return (
-    <Badge className={`${getColor()} text-white`}>
-      {rating}
-    </Badge>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <Badge className={`${color} text-white cursor-help`}>
+            {rating}
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent dir="rtl" className="max-w-xs">
+          <p className="font-semibold">{label}</p>
+          {description && <p className="text-sm mt-1">{description}</p>}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
