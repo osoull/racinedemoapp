@@ -17,8 +17,23 @@ interface DepositDialogProps {
 export function DepositDialog({ onSuccess }: DepositDialogProps) {
   const [amount, setAmount] = useState("")
   const [isOpen, setIsOpen] = useState(false)
+  const [amountError, setAmountError] = useState<string>("")
   const { toast } = useToast()
   const { data: bankDetails, isLoading, error } = useBankDetails()
+
+  const validateAmount = () => {
+    if (!amount) {
+      setAmountError("يرجى إدخال المبلغ")
+      return false
+    }
+    const numAmount = Number(amount)
+    if (isNaN(numAmount) || numAmount <= 0) {
+      setAmountError("يرجى إدخال مبلغ صحيح")
+      return false
+    }
+    setAmountError("")
+    return true
+  }
 
   const handleCardDeposit = async () => {
     toast({
@@ -28,6 +43,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
   }
 
   const handleBankTransfer = async () => {
+    if (!validateAmount()) return
+
     try {
       const { error } = await supabase
         .from("transactions")
@@ -55,22 +72,34 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     }
   }
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (!open) {
+      setAmount("")
+      setAmountError("")
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button>
           <ArrowDownLeft className="ml-2 h-4 w-4" />
           إيداع رصيد
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>إيداع رصيد</DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">
-          <AmountInput amount={amount} setAmount={setAmount} />
+          <AmountInput 
+            amount={amount} 
+            setAmount={setAmount} 
+            error={amountError}
+          />
 
-          <Tabs defaultValue="bank">
+          <Tabs defaultValue="bank" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="bank" className="space-x-2">
                 <Building2 className="h-4 w-4" />
@@ -83,7 +112,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
             </TabsList>
 
             <TabsContent value="bank" className="space-y-4">
-              <Alert>
+              <Alert variant="info">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   يرجى استخدام المعلومات البنكية أدناه لإتمام التحويل. سيتم تحديث رصيدك تلقائياً خلال يوم عمل واحد بعد استلام وتأكيد التحويل.
@@ -96,7 +125,11 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
                 error={error}
               />
               
-              <Button onClick={handleBankTransfer} className="w-full">
+              <Button 
+                onClick={handleBankTransfer} 
+                className="w-full"
+                variant="default"
+              >
                 تأكيد التحويل البنكي
               </Button>
             </TabsContent>
