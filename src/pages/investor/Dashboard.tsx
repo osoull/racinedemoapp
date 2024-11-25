@@ -12,6 +12,19 @@ import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 const InvestorDashboard = () => {
   const { user } = useAuth()
 
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('first_name')
+        .eq('id', user?.id)
+        .single()
+      return data
+    },
+    enabled: !!user?.id
+  })
+
   const { data: projects } = useQuery({
     queryKey: ["projects", user?.id],
     queryFn: async () => {
@@ -36,19 +49,25 @@ const InvestorDashboard = () => {
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-4 lg:space-y-6">
-        <div className="flex items-center gap-4 mb-4">
-          <img 
-            src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-            alt="رسين"
-            className="h-8 object-contain dark:hidden" 
-          />
-          <img 
-            src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-            alt="رسين"
-            className="h-8 object-contain hidden dark:block" 
-          />
-          <h1 className="text-2xl font-bold text-foreground">لوحة تحكم المستثمر</h1>
-        </div>
+        {profile?.first_name && (
+          <div className="p-6 bg-card rounded-lg shadow-sm border">
+            <div className="flex items-center gap-4 mb-4">
+              <img 
+                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
+                alt="رسين"
+                className="h-8 object-contain dark:hidden" 
+              />
+              <img 
+                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+                alt="رسين"
+                className="h-8 object-contain hidden dark:block" 
+              />
+              <h2 className="text-2xl font-bold text-foreground">
+                مرحباً بك {profile.first_name}
+              </h2>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
