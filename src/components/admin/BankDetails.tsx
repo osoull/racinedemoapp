@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Copy, Edit2, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { useBankDetails } from "@/hooks/useBankDetails"
 import { Input } from "@/components/ui/input"
 import { supabase } from "@/integrations/supabase/client"
+import { useQuery } from "@tanstack/react-query"
 
 const BankDetailsField = ({ 
   label, 
@@ -45,7 +45,6 @@ const BankDetailsField = ({
 
 export default function BankDetails() {
   const { toast } = useToast()
-  const { data: bankDetails, isLoading, refetch } = useBankDetails()
   const [isEditing, setIsEditing] = useState(false)
   const [editedDetails, setEditedDetails] = useState({
     bank_name: "",
@@ -54,11 +53,33 @@ export default function BankDetails() {
     iban: ""
   })
 
+  // Récupérer les informations bancaires de Racine (is_primary = true)
+  const { data: bankDetails, isLoading, refetch } = useQuery({
+    queryKey: ['platform_bank_account'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bank_accounts')
+        .select('*')
+        .eq('is_primary', true)
+        .single()
+
+      if (error) throw error
+      return data
+    }
+  })
+
   const startEditing = () => {
     if (bankDetails) {
       setEditedDetails(bankDetails)
-      setIsEditing(true)
+    } else {
+      setEditedDetails({
+        bank_name: "",
+        account_name: "",
+        swift: "",
+        iban: ""
+      })
     }
+    setIsEditing(true)
   }
 
   const handleSave = async () => {
@@ -72,10 +93,7 @@ export default function BankDetails() {
       const { error } = await supabase
         .from('bank_accounts')
         .upsert({ 
-          bank_name: editedDetails.bank_name,
-          account_name: editedDetails.account_name,
-          swift: editedDetails.swift,
-          iban: editedDetails.iban,
+          ...editedDetails,
           is_primary: true,
           user_id: user.id,
           updated_at: new Date().toISOString()
@@ -108,10 +126,6 @@ export default function BankDetails() {
 
   if (isLoading) {
     return <div>جاري التحميل...</div>
-  }
-
-  if (!bankDetails && !isEditing) {
-    return <div>لا توجد معلومات بنكية</div>
   }
 
   return (
