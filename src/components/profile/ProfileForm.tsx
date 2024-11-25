@@ -72,6 +72,7 @@ export function ProfileForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Submitting profile:', profile);
     
     if (!user?.id) {
       toast({
@@ -83,7 +84,7 @@ export function ProfileForm() {
     }
 
     const isValid = validateRequiredFields()
-    if (!isValid) return // Arrêter si la validation échoue
+    if (!isValid) return
     
     setSaving(true)
     
