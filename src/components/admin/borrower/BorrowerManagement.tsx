@@ -26,13 +26,17 @@ interface Borrower {
 
 const columns: ColumnDef<Borrower>[] = [
   {
-    accessorKey: "kyc_status",
-    header: "حالة KYC",
-    cell: ({ row }) => (
-      <Badge variant={row.original.kyc_status === "approved" ? "default" : "secondary"}>
-        {row.original.kyc_status === "approved" ? "معتمد" : "قيد المراجعة"}
-      </Badge>
-    ),
+    accessorKey: "full_name",
+    header: "الاسم الكامل",
+    cell: ({ row }) => `${row.original.first_name} ${row.original.last_name}`,
+  },
+  {
+    accessorKey: "email",
+    header: "البريد الإلكتروني",
+  },
+  {
+    accessorKey: "company_name",
+    header: "اسم الشركة",
   },
   {
     accessorKey: "status",
@@ -44,17 +48,13 @@ const columns: ColumnDef<Borrower>[] = [
     ),
   },
   {
-    accessorKey: "company_name",
-    header: "اسم الشركة",
-  },
-  {
-    accessorKey: "email",
-    header: "البريد الإلكتروني",
-  },
-  {
-    accessorKey: "full_name",
-    header: "الاسم الكامل",
-    cell: ({ row }) => `${row.original.first_name} ${row.original.last_name}`,
+    accessorKey: "kyc_status",
+    header: "حالة KYC",
+    cell: ({ row }) => (
+      <Badge variant={row.original.kyc_status === "approved" ? "default" : "secondary"}>
+        {row.original.kyc_status === "approved" ? "معتمد" : "قيد المراجعة"}
+      </Badge>
+    ),
   },
   {
     id: "actions",
