@@ -21,6 +21,9 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      // Convert userType to match the expected format in the database
+      const dbUserType = userType === "investor" ? "basic_investor" : "borrower"
+      
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -28,8 +31,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
           data: {
             first_name: firstName,
             last_name: lastName,
-            user_type: userType,
-            investor_type: userType === "investor" ? "basic" : undefined
+            user_type: dbUserType
           }
         }
       })
