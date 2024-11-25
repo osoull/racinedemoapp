@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RiskRatingBadge } from "./RiskRatingBadge";
+import { Tables } from "@/integrations/supabase/types";
 
 interface RiskRatingManagerProps {
   projectId: string;
@@ -20,6 +21,12 @@ interface RiskRatingManagerProps {
   onUpdate?: () => void;
   onClose: () => void;
 }
+
+type ProjectPayload = {
+  new: Tables<"projects">;
+  old: Tables<"projects">;
+  eventType: "INSERT" | "UPDATE" | "DELETE";
+};
 
 export function RiskRatingManager({
   projectId,
@@ -65,7 +72,7 @@ export function RiskRatingManager({
           table: 'projects',
           filter: `id=eq.${projectId}`,
         },
-        (payload) => {
+        (payload: ProjectPayload) => {
           if (payload.new) {
             setRating(payload.new.risk_rating || "");
             setDescription(payload.new.risk_description || "");
