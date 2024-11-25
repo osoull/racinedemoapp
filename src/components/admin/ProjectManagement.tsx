@@ -44,12 +44,16 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           risk_rating:risk_ratings(rating)
         `);
 
-      // Apply status filter if specified
+      // Appliquer le filtre de statut si spécifié
       if (filter) {
-        query = query.eq('status', filter);
+        if (filter === 'active') {
+          query = query.eq('status', 'approved');
+        } else {
+          query = query.eq('status', filter);
+        }
       }
 
-      // Order by creation date, newest first
+      // Ordonner par date de création, plus récent en premier
       query = query.order('created_at', { ascending: false });
 
       const { data, error } = await query;
