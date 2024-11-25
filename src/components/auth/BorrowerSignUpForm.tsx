@@ -142,7 +142,7 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">
-                  رقم الهوية <span className="text-red-500">*</span>
+                  رقم هوية المدير <span className="text-red-500">*</span>
                 </label>
                 <Input
                   placeholder="رقم الهوية الوطنية (10 أرقام)"
