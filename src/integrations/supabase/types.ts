@@ -897,6 +897,21 @@ export type Database = {
           investment_experience: string
         }[]
       }
+      handle_payment_failure: {
+        Args: {
+          p_transaction_id: string
+          p_error_message: string
+        }
+        Returns: undefined
+      }
+      validate_payment: {
+        Args: {
+          p_transaction_id: string
+          p_status: string
+          p_notes?: string
+        }
+        Returns: undefined
+      }
       validate_project_submission: {
         Args: {
           p_project_id: string

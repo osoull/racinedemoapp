@@ -67,7 +67,7 @@ export function DashboardSidebar() {
       <div className="flex h-16 items-center border-b px-6">
         <img 
           src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg"
-          alt="رسين"
+          alt="شركة رسين للاستثمار"
           className="h-6"
         />
       </div>

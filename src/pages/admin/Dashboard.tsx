@@ -40,12 +40,12 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-4 mb-4">
               <img 
                 src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-                alt="رسين"
+                alt="شركة رسين للاستثمار"
                 className="h-8 object-contain dark:hidden" 
               />
               <img 
                 src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-                alt="رسين"
+                alt="شركة رسين للاستثمار"
                 className="h-8 object-contain hidden dark:block" 
               />
               <h2 className="text-2xl font-bold text-foreground">

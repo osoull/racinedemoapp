@@ -41,13 +41,13 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
             {/* Logo - Light mode */}
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
-              alt="رسين"
+              alt="شركة رسين للاستثمار"
               className="h-16 w-auto py-2 object-contain dark:hidden" 
             />
             {/* Logo - Dark mode */}
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
-              alt="رسين"
+              alt="شركة رسين للاستثمار"
               className="h-16 w-auto py-2 object-contain hidden dark:block" 
             />
           </div>
