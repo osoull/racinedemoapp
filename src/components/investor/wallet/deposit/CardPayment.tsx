@@ -42,7 +42,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     setIsLoading(true)
     try {
       const amountNumber = Number(amount)
-      const fees = calculateFees(amountNumber, commissions || [], user.type)
+      const fees = calculateFees(amountNumber, commissions || [], user.user_type)
       const totalAmount = amountNumber + fees.total
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
@@ -75,7 +75,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   }
 
   const amountNumber = Number(amount)
-  const fees = calculateFees(amountNumber, commissions || [], user?.type)
+  const fees = calculateFees(amountNumber, commissions || [], user?.user_type)
   const totalAmount = amountNumber + fees.total
 
   return (
