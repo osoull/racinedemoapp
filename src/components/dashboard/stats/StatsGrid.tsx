@@ -1,70 +1,9 @@
 import { Card } from "@/components/ui/card"
 import { Briefcase, Users, Wallet, TrendingUp, ArrowUp, ArrowDown } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/contexts/AuthContext"
-
-interface StatsData {
-  activeProjects: number
-  totalFunding: number
-  totalInvestors: number
-  totalTransactions: number
-  projectsGrowth: number
-  fundingGrowth: number
-  investorsGrowth: number
-  transactionsGrowth: number
-}
+import { usePlatformStats } from "@/hooks/usePlatformStats"
 
 export function StatsGrid() {
-  const { user } = useAuth()
-
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["dashboard-stats"],
-    queryFn: async () => {
-      // Fetch active projects count
-      const { data: activeProjects } = await supabase
-        .from("projects")
-        .select("count")
-        .eq("status", "active")
-
-      // Fetch total funding
-      const { data: investments } = await supabase
-        .from("investments")
-        .select("amount")
-        .eq("status", "completed")
-
-      // Fetch total investors
-      const { data: investors } = await supabase
-        .from("profiles")
-        .select("count")
-        .eq("user_type", "investor")
-
-      // Fetch total transactions
-      const { data: transactions } = await supabase
-        .from("transactions")
-        .select("amount")
-        .eq("status", "completed")
-
-      // Calculate total funding
-      const totalFunding = investments?.reduce((sum, inv) => sum + (inv.amount || 0), 0) || 0
-
-      // Calculate total transactions value
-      const totalTransactions = transactions?.reduce((sum, tx) => sum + (tx.amount || 0), 0) || 0
-
-      return {
-        activeProjects: Number(activeProjects?.[0]?.count || 0),
-        totalFunding,
-        totalInvestors: Number(investors?.[0]?.count || 0),
-        totalTransactions,
-        // Note: Growth rates could be calculated by comparing with previous period
-        // For now using placeholder values
-        projectsGrowth: 12.5,
-        fundingGrowth: 8.3,
-        investorsGrowth: 15.2,
-        transactionsGrowth: 4.1
-      } as StatsData
-    }
-  })
+  const { stats, isLoading } = usePlatformStats()
 
   if (isLoading) {
     return (
@@ -82,36 +21,41 @@ export function StatsGrid() {
     )
   }
 
+  const formatCurrency = (amount: number) => {
+    const millions = amount / 1000000
+    return `${millions.toFixed(1)} مليون ريال`
+  }
+
   const items = [
     {
-      title: "المشاريع النشطة",
-      value: stats?.activeProjects || 0,
-      icon: Briefcase,
-      trend: { value: stats?.projectsGrowth || 0, isPositive: true },
+      title: "حجم المعاملات",
+      value: formatCurrency(stats?.transactionVolume || 0),
+      icon: TrendingUp,
+      trend: { value: 4.1, isPositive: false },
       bgColor: "bg-purple-50",
       iconColor: "text-purple-600"
-    },
-    {
-      title: "إجمالي التمويل",
-      value: `${((stats?.totalFunding || 0) / 1000000).toFixed(1)} مليون ريال`,
-      icon: Wallet,
-      trend: { value: stats?.fundingGrowth || 0, isPositive: true },
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600"
     },
     {
       title: "المستثمرين النشطين",
       value: stats?.totalInvestors || 0,
       icon: Users,
-      trend: { value: stats?.investorsGrowth || 0, isPositive: true },
+      trend: { value: 15.2, isPositive: true },
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600"
+    },
+    {
+      title: "إجمالي التمويل",
+      value: formatCurrency(stats?.totalInvestment || 0),
+      icon: Wallet,
+      trend: { value: 8.3, isPositive: true },
       bgColor: "bg-green-50",
       iconColor: "text-green-600"
     },
     {
-      title: "حجم المعاملات",
-      value: `${((stats?.totalTransactions || 0) / 1000000).toFixed(1)} مليون ريال`,
-      icon: TrendingUp,
-      trend: { value: stats?.transactionsGrowth || 0, isPositive: false },
+      title: "المشاريع النشطة",
+      value: stats?.activeProjects || 0,
+      icon: Briefcase,
+      trend: { value: 12.5, isPositive: true },
       bgColor: "bg-orange-50",
       iconColor: "text-orange-600"
     }
