@@ -130,7 +130,9 @@ export function ProfileForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium">الاسم الأول</label>
+              <label className="text-sm font-medium">
+                الاسم الأول <span className="text-red-500">*</span>
+              </label>
               <Input
                 value={profile.first_name || ''}
                 onChange={(e) => setProfile({ ...profile, first_name: e.target.value })}
@@ -140,7 +142,9 @@ export function ProfileForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">اسم العائلة</label>
+              <label className="text-sm font-medium">
+                اسم العائلة <span className="text-red-500">*</span>
+              </label>
               <Input
                 value={profile.last_name || ''}
                 onChange={(e) => setProfile({ ...profile, last_name: e.target.value })}
@@ -150,7 +154,9 @@ export function ProfileForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">رقم الهاتف</label>
+              <label className="text-sm font-medium">
+                رقم الهاتف <span className="text-red-500">*</span>
+              </label>
               <Input
                 value={profile.phone || ''}
                 onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
@@ -161,7 +167,9 @@ export function ProfileForm() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">رقم الهوية</label>
+              <label className="text-sm font-medium">
+                رقم الهوية <span className="text-red-500">*</span>
+              </label>
               <Input
                 value={profile.national_id || ''}
                 onChange={(e) => setProfile({ ...profile, national_id: e.target.value })}
@@ -172,7 +180,9 @@ export function ProfileForm() {
             </div>
 
             <div className="space-y-2 col-span-full">
-              <label className="text-sm font-medium">العنوان</label>
+              <label className="text-sm font-medium">
+                العنوان <span className="text-red-500">*</span>
+              </label>
               <Textarea
                 value={profile.address || ''}
                 onChange={(e) => setProfile({ ...profile, address: e.target.value })}
