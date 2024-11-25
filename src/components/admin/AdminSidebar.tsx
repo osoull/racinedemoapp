@@ -52,12 +52,6 @@ const menuItems = [
     description: "إدارة التحقق والامتثال"
   },
   {
-    title: "التقارير",
-    icon: PieChart,
-    path: "/admin/reports",
-    description: "تقارير وإحصائيات"
-  },
-  {
     title: "الدعم الفني",
     icon: MessageSquare,
     path: "/admin/support",
@@ -67,7 +61,7 @@ const menuItems = [
     title: "الإعدادات",
     icon: Settings,
     path: "/admin/settings",
-    description: "إعدادات المنصة وإدارة المستخدمين"
+    description: "إعدادات المنصة"
   }
 ]
 

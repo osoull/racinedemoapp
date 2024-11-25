@@ -15,6 +15,11 @@ import Portfolio from "@/pages/investor/Portfolio"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import ProjectsPage from "@/pages/admin/projects"
+import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement"
+import { TransactionManagement } from "@/components/admin/transaction/TransactionManagement"
+import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
+import SupportTools from "@/components/admin/SupportTools"
+import PlatformSettings from "@/components/admin/PlatformSettings"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
@@ -112,6 +117,11 @@ function App() {
                           <Route index element={<AdminDashboard />} />
                           <Route path="investors" element={<InvestorsPage />} />
                           <Route path="projects" element={<ProjectsPage />} />
+                          <Route path="borrowers" element={<BorrowerManagement />} />
+                          <Route path="transactions" element={<TransactionManagement />} />
+                          <Route path="compliance" element={<KYCManagement />} />
+                          <Route path="support" element={<SupportTools />} />
+                          <Route path="settings/*" element={<PlatformSettings />} />
                         </Routes>
                       </PrivateRoute>
                     }
