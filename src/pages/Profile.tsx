@@ -10,6 +10,7 @@ import { BackButton } from "@/components/BackButton"
 import { AvatarUpload } from "@/components/AvatarUpload"
 import { useProfileSync } from "@/hooks/useProfileSync"
 import { Profile as ProfileType } from "@/types/user"
+import { UserProfileInfo } from "@/components/UserProfileInfo"
 
 export default function Profile() {
   const { user } = useAuth()
@@ -95,92 +96,95 @@ export default function Profile() {
       <div className="mb-8">
         <BackButton />
       </div>
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">الملف الشخصي</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-8">
-            <AvatarUpload />
-          </div>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="first_name" className="text-sm font-medium">
-                الاسم الأول
-              </label>
-              <Input
-                id="first_name"
-                value={profile.first_name}
-                onChange={(e) =>
-                  setProfile({ ...profile, first_name: e.target.value })
-                }
-                placeholder="أدخل اسمك الأول"
-              />
+      <div className="space-y-8">
+        <UserProfileInfo />
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl">تحديث الملف الشخصي</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-8">
+              <AvatarUpload />
             </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label htmlFor="first_name" className="text-sm font-medium">
+                  الاسم الأول
+                </label>
+                <Input
+                  id="first_name"
+                  value={profile.first_name}
+                  onChange={(e) =>
+                    setProfile({ ...profile, first_name: e.target.value })
+                  }
+                  placeholder="أدخل اسمك الأول"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor="middle_name" className="text-sm font-medium">
-                الاسم الأوسط
-              </label>
-              <Input
-                id="middle_name"
-                value={profile.middle_name || ""}
-                onChange={(e) =>
-                  setProfile({ ...profile, middle_name: e.target.value })
-                }
-                placeholder="أدخل اسمك الأوسط"
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="middle_name" className="text-sm font-medium">
+                  الاسم الأوسط
+                </label>
+                <Input
+                  id="middle_name"
+                  value={profile.middle_name || ""}
+                  onChange={(e) =>
+                    setProfile({ ...profile, middle_name: e.target.value })
+                  }
+                  placeholder="أدخل اسمك الأوسط"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor="last_name" className="text-sm font-medium">
-                اسم العائلة
-              </label>
-              <Input
-                id="last_name"
-                value={profile.last_name}
-                onChange={(e) =>
-                  setProfile({ ...profile, last_name: e.target.value })
-                }
-                placeholder="أدخل اسم عائلتك"
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="last_name" className="text-sm font-medium">
+                  اسم العائلة
+                </label>
+                <Input
+                  id="last_name"
+                  value={profile.last_name}
+                  onChange={(e) =>
+                    setProfile({ ...profile, last_name: e.target.value })
+                  }
+                  placeholder="أدخل اسم عائلتك"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor="phone" className="text-sm font-medium">
-                رقم الهاتف
-              </label>
-              <Input
-                id="phone"
-                value={profile.phone || ""}
-                onChange={(e) =>
-                  setProfile({ ...profile, phone: e.target.value })
-                }
-                placeholder="أدخل رقم هاتفك"
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium">
+                  رقم الهاتف
+                </label>
+                <Input
+                  id="phone"
+                  value={profile.phone || ""}
+                  onChange={(e) =>
+                    setProfile({ ...profile, phone: e.target.value })
+                  }
+                  placeholder="أدخل رقم هاتفك"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label htmlFor="address" className="text-sm font-medium">
-                العنوان
-              </label>
-              <Input
-                id="address"
-                value={profile.address || ""}
-                onChange={(e) =>
-                  setProfile({ ...profile, address: e.target.value })
-                }
-                placeholder="أدخل عنوانك"
-              />
-            </div>
+              <div className="space-y-2">
+                <label htmlFor="address" className="text-sm font-medium">
+                  العنوان
+                </label>
+                <Input
+                  id="address"
+                  value={profile.address || ""}
+                  onChange={(e) =>
+                    setProfile({ ...profile, address: e.target.value })
+                  }
+                  placeholder="أدخل عنوانك"
+                />
+              </div>
 
-            <Button type="submit" disabled={saving}>
-              {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              حفظ التغييرات
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              <Button type="submit" disabled={saving}>
+                {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                حفظ التغييرات
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
