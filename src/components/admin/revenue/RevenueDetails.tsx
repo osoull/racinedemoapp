@@ -39,7 +39,7 @@ export function RevenueDetails() {
     }
   });
 
-  // S'abonner aux changements en temps réel des transactions et des frais
+  // Subscribe to real-time changes in transactions and fee tracking
   useRealtimeSubscription(
     ['transactions', 'fee_tracking'],
     {
@@ -53,30 +53,6 @@ export function RevenueDetails() {
       }
     }
   );
-
-  const calculateTotals = (data: typeof revenueData) => {
-    if (!data) return {
-      admin_fees: 0,
-      collection_fees: 0,
-      basic_investor_fees: 0,
-      qualified_investor_fees: 0,
-      total_fees: 0
-    };
-
-    return data.reduce((acc, curr) => ({
-      admin_fees: acc.admin_fees + curr.admin_fees,
-      collection_fees: acc.collection_fees + curr.collection_fees,
-      basic_investor_fees: acc.basic_investor_fees + curr.basic_investor_fees,
-      qualified_investor_fees: acc.qualified_investor_fees + curr.qualified_investor_fees,
-      total_fees: acc.total_fees + curr.total_fees
-    }), {
-      admin_fees: 0,
-      collection_fees: 0,
-      basic_investor_fees: 0,
-      qualified_investor_fees: 0,
-      total_fees: 0
-    });
-  };
 
   if (isLoading) {
     return (
@@ -131,3 +107,27 @@ export function RevenueDetails() {
     </Card>
   );
 }
+
+const calculateTotals = (data: any[] | null) => {
+  if (!data) return {
+    admin_fees: 0,
+    collection_fees: 0,
+    basic_investor_fees: 0,
+    qualified_investor_fees: 0,
+    total_fees: 0
+  };
+
+  return data.reduce((acc, curr) => ({
+    admin_fees: acc.admin_fees + curr.admin_fees,
+    collection_fees: acc.collection_fees + curr.collection_fees,
+    basic_investor_fees: acc.basic_investor_fees + curr.basic_investor_fees,
+    qualified_investor_fees: acc.qualified_investor_fees + curr.qualified_investor_fees,
+    total_fees: acc.total_fees + curr.total_fees
+  }), {
+    admin_fees: 0,
+    collection_fees: 0,
+    basic_investor_fees: 0,
+    qualified_investor_fees: 0,
+    total_fees: 0
+  });
+};
