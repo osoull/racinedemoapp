@@ -70,7 +70,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     try {
       const totalFees = calculateTotalFees(projectData.funding_goal);
 
-      const { error: transactionError } = await supabase
+      const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
         .insert([
           {
@@ -79,9 +79,22 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
             status: 'pending',
             user_id: user.id
           }
-        ]);
+        ])
+        .select()
+        .single();
 
       if (transactionError) throw transactionError;
+
+      // Create project after transaction is created
+      const { error: projectError } = await supabase
+        .from('projects')
+        .insert([{
+          ...projectData,
+          owner_id: user.id,
+          status: 'pending'
+        }]);
+
+      if (projectError) throw projectError;
 
       toast({
         title: "تم تسجيل طلب التحويل",

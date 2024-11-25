@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { BankTransferDetails } from "./deposit/BankTransferDetails"
 import { AmountInput } from "./deposit/AmountInput"
 import { CardPayment } from "./deposit/CardPayment"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface DepositDialogProps {
   onSuccess?: () => void
@@ -21,6 +22,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
   const [amountError, setAmountError] = useState<string>("")
   const { toast } = useToast()
   const { data: bankDetails, isLoading, error } = useBankDetails()
+  const { user } = useAuth()
 
   const validateAmount = () => {
     if (!amount) {
@@ -37,20 +39,19 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
   }
 
   const handleBankTransfer = async () => {
-    if (!validateAmount()) return
+    if (!validateAmount() || !user) return
 
     try {
-      const { data, error: transactionError } = await supabase
+      const { error: transactionError } = await supabase
         .from('transactions')
         .insert([
           {
             amount: Number(amount),
             type: 'deposit',
-            status: 'pending'
+            status: 'pending',
+            user_id: user.id
           }
         ])
-        .select()
-        .single()
 
       if (transactionError) throw transactionError
 
