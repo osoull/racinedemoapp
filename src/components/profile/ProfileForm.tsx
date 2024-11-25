@@ -42,7 +42,6 @@ export function ProfileForm() {
   }, [initialProfile])
 
   const validateRequiredFields = () => {
-    // Vérification des champs obligatoires affichés sur l'écran
     const requiredFields = {
       first_name: 'الاسم الأول',
       last_name: 'اسم العائلة',
@@ -83,10 +82,8 @@ export function ProfileForm() {
       return
     }
 
-    if (!validateRequiredFields()) {
-      return
-    }
-
+    const isValid = validateRequiredFields()
+    
     setSaving(true)
     
     try {
@@ -94,7 +91,7 @@ export function ProfileForm() {
         .from('profiles')
         .update({
           ...profile,
-          profile_completed: true,
+          profile_completed: isValid, // Mettre à jour profile_completed en fonction de la validation
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
@@ -103,10 +100,12 @@ export function ProfileForm() {
 
       await queryClient.invalidateQueries({ queryKey: ["profile"] })
       
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث معلوماتك الشخصية بنجاح",
-      })
+      if (isValid) {
+        toast({
+          title: "تم التحديث",
+          description: "تم تحديث معلوماتك الشخصية بنجاح",
+        })
+      }
     } catch (error) {
       console.error('Error in handleSubmit:', error)
       toast({
