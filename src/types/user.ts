@@ -9,7 +9,6 @@ export interface User {
   created_at?: string;
   updated_at?: string;
   phone?: string | null;
-  address?: string | null;
   national_id?: string | null;
   company_name?: string | null;
   commercial_register?: string | null;
@@ -17,6 +16,11 @@ export interface User {
   business_address?: string | null;
   business_description?: string | null;
   profile_completed?: boolean | null;
+  street_number?: string | null;
+  street_name?: string | null;
+  postal_code?: string | null;
+  city?: string | null;
+  country?: string | null;
 }
 
 export type UserType = User['user_type'];

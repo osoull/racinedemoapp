@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { Profile } from "@/types/user"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { PersonalFields } from "./PersonalFields"
+import { AddressFields } from "./AddressFields"
 
 export function ProfileForm() {
   const { user } = useAuth()
@@ -58,8 +58,12 @@ export function ProfileForm() {
       'first_name',
       'last_name',
       'phone',
-      'address',
-      'national_id'
+      'national_id',
+      'street_number',
+      'street_name',
+      'postal_code',
+      'city',
+      'country'
     ]
 
     const missingFields = requiredFields.filter(field => !profile[field as keyof Profile])
@@ -128,69 +132,8 @@ export function ProfileForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                الاسم الأول <span className="text-red-500">*</span>
-              </label>
-              <Input
-                value={profile.first_name || ''}
-                onChange={(e) => setProfile({ ...profile, first_name: e.target.value })}
-                placeholder="أدخل اسمك الأول"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                اسم العائلة <span className="text-red-500">*</span>
-              </label>
-              <Input
-                value={profile.last_name || ''}
-                onChange={(e) => setProfile({ ...profile, last_name: e.target.value })}
-                placeholder="أدخل اسم عائلتك"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                رقم الهاتف <span className="text-red-500">*</span>
-              </label>
-              <Input
-                value={profile.phone || ''}
-                onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                placeholder="أدخل رقم هاتفك"
-                dir="ltr"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                رقم الهوية <span className="text-red-500">*</span>
-              </label>
-              <Input
-                value={profile.national_id || ''}
-                onChange={(e) => setProfile({ ...profile, national_id: e.target.value })}
-                placeholder="أدخل رقم هويتك"
-                dir="ltr"
-                required
-              />
-            </div>
-
-            <div className="space-y-2 col-span-full">
-              <label className="text-sm font-medium">
-                العنوان <span className="text-red-500">*</span>
-              </label>
-              <Textarea
-                value={profile.address || ''}
-                onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                placeholder="أدخل عنوانك"
-                required
-              />
-            </div>
-          </div>
+          <PersonalFields profile={profile} setProfile={setProfile} />
+          <AddressFields profile={profile} setProfile={setProfile} />
 
           <div className="flex justify-end">
             <Button type="submit" disabled={saving} size="lg">

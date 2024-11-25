@@ -523,13 +523,14 @@ export type Database = {
       }
       profiles: {
         Row: {
-          address: string | null
           avatar_url: string | null
           business_address: string | null
           business_description: string | null
           business_type: string | null
+          city: string | null
           commercial_register: string | null
           company_name: string | null
+          country: string | null
           created_at: string
           email: string | null
           first_name: string
@@ -540,18 +541,22 @@ export type Database = {
           middle_name: string | null
           national_id: string | null
           phone: string | null
+          postal_code: string | null
           profile_completed: boolean | null
+          street_name: string | null
+          street_number: string | null
           updated_at: string
           user_type: string | null
         }
         Insert: {
-          address?: string | null
           avatar_url?: string | null
           business_address?: string | null
           business_description?: string | null
           business_type?: string | null
+          city?: string | null
           commercial_register?: string | null
           company_name?: string | null
+          country?: string | null
           created_at?: string
           email?: string | null
           first_name: string
@@ -562,18 +567,22 @@ export type Database = {
           middle_name?: string | null
           national_id?: string | null
           phone?: string | null
+          postal_code?: string | null
           profile_completed?: boolean | null
+          street_name?: string | null
+          street_number?: string | null
           updated_at?: string
           user_type?: string | null
         }
         Update: {
-          address?: string | null
           avatar_url?: string | null
           business_address?: string | null
           business_description?: string | null
           business_type?: string | null
+          city?: string | null
           commercial_register?: string | null
           company_name?: string | null
+          country?: string | null
           created_at?: string
           email?: string | null
           first_name?: string
@@ -584,7 +593,10 @@ export type Database = {
           middle_name?: string | null
           national_id?: string | null
           phone?: string | null
+          postal_code?: string | null
           profile_completed?: boolean | null
+          street_name?: string | null
+          street_number?: string | null
           updated_at?: string
           user_type?: string | null
         }
