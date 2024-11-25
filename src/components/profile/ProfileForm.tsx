@@ -42,7 +42,8 @@ export function ProfileForm() {
   }, [initialProfile])
 
   const validateRequiredFields = () => {
-    const requiredFields = {
+    // Champs obligatoires pour tous les utilisateurs
+    const commonRequiredFields = {
       first_name: 'الاسم الأول',
       last_name: 'اسم العائلة',
       phone: 'رقم الهاتف',
@@ -54,7 +55,18 @@ export function ProfileForm() {
       country: 'البلد'
     }
 
-    const missingFields = Object.entries(requiredFields)
+    // Ne vérifie que les champs communs si l'utilisateur n'est pas un emprunteur
+    const fieldsToCheck = profile.user_type === 'borrower' 
+      ? {
+          ...commonRequiredFields,
+          company_name: 'اسم الشركة',
+          commercial_register: 'السجل التجاري',
+          business_type: 'نوع النشاط',
+          business_address: 'عنوان العمل'
+        }
+      : commonRequiredFields
+
+    const missingFields = Object.entries(fieldsToCheck)
       .filter(([key]) => !profile[key as keyof Profile])
       .map(([_, label]) => label)
 
