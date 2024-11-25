@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -9,90 +11,108 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useRiskRating } from "@/hooks/useRiskRating";
-import { Loader2 } from "lucide-react";
+import { RiskRatingBadge } from "./RiskRatingBadge";
 
 interface RiskRatingManagerProps {
   projectId: string;
-  onClose?: () => void;
+  currentRating?: string | null;
+  currentDescription?: string | null;
+  onUpdate?: () => void;
 }
 
-export const RiskRatingManager = ({ projectId, onClose }: RiskRatingManagerProps) => {
-  const { riskRating, riskDescription, isLoading, updateRiskRating } = useRiskRating(projectId);
-  const [selectedRating, setSelectedRating] = useState<string>(riskRating);
-  const [description, setDescription] = useState<string>(riskDescription);
+export function RiskRatingManager({
+  projectId,
+  currentRating,
+  currentDescription,
+  onUpdate,
+}: RiskRatingManagerProps) {
+  const [rating, setRating] = useState<string>(currentRating || "");
+  const [description, setDescription] = useState<string>(currentDescription || "");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  // Update local state when the risk rating changes from the server
   useEffect(() => {
-    setSelectedRating(riskRating);
-    setDescription(riskDescription);
-  }, [riskRating, riskDescription]);
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center p-6">
-          <Loader2 className="h-6 w-6 animate-spin" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const handleSubmit = () => {
-    if (!selectedRating) return;
-    
-    updateRiskRating.mutate(
-      { rating: selectedRating, description },
-      {
-        onSuccess: () => {
-          if (onClose) onClose();
+    const channel = supabase
+      .channel('risk_rating_updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'projects',
+          filter: `id=eq.${projectId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            setRating(payload.new.risk_rating || "");
+            setDescription(payload.new.risk_description || "");
+          }
         }
-      }
-    );
-  };
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [projectId]);
+
+  const updateRiskRating = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc('update_risk_rating', {
+        p_project_id: projectId,
+        p_rating: rating,
+        p_description: description,
+        p_evaluator_id: null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "تم تحديث تقييم المخاطر",
+        description: "تم تحديث تقييم المخاطر بنجاح",
+      });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      if (onUpdate) onUpdate();
+    },
+    onError: (error) => {
+      toast({
+        title: "خطأ في تحديث تقييم المخاطر",
+        description: "حدث خطأ أثناء محاولة تحديث تقييم المخاطر",
+        variant: "destructive",
+      });
+      console.error("Error updating risk rating:", error);
+    },
+  });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>تقييم المخاطر</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">تصنيف المخاطر</label>
-          <Select
-            value={selectedRating}
-            onValueChange={setSelectedRating}
-          >
-            <SelectTrigger className="w-full text-right">
-              <SelectValue placeholder="اختر تصنيف المخاطر" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="A">A - مخاطر منخفضة</SelectItem>
-              <SelectItem value="B">B - مخاطر متوسطة</SelectItem>
-              <SelectItem value="C">C - مخاطر عالية</SelectItem>
-              <SelectItem value="D">D - مخاطر مرتفعة جداً</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+    <div className="space-y-4">
+      <div className="flex items-center gap-4">
+        <Select value={rating} onValueChange={setRating}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="اختر تقييم المخاطر" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">منخفض</SelectItem>
+            <SelectItem value="medium">متوسط</SelectItem>
+            <SelectItem value="high">مرتفع</SelectItem>
+          </SelectContent>
+        </Select>
+        {rating && <RiskRatingBadge rating={rating} />}
+      </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium">تفاصيل التقييم</label>
-          <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="أدخل تفاصيل تقييم المخاطر"
-            className="text-right"
-          />
-        </div>
+      <Textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="وصف المخاطر..."
+        className="min-h-[100px]"
+      />
 
-        <Button 
-          onClick={handleSubmit}
-          disabled={updateRiskRating.isPending || !selectedRating}
-          className="w-full"
-        >
-          {updateRiskRating.isPending ? "جاري الحفظ..." : "حفظ التقييم"}
-        </Button>
-      </CardContent>
-    </Card>
+      <Button 
+        onClick={() => updateRiskRating.mutate()}
+        disabled={!rating || updateRiskRating.isPending}
+      >
+        {updateRiskRating.isPending ? "جاري التحديث..." : "تحديث تقييم المخاطر"}
+      </Button>
+    </div>
   );
-};
+}

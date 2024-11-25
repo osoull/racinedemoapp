@@ -6,7 +6,7 @@ export const usePlatformStats = () => {
   const { data: stats, isLoading, refetch } = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      // Récupérer le total des investissements
+      // Get total investments
       const { data: investments, error: investmentsError } = await supabase
         .from("investments")
         .select("amount")
@@ -14,7 +14,7 @@ export const usePlatformStats = () => {
       
       if (investmentsError) throw investmentsError
 
-      // Récupérer le nombre d'investisseurs uniques
+      // Get number of unique investors
       const { data: investors, error: investorsError } = await supabase
         .from("profiles")
         .select("count")
@@ -23,29 +23,29 @@ export const usePlatformStats = () => {
 
       if (investorsError) throw investorsError
 
-      // Récupérer le nombre de projets actifs
+      // Get number of approved projects
       const { data: projects, error: projectsError } = await supabase
         .from("projects")
         .select("count")
-        .eq("status", "active")
+        .eq("status", "approved")
         .single()
 
       if (projectsError) throw projectsError
 
-      // Calculer le total des investissements
+      // Calculate total investment
       const totalInvestment = investments?.reduce((sum, inv) => sum + (inv.amount || 0), 0) || 0
 
       return {
         totalInvestment,
         totalInvestors: investors?.count || 0,
         activeProjects: projects?.count || 0,
-        transactionVolume: totalInvestment // Pour le moment identique au total des investissements
+        transactionVolume: totalInvestment // For now identical to total investment
       }
     }
   })
 
   useEffect(() => {
-    // S'abonner aux changements des tables pertinentes
+    // Subscribe to changes in relevant tables
     const investmentsChannel = supabase
       .channel('investments_changes')
       .on('postgres_changes', 
