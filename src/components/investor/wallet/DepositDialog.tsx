@@ -36,6 +36,41 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     return true
   }
 
+  const handleBankTransfer = async () => {
+    if (!validateAmount()) return
+
+    try {
+      const { data, error: transactionError } = await supabase
+        .from('transactions')
+        .insert([
+          {
+            amount: Number(amount),
+            type: 'deposit',
+            status: 'pending'
+          }
+        ])
+        .select()
+        .single()
+
+      if (transactionError) throw transactionError
+
+      toast({
+        title: "تم تسجيل طلب التحويل",
+        description: "سيتم تحديث رصيدك بعد التأكد من التحويل",
+      })
+
+      setIsOpen(false)
+      onSuccess?.()
+    } catch (err) {
+      console.error('Error creating bank transfer:', err)
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "حدث خطأ أثناء تسجيل التحويل. يرجى المحاولة مرة أخرى.",
+      })
+    }
+  }
+
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open)
     if (!open) {
