@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ProjectDetails } from "./ProjectDetails";
-import { ProjectSubmissionFees } from "./ProjectSubmissionFees";
+import { ProjectFeeDetails } from "./ProjectFeeDetails";
 import { CardPayment } from "@/components/investor/wallet/deposit/CardPayment";
 import { useToast } from "@/components/ui/use-toast";
 import { Tables } from "@/integrations/supabase/types";
@@ -78,7 +78,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
         .from('transactions')
         .insert({
           amount: totalFees,
-          type: 'deposit',
+          type: 'project_fee',
           status: 'pending',
           user_id: user.id,
         })
@@ -93,6 +93,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
           ...projectData,
           owner_id: user.id,
           status: 'pending',
+          fees_transaction_id: transaction.id
         });
 
       if (projectError) throw projectError;
@@ -160,7 +161,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
             <span className="text-sm text-muted-foreground">الخطوة 2 من 2</span>
           </div>
           
-          <ProjectSubmissionFees amount={projectData.funding_goal} />
+          <ProjectFeeDetails amount={projectData.funding_goal} />
           
           <div className="space-y-4">
             <h3 className="font-semibold">طريقة الدفع</h3>
