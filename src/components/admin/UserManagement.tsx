@@ -16,13 +16,17 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Updated query to fetch all profiles
+  // Mise à jour de la requête pour inclure toutes les informations nécessaires
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['users', userType],
     queryFn: async () => {
-      let query = supabase.from('profiles').select('*');
+      let query = supabase.from('profiles').select(`
+        *,
+        investor_kyc (*),
+        borrower_kyc (*)
+      `);
       
-      // Only filter by userType if it's provided
+      // Filtrer par type d'utilisateur si spécifié
       if (userType) {
         query = query.eq('user_type', userType);
       }
@@ -38,7 +42,7 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
     },
   });
 
-  // Set up realtime subscription
+  // Configuration de la souscription en temps réel
   useEffect(() => {
     const channel = supabase
       .channel('profiles-changes')
@@ -51,10 +55,8 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
         },
         (payload) => {
           console.log('Realtime update received:', payload);
-          // Invalidate and refetch users query when changes occur
           queryClient.invalidateQueries({ queryKey: ['users'] });
           
-          // Show toast notification for new users
           if (payload.eventType === 'INSERT') {
             toast({
               title: "مستخدم جديد",
@@ -65,7 +67,6 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
       )
       .subscribe();
 
-    // Cleanup subscription on component unmount
     return () => {
       supabase.removeChannel(channel);
     };
@@ -159,16 +160,6 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
     );
   }
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6 flex justify-center items-center">
-          <Loader2 className="h-6 w-6 animate-spin" />
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -176,16 +167,22 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
         <CreateUserDialog onUserCreated={() => queryClient.invalidateQueries({ queryKey: ['users'] })} />
       </CardHeader>
       <CardContent>
-        <UserList 
-          users={users} 
-          onDelete={(user) => {
-            if (window.confirm("هل أنت متأكد من حذف هذا المستخدم؟")) {
-              deleteUserMutation.mutate(user);
-            }
-          }}
-          onUpdateType={(userId, newType) => updateUserTypeMutation.mutate({ userId, newType })}
-          onEdit={(userId, updatedData) => updateUserMutation.mutate({ userId, data: updatedData })}
-        />
+        {isLoading ? (
+          <div className="flex items-center justify-center h-96">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        ) : (
+          <UserList 
+            users={users} 
+            onDelete={(user) => {
+              if (window.confirm("هل أنت متأكد من حذف هذا المستخدم؟")) {
+                deleteUserMutation.mutate(user);
+              }
+            }}
+            onUpdateType={(userId, newType) => updateUserTypeMutation.mutate({ userId, newType })}
+            onEdit={(userId, updatedData) => updateUserMutation.mutate({ userId, data: updatedData })}
+          />
+        )}
       </CardContent>
     </Card>
   );
