@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { ArrowRight } from "lucide-react"
 
 interface SignUpFormProps {
   userType: "investor" | "borrower"
@@ -31,7 +32,8 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
           data: {
             first_name: firstName,
             last_name: lastName,
-            user_type: dbUserType
+            user_type: dbUserType,
+            investor_type: userType === "investor" ? "basic" : undefined
           }
         }
       })
@@ -56,6 +58,14 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
   return (
     <Card className="w-[350px]">
       <CardHeader>
+        <Button 
+          variant="ghost" 
+          className="w-fit mb-4" 
+          onClick={onBack}
+        >
+          <ArrowRight className="h-4 w-4 ml-2" />
+          رجوع
+        </Button>
         <CardTitle>إنشاء حساب جديد</CardTitle>
         <CardDescription>
           {userType === "investor" ? "مستثمر جديد" : "صاحب مشروع"}
@@ -73,6 +83,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
+                dir="rtl"
               />
             </div>
             <div className="space-y-2">
@@ -84,6 +95,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
+                dir="rtl"
               />
             </div>
             <div className="space-y-2">
@@ -96,6 +108,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                dir="rtl"
               />
             </div>
             <div className="space-y-2">
@@ -108,6 +121,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                dir="rtl"
               />
             </div>
           </div>
