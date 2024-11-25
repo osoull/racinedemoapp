@@ -35,7 +35,6 @@ export const ProjectSubmissionFees = ({ amount }: ProjectSubmissionFeesProps) =>
   const calculatedAdminFee = (amount * adminFee) / 100;
   const calculatedCollectionFee = (amount * collectionFee) / 100;
   const totalFees = calculatedAdminFee + calculatedCollectionFee;
-  const totalAmount = amount + totalFees;
 
   return (
     <Card className="p-6 space-y-4">
@@ -58,8 +57,8 @@ export const ProjectSubmissionFees = ({ amount }: ProjectSubmissionFeesProps) =>
         </div>
         
         <div className="flex justify-between font-semibold border-t pt-2">
-          <span>المبلغ الإجمالي:</span>
-          <span>{formatCurrency(totalAmount)}</span>
+          <span>المبلغ الإجمالي للرسوم:</span>
+          <span>{formatCurrency(totalFees)}</span>
         </div>
       </div>
     </Card>
