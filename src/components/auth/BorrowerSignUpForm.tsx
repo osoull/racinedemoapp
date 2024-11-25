@@ -18,8 +18,20 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
   const [password, setPassword] = useState("")
   const [companyName, setCompanyName] = useState("")
   const [commercialRegister, setCommercialRegister] = useState("")
+  const [nationalId, setNationalId] = useState("")
+  const [nationalIdError, setNationalIdError] = useState("")
   const [acceptTerms, setAcceptTerms] = useState(false)
   const { toast } = useToast()
+
+  const validateNationalId = (id: string) => {
+    const saudiIdRegex = /^[12]\d{9}$/
+    if (!saudiIdRegex.test(id)) {
+      setNationalIdError("يجب أن يكون رقم الهوية 10 أرقام ويبدأ بـ 1 أو 2")
+      return false
+    }
+    setNationalIdError("")
+    return true
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +43,9 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
       })
       return
     }
+    if (!validateNationalId(nationalId)) {
+      return
+    }
     try {
       const { error } = await supabase.auth.signUp({
         email,
@@ -39,7 +54,8 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
           data: {
             user_type: "borrower",
             company_name: companyName,
-            commercial_register: commercialRegister
+            commercial_register: commercialRegister,
+            national_id: nationalId
           }
         }
       })
@@ -126,6 +142,22 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">
+                  رقم الهوية <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder="رقم الهوية الوطنية (10 أرقام)"
+                  value={nationalId}
+                  onChange={(e) => setNationalId(e.target.value)}
+                  required
+                  dir="rtl"
+                  maxLength={10}
+                />
+                {nationalIdError && (
+                  <p className="text-sm text-red-500">{nationalIdError}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
                   كلمة المرور <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -161,6 +193,7 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
               <button 
                 onClick={onBack}
                 className="text-primary hover:underline"
+                type="button"
               >
                 لديك حساب؟ سجل دخول
               </button>
