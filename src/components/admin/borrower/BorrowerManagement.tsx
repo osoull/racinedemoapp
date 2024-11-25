@@ -26,25 +26,12 @@ interface Borrower {
 
 const columns: ColumnDef<Borrower>[] = [
   {
-    accessorKey: "full_name",
-    header: "الاسم الكامل",
-    cell: ({ row }) => `${row.original.first_name} ${row.original.last_name}`,
-  },
-  {
-    accessorKey: "email",
-    header: "البريد الإلكتروني",
-  },
-  {
-    accessorKey: "company_name",
-    header: "اسم الشركة",
-  },
-  {
-    accessorKey: "status",
-    header: "الحالة",
+    accessorKey: "actions",
+    header: "الإجراءات",
     cell: ({ row }) => (
-      <Badge variant={row.original.user_type === "active" ? "default" : "secondary"}>
-        {row.original.user_type === "active" ? "نشط" : "معلق"}
-      </Badge>
+      <Button variant="ghost" size="sm" className="w-full text-right">
+        عرض التفاصيل
+      </Button>
     ),
   },
   {
@@ -57,12 +44,26 @@ const columns: ColumnDef<Borrower>[] = [
     ),
   },
   {
-    id: "actions",
+    accessorKey: "status",
+    header: "الحالة",
     cell: ({ row }) => (
-      <Button variant="ghost" size="sm" className="w-full text-right">
-        عرض التفاصيل
-      </Button>
+      <Badge variant={row.original.user_type === "active" ? "default" : "secondary"}>
+        {row.original.user_type === "active" ? "نشط" : "معلق"}
+      </Badge>
     ),
+  },
+  {
+    accessorKey: "company_name",
+    header: "اسم الشركة",
+  },
+  {
+    accessorKey: "email",
+    header: "البريد الإلكتروني",
+  },
+  {
+    accessorKey: "full_name",
+    header: "الاسم الكامل",
+    cell: ({ row }) => `${row.original.first_name} ${row.original.last_name}`,
   },
 ]
 
