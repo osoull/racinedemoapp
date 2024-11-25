@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
-import { useProfileSync } from "@/hooks/useProfileSync"
 import { Profile } from "@/types/user"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -21,6 +20,7 @@ export function ProfileForm() {
   const { data: initialProfile, isLoading, error } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
+      console.log("Fetching profile for user:", user?.id)
       if (!user?.id) throw new Error("No user ID")
       
       const { data, error } = await supabase
@@ -34,6 +34,7 @@ export function ProfileForm() {
         throw error
       }
       
+      console.log("Fetched profile:", data)
       return data as Profile
     },
     enabled: !!user?.id,
@@ -41,12 +42,15 @@ export function ProfileForm() {
 
   useEffect(() => {
     if (initialProfile) {
+      console.log("Setting initial profile:", initialProfile)
       setProfile(initialProfile)
     }
   }, [initialProfile])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log("Submitting profile update:", profile)
+    
     if (!user?.id) {
       toast({
         title: "خطأ",
@@ -56,10 +60,20 @@ export function ProfileForm() {
       return
     }
 
+    if (!profile.first_name || !profile.last_name) {
+      toast({
+        title: "خطأ",
+        description: "الاسم الأول واسم العائلة مطلوبان",
+        variant: "destructive",
+      })
+      return
+    }
+
     setSaving(true)
     
     try {
-      const { error: updateError } = await supabase
+      console.log("Updating profile in Supabase...")
+      const { data, error: updateError } = await supabase
         .from('profiles')
         .update({
           ...profile,
@@ -67,17 +81,26 @@ export function ProfileForm() {
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
+        .select()
+        .single()
 
-      if (updateError) throw updateError
+      if (updateError) {
+        console.error('Error updating profile:', updateError)
+        throw updateError
+      }
 
+      console.log("Profile updated successfully:", data)
+      
+      // Force a refetch of the profile data
       await queryClient.invalidateQueries({ queryKey: ["profile"] })
+      await queryClient.refetchQueries({ queryKey: ["profile"] })
       
       toast({
         title: "تم التحديث",
         description: "تم تحديث معلوماتك الشخصية بنجاح",
       })
     } catch (error) {
-      console.error('Error updating profile:', error)
+      console.error('Error in handleSubmit:', error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث المعلومات",
