@@ -64,6 +64,36 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
     }
   };
 
+  const handleReject = async () => {
+    try {
+      setIsApproving(true);
+      const { error } = await supabase
+        .from('projects')
+        .update({ 
+          status: 'rejected',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', project.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "تم رفض المشروع",
+      });
+
+      await queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+    } catch (error) {
+      console.error("Error rejecting project:", error);
+      toast({
+        title: "حدث خطأ",
+        description: "لم نتمكن من رفض المشروع",
+        variant: "destructive",
+      });
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
   const getStatusBadgeVariant = (status: string | null) => {
     switch (status) {
       case 'approved':
@@ -73,6 +103,8 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
         return 'secondary';
       case 'rejected':
         return 'destructive';
+      case 'completed':
+        return 'outline';
       default:
         return 'secondary';
     }
@@ -87,6 +119,8 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
         return 'قيد المراجعة';
       case 'rejected':
         return 'مرفوض';
+      case 'completed':
+        return 'مكتمل';
       default:
         return status;
     }
@@ -139,14 +173,24 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
                 </Button>
               )}
               {isAdmin && project.status === 'pending' && (
-                <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={handleApprove}
-                  disabled={isApproving}
-                >
-                  {isApproving ? "جاري الاعتماد..." : "اعتماد المشروع"}
-                </Button>
+                <>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={handleApprove}
+                    disabled={isApproving}
+                  >
+                    {isApproving ? "جاري الاعتماد..." : "اعتماد المشروع"}
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={handleReject}
+                    disabled={isApproving}
+                  >
+                    رفض المشروع
+                  </Button>
+                </>
               )}
             </>
           )}
