@@ -13,7 +13,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { RiskRatingBadge } from "./RiskRatingBadge";
 import { Tables } from "@/integrations/supabase/types";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 interface RiskRatingManagerProps {
   projectId: string;
@@ -23,10 +22,7 @@ interface RiskRatingManagerProps {
   onClose: () => void;
 }
 
-type ProjectPayload = RealtimePostgresChangesPayload<{
-  old: Tables<"projects">;
-  new: Tables<"projects">;
-}>;
+type Project = Tables<"projects">;
 
 export function RiskRatingManager({
   projectId,
@@ -63,19 +59,22 @@ export function RiskRatingManager({
 
   useEffect(() => {
     const channel = supabase
-      .channel('risk_rating_updates')
-      .on<Tables<"projects">>(
-        'postgres_changes',
+      .channel(`project_risk_rating_${projectId}`)
+      .on(
+        'postgres_changes' as any,
         {
           event: '*',
           schema: 'public',
           table: 'projects',
           filter: `id=eq.${projectId}`,
         },
-        (payload: ProjectPayload) => {
-          if (payload.new) {
-            setRating(payload.new.risk_rating || "");
-            setDescription(payload.new.risk_description || "");
+        (payload) => {
+          const newData = payload.new as Project;
+          if (newData) {
+            setRating(newData.risk_rating || "");
+            setDescription(newData.risk_description || "");
+            queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+            queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
           }
         }
       )
@@ -84,7 +83,7 @@ export function RiskRatingManager({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [projectId]);
+  }, [projectId, queryClient]);
 
   const updateRiskRating = useMutation({
     mutationFn: async () => {
@@ -101,7 +100,8 @@ export function RiskRatingManager({
         title: "تم تحديث تقييم المخاطر",
         description: "تم تحديث تقييم المخاطر بنجاح",
       });
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
       if (onUpdate) onUpdate();
       onClose();
     },
