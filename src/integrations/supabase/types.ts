@@ -546,7 +546,7 @@ export type Database = {
           street_name: string | null
           street_number: string | null
           updated_at: string
-          user_type: string | null
+          user_type: string
         }
         Insert: {
           avatar_url?: string | null
@@ -572,7 +572,7 @@ export type Database = {
           street_name?: string | null
           street_number?: string | null
           updated_at?: string
-          user_type?: string | null
+          user_type?: string
         }
         Update: {
           avatar_url?: string | null
@@ -598,7 +598,7 @@ export type Database = {
           street_name?: string | null
           street_number?: string | null
           updated_at?: string
-          user_type?: string | null
+          user_type?: string
         }
         Relationships: []
       }
