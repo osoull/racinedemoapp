@@ -33,20 +33,20 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
         return
       }
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single()
+      try {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('id', user.id)
+          .single()
 
-      if (error) {
+        if (error) throw error
+        setUserType(profile?.user_type)
+      } catch (error) {
         console.error("Error fetching user type:", error)
+      } finally {
         setIsLoading(false)
-        return
       }
-
-      setUserType(profile?.user_type)
-      setIsLoading(false)
     }
 
     getUserType()
@@ -98,7 +98,9 @@ function App() {
                     path="/borrower/*"
                     element={
                       <PrivateRoute allowedRoles={["borrower"]}>
-                        <BorrowerDashboard />
+                        <Routes>
+                          <Route index element={<BorrowerDashboard />} />
+                        </Routes>
                       </PrivateRoute>
                     }
                   />

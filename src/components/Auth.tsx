@@ -30,12 +30,12 @@ export function Auth() {
     setIsLoading(true)
 
     try {
-      const { error } = await signIn(email, password)
-      if (error) throw error
-      
+      const { error: signInError } = await signIn(email, password)
+      if (signInError) throw signInError
+
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError) throw userError
-      if (!user) throw new Error("No user found after sign in")
+      if (!user) throw new Error("No user found")
 
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -46,15 +46,13 @@ export function Auth() {
       if (profileError) throw profileError
       if (!profile) throw new Error("No profile found")
 
-      const userType = profile.user_type as UserType
-
       // Redirection basée sur le type d'utilisateur
-      switch (userType) {
-        case "borrower":
-          navigate("/borrower")
-          break
+      switch (profile.user_type) {
         case "investor":
           navigate("/investor")
+          break
+        case "borrower":
+          navigate("/borrower")
           break
         case "admin":
           navigate("/admin")
@@ -63,7 +61,7 @@ export function Auth() {
           navigate("/investment-manager")
           break
         default:
-          navigate("/")
+          throw new Error("Invalid user type")
       }
 
       toast({
@@ -127,14 +125,9 @@ export function Auth() {
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
       <img 
-        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-        alt="Raseen Logo" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain dark:hidden" 
-      />
-      <img 
-        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-        alt="Raseen Logo" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
+        src="/lovable-uploads/7b06f9d7-31bb-4323-a3bd-354a51415973.png"
+        alt="Racine Investment" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
       />
       <Card className="w-[350px]">
         <CardHeader>
@@ -161,7 +154,7 @@ export function Auth() {
                 disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-[#4338CA] hover:bg-[#3730A3]" disabled={isLoading}>
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
@@ -171,7 +164,7 @@ export function Auth() {
             <div className="text-sm text-muted-foreground text-center">
               <button 
                 onClick={() => setStep("selection")}
-                className="text-primary hover:underline"
+                className="text-[#4338CA] hover:underline"
                 type="button"
                 disabled={isLoading}
               >
