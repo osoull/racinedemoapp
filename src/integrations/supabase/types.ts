@@ -864,7 +864,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_transaction_fees: {
+        Args: {
+          amount: number
+          user_type: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

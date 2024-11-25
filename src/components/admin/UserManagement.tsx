@@ -51,15 +51,25 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
         },
         (payload) => {
           console.log('Realtime update received:', payload);
+          // Invalidate and refetch users query when changes occur
           queryClient.invalidateQueries({ queryKey: ['users'] });
+          
+          // Show toast notification for new users
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "مستخدم جديد",
+              description: "تم إضافة مستخدم جديد إلى المنصة",
+            });
+          }
         }
       )
       .subscribe();
 
+    // Cleanup subscription on component unmount
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, toast]);
 
   const deleteUserMutation = useMutation({
     mutationFn: async (user: User) => {
