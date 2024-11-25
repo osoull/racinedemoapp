@@ -6,7 +6,6 @@ import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { formatCurrency } from "@/utils/feeCalculations"
-import { UserType } from "@/types/user"
 
 interface CardPaymentProps {
   amount: string

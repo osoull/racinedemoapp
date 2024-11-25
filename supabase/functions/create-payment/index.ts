@@ -18,27 +18,12 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, user_id, fees } = await req.json()
+    const { amount, user_id } = await req.json()
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-
-    // Create the transaction first
-    const { data: transaction, error: transactionError } = await supabaseClient
-      .from('transactions')
-      .insert({
-        user_id,
-        amount,
-        type: 'deposit',
-        status: 'pending',
-        metadata: { fees }
-      })
-      .select()
-      .single()
-
-    if (transactionError) throw transactionError
 
     // Create Stripe session
     const session = await stripe.checkout.sessions.create({
@@ -49,7 +34,6 @@ serve(async (req) => {
             currency: 'sar',
             product_data: {
               name: 'إيداع رصيد',
-              description: `المبلغ الأساسي: ${amount - fees.total} ريال\nرسوم الإدارة: ${fees.admin} ريال\nرسوم التحصيل: ${fees.collection} ريال\nرسوم المستثمر: ${fees.investor} ريال`,
             },
             unit_amount: Math.round(amount * 100), // Stripe uses cents
           },
@@ -60,13 +44,23 @@ serve(async (req) => {
       success_url: `${req.headers.get('origin')}/investor/wallet?success=true`,
       cancel_url: `${req.headers.get('origin')}/investor/wallet?canceled=true`,
       client_reference_id: user_id,
-      metadata: {
-        transaction_id: transaction.id,
-        fees: JSON.stringify(fees)
-      }
     })
 
-    // Save Stripe payment details
+    // Create transaction record
+    const { data: transaction, error: transactionError } = await supabaseClient
+      .from('transactions')
+      .insert({
+        user_id,
+        amount,
+        type: 'deposit',
+        status: 'pending'
+      })
+      .select()
+      .single()
+
+    if (transactionError) throw transactionError
+
+    // Create stripe payment record
     const { error: stripePaymentError } = await supabaseClient
       .from('stripe_payments')
       .insert({
@@ -74,8 +68,7 @@ serve(async (req) => {
         transaction_id: transaction.id,
         stripe_session_id: session.id,
         amount,
-        status: 'pending',
-        metadata: { fees }
+        status: 'pending'
       })
 
     if (stripePaymentError) throw stripePaymentError

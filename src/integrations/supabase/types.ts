@@ -897,6 +897,13 @@ export type Database = {
           investment_experience: string
         }[]
       }
+      validate_project_submission: {
+        Args: {
+          p_project_id: string
+          p_transaction_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
