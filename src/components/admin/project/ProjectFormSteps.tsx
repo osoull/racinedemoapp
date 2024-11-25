@@ -1,18 +1,13 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ProjectDetails } from "./ProjectDetails";
-import { ProjectFeeDetails } from "./ProjectFeeDetails";
-import { CardPayment } from "@/components/investor/wallet/deposit/CardPayment";
 import { useToast } from "@/components/ui/use-toast";
 import { Tables } from "@/integrations/supabase/types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, CreditCard, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { BankTransferDetails } from "@/components/investor/wallet/deposit/BankTransferDetails";
 import { supabase } from "@/integrations/supabase/client";
-import { useBankDetails } from "@/hooks/useBankDetails";
-import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { ProjectPaymentStep } from "./ProjectPaymentStep";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
@@ -25,7 +20,6 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submissionType, setSubmissionType] = useState<"bank" | "card" | null>(null);
   const { toast } = useToast();
-  const { data: bankDetails, isLoading, error } = useBankDetails();
   const { user } = useAuth();
 
   const { data: commissions } = useQuery({
@@ -40,10 +34,18 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     },
   });
 
-  const calculateTotalFees = (amount: number) => {
+  const calculateFees = (amount: number) => {
     const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
     const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
-    return (amount * (adminFee + collectionFee)) / 100;
+    
+    const calculatedAdminFee = (amount * adminFee) / 100;
+    const calculatedCollectionFee = (amount * collectionFee) / 100;
+    
+    return {
+      admin: calculatedAdminFee,
+      collection: calculatedCollectionFee,
+      total: calculatedAdminFee + calculatedCollectionFee
+    };
   };
 
   const handleProjectDetailsSubmit = (data: any) => {
@@ -72,12 +74,12 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     }
 
     try {
-      const totalFees = calculateTotalFees(projectData.funding_goal);
+      const fees = calculateFees(projectData.funding_goal);
 
       const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
         .insert({
-          amount: totalFees,
+          amount: fees.total,
           type: 'project_fee',
           status: 'pending',
           user_id: user.id,
@@ -141,84 +143,23 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     );
   }
 
+  const fees = projectData ? calculateFees(projectData.funding_goal) : { admin: 0, collection: 0, total: 0 };
+
   return (
     <div className="space-y-6">
       {step === 1 ? (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">تفاصيل المشروع</h2>
-            <span className="text-sm text-muted-foreground">الخطوة 1 من 2</span>
-          </div>
-          <ProjectDetails 
-            project={projectData}
-            onSubmit={handleProjectDetailsSubmit}
-          />
-        </div>
+        <ProjectDetails 
+          project={projectData}
+          onSubmit={handleProjectDetailsSubmit}
+        />
       ) : (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">دفع الرسوم</h2>
-            <span className="text-sm text-muted-foreground">الخطوة 2 من 2</span>
-          </div>
-          
-          <ProjectFeeDetails amount={projectData.funding_goal} />
-          
-          <div className="space-y-4">
-            <h3 className="font-semibold">طريقة الدفع</h3>
-            <Tabs defaultValue="bank" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="bank" className="space-x-2">
-                  <Building2 className="h-4 w-4" />
-                  <span>تحويل بنكي</span>
-                </TabsTrigger>
-                <TabsTrigger value="card" className="space-x-2">
-                  <CreditCard className="h-4 w-4" />
-                  <span>بطاقة ائتمان</span>
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="bank" className="space-y-4">
-                <Alert>
-                  <AlertDescription>
-                    يرجى استخدام المعلومات البنكية أدناه لإتمام التحويل. سيتم تحديث رصيدك تلقائياً خلال يوم عمل واحد بعد استلام وتأكيد التحويل.
-                  </AlertDescription>
-                </Alert>
-                <BankTransferDetails 
-                  bankDetails={bankDetails}
-                  isLoading={isLoading}
-                  error={error}
-                />
-                <Button 
-                  onClick={handleBankTransfer} 
-                  className="w-full"
-                  disabled={!bankDetails}
-                >
-                  تأكيد التحويل البنكي
-                </Button>
-              </TabsContent>
-
-              <TabsContent value="card" className="space-y-4">
-                <Alert>
-                  <AlertDescription>
-                    سيتم تحويلك إلى صفحة الدفع الآمنة لإتمام العملية
-                  </AlertDescription>
-                </Alert>
-                <CardPayment 
-                  amount={calculateTotalFees(projectData.funding_goal).toString()} 
-                  onSuccess={handlePaymentSuccess}
-                />
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <Button 
-            variant="outline" 
-            onClick={() => setStep(1)}
-            className="w-full mt-4"
-          >
-            العودة للخطوة السابقة
-          </Button>
-        </div>
+        <ProjectPaymentStep
+          projectData={projectData}
+          fees={fees}
+          onBankTransfer={handleBankTransfer}
+          onPaymentSuccess={handlePaymentSuccess}
+          onBack={() => setStep(1)}
+        />
       )}
     </div>
   );
