@@ -18,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, user_id } = await req.json()
+    const { amount, user_id, fees } = await req.json()
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -32,7 +32,8 @@ serve(async (req) => {
         user_id,
         amount,
         type: 'deposit',
-        status: 'pending'
+        status: 'pending',
+        metadata: { fees }
       })
       .select()
       .single()
@@ -48,6 +49,7 @@ serve(async (req) => {
             currency: 'sar',
             product_data: {
               name: 'إيداع رصيد',
+              description: `المبلغ الأساسي: ${amount - fees.total} ريال\nرسوم الإدارة: ${fees.admin} ريال\nرسوم التحصيل: ${fees.collection} ريال\nرسوم المستثمر: ${fees.investor} ريال`,
             },
             unit_amount: Math.round(amount * 100), // Stripe uses cents
           },
@@ -59,7 +61,8 @@ serve(async (req) => {
       cancel_url: `${req.headers.get('origin')}/investor/wallet?canceled=true`,
       client_reference_id: user_id,
       metadata: {
-        transaction_id: transaction.id
+        transaction_id: transaction.id,
+        fees: JSON.stringify(fees)
       }
     })
 
@@ -71,7 +74,8 @@ serve(async (req) => {
         transaction_id: transaction.id,
         stripe_session_id: session.id,
         amount,
-        status: 'pending'
+        status: 'pending',
+        metadata: { fees }
       })
 
     if (stripePaymentError) throw stripePaymentError

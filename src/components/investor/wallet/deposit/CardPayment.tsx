@@ -4,6 +4,8 @@ import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { calculateFees, formatCurrency } from "@/utils/feeCalculations"
 
 interface CardPaymentProps {
   amount: string
@@ -15,12 +17,17 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   const { user } = useAuth()
   const { toast } = useToast()
 
-  const formatCurrency = (amount: string | number) => {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency',
-      currency: 'SAR'
-    }).format(Number(amount))
-  }
+  const { data: commissions } = useQuery({
+    queryKey: ["commissions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commissions")
+        .select("*")
+      
+      if (error) throw error
+      return data
+    },
+  })
 
   const handleCardPayment = async () => {
     if (!user || !amount) {
@@ -34,10 +41,15 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     
     setIsLoading(true)
     try {
+      const amountNumber = Number(amount)
+      const fees = calculateFees(amountNumber, commissions || [], user.investor_type)
+      const totalAmount = amountNumber + fees.total
+
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { 
-          amount: Number(amount), 
-          user_id: user.id 
+          amount: totalAmount,
+          user_id: user.id,
+          fees: fees
         }
       })
 
@@ -62,20 +74,49 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     }
   }
 
+  const amountNumber = Number(amount)
+  const fees = calculateFees(amountNumber, commissions || [], user?.investor_type)
+  const totalAmount = amountNumber + fees.total
+
   return (
-    <Button 
-      onClick={handleCardPayment} 
-      className="w-full"
-      disabled={isLoading || !amount}
-    >
-      {isLoading ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          جاري المعالجة...
-        </>
-      ) : (
-        `الدفع بالبطاقة (${formatCurrency(amount)})`
-      )}
-    </Button>
+    <div className="space-y-4">
+      <div className="text-sm space-y-2">
+        <div className="flex justify-between">
+          <span>المبلغ الأساسي:</span>
+          <span>{formatCurrency(amountNumber)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>رسوم الإدارة:</span>
+          <span>{formatCurrency(fees.admin)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>رسوم التحصيل:</span>
+          <span>{formatCurrency(fees.collection)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>رسوم المستثمر:</span>
+          <span>{formatCurrency(fees.investor)}</span>
+        </div>
+        <div className="flex justify-between font-bold border-t pt-2">
+          <span>المبلغ الإجمالي:</span>
+          <span>{formatCurrency(totalAmount)}</span>
+        </div>
+      </div>
+
+      <Button 
+        onClick={handleCardPayment} 
+        className="w-full"
+        disabled={isLoading || !amount}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            جاري المعالجة...
+          </>
+        ) : (
+          `الدفع بالبطاقة (${formatCurrency(totalAmount)})`
+        )}
+      </Button>
+    </div>
   )
 }
