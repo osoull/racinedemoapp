@@ -14,6 +14,7 @@ import ProjectsListPage from "@/pages/investor/projects"
 import Portfolio from "@/pages/investor/Portfolio"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
+import ProjectsPage from "@/pages/admin/projects"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
@@ -110,6 +111,7 @@ function App() {
                         <Routes>
                           <Route index element={<AdminDashboard />} />
                           <Route path="investors" element={<InvestorsPage />} />
+                          <Route path="projects" element={<ProjectsPage />} />
                         </Routes>
                       </PrivateRoute>
                     }
