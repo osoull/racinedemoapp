@@ -12,7 +12,7 @@ interface BankTransferDetailsProps {
   error: Error | null
 }
 
-export function BankTransferDetails({ bankDetails, isLoading, error }: BankTransferDetailsProps) {
+export function BankTransferDetails({ bankDetails }: BankTransferDetailsProps) {
   const { toast } = useToast()
 
   const copyToClipboard = (text: string) => {

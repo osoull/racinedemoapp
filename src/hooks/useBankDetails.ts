@@ -9,7 +9,7 @@ export interface BankDetailsData {
 }
 
 export function useBankDetails() {
-  const query = useQuery({
+  return useQuery({
     queryKey: ['platform_bank_accounts'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -35,6 +35,4 @@ export function useBankDetails() {
       }
     }
   })
-
-  return query
 }
