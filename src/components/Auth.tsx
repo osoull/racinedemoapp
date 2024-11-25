@@ -10,7 +10,7 @@ import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 
-type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
+type AuthStep = "selection" | "signup" | "signin" | "borrower_signup" | "reset_password";
 type UserType = "investor" | "admin" | "borrower" | "investment_manager";
 type SelectableUserType = Extract<UserType, "investor" | "borrower">;
 
@@ -75,6 +75,28 @@ export function Auth() {
     }
   }
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
+      if (error) throw error
+      
+      toast({
+        title: "تم إرسال رابط إعادة تعيين كلمة المرور",
+        description: "يرجى التحقق من بريدك الإلكتروني",
+      })
+      setStep("signin")
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء إرسال رابط إعادة تعيين كلمة المرور",
+        variant: "destructive",
+      })
+    }
+  }
+
   const handleUserTypeSelect = (type: SelectableUserType | "login") => {
     if (type === "login") {
       setStep("signin")
@@ -117,6 +139,52 @@ export function Auth() {
     )
   }
 
+  if (step === "reset_password") {
+    return (
+      <div className="flex min-h-[80vh] items-center justify-center flex-col">
+        <img 
+          src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
+          alt="Raseen Logo" 
+          className="w-64 md:w-72 lg:w-80 mb-8 object-contain dark:hidden" 
+        />
+        <img 
+          src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+          alt="Raseen Logo" 
+          className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
+        />
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>إعادة تعيين كلمة المرور</CardTitle>
+            <CardDescription>
+              أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Button type="submit" className="w-full">
+                إرسال رابط إعادة التعيين
+              </Button>
+              <div className="text-sm text-muted-foreground text-center">
+                <button 
+                  onClick={() => setStep("signin")}
+                  className="text-primary hover:underline"
+                >
+                  العودة لتسجيل الدخول
+                </button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
       <img 
@@ -155,10 +223,16 @@ export function Auth() {
             <Button type="submit" className="w-full">
               تسجيل الدخول
             </Button>
-            <div className="text-sm text-muted-foreground text-center">
+            <div className="text-sm text-muted-foreground text-center space-y-2">
+              <button 
+                onClick={() => setStep("reset_password")}
+                className="text-primary hover:underline block w-full"
+              >
+                نسيت كلمة المرور؟
+              </button>
               <button 
                 onClick={() => setStep("selection")}
-                className="text-primary hover:underline"
+                className="text-primary hover:underline block w-full"
               >
                 ليس لديك حساب؟ قم بإنشاء حساب جديد
               </button>
