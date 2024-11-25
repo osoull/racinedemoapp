@@ -20,7 +20,7 @@ const BankDetailsField = ({
   onChange?: (value: string) => void
   onCopy: () => void
 }) => (
-  <div className="space-y-2">
+  <div className="space-y-1.5">
     <label className="text-sm font-medium text-muted-foreground">
       {label} <span className="text-red-500">*</span>
     </label>
@@ -32,7 +32,7 @@ const BankDetailsField = ({
         required
       />
     ) : (
-      <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/50">
+      <div className="flex items-center justify-between p-2.5 border rounded-lg bg-muted/50">
         <span className="font-mono text-muted-foreground">{value}</span>
         <Button
           variant="ghost"
@@ -56,7 +56,6 @@ export default function BankDetails() {
     iban: ""
   })
 
-  // Récupérer les informations bancaires de Racine (is_primary = true)
   const { data: bankDetails, isLoading, refetch } = useQuery({
     queryKey: ['platform_bank_account'],
     queryFn: async () => {
@@ -133,7 +132,7 @@ export default function BankDetails() {
 
   return (
     <Card className="bg-gradient-to-br from-card/50 to-card border-primary/20">
-      <CardHeader>
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-primary">
             <Building2 className="h-5 w-5" />
@@ -153,8 +152,8 @@ export default function BankDetails() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <BankDetailsField
               label="اسم البنك"
               value={isEditing ? editedDetails.bank_name : bankDetails?.bank_name || ""}
