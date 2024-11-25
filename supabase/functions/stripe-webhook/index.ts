@@ -35,7 +35,7 @@ serve(async (req) => {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session
 
-      // Update stripe payment status
+      // Mettre à jour le paiement Stripe
       const { error: stripePaymentError } = await supabaseClient
         .from('stripe_payments')
         .update({ status: 'completed' })
@@ -43,7 +43,7 @@ serve(async (req) => {
 
       if (stripePaymentError) throw stripePaymentError
 
-      // Get the transaction ID
+      // Récupérer les informations de transaction
       const { data: stripePayment, error: getPaymentError } = await supabaseClient
         .from('stripe_payments')
         .select('transaction_id, user_id')
@@ -52,7 +52,7 @@ serve(async (req) => {
 
       if (getPaymentError) throw getPaymentError
 
-      // Update transaction status
+      // Mettre à jour la transaction
       const { error: transactionError } = await supabaseClient
         .from('transactions')
         .update({ status: 'completed' })
@@ -60,7 +60,7 @@ serve(async (req) => {
 
       if (transactionError) throw transactionError
 
-      // Create notification for the user
+      // Créer une notification
       const { error: notificationError } = await supabaseClient
         .from('notifications')
         .insert({
