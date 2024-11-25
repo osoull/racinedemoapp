@@ -13,6 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { RiskRatingBadge } from "./RiskRatingBadge";
 import { Tables } from "@/integrations/supabase/types";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 interface RiskRatingManagerProps {
   projectId: string;
@@ -22,11 +23,10 @@ interface RiskRatingManagerProps {
   onClose: () => void;
 }
 
-type ProjectPayload = {
-  new: Tables<"projects">;
+type ProjectPayload = RealtimePostgresChangesPayload<{
   old: Tables<"projects">;
-  eventType: "INSERT" | "UPDATE" | "DELETE";
-};
+  new: Tables<"projects">;
+}>;
 
 export function RiskRatingManager({
   projectId,
@@ -123,9 +123,10 @@ export function RiskRatingManager({
             <SelectValue placeholder="اختر تقييم المخاطر" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="low">منخفض</SelectItem>
-            <SelectItem value="medium">متوسط</SelectItem>
-            <SelectItem value="high">مرتفع</SelectItem>
+            <SelectItem value="A">A</SelectItem>
+            <SelectItem value="B">B</SelectItem>
+            <SelectItem value="C">C</SelectItem>
+            <SelectItem value="D">D</SelectItem>
           </SelectContent>
         </Select>
         {rating && <RiskRatingBadge rating={rating} />}
