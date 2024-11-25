@@ -19,6 +19,7 @@ export const useRiskRating = (projectId: string) => {
         }, 
         () => {
           queryClient.invalidateQueries({ queryKey: ["risk-rating", projectId] });
+          queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
         }
       )
       .subscribe();

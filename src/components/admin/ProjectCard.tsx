@@ -1,13 +1,12 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Tables } from "@/integrations/supabase/types";
 import { RiskRatingBadge } from "./project/RiskRatingBadge";
 import { RiskRatingManager } from "./project/RiskRatingManager";
+import { ProjectActions } from "./project/ProjectActions";
+import { ProjectStatus } from "./project/ProjectStatus";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
 type Project = Tables<"projects"> & {
   owner?: {
@@ -30,101 +29,6 @@ interface ProjectCardProps {
 
 export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: ProjectCardProps) => {
   const [isRatingOpen, setIsRatingOpen] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const handleApprove = async () => {
-    try {
-      setIsApproving(true);
-      const { error } = await supabase
-        .from('projects')
-        .update({ 
-          status: 'approved',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', project.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "تم اعتماد المشروع بنجاح",
-      });
-
-      await queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-    } catch (error) {
-      console.error("Error approving project:", error);
-      toast({
-        title: "حدث خطأ",
-        description: "لم نتمكن من اعتماد المشروع",
-        variant: "destructive",
-      });
-    } finally {
-      setIsApproving(false);
-    }
-  };
-
-  const handleReject = async () => {
-    try {
-      setIsApproving(true);
-      const { error } = await supabase
-        .from('projects')
-        .update({ 
-          status: 'rejected',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', project.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "تم رفض المشروع",
-      });
-
-      await queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-    } catch (error) {
-      console.error("Error rejecting project:", error);
-      toast({
-        title: "حدث خطأ",
-        description: "لم نتمكن من رفض المشروع",
-        variant: "destructive",
-      });
-    } finally {
-      setIsApproving(false);
-    }
-  };
-
-  const getStatusBadgeVariant = (status: string | null) => {
-    switch (status) {
-      case 'approved':
-      case 'active':
-        return 'default';
-      case 'pending':
-        return 'secondary';
-      case 'rejected':
-        return 'destructive';
-      case 'completed':
-        return 'outline';
-      default:
-        return 'secondary';
-    }
-  };
-
-  const getStatusDisplay = (status: string | null) => {
-    switch (status) {
-      case 'approved':
-      case 'active':
-        return 'نشط';
-      case 'pending':
-        return 'قيد المراجعة';
-      case 'rejected':
-        return 'مرفوض';
-      case 'completed':
-        return 'مكتمل';
-      default:
-        return status;
-    }
-  };
 
   return (
     <Card className="p-6">
@@ -133,9 +37,7 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
           <h3 className="font-semibold text-lg mb-1">{project.title}</h3>
           <p className="text-sm text-muted-foreground">{project.description}</p>
           <div className="mt-2">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${getStatusBadgeVariant(project.status)}-100 text-${getStatusBadgeVariant(project.status)}-800`}>
-              {getStatusDisplay(project.status)}
-            </span>
+            <ProjectStatus status={project.status} />
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -161,40 +63,13 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
       </div>
       
       <div className="flex justify-between items-center mt-4">
-        <div className="space-x-2 rtl:space-x-reverse">
-          {(canEdit || isAdmin) && (
-            <>
-              <Button variant="outline" size="sm" onClick={onEdit}>
-                تعديل
-              </Button>
-              {canEdit && (
-                <Button variant="destructive" size="sm" onClick={onDelete}>
-                  حذف
-                </Button>
-              )}
-              {isAdmin && project.status === 'pending' && (
-                <>
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    onClick={handleApprove}
-                    disabled={isApproving}
-                  >
-                    {isApproving ? "جاري الاعتماد..." : "اعتماد المشروع"}
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    onClick={handleReject}
-                    disabled={isApproving}
-                  >
-                    رفض المشروع
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-        </div>
+        <ProjectActions 
+          projectId={project.id}
+          status={project.status}
+          canEdit={canEdit}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
         <div className="text-sm text-muted-foreground">
           {project.owner?.first_name} {project.owner?.last_name}
         </div>
