@@ -41,6 +41,36 @@ export function ProfileForm() {
     }
   }, [initialProfile])
 
+  const validateRequiredFields = () => {
+    // Vérification des champs obligatoires affichés sur l'écran
+    const requiredFields = {
+      first_name: 'الاسم الأول',
+      last_name: 'اسم العائلة',
+      phone: 'رقم الهاتف',
+      national_id: 'رقم الهوية',
+      street_number: 'رقم المبنى',
+      street_name: 'اسم الشارع',
+      postal_code: 'الرمز البريدي',
+      city: 'المدينة',
+      country: 'البلد'
+    }
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !profile[key as keyof Profile])
+      .map(([_, label]) => label)
+
+    if (missingFields.length > 0) {
+      toast({
+        title: "خطأ",
+        description: `يرجى ملء الحقول التالية: ${missingFields.join('، ')}`,
+        variant: "destructive",
+      })
+      return false
+    }
+
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -53,27 +83,7 @@ export function ProfileForm() {
       return
     }
 
-    // Vérification que tous les champs requis sont remplis
-    const requiredFields = [
-      'first_name',
-      'last_name',
-      'phone',
-      'national_id',
-      'street_number',
-      'street_name',
-      'postal_code',
-      'city',
-      'country'
-    ]
-
-    const missingFields = requiredFields.filter(field => !profile[field as keyof Profile])
-
-    if (missingFields.length > 0) {
-      toast({
-        title: "خطأ",
-        description: "يرجى ملء جميع الحقول المطلوبة",
-        variant: "destructive",
-      })
+    if (!validateRequiredFields()) {
       return
     }
 
