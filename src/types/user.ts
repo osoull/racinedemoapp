@@ -4,8 +4,7 @@ export interface User {
   first_name: string;
   middle_name?: string | null;
   last_name: string;
-  user_type: 'investor' | 'borrower' | 'admin' | 'investment_manager';
-  investor_type?: 'basic' | 'qualified';
+  user_type: 'admin' | 'investment_manager' | 'basic_investor' | 'qualified_investor' | 'borrower';
   kyc_status?: string;
   created_at?: string;
   updated_at?: string;
@@ -21,7 +20,6 @@ export interface User {
 }
 
 export type UserType = User['user_type'];
-export type InvestorType = 'basic' | 'qualified';
 
 export interface Profile extends User {
   avatar_url?: string | null;

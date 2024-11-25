@@ -1,11 +1,12 @@
 import { Tables } from "@/integrations/supabase/types"
+import { UserType } from "@/types/user"
 
 type Commission = Tables<"commissions">
 
 export const calculateFees = (
   amount: number,
   commissions: Commission[],
-  userType: string = 'basic'
+  userType: UserType = 'basic_investor'
 ) => {
   const fees = {
     admin: 0,
@@ -15,8 +16,8 @@ export const calculateFees = (
   }
 
   // Pour les investisseurs, on n'applique que les frais d'investisseur correspondant à leur type
-  if (userType === 'basic' || userType === 'qualified') {
-    const investorFeeType = userType === 'basic' ? 'basic_investor_fee' : 'qualified_investor_fee'
+  if (userType === 'basic_investor' || userType === 'qualified_investor') {
+    const investorFeeType = userType === 'basic_investor' ? 'basic_investor_fee' : 'qualified_investor_fee'
     const investorFee = commissions.find(c => c.commission_type === investorFeeType)
     if (investorFee) {
       fees.investor = amount * (investorFee.rate / 100)
@@ -24,7 +25,7 @@ export const calculateFees = (
     fees.total = fees.investor
   } 
   // Pour les emprunteurs, on applique les frais d'administration et de collection
-  else {
+  else if (userType === 'borrower') {
     commissions.forEach(commission => {
       const rate = commission.rate / 100
       switch (commission.commission_type) {
