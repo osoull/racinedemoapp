@@ -84,7 +84,22 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   }
 
   const amountNumber = Number(amount)
-  const userType = user?.user_type as UserType || 'basic_investor'
+  const { data: userProfile } = useQuery({
+    queryKey: ['userProfile', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+      
+      if (error) throw error
+      return data
+    },
+  })
+
+  const userType = (userProfile?.user_type as UserType) || 'basic_investor'
   const fees = calculateFees(amountNumber, commissions || [], userType)
   const totalAmount = amountNumber + fees.total
 
