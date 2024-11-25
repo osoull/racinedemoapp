@@ -1,54 +1,19 @@
-import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, subMonths, startOfYear, endOfYear } from "date-fns";
-import { ar } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
-interface RevenueData {
-  period: string;
-  admin_fees: number;
-  collection_fees: number;
-  basic_investor_fees: number;
-  qualified_investor_fees: number;
-  total_fees: number;
-}
+import { RevenueSummary } from "./RevenueSummary";
+import { RevenueTable } from "./RevenueTable";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    // Subscribe to changes in transactions and commissions tables
-    const transactionsChannel = supabase
-      .channel('revenue_changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'transactions' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["revenue", timeframe] });
-          toast.info("تم تحديث بيانات الإيرادات");
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'commissions' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["revenue", timeframe] });
-          toast.info("تم تحديث معدلات العمولات");
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(transactionsChannel);
-    };
-  }, [timeframe, queryClient]);
-
-  const { data: revenueData, isLoading } = useQuery({
+  
+  const { data: revenueData, isLoading, refetch } = useQuery({
     queryKey: ["revenue", timeframe],
     queryFn: async () => {
       let startDate, endDate;
@@ -70,18 +35,26 @@ export function RevenueDetails() {
       );
 
       if (error) throw error;
-      return data as RevenueData[];
+      return data;
     }
   });
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency',
-      currency: 'SAR'
-    }).format(amount);
-  };
+  // S'abonner aux changements en temps réel des transactions et des frais
+  useRealtimeSubscription(
+    ['transactions', 'fee_tracking'],
+    {
+      onInsert: () => {
+        refetch();
+        toast.info("تم تحديث بيانات الإيرادات");
+      },
+      onUpdate: () => {
+        refetch();
+        toast.info("تم تحديث بيانات الإيرادات");
+      }
+    }
+  );
 
-  const calculateTotals = (data: RevenueData[] | undefined) => {
+  const calculateTotals = (data: typeof revenueData) => {
     if (!data) return {
       admin_fees: 0,
       collection_fees: 0,
@@ -105,8 +78,6 @@ export function RevenueDetails() {
     });
   };
 
-  const totals = calculateTotals(revenueData);
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -114,6 +85,8 @@ export function RevenueDetails() {
       </div>
     );
   }
+
+  const totals = calculateTotals(revenueData);
 
   return (
     <Card>
@@ -147,73 +120,11 @@ export function RevenueDetails() {
           </div>
 
           <TabsContent value="summary">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">رسوم الإدارة</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{formatCurrency(totals.admin_fees)}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">رسوم التحصيل</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{formatCurrency(totals.collection_fees)}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">رسوم المستثمرين الأساسيين</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{formatCurrency(totals.basic_investor_fees)}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">رسوم المستثمرين المؤهلين</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{formatCurrency(totals.qualified_investor_fees)}</div>
-                </CardContent>
-              </Card>
-              <Card className="md:col-span-2 lg:col-span-3">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">إجمالي الإيرادات</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-primary">{formatCurrency(totals.total_fees)}</div>
-                </CardContent>
-              </Card>
-            </div>
+            <RevenueSummary totals={totals} />
           </TabsContent>
 
           <TabsContent value="monthly">
-            <div className="rounded-md border">
-              <div className="grid grid-cols-6 gap-4 p-4 font-medium bg-muted">
-                <div>الفترة</div>
-                <div>رسوم الإدارة</div>
-                <div>رسوم التحصيل</div>
-                <div>رسوم المستثمرين الأساسيين</div>
-                <div>رسوم المستثمرين المؤهلين</div>
-                <div>الإجمالي</div>
-              </div>
-              <div className="divide-y">
-                {revenueData?.map((row) => (
-                  <div key={row.period} className="grid grid-cols-6 gap-4 p-4">
-                    <div>{row.period}</div>
-                    <div>{formatCurrency(row.admin_fees)}</div>
-                    <div>{formatCurrency(row.collection_fees)}</div>
-                    <div>{formatCurrency(row.basic_investor_fees)}</div>
-                    <div>{formatCurrency(row.qualified_investor_fees)}</div>
-                    <div className="font-medium">{formatCurrency(row.total_fees)}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <RevenueTable revenueData={revenueData || []} />
           </TabsContent>
         </Tabs>
       </CardContent>
