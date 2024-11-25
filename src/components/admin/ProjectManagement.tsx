@@ -44,9 +44,16 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           risk_rating:risk_ratings(rating)
         `);
 
+      // Si un filtre est spécifié, l'appliquer
       if (filter) {
         query = query.eq('status', filter);
+      } else {
+        // Si pas de filtre, exclure les projets en attente
+        query = query.neq('status', 'pending');
       }
+
+      // Ordonner par date de création, plus récent en premier
+      query = query.order('created_at', { ascending: false });
 
       const { data, error } = await query;
       if (error) throw error;
@@ -134,6 +141,10 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
       <CardContent>
         {isLoading ? (
           <div className="flex items-center justify-center h-32">جاري التحميل...</div>
+        ) : projects.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            لا توجد مشاريع {filter ? `بحالة ${filter}` : ''}
+          </div>
         ) : (
           <div className="space-y-4">
             {projects.map((project) => (
