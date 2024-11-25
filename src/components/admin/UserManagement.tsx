@@ -16,33 +16,56 @@ const UserManagement: FC<UserManagementProps> = ({ userType }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Mise à jour de la requête pour inclure toutes les informations nécessaires
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['users', userType],
     queryFn: async () => {
       let query = supabase.from('profiles').select(`
         *,
-        investor_kyc (*),
-        borrower_kyc (*)
-      `);
+        investor_kyc (
+          id,
+          verification_status,
+          national_id_number,
+          date_of_birth,
+          occupation,
+          employer,
+          annual_income,
+          source_of_funds,
+          risk_tolerance,
+          investment_experience
+        ),
+        borrower_kyc (
+          id,
+          verification_status,
+          company_registration_number,
+          tax_identification_number,
+          legal_representative_name,
+          legal_representative_id,
+          annual_revenue,
+          number_of_employees,
+          industry_sector,
+          company_website
+        )
+      `).order('created_at', { ascending: false });
       
-      // Filtrer par type d'utilisateur si spécifié
       if (userType) {
         query = query.eq('user_type', userType);
       }
       
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data: profilesData, error: profilesError } = await query;
       
-      if (error) {
-        console.error('Error fetching users:', error);
-        throw error;
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        throw profilesError;
       }
+
+      // Log pour le débogage
+      console.log('Profiles data:', profilesData);
       
-      return data as User[];
+      return profilesData as User[];
     },
+    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
   });
 
-  // Configuration de la souscription en temps réel
   useEffect(() => {
     const channel = supabase
       .channel('profiles-changes')
