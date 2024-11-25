@@ -74,7 +74,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
 
       if (error) {
         console.error('Payment function error:', error)
-        throw new Error(error.message || 'حدث خطأ أثناء معالجة الدفع')
+        throw new Error('حدث خطأ أثناء معالجة الدفع')
       }
 
       if (!data?.sessionUrl) {
@@ -83,7 +83,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
 
       window.location.href = data.sessionUrl
       onSuccess?.()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Payment error:', error)
       toast({
         title: "خطأ في عملية الدفع",
