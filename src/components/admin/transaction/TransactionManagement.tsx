@@ -10,7 +10,8 @@ export function TransactionManagement() {
   const { data: transactions, isLoading } = useQuery({
     queryKey: ['transactions'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Récupérer les transactions avec les frais associés
+      const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select(`
           *,
@@ -22,8 +23,31 @@ export function TransactionManagement() {
         `)
         .order('created_at', { ascending: false })
 
-      if (error) throw error
-      return data
+      if (transactionsError) throw transactionsError
+
+      // Récupérer les frais pour chaque transaction
+      const { data: feesData, error: feesError } = await supabase
+        .from('fee_tracking')
+        .select('*')
+        .in('transaction_id', transactionsData.map(t => t.id))
+
+      if (feesError) throw feesError
+
+      // Associer les frais aux transactions
+      const transactionsWithFees = transactionsData.map(transaction => {
+        const transactionFees = feesData.filter(f => f.transaction_id === transaction.id)
+        const fees = {
+          admin: transactionFees.find(f => f.fee_type === 'admin_fee')?.fee_amount || 0,
+          collection: transactionFees.find(f => f.fee_type === 'collection_fee')?.fee_amount || 0,
+          investor: transactionFees.find(f => 
+            f.fee_type === 'basic_investor_fee' || f.fee_type === 'qualified_investor_fee'
+          )?.fee_amount || 0,
+          total: transactionFees.reduce((sum, fee) => sum + fee.fee_amount, 0)
+        }
+        return { ...transaction, fees }
+      })
+
+      return transactionsWithFees
     }
   })
 
