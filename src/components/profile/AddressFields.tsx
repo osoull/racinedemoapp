@@ -63,7 +63,7 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
           البلد <span className="text-red-500">*</span>
         </label>
         <Select 
-          value={profile.country || ''} 
+          value={profile.country || 'SA'} 
           onValueChange={(value) => setProfile({ ...profile, country: value })}
           required
         >
