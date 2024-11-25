@@ -6,20 +6,14 @@ import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { formatCurrency } from "@/utils/feeCalculations"
+import { UserType } from "@/types/user"
 
 interface CardPaymentProps {
   amount: string
-  fees?: {
-    admin: number;
-    collection: number;
-    investor: number;
-    total: number;
-  }
   onSuccess?: () => void
-  userType?: string
 }
 
-export function CardPayment({ amount, fees, onSuccess, userType }: CardPaymentProps) {
+export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
@@ -36,16 +30,19 @@ export function CardPayment({ amount, fees, onSuccess, userType }: CardPaymentPr
     
     setIsLoading(true)
     try {
-      // Pour les emprunteurs, on ne prend que le montant des frais
-      const paymentAmount = userType === 'borrower' && fees 
-        ? fees.total 
-        : Number(amount)
+      const amountNumber = Number(amount)
+      const userProfile = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+
+      if (!userProfile.data) throw new Error('User profile not found')
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { 
-          amount: paymentAmount,
-          user_id: user.id,
-          fees: fees
+          amount: amountNumber,
+          user_id: user.id
         }
       })
 
@@ -70,29 +67,14 @@ export function CardPayment({ amount, fees, onSuccess, userType }: CardPaymentPr
     }
   }
 
-  // Pour les emprunteurs, on affiche uniquement le montant total des frais
-  const displayAmount = userType === 'borrower' && fees 
-    ? fees.total 
-    : Number(amount)
+  const amountNumber = Number(amount)
 
   return (
     <div className="space-y-4">
       <div className="text-sm space-y-2">
-        {userType === 'borrower' && fees ? (
-          <>
-            <div className="flex justify-between">
-              <span>رسوم الإدارة:</span>
-              <span>{formatCurrency(fees.admin)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>رسوم التحصيل:</span>
-              <span>{formatCurrency(fees.collection)}</span>
-            </div>
-          </>
-        ) : null}
         <div className="flex justify-between font-bold border-t pt-2">
           <span>المبلغ الإجمالي:</span>
-          <span>{formatCurrency(displayAmount)}</span>
+          <span>{formatCurrency(amountNumber)}</span>
         </div>
       </div>
 
@@ -107,7 +89,7 @@ export function CardPayment({ amount, fees, onSuccess, userType }: CardPaymentPr
             جاري المعالجة...
           </>
         ) : (
-          `الدفع بالبطاقة (${formatCurrency(displayAmount)})`
+          `الدفع بالبطاقة (${formatCurrency(amountNumber)})`
         )}
       </Button>
     </div>

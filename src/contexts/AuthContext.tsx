@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/components/ui/use-toast'
-import { useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
   session: Session | null
@@ -20,63 +19,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
-  const navigate = useNavigate()
 
   useEffect(() => {
-    // Récupérer la session initiale
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Écouter les changements d'état d'authentification
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
-
-      if (!session) {
-        navigate('/')
-        return
-      }
-
-      // Récupérer le type d'utilisateur et rediriger en conséquence
-      if (session?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('user_type')
-          .eq('id', session.user.id)
-          .single()
-
-        if (profile) {
-          switch (profile.user_type) {
-            case "borrower":
-              navigate("/borrower")
-              break
-            case "basic_investor":
-            case "qualified_investor":
-              navigate("/investor")
-              break
-            case "admin":
-              navigate("/admin")
-              break
-            case "investment_manager":
-              navigate("/investment-manager")
-              break
-            default:
-              navigate("/")
-          }
-        }
-      }
     })
 
     return () => {
       subscription.unsubscribe()
     }
-  }, [navigate])
+  }, [])
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -134,7 +96,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-      navigate('/')
       toast({
         title: "نجاح",
         description: "تم تسجيل الخروج بنجاح",
