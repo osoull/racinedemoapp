@@ -1,119 +1,164 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { User } from "@/types/user";
-import { Button } from "@/components/ui/button";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { Loader2 } from "lucide-react"
+import { DataTable } from "@/components/ui/data-table"
+import { ColumnDef } from "@tanstack/react-table"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+interface Borrower {
+  id: string
+  created_at: string
+  email: string
+  full_name: string
+  company_name: string
+  status: string
+  kyc_status: string
+}
+
+const columns: ColumnDef<Borrower>[] = [
+  {
+    accessorKey: "full_name",
+    header: "الاسم الكامل",
+  },
+  {
+    accessorKey: "email",
+    header: "البريد الإلكتروني",
+  },
+  {
+    accessorKey: "company_name",
+    header: "اسم الشركة",
+  },
+  {
+    accessorKey: "status",
+    header: "الحالة",
+    cell: ({ row }) => (
+      <Badge variant={row.original.status === "active" ? "default" : "secondary"}>
+        {row.original.status === "active" ? "نشط" : "معلق"}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: "kyc_status",
+    header: "حالة KYC",
+    cell: ({ row }) => (
+      <Badge variant={row.original.kyc_status === "approved" ? "default" : "secondary"}>
+        {row.original.kyc_status === "approved" ? "معتمد" : "قيد المراجعة"}
+      </Badge>
+    ),
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => (
+      <Button variant="ghost" size="sm">
+        عرض التفاصيل
+      </Button>
+    ),
+  },
+]
 
 export default function BorrowerManagement() {
-  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("all")
 
   const { data: borrowers, isLoading } = useQuery({
-    queryKey: ["borrowers"],
+    queryKey: ["borrowers", activeTab],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("profiles")
-        .select(`
-          *,
-          borrower_kyc (
-            company_registration_number,
-            tax_identification_number,
-            verification_status
-          )
-        `)
-        .eq("user_type", "borrower");
+        .select("*")
+        .eq("user_type", "borrower")
 
-      if (error) throw error;
-      return data as User[];
+      if (activeTab !== "all") {
+        query = query.eq("status", activeTab)
+      }
+
+      const { data, error } = await query
+
+      if (error) throw error
+      return data as Borrower[]
     },
-  });
-
-  const handleDelete = async (user: User) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("id", user.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "تم بنجاح",
-        description: "تم حذف المستخدم بنجاح",
-      });
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء حذف المستخدم",
-        variant: "destructive",
-      });
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
+  })
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>إدارة المقترضين</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="all" className="w-full" dir="rtl">
-          <TabsList className="mb-4">
-            <TabsTrigger value="all">الكل</TabsTrigger>
-            <TabsTrigger value="pending">في انتظار التحقق</TabsTrigger>
-            <TabsTrigger value="verified">تم التحقق</TabsTrigger>
-            <TabsTrigger value="rejected">مرفوض</TabsTrigger>
-          </TabsList>
+    <DashboardLayout sidebar={<AdminSidebar />}>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">إدارة المقترضين</h2>
+          <p className="text-muted-foreground">
+            إدارة ومراقبة حسابات المقترضين
+          </p>
+        </div>
 
-          <div className="mt-4">
-            {borrowers && borrowers.length > 0 ? (
-              <div className="rounded-md border">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="p-2 text-right">الاسم</th>
-                      <th className="p-2 text-right">البريد الإلكتروني</th>
-                      <th className="p-2 text-right">حالة التحقق</th>
-                      <th className="p-2 text-right">الإجراءات</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {borrowers.map((borrower) => (
-                      <tr key={borrower.id} className="border-b">
-                        <td className="p-2">
-                          {borrower.first_name} {borrower.last_name}
-                        </td>
-                        <td className="p-2">{borrower.email}</td>
-                        <td className="p-2">{borrower.kyc_status}</td>
-                        <td className="p-2">
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(borrower)}
-                          >
-                            حذف
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground">لا يوجد مقترضين</p>
-            )}
-          </div>
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
+        <Card>
+          <CardHeader>
+            <CardTitle>المقترضون</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab}>
+              <TabsList>
+                <TabsTrigger value="all">الكل</TabsTrigger>
+                <TabsTrigger value="active">نشط</TabsTrigger>
+                <TabsTrigger value="pending">معلق</TabsTrigger>
+                <TabsTrigger value="blocked">محظور</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="all">
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-96">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <DataTable columns={columns} data={borrowers || []} />
+                )}
+              </TabsContent>
+
+              <TabsContent value="active">
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-96">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <DataTable 
+                    columns={columns} 
+                    data={borrowers?.filter(b => b.status === "active") || []} 
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="pending">
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-96">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <DataTable 
+                    columns={columns} 
+                    data={borrowers?.filter(b => b.status === "pending") || []} 
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="blocked">
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-96">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <DataTable 
+                    columns={columns} 
+                    data={borrowers?.filter(b => b.status === "blocked") || []} 
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
+  )
 }
