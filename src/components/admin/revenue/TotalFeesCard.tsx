@@ -9,25 +9,21 @@ export function TotalFeesCard() {
   const { data: totalFees, isLoading, refetch } = useQuery({
     queryKey: ["total-fees"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc(
-        'calculate_revenue_by_period',
-        {
-          start_date: new Date(0).toISOString(), // From beginning
-          end_date: new Date().toISOString()
-        }
-      );
-
+      const { data, error } = await supabase
+        .from('fee_tracking')
+        .select('fee_amount')
+      
       if (error) throw error;
       
-      // Calculate total fees from all periods
-      const total = data.reduce((sum, period) => sum + period.total_fees, 0);
+      // Calculate total fees by summing all fee_amounts
+      const total = data.reduce((sum, fee) => sum + fee.fee_amount, 0);
       return total;
     }
   });
 
-  // Subscribe to real-time changes in transactions and fee tracking
+  // Subscribe to real-time changes in fee_tracking
   useRealtimeSubscription(
-    ['transactions', 'fee_tracking'],
+    ['fee_tracking'],
     {
       onInsert: () => {
         refetch();
