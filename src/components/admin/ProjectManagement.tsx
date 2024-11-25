@@ -28,13 +28,13 @@ export interface ProjectManagementProps {
 const getStatusInArabic = (status: string | undefined) => {
   switch (status) {
     case 'pending':
-      return 'المشاريع قيد المراجعة';
+      return 'مشاريع قيد المراجعة';
     case 'active':
-      return 'المشاريع النشطة';
+      return 'مشاريع نشطة';
     case 'completed':
-      return 'المشاريع المكتملة';
+      return 'مشاريع مكتملة';
     case 'rejected':
-      return 'المشاريع المرفوضة';
+      return 'مشاريع مرفوضة';
     default:
       return '';
   }
