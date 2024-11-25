@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, CreditCard } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BankTransferDetails } from "@/components/investor/wallet/deposit/BankTransferDetails";
+import { supabase } from "@/integrations/supabase/client";
+import { useBankDetails } from "@/hooks/useBankDetails";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
@@ -19,6 +21,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   const [step, setStep] = useState(1);
   const [projectData, setProjectData] = useState<any>(null);
   const { toast } = useToast();
+  const { data: bankDetails, isLoading, error } = useBankDetails();
 
   const handleProjectDetailsSubmit = (data: any) => {
     setProjectData(data);
@@ -105,7 +108,11 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
                     يرجى استخدام المعلومات البنكية أدناه لإتمام التحويل. سيتم تحديث رصيدك تلقائياً خلال يوم عمل واحد بعد استلام وتأكيد التحويل.
                   </AlertDescription>
                 </Alert>
-                <BankTransferDetails />
+                <BankTransferDetails 
+                  bankDetails={bankDetails}
+                  isLoading={isLoading}
+                  error={error}
+                />
                 <Button 
                   onClick={handleBankTransfer} 
                   className="w-full"
