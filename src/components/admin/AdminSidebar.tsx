@@ -11,7 +11,8 @@ import {
   Wallet,
   PieChart,
   MessageSquare,
-  Users
+  Users,
+  DollarSign
 } from "lucide-react"
 
 const menuItems = [
@@ -44,6 +45,12 @@ const menuItems = [
     icon: Wallet,
     path: "/admin/transactions",
     description: "إدارة المعاملات المالية"
+  },
+  {
+    title: "الإيرادات",
+    icon: DollarSign,
+    path: "/admin/revenue",
+    description: "تتبع وتحليل الإيرادات"
   },
   {
     title: "التحقق والامتثال",

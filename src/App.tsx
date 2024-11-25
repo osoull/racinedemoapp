@@ -20,6 +20,7 @@ import { TransactionManagement } from "@/components/admin/transaction/Transactio
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
 import SupportTools from "@/components/admin/SupportTools"
 import PlatformSettings from "@/components/admin/PlatformSettings"
+import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
@@ -127,6 +128,7 @@ function App() {
                           <Route path="compliance" element={<KYCManagement />} />
                           <Route path="support" element={<SupportTools />} />
                           <Route path="settings/*" element={<PlatformSettings />} />
+                          <Route path="revenue" element={<RevenueTracking />} />
                         </Routes>
                       </PrivateRoute>
                     }
