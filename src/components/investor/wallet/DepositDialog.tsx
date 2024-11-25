@@ -19,6 +19,7 @@ interface DepositDialogProps {
 export function DepositDialog({ onSuccess }: DepositDialogProps) {
   const [amount, setAmount] = useState("")
   const [isOpen, setIsOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [amountError, setAmountError] = useState<string>("")
   const { toast } = useToast()
   const { data: bankDetails, isLoading, error } = useBankDetails()
@@ -42,18 +43,24 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     if (!validateAmount() || !user) return
 
     try {
-      const { error: transactionError } = await supabase
+      setIsSubmitting(true)
+
+      const { data, error: transactionError } = await supabase
         .from('transactions')
         .insert([
           {
+            user_id: user.id,
             amount: Number(amount),
             type: 'deposit',
-            status: 'pending',
-            user_id: user.id
+            status: 'pending'
           }
         ])
+        .select()
+        .single()
 
-      if (transactionError) throw transactionError
+      if (transactionError) {
+        throw transactionError
+      }
 
       toast({
         title: "تم تسجيل طلب التحويل",
@@ -69,6 +76,8 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
         title: "خطأ",
         description: "حدث خطأ أثناء تسجيل التحويل. يرجى المحاولة مرة أخرى.",
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -77,6 +86,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     if (!open) {
       setAmount("")
       setAmountError("")
+      setIsSubmitting(false)
     }
   }
 
@@ -142,9 +152,16 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
                 onClick={handleBankTransfer} 
                 className="w-full"
                 variant="default"
-                disabled={isLoading || !!error}
+                disabled={isLoading || !!error || isSubmitting}
               >
-                تأكيد التحويل البنكي
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    جاري التسجيل...
+                  </>
+                ) : (
+                  "تأكيد التحويل البنكي"
+                )}
               </Button>
             </TabsContent>
 
