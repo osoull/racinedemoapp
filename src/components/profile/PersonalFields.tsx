@@ -28,6 +28,18 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground/80">
+          الاسم الأوسط
+        </label>
+        <Input
+          value={profile.middle_name || ''}
+          onChange={(e) => handleChange('middle_name', e.target.value)}
+          placeholder="أدخل اسمك الأوسط (اختياري)"
+          className="bg-background/50 border-muted-foreground/20 focus:border-primary"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-foreground/80">
           اسم العائلة <span className="text-red-500">*</span>
         </label>
         <Input
