@@ -25,7 +25,14 @@ import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) {
   const { user, loading } = useAuth()
@@ -39,23 +46,21 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
         return
       }
 
-      const { data: profile, error } = await supabase
+      const { data: profile } = await supabase
         .from('profiles')
         .select('user_type')
         .eq('id', user.id)
         .single()
 
-      if (error) {
-        console.error("Error fetching user type:", error)
-        setIsLoading(false)
-        return
-      }
-
       setUserType(profile?.user_type)
       setIsLoading(false)
     }
 
-    getUserType()
+    if (user) {
+      getUserType()
+    } else {
+      setIsLoading(false)
+    }
   }, [user])
 
   if (loading || isLoading) {
@@ -77,9 +82,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system" storageKey="app-theme">
-        <AuthProvider>
-          <NotificationsProvider>
-            <BrowserRouter>
+        <BrowserRouter>
+          <AuthProvider>
+            <NotificationsProvider>
               <div className="min-h-screen bg-background font-messiri" dir="rtl">
                 <Routes>
                   <Route path="/" element={<Auth />} />
@@ -147,9 +152,9 @@ function App() {
                 </Routes>
                 <Toaster />
               </div>
-            </BrowserRouter>
-          </NotificationsProvider>
-        </AuthProvider>
+            </NotificationsProvider>
+          </AuthProvider>
+        </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>
   )
