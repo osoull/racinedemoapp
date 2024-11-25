@@ -13,6 +13,7 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') as string, {
 })
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -20,10 +21,16 @@ serve(async (req) => {
   try {
     const { amount, user_id } = await req.json()
 
+    if (!amount || !user_id) {
+      throw new Error('Amount and user_id are required')
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    console.log('Creating Stripe session for amount:', amount)
 
     // Create Stripe session
     const session = await stripe.checkout.sessions.create({
@@ -46,6 +53,8 @@ serve(async (req) => {
       client_reference_id: user_id,
     })
 
+    console.log('Stripe session created:', session.id)
+
     // Create transaction record
     const { data: transaction, error: transactionError } = await supabaseClient
       .from('transactions')
@@ -58,7 +67,12 @@ serve(async (req) => {
       .select()
       .single()
 
-    if (transactionError) throw transactionError
+    if (transactionError) {
+      console.error('Error creating transaction:', transactionError)
+      throw transactionError
+    }
+
+    console.log('Transaction created:', transaction.id)
 
     // Create stripe payment record
     const { error: stripePaymentError } = await supabaseClient
@@ -71,7 +85,10 @@ serve(async (req) => {
         status: 'pending'
       })
 
-    if (stripePaymentError) throw stripePaymentError
+    if (stripePaymentError) {
+      console.error('Error creating stripe payment:', stripePaymentError)
+      throw stripePaymentError
+    }
 
     return new Response(
       JSON.stringify({ sessionId: session.id, sessionUrl: session.url }),
@@ -81,7 +98,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
-    console.error('Error creating payment:', error)
+    console.error('Error in create-payment function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {

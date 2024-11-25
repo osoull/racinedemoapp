@@ -72,20 +72,22 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
         }
       })
 
-      if (error) throw error
-
-      if (data?.sessionUrl) {
-        window.location.href = data.sessionUrl
-      } else {
-        throw new Error('No session URL returned')
+      if (error) {
+        console.error('Payment function error:', error)
+        throw new Error(error.message || 'حدث خطأ أثناء معالجة الدفع')
       }
 
+      if (!data?.sessionUrl) {
+        throw new Error('لم يتم إنشاء جلسة الدفع')
+      }
+
+      window.location.href = data.sessionUrl
       onSuccess?.()
     } catch (error) {
       console.error('Payment error:', error)
       toast({
         title: "خطأ في عملية الدفع",
-        description: "حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى.",
+        description: error.message || "حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى.",
         variant: "destructive"
       })
     } finally {
