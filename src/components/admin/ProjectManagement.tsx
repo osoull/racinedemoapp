@@ -28,13 +28,13 @@ export interface ProjectManagementProps {
 const getStatusInArabic = (status: string | undefined) => {
   switch (status) {
     case 'pending':
-      return 'قيد المراجعة';
+      return 'المشاريع قيد المراجعة';
     case 'active':
-      return 'نشط';
+      return 'المشاريع النشطة';
     case 'completed':
-      return 'مكتمل';
+      return 'المشاريع المكتملة';
     case 'rejected':
-      return 'مرفوض';
+      return 'المشاريع المرفوضة';
     default:
       return '';
   }
@@ -159,7 +159,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           <div className="flex items-center justify-center h-32">جاري التحميل...</div>
         ) : projects.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            لا توجد مشاريع {filter ? `بحالة ${getStatusInArabic(filter)}` : ''}
+            لا توجد {filter ? getStatusInArabic(filter) : 'مشاريع'}
           </div>
         ) : (
           <div className="space-y-4">
