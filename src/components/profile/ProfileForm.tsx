@@ -53,10 +53,21 @@ export function ProfileForm() {
       return
     }
 
-    if (!profile.first_name || !profile.last_name) {
+    // Vérification que tous les champs requis sont remplis
+    const requiredFields = [
+      'first_name',
+      'last_name',
+      'phone',
+      'address',
+      'national_id'
+    ]
+
+    const missingFields = requiredFields.filter(field => !profile[field as keyof Profile])
+
+    if (missingFields.length > 0) {
       toast({
         title: "خطأ",
-        description: "الاسم الأول واسم العائلة مطلوبان",
+        description: "يرجى ملء جميع الحقول المطلوبة",
         variant: "destructive",
       })
       return
@@ -76,7 +87,6 @@ export function ProfileForm() {
 
       if (updateError) throw updateError
 
-      // Forcer un rafraîchissement des données
       await queryClient.invalidateQueries({ queryKey: ["profile"] })
       
       toast({
@@ -146,6 +156,7 @@ export function ProfileForm() {
                 onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                 placeholder="أدخل رقم هاتفك"
                 dir="ltr"
+                required
               />
             </div>
 
@@ -156,6 +167,7 @@ export function ProfileForm() {
                 onChange={(e) => setProfile({ ...profile, national_id: e.target.value })}
                 placeholder="أدخل رقم هويتك"
                 dir="ltr"
+                required
               />
             </div>
 
@@ -165,6 +177,7 @@ export function ProfileForm() {
                 value={profile.address || ''}
                 onChange={(e) => setProfile({ ...profile, address: e.target.value })}
                 placeholder="أدخل عنوانك"
+                required
               />
             </div>
           </div>
