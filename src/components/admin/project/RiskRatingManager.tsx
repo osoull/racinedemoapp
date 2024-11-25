@@ -64,7 +64,7 @@ export function RiskRatingManager({
   useEffect(() => {
     const channel = supabase
       .channel('risk_rating_updates')
-      .on(
+      .on<Tables<"projects">>(
         'postgres_changes',
         {
           event: '*',
