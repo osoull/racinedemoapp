@@ -72,12 +72,21 @@ export function ProfileForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Submitting profile:', profile);
     
     if (!user?.id) {
       toast({
         title: "خطأ",
         description: "يجب تسجيل الدخول أولاً",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Vérifier que le pays est bien défini
+    if (!profile.country) {
+      toast({
+        title: "خطأ",
+        description: "يرجى اختيار البلد",
         variant: "destructive",
       })
       return
@@ -89,12 +98,14 @@ export function ProfileForm() {
     setSaving(true)
     
     try {
+      const dataToUpdate = {
+        ...profile,
+        updated_at: new Date().toISOString()
+      }
+
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({
-          ...profile,
-          updated_at: new Date().toISOString()
-        })
+        .update(dataToUpdate)
         .eq('id', user.id)
 
       if (updateError) throw updateError
