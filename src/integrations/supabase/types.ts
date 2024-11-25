@@ -933,7 +933,12 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      project_status:
+        | "pending"
+        | "approved"
+        | "active"
+        | "rejected"
+        | "completed"
     }
     CompositeTypes: {
       [_ in never]: never

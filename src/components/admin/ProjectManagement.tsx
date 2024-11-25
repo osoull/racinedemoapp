@@ -22,7 +22,7 @@ type Project = Tables<"projects"> & {
 };
 
 export interface ProjectManagementProps {
-  filter?: string;
+  filter?: 'pending' | 'active' | 'completed' | 'rejected';
 }
 
 const ProjectManagement = ({ filter }: ProjectManagementProps) => {
@@ -44,15 +44,12 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
           risk_rating:risk_ratings(rating)
         `);
 
-      // Si un filtre est spécifié, l'appliquer
+      // Apply status filter if specified
       if (filter) {
         query = query.eq('status', filter);
-      } else {
-        // Si pas de filtre, exclure les projets en attente
-        query = query.neq('status', 'pending');
       }
 
-      // Ordonner par date de création, plus récent en premier
+      // Order by creation date, newest first
       query = query.order('created_at', { ascending: false });
 
       const { data, error } = await query;
