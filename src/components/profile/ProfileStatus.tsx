@@ -25,6 +25,21 @@ export function ProfileStatus() {
 
   if (!profile) return null
 
+  const getUserTypeLabel = (userType: string) => {
+    switch (userType) {
+      case 'admin':
+        return 'مدير';
+      case 'investment_manager':
+        return 'مدير استثمار';
+      case 'borrower':
+        return 'مقترض';
+      case 'investor':
+        return 'مستثمر';
+      default:
+        return userType;
+    }
+  }
+
   return (
     <Card className="mb-8">
       <CardContent className="pt-6">
@@ -39,7 +54,7 @@ export function ProfileStatus() {
           <div>
             <p className="text-sm text-muted-foreground mb-2">نوع الحساب</p>
             <Badge variant="outline">
-              {profile.user_type === 'borrower' ? 'مقترض' : 'مستثمر'}
+              {getUserTypeLabel(profile.user_type)}
             </Badge>
           </div>
 
