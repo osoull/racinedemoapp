@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "@/types/user";
-import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 
 export default function BorrowerManagement() {

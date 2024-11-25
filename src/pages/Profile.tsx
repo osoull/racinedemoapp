@@ -22,10 +22,15 @@ export default function Profile() {
     last_name: "",
     phone: "",
     address: "",
+    user_type: "basic_investor",
+    id: "",
+    email: "",
   } as ProfileType)
 
   const { updateProfile } = useProfileSync((updatedProfile) => {
-    setProfile(updatedProfile)
+    if (updatedProfile) {
+      setProfile(updatedProfile)
+    }
   })
 
   useEffect(() => {
@@ -45,7 +50,7 @@ export default function Profile() {
       if (error) throw error
 
       if (data) {
-        setProfile(data)
+        setProfile(data as ProfileType)
       }
     } catch (error) {
       console.error("Error loading profile:", error)
