@@ -6,7 +6,7 @@ import { CardPayment } from "@/components/investor/wallet/deposit/CardPayment";
 import { useToast } from "@/components/ui/use-toast";
 import { Tables } from "@/integrations/supabase/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, CreditCard } from "lucide-react";
+import { Building2, CreditCard, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BankTransferDetails } from "@/components/investor/wallet/deposit/BankTransferDetails";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,8 @@ interface ProjectFormStepsProps {
 export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) => {
   const [step, setStep] = useState(1);
   const [projectData, setProjectData] = useState<any>(project || null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionType, setSubmissionType] = useState<"bank" | "card" | null>(null);
   const { toast } = useToast();
   const { data: bankDetails, isLoading, error } = useBankDetails();
   const { user } = useAuth();
@@ -50,6 +52,8 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   };
 
   const handlePaymentSuccess = () => {
+    setIsSubmitted(true);
+    setSubmissionType("card");
     toast({
       title: "تم الدفع بنجاح",
       description: "سيتم مراجعة طلبك من قبل فريق الإدارة"
@@ -70,7 +74,6 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     try {
       const totalFees = calculateTotalFees(projectData.funding_goal);
 
-      // First create the transaction
       const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
         .insert({
@@ -84,7 +87,6 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
 
       if (transactionError) throw transactionError;
 
-      // Then create the project with the transaction ID
       const { error: projectError } = await supabase
         .from('projects')
         .insert({
@@ -95,6 +97,8 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
 
       if (projectError) throw projectError;
 
+      setIsSubmitted(true);
+      setSubmissionType("bank");
       toast({
         title: "تم تسجيل طلب التحويل",
         description: "سيتم تحديث رصيدك بعد التأكد من التحويل",
@@ -110,6 +114,31 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
       });
     }
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="text-center space-y-4 py-8">
+        <CheckCircle2 className="mx-auto h-16 w-16 text-green-500" />
+        <h2 className="text-2xl font-semibold">تم تقديم المشروع بنجاح!</h2>
+        {submissionType === "bank" ? (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              تم استلام طلب التحويل البنكي الخاص بك. سيتم مراجعة المشروع بمجرد التأكد من التحويل.
+            </p>
+            <Alert>
+              <AlertDescription>
+                يرجى الاحتفاظ بإيصال التحويل البنكي للرجوع إليه عند الحاجة.
+              </AlertDescription>
+            </Alert>
+          </div>
+        ) : (
+          <p className="text-muted-foreground">
+            تم استلام الدفع بنجاح. سيتم مراجعة مشروعك من قبل فريق الإدارة وسنخبرك بأي تحديثات.
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

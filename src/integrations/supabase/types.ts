@@ -639,6 +639,7 @@ export type Database = {
           description: string | null
           funding_goal: number
           id: string
+          min_investment: number
           owner_id: string | null
           status: string | null
           title: string
@@ -651,6 +652,7 @@ export type Database = {
           description?: string | null
           funding_goal: number
           id?: string
+          min_investment?: number
           owner_id?: string | null
           status?: string | null
           title: string
@@ -663,6 +665,7 @@ export type Database = {
           description?: string | null
           funding_goal?: number
           id?: string
+          min_investment?: number
           owner_id?: string | null
           status?: string | null
           title?: string
