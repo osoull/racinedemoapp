@@ -538,7 +538,7 @@ export type Database = {
           kyc_status: string | null
           last_name: string
           middle_name: string | null
-          national_id: string | null
+          national_id: string
           phone: string | null
           postal_code: string | null
           profile_completed: boolean | null
@@ -563,7 +563,7 @@ export type Database = {
           kyc_status?: string | null
           last_name: string
           middle_name?: string | null
-          national_id?: string | null
+          national_id: string
           phone?: string | null
           postal_code?: string | null
           profile_completed?: boolean | null
@@ -588,7 +588,7 @@ export type Database = {
           kyc_status?: string | null
           last_name?: string
           middle_name?: string | null
-          national_id?: string | null
+          national_id?: string
           phone?: string | null
           postal_code?: string | null
           profile_completed?: boolean | null
