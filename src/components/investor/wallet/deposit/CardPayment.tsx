@@ -15,6 +15,13 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   const { user } = useAuth()
   const { toast } = useToast()
 
+  const formatCurrency = (amount: string | number) => {
+    return new Intl.NumberFormat('ar-SA', {
+      style: 'currency',
+      currency: 'SAR'
+    }).format(Number(amount))
+  }
+
   const handleCardPayment = async () => {
     if (!user || !amount) {
       toast({
@@ -67,7 +74,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
           جاري المعالجة...
         </>
       ) : (
-        'الدفع بالبطاقة'
+        `الدفع بالبطاقة (${formatCurrency(amount)})`
       )}
     </Button>
   )

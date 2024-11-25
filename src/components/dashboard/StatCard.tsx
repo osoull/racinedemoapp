@@ -22,6 +22,16 @@ export function StatCard({
   iconBgColor = "bg-primary-50",
   iconColor = "text-primary"
 }: StatCardProps) {
+  const formatCurrency = (value: string | number) => {
+    if (typeof value === 'number') {
+      return new Intl.NumberFormat('ar-SA', {
+        style: 'currency',
+        currency: 'SAR'
+      }).format(value)
+    }
+    return value
+  }
+
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-center justify-between">
@@ -40,7 +50,7 @@ export function StatCard({
       <div className="mt-4">
         <p className="text-sm text-muted-foreground">{title}</p>
         <div className="flex items-baseline gap-2">
-          <h3 className="text-2xl font-bold">{value}</h3>
+          <h3 className="text-2xl font-bold">{formatCurrency(value)}</h3>
           {subtitle && (
             <p className="text-sm text-muted-foreground">{subtitle}</p>
           )}

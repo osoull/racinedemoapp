@@ -29,6 +29,13 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
     },
   })
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ar-SA', {
+      style: 'currency',
+      currency: 'SAR'
+    }).format(amount)
+  }
+
   if (isLoading) return <div>جاري التحميل...</div>
 
   const investmentTransactions = transactions?.filter(t => 
@@ -71,19 +78,19 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">رسوم الإدارة</h3>
-          <p className="text-2xl font-bold">{totalFees.admin.toLocaleString()} ريال</p>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees.admin)}</p>
         </Card>
         <Card className="p-4">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">رسوم التحصيل</h3>
-          <p className="text-2xl font-bold">{totalFees.collection.toLocaleString()} ريال</p>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees.collection)}</p>
         </Card>
         <Card className="p-4">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">رسوم المستثمر الأساسي</h3>
-          <p className="text-2xl font-bold">{totalFees.basic_investor.toLocaleString()} ريال</p>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees.basic_investor)}</p>
         </Card>
         <Card className="p-4">
           <h3 className="text-sm font-medium text-muted-foreground mb-2">رسوم المستثمر المؤهل</h3>
-          <p className="text-2xl font-bold">{totalFees.qualified_investor.toLocaleString()} ريال</p>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees.qualified_investor)}</p>
         </Card>
       </div>
 
@@ -109,28 +116,28 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
                       }
                     </p>
                   </div>
-                  <p className="font-medium">{transaction.amount.toLocaleString()} ريال</p>
+                  <p className="font-medium">{formatCurrency(transaction.amount)}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
                     <span className="text-muted-foreground">رسوم الإدارة:</span>
-                    <span className="float-left">{fees.admin.toLocaleString()} ريال</span>
+                    <span className="float-left">{formatCurrency(fees.admin)}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">رسوم التحصيل:</span>
-                    <span className="float-left">{fees.collection.toLocaleString()} ريال</span>
+                    <span className="float-left">{formatCurrency(fees.collection)}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">رسوم المستثمر الأساسي:</span>
-                    <span className="float-left">{fees.basic_investor.toLocaleString()} ريال</span>
+                    <span className="float-left">{formatCurrency(fees.basic_investor)}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">رسوم المستثمر المؤهل:</span>
-                    <span className="float-left">{fees.qualified_investor.toLocaleString()} ريال</span>
+                    <span className="float-left">{formatCurrency(fees.qualified_investor)}</span>
                   </div>
                   <div className="col-span-2">
                     <span className="font-medium">صافي الاستثمار:</span>
-                    <span className="float-left font-medium">{netAmount.toLocaleString()} ريال</span>
+                    <span className="float-left font-medium">{formatCurrency(netAmount)}</span>
                   </div>
                 </div>
               </div>

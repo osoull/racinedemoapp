@@ -22,6 +22,13 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
     t.type === 'deposit' || t.type === 'withdrawal'
   )
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('ar-SA', {
+      style: 'currency',
+      currency: 'SAR'
+    }).format(amount)
+  }
+
   return (
     <div className="space-y-4">
       <Table>
@@ -46,7 +53,7 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
               <TableCell>
                 {transaction.type === 'deposit' ? 'إيداع' : 'سحب'}
               </TableCell>
-              <TableCell>{transaction.amount.toLocaleString()} ريال</TableCell>
+              <TableCell>{formatCurrency(transaction.amount)}</TableCell>
               <TableCell>
                 <Badge variant={
                   transaction.status === 'completed' ? 'default' :
