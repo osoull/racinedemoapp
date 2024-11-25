@@ -30,14 +30,19 @@ interface ProjectCardProps {
 
 export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: ProjectCardProps) => {
   const [isRatingOpen, setIsRatingOpen] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const handleApprove = async () => {
     try {
+      setIsApproving(true);
       const { error } = await supabase
         .from('projects')
-        .update({ status: 'approved' })
+        .update({ 
+          status: 'approved',
+          updated_at: new Date().toISOString()
+        })
         .eq('id', project.id);
 
       if (error) throw error;
@@ -46,13 +51,16 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
         title: "تم اعتماد المشروع بنجاح",
       });
 
-      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+      await queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
     } catch (error) {
+      console.error("Error approving project:", error);
       toast({
         title: "حدث خطأ",
         description: "لم نتمكن من اعتماد المشروع",
         variant: "destructive",
       });
+    } finally {
+      setIsApproving(false);
     }
   };
 
@@ -98,8 +106,13 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
                 </Button>
               )}
               {isAdmin && project.status === 'pending' && (
-                <Button variant="default" size="sm" onClick={handleApprove}>
-                  اعتماد المشروع
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={handleApprove}
+                  disabled={isApproving}
+                >
+                  {isApproving ? "جاري الاعتماد..." : "اعتماد المشروع"}
                 </Button>
               )}
             </>
