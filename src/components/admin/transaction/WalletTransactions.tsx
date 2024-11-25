@@ -64,7 +64,13 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
         .update({ status: newStatus })
         .eq('id', transactionId)
 
-      if (error) throw error
+      if (error) {
+        toast.error('حدث خطأ أثناء تحديث حالة المعاملة')
+        throw error
+      }
+
+      // Forcer la mise à jour des données
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
 
       toast.success(
         newStatus === 'completed' 
@@ -73,7 +79,6 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
       )
     } catch (error) {
       console.error('Error updating transaction:', error)
-      toast.error('حدث خطأ أثناء تحديث حالة المعاملة')
     }
   }
 
