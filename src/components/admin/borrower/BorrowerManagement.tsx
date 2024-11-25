@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { UserList } from "../UserList";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "@/types/user";
+import { DataTable } from "@/components/ui/data-table";
+import { Button } from "@/components/ui/button";
 
 export default function BorrowerManagement() {
   const { toast } = useToast();
@@ -52,50 +53,6 @@ export default function BorrowerManagement() {
     }
   };
 
-  const handleUpdateType = async (userId: string, newType: string) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ user_type: newType })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      toast({
-        title: "تم بنجاح",
-        description: "تم تحديث نوع المستخدم بنجاح",
-      });
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث نوع المستخدم",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleEdit = async (userId: string, updatedData: Partial<User>) => {
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update(updatedData)
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      toast({
-        title: "تم بنجاح",
-        description: "تم تحديث بيانات المستخدم بنجاح",
-      });
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث بيانات المستخدم",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -118,12 +75,44 @@ export default function BorrowerManagement() {
             <TabsTrigger value="rejected">مرفوض</TabsTrigger>
           </TabsList>
 
-          <UserList
-            users={borrowers}
-            onDelete={handleDelete}
-            onUpdateType={handleUpdateType}
-            onEdit={handleEdit}
-          />
+          <div className="mt-4">
+            {borrowers && borrowers.length > 0 ? (
+              <div className="rounded-md border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="p-2 text-right">الاسم</th>
+                      <th className="p-2 text-right">البريد الإلكتروني</th>
+                      <th className="p-2 text-right">حالة التحقق</th>
+                      <th className="p-2 text-right">الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {borrowers.map((borrower) => (
+                      <tr key={borrower.id} className="border-b">
+                        <td className="p-2">
+                          {borrower.first_name} {borrower.last_name}
+                        </td>
+                        <td className="p-2">{borrower.email}</td>
+                        <td className="p-2">{borrower.kyc_status}</td>
+                        <td className="p-2">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDelete(borrower)}
+                          >
+                            حذف
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">لا يوجد مقترضين</p>
+            )}
+          </div>
         </Tabs>
       </CardContent>
     </Card>
