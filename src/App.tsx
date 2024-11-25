@@ -56,12 +56,10 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
       setIsLoading(false)
     }
 
-    if (user) {
+    if (!loading) {
       getUserType()
-    } else {
-      setIsLoading(false)
     }
-  }, [user])
+  }, [user, loading])
 
   if (loading || isLoading) {
     return (
