@@ -12,7 +12,7 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
         <label className="text-sm font-medium">
-          رقم الشارع <span className="text-red-500">*</span>
+          رقم المبنى <span className="text-red-500">*</span>
         </label>
         <Input
           value={profile.street_number || ''}
