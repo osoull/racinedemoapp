@@ -13,11 +13,14 @@ interface SignInFormProps {
 export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const { signIn } = useAuth()
   const { toast } = useToast()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+
     try {
       const { error } = await signIn(email, password)
       if (error) throw error
@@ -29,10 +32,12 @@ export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps) {
     } catch (error) {
       console.error("Auth error:", error)
       toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تسجيل الدخول",
+        title: "خطأ في تسجيل الدخول",
+        description: "تأكد من صحة البريد الإلكتروني وكلمة المرور",
         variant: "destructive",
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -63,27 +68,33 @@ export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps) {
                 placeholder="البريد الإلكتروني"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
               <Input
                 type="password"
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full">
-              تسجيل الدخول
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
             </Button>
             <div className="text-sm text-muted-foreground text-center space-y-2">
               <button 
+                type="button"
                 onClick={onForgotPassword}
                 className="text-primary hover:underline block w-full"
+                disabled={isLoading}
               >
                 نسيت كلمة المرور؟
               </button>
               <button 
+                type="button"
                 onClick={onSignUp}
                 className="text-primary hover:underline block w-full"
+                disabled={isLoading}
               >
                 ليس لديك حساب؟ قم بإنشاء حساب جديد
               </button>
