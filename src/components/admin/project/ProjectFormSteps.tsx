@@ -41,10 +41,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   const calculateTotalFees = (amount: number) => {
     const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
     const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
-
-    const calculatedAdminFee = (amount * adminFee) / 100;
-    const calculatedCollectionFee = (amount * collectionFee) / 100;
-    return calculatedAdminFee + calculatedCollectionFee;
+    return (amount * (adminFee + collectionFee)) / 100;
   };
 
   const handleProjectDetailsSubmit = (data: any) => {
@@ -80,7 +77,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
             amount: totalFees,
             type: 'deposit',
             status: 'pending',
-            user_id: user.id // Add the user_id here
+            user_id: user.id
           }
         ]);
 
@@ -152,6 +149,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
                 <Button 
                   onClick={handleBankTransfer} 
                   className="w-full"
+                  disabled={!bankDetails}
                 >
                   تأكيد التحويل البنكي
                 </Button>

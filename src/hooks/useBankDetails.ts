@@ -19,12 +19,12 @@ export function useBankDetails() {
         .single()
 
       if (error) {
+        // If no rows found, return null instead of throwing
+        if (error.code === 'PGRST116') {
+          return null;
+        }
         console.error('Error fetching bank details:', error)
         throw new Error('Failed to load bank details')
-      }
-      
-      if (!data) {
-        throw new Error('No bank details found')
       }
       
       return {
