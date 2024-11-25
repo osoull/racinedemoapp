@@ -43,7 +43,15 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     setIsLoading(true)
     try {
       const amountNumber = Number(amount)
-      const fees = calculateFees(amountNumber, commissions || [], user.user_type as UserType)
+      const userProfile = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single()
+
+      if (!userProfile.data) throw new Error('User profile not found')
+      
+      const fees = calculateFees(amountNumber, commissions || [], userProfile.data.user_type as UserType)
       const totalAmount = amountNumber + fees.total
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
@@ -76,7 +84,8 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   }
 
   const amountNumber = Number(amount)
-  const fees = calculateFees(amountNumber, commissions || [], user?.user_type as UserType || 'basic_investor')
+  const userType = user?.user_type as UserType || 'basic_investor'
+  const fees = calculateFees(amountNumber, commissions || [], userType)
   const totalAmount = amountNumber + fees.total
 
   return (

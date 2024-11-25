@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,27 @@ interface WalletTransactionsProps {
 
 export function WalletTransactions({ transactions, isLoading }: WalletTransactionsProps) {
   const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('transactions_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'transactions'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['transactions'] })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [queryClient])
 
   if (isLoading) return <div>جاري التحميل...</div>
 
