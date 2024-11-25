@@ -69,42 +69,67 @@ export function BusinessInfoForm() {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Input
-              placeholder="اسم الشركة"
-              value={formData.companyName}
-              onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-              required
-              dir="rtl"
-            />
-            <Input
-              placeholder="رقم السجل التجاري"
-              value={formData.commercialRegister}
-              onChange={(e) => setFormData({ ...formData, commercialRegister: e.target.value })}
-              required
-              dir="rtl"
-            />
-            <Input
-              placeholder="نوع النشاط التجاري"
-              value={formData.businessType}
-              onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
-              required
-              dir="rtl"
-            />
-            <Input
-              placeholder="عنوان الشركة"
-              value={formData.businessAddress}
-              onChange={(e) => setFormData({ ...formData, businessAddress: e.target.value })}
-              required
-              dir="rtl"
-            />
-            <Textarea
-              placeholder="وصف النشاط التجاري"
-              value={formData.businessDescription}
-              onChange={(e) => setFormData({ ...formData, businessDescription: e.target.value })}
-              required
-              dir="rtl"
-              className="min-h-[100px]"
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                اسم الشركة <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="اسم الشركة"
+                value={formData.companyName}
+                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                required
+                dir="rtl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                رقم السجل التجاري <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="رقم السجل التجاري"
+                value={formData.commercialRegister}
+                onChange={(e) => setFormData({ ...formData, commercialRegister: e.target.value })}
+                required
+                dir="rtl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                نوع النشاط التجاري <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="نوع النشاط التجاري"
+                value={formData.businessType}
+                onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+                required
+                dir="rtl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                عنوان الشركة <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="عنوان الشركة"
+                value={formData.businessAddress}
+                onChange={(e) => setFormData({ ...formData, businessAddress: e.target.value })}
+                required
+                dir="rtl"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                وصف النشاط التجاري <span className="text-red-500">*</span>
+              </label>
+              <Textarea
+                placeholder="وصف النشاط التجاري"
+                value={formData.businessDescription}
+                onChange={(e) => setFormData({ ...formData, businessDescription: e.target.value })}
+                required
+                dir="rtl"
+                className="min-h-[100px]"
+              />
+            </div>
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>

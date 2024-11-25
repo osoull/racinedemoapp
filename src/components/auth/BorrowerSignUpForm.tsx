@@ -85,38 +85,58 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Input
-                type="email"
-                placeholder="البريد الإلكتروني"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                dir="rtl"
-              />
-              <Input
-                type="text"
-                placeholder="اسم الشركة"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-                dir="rtl"
-              />
-              <Input
-                type="text"
-                placeholder="رقم السجل التجاري"
-                value={commercialRegister}
-                onChange={(e) => setCommercialRegister(e.target.value)}
-                required
-                dir="rtl"
-              />
-              <Input
-                type="password"
-                placeholder="كلمة المرور"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                dir="rtl"
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  البريد الإلكتروني <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="email"
+                  placeholder="البريد الإلكتروني"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  dir="rtl"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  اسم الشركة <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  placeholder="اسم الشركة"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  required
+                  dir="rtl"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  رقم السجل التجاري <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  placeholder="رقم السجل التجاري"
+                  value={commercialRegister}
+                  onChange={(e) => setCommercialRegister(e.target.value)}
+                  required
+                  dir="rtl"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  كلمة المرور <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="password"
+                  placeholder="كلمة المرور"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  dir="rtl"
+                />
+              </div>
             </div>
             
             <div className="flex items-center space-x-2 space-x-reverse">
@@ -129,7 +149,7 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
                 htmlFor="terms" 
                 className="text-sm text-muted-foreground cursor-pointer"
               >
-                أوافق على الشروط والأحكام
+                أوافق على الشروط والأحكام <span className="text-red-500">*</span>
               </Label>
             </div>
 

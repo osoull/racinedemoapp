@@ -21,12 +21,15 @@ const BankDetailsField = ({
   onCopy: () => void
 }) => (
   <div className="space-y-2">
-    <label className="text-sm font-medium text-muted-foreground">{label}</label>
+    <label className="text-sm font-medium text-muted-foreground">
+      {label} <span className="text-red-500">*</span>
+    </label>
     {isEditing ? (
       <Input
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         className="font-mono"
+        required
       />
     ) : (
       <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/50">

@@ -62,32 +62,52 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Input
-              placeholder="الاسم الأول"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-            <Input
-              placeholder="اسم العائلة"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-            <Input
-              type="email"
-              placeholder="البريد الإلكتروني"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Input
-              type="password"
-              placeholder="كلمة المرور"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                الاسم الأول <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="الاسم الأول"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                اسم العائلة <span className="text-red-500">*</span>
+              </label>
+              <Input
+                placeholder="اسم العائلة"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                البريد الإلكتروني <span className="text-red-500">*</span>
+              </label>
+              <Input
+                type="email"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                كلمة المرور <span className="text-red-500">*</span>
+              </label>
+              <Input
+                type="password"
+                placeholder="كلمة المرور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
           </div>
           <div className="flex gap-2">
             <Button type="button" variant="outline" onClick={onBack} className="flex-1">
