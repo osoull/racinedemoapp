@@ -847,6 +847,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_revenue_by_period: {
+        Args: {
+          start_date: string
+          end_date: string
+        }
+        Returns: {
+          period: string
+          admin_fees: number
+          collection_fees: number
+          basic_investor_fees: number
+          qualified_investor_fees: number
+          total_fees: number
+        }[]
+      }
       calculate_transaction_fees: {
         Args: {
           amount: number
