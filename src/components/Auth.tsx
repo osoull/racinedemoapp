@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
+import { Loader2 } from "lucide-react"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 type UserType = "investor" | "admin" | "borrower" | "investment_manager";
@@ -19,12 +20,15 @@ export function Auth() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState<SelectableUserType>("investor")
+  const [isLoading, setIsLoading] = useState(false)
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+
     try {
       const { error } = await signIn(email, password)
       if (error) throw error
@@ -44,6 +48,7 @@ export function Auth() {
 
       const userType = profile.user_type as UserType
 
+      // Redirection basée sur le type d'utilisateur
       switch (userType) {
         case "borrower":
           navigate("/borrower")
@@ -72,6 +77,8 @@ export function Auth() {
         description: "حدث خطأ أثناء تسجيل الدخول",
         variant: "destructive",
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -144,21 +151,29 @@ export function Auth() {
                 placeholder="البريد الإلكتروني"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
               <Input
                 type="password"
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full">
-              تسجيل الدخول
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "تسجيل الدخول"
+              )}
             </Button>
             <div className="text-sm text-muted-foreground text-center">
               <button 
                 onClick={() => setStep("selection")}
                 className="text-primary hover:underline"
+                type="button"
+                disabled={isLoading}
               >
                 ليس لديك حساب؟ قم بإنشاء حساب جديد
               </button>

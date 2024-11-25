@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { NotificationsProvider } from "@/contexts/NotificationsContext"
 import { ThemeProvider } from "@/components/ui/theme"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
@@ -17,6 +17,7 @@ import Settings from "@/pages/Settings"
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
+import { Loader2 } from "lucide-react"
 
 const queryClient = new QueryClient()
 
@@ -39,6 +40,7 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
         .single()
 
       if (error) {
+        console.error("Error fetching user type:", error)
         setIsLoading(false)
         return
       }
@@ -51,11 +53,15 @@ function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; a
   }, [user])
 
   if (loading || isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">جاري التحميل...</div>
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
   }
 
   if (!user || !userType || !allowedRoles.includes(userType)) {
-    return <Auth />
+    return <Navigate to="/" replace />
   }
 
   return <>{children}</>
@@ -73,55 +79,17 @@ function App() {
                   <Route path="/" element={<Auth />} />
                   
                   <Route
-                    path="/investor"
+                    path="/investor/*"
                     element={
                       <PrivateRoute allowedRoles={["investor"]}>
-                        <InvestorDashboard />
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/investor/projects"
-                    element={
-                      <PrivateRoute allowedRoles={["investor"]}>
-                        <ProjectsListPage />
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/investor/portfolio"
-                    element={
-                      <PrivateRoute allowedRoles={["investor"]}>
-                        <Portfolio />
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/investor/reports"
-                    element={
-                      <PrivateRoute allowedRoles={["investor"]}>
-                        <div>Reports Page</div>
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/investor/verification"
-                    element={
-                      <PrivateRoute allowedRoles={["investor"]}>
-                        <div>Verification Page</div>
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/investor/support"
-                    element={
-                      <PrivateRoute allowedRoles={["investor"]}>
-                        <div>Support Page</div>
+                        <Routes>
+                          <Route index element={<InvestorDashboard />} />
+                          <Route path="projects" element={<ProjectsListPage />} />
+                          <Route path="portfolio" element={<Portfolio />} />
+                          <Route path="reports" element={<div>Reports Page</div>} />
+                          <Route path="verification" element={<div>Verification Page</div>} />
+                          <Route path="support" element={<div>Support Page</div>} />
+                        </Routes>
                       </PrivateRoute>
                     }
                   />
@@ -139,16 +107,10 @@ function App() {
                     path="/admin/*"
                     element={
                       <PrivateRoute allowedRoles={["admin"]}>
-                        <AdminDashboard />
-                      </PrivateRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/admin/investors"
-                    element={
-                      <PrivateRoute allowedRoles={["admin"]}>
-                        <InvestorsPage />
+                        <Routes>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="investors" element={<InvestorsPage />} />
+                        </Routes>
                       </PrivateRoute>
                     }
                   />
