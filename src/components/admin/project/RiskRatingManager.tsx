@@ -19,8 +19,14 @@ interface RiskRatingManagerProps {
 
 export const RiskRatingManager = ({ projectId, onClose }: RiskRatingManagerProps) => {
   const { riskRating, riskDescription, isLoading, updateRiskRating } = useRiskRating(projectId);
-  const [selectedRating, setSelectedRating] = useState<string>(riskRating || "");
-  const [description, setDescription] = useState<string>(riskDescription || "");
+  const [selectedRating, setSelectedRating] = useState<string>(riskRating);
+  const [description, setDescription] = useState<string>(riskDescription);
+
+  // Update local state when the risk rating changes from the server
+  useEffect(() => {
+    setSelectedRating(riskRating);
+    setDescription(riskDescription);
+  }, [riskRating, riskDescription]);
 
   if (isLoading) {
     return (

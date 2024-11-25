@@ -9,7 +9,7 @@ export const useRiskRating = (projectId: string) => {
 
   useEffect(() => {
     const channel = supabase
-      .channel('project_changes')
+      .channel(`project_risk_rating_${projectId}`)
       .on('postgres_changes', 
         { 
           event: '*', 
@@ -73,8 +73,8 @@ export const useRiskRating = (projectId: string) => {
   });
 
   return {
-    riskRating: project?.risk_rating,
-    riskDescription: project?.risk_description,
+    riskRating: project?.risk_rating || "",
+    riskDescription: project?.risk_description || "",
     isLoading,
     updateRiskRating
   };
