@@ -8,18 +8,24 @@ import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { BackButton } from "@/components/BackButton"
 import { AvatarUpload } from "@/components/AvatarUpload"
+import { useProfileSync } from "@/hooks/useProfileSync"
+import { Profile as ProfileType } from "@/types/user"
 
 export default function Profile() {
   const { user } = useAuth()
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [profile, setProfile] = useState({
+  const [profile, setProfile] = useState<ProfileType>({
     first_name: "",
     middle_name: "",
     last_name: "",
     phone: "",
     address: "",
+  } as ProfileType)
+
+  const { updateProfile } = useProfileSync((updatedProfile) => {
+    setProfile(updatedProfile)
   })
 
   useEffect(() => {
@@ -39,13 +45,7 @@ export default function Profile() {
       if (error) throw error
 
       if (data) {
-        setProfile({
-          first_name: data.first_name || "",
-          middle_name: data.middle_name || "",
-          last_name: data.last_name || "",
-          phone: data.phone || "",
-          address: data.address || "",
-        })
+        setProfile(data)
       }
     } catch (error) {
       console.error("Error loading profile:", error)
@@ -64,30 +64,13 @@ export default function Profile() {
     setSaving(true)
 
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          first_name: profile.first_name,
-          middle_name: profile.middle_name,
-          last_name: profile.last_name,
-          phone: profile.phone,
-          address: profile.address,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user?.id)
-
-      if (error) throw error
-
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث الملف الشخصي بنجاح",
-      })
-    } catch (error) {
-      console.error("Error updating profile:", error)
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث الملف الشخصي",
-        variant: "destructive",
+      await updateProfile({
+        first_name: profile.first_name,
+        middle_name: profile.middle_name,
+        last_name: profile.last_name,
+        phone: profile.phone,
+        address: profile.address,
+        updated_at: new Date().toISOString(),
       })
     } finally {
       setSaving(false)
@@ -136,7 +119,7 @@ export default function Profile() {
               </label>
               <Input
                 id="middle_name"
-                value={profile.middle_name}
+                value={profile.middle_name || ""}
                 onChange={(e) =>
                   setProfile({ ...profile, middle_name: e.target.value })
                 }
@@ -164,7 +147,7 @@ export default function Profile() {
               </label>
               <Input
                 id="phone"
-                value={profile.phone}
+                value={profile.phone || ""}
                 onChange={(e) =>
                   setProfile({ ...profile, phone: e.target.value })
                 }
@@ -178,7 +161,7 @@ export default function Profile() {
               </label>
               <Input
                 id="address"
-                value={profile.address}
+                value={profile.address || ""}
                 onChange={(e) =>
                   setProfile({ ...profile, address: e.target.value })
                 }
