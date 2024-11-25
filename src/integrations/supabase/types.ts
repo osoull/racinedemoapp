@@ -883,23 +883,6 @@ export type Database = {
         }
         Returns: Json
       }
-      get_investors: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          email: string
-          first_name: string
-          middle_name: string
-          last_name: string
-          created_at: string
-          kyc_status: string
-          investor_type: string
-          avatar_url: string
-          annual_income: number
-          risk_tolerance: string
-          investment_experience: string
-        }[]
-      }
     }
     Enums: {
       [_ in never]: never

@@ -9,7 +9,12 @@ export function InvestorManagement() {
     queryKey: ["investors"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .rpc('get_investors')
+        .from("profiles")
+        .select(`
+          *,
+          investor_kyc (*)
+        `)
+        .eq("user_type", "investor")
 
       if (error) throw error
       return data
@@ -30,7 +35,7 @@ export function InvestorManagement() {
         <CardTitle>إدارة المستثمرين</CardTitle>
       </CardHeader>
       <CardContent>
-        <InvestorList investors={investors || []} />
+        <InvestorList investors={investors} />
       </CardContent>
     </Card>
   )

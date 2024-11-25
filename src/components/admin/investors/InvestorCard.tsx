@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { User, Wallet, Shield, Calendar } from "lucide-react"
-import { format } from "date-fns"
+import { User, Wallet, Shield } from "lucide-react"
 
 type InvestorCardProps = {
   investor: any
@@ -18,15 +17,7 @@ export function InvestorCard({ investor }: InvestorCardProps) {
     <Card className="p-4 hover:shadow-md transition-all">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-          {investor.avatar_url ? (
-            <img 
-              src={investor.avatar_url} 
-              alt={fullName}
-              className="h-10 w-10 rounded-full object-cover"
-            />
-          ) : (
-            <User className="h-5 w-5 text-primary" />
-          )}
+          <User className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
           <h3 className="font-medium">{fullName}</h3>
@@ -52,12 +43,6 @@ export function InvestorCard({ investor }: InvestorCardProps) {
               <Shield className="h-4 w-4 text-muted-foreground" />
               <span>
                 {investor.investor_kyc?.risk_tolerance || "غير محدد"}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>
-                {investor.created_at ? format(new Date(investor.created_at), 'dd/MM/yyyy') : "غير محدد"}
               </span>
             </div>
           </div>

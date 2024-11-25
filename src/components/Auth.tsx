@@ -1,72 +1,72 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
+import { useAuth } from "@/contexts/AuthContext"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
-import { SignInForm } from "./auth/SignInForm"
+import { useToast } from "@/components/ui/use-toast"
+import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
-import { ResetPasswordForm } from "./auth/ResetPasswordForm"
-import { UserTypeSelection } from "./auth/UserTypeSelection"
-import { useToast } from "@/components/ui/use-toast"
 
-type AuthStep = "selection" | "signup" | "signin" | "borrower_signup" | "reset_password";
+type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 type UserType = "investor" | "admin" | "borrower" | "investment_manager";
 type SelectableUserType = Extract<UserType, "investor" | "borrower">;
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
   const [userType, setUserType] = useState<SelectableUserType>("investor")
+  const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
-  useEffect(() => {
-    // Vérifier l'état de l'authentification au chargement
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        handleRedirect(session.user.id)
-      }
-    })
-
-    // Écouter les changements d'état d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        handleRedirect(session.user.id)
-      }
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
-
-  const handleRedirect = async (userId: string) => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
     try {
-      const { data: profile, error } = await supabase
+      const { error } = await signIn(email, password)
+      if (error) throw error
+      
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError) throw userError
+      if (!user) throw new Error("No user found after sign in")
+
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('user_type')
-        .eq('id', userId)
+        .eq('id', user.id)
         .single()
 
-      if (error) throw error
+      if (profileError) throw profileError
+      if (!profile) throw new Error("No profile found")
 
-      switch (profile?.user_type) {
-        case 'admin':
-          navigate('/admin')
+      const userType = profile.user_type as UserType
+
+      switch (userType) {
+        case "borrower":
+          navigate("/borrower")
           break
-        case 'investor':
-          navigate('/investor')
+        case "investor":
+          navigate("/investor")
           break
-        case 'borrower':
-          navigate('/borrower')
+        case "admin":
+          navigate("/admin")
+          break
+        case "investment_manager":
+          navigate("/investment-manager")
           break
         default:
-          toast({
-            title: "خطأ في تسجيل الدخول",
-            description: "نوع المستخدم غير صالح",
-            variant: "destructive",
-          })
+          navigate("/")
       }
+
+      toast({
+        title: "تم تسجيل الدخول بنجاح",
+        description: "مرحباً بك في لوحة التحكم",
+      })
     } catch (error) {
-      console.error('Error fetching user profile:', error)
+      console.error("Auth error:", error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تسجيل الدخول",
@@ -117,20 +117,55 @@ export function Auth() {
     )
   }
 
-  if (step === "reset_password") {
-    return (
-      <div className="flex min-h-[80vh] items-center justify-center flex-col">
-        <ResetPasswordForm onBack={() => setStep("signin")} />
-      </div>
-    )
-  }
-
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
-      <SignInForm 
-        onForgotPassword={() => setStep("reset_password")}
-        onSignUp={() => setStep("selection")}
+      <img 
+        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain dark:hidden" 
       />
+      <img 
+        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
+        alt="Raseen Logo" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
+      />
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>مرحباً بك</CardTitle>
+          <CardDescription>
+            قم بتسجيل الدخول للمتابعة
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                type="email"
+                placeholder="البريد الإلكتروني"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                type="password"
+                placeholder="كلمة المرور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full">
+              تسجيل الدخول
+            </Button>
+            <div className="text-sm text-muted-foreground text-center">
+              <button 
+                onClick={() => setStep("selection")}
+                className="text-primary hover:underline"
+              >
+                ليس لديك حساب؟ قم بإنشاء حساب جديد
+              </button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }
