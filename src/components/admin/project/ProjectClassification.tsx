@@ -17,15 +17,15 @@ export const ProjectClassification = ({ control }: ProjectClassificationProps) =
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger className="text-right">
-                <SelectValue placeholder="اختر تصنيف المشروع" />
+                <SelectValue className="text-right" placeholder="اختر تصنيف المشروع" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent align="end" className="text-right">
-              <SelectItem value="تمويل مشاريع طرف ثاني">تمويل مشاريع طرف ثاني</SelectItem>
-              <SelectItem value="تمويل الفواتير">تمويل الفواتير</SelectItem>
-              <SelectItem value="تمويل رأس المال العامل">تمويل رأس المال العامل</SelectItem>
-              <SelectItem value="تمويل التوسع">تمويل التوسع</SelectItem>
-              <SelectItem value="تمويل المشاريع العقارية">تمويل المشاريع العقارية</SelectItem>
+            <SelectContent className="text-right">
+              <SelectItem className="text-right flex flex-row-reverse justify-between" value="تمويل مشاريع طرف ثاني">تمويل مشاريع طرف ثاني</SelectItem>
+              <SelectItem className="text-right flex flex-row-reverse justify-between" value="تمويل الفواتير">تمويل الفواتير</SelectItem>
+              <SelectItem className="text-right flex flex-row-reverse justify-between" value="تمويل رأس المال العامل">تمويل رأس المال العامل</SelectItem>
+              <SelectItem className="text-right flex flex-row-reverse justify-between" value="تمويل التوسع">تمويل التوسع</SelectItem>
+              <SelectItem className="text-right flex flex-row-reverse justify-between" value="تمويل المشاريع العقارية">تمويل المشاريع العقارية</SelectItem>
             </SelectContent>
           </Select>
           <FormMessage />
