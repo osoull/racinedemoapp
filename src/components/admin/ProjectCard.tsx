@@ -53,7 +53,10 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
               <DialogContent>
                 <RiskRatingManager 
                   projectId={project.id} 
+                  currentRating={project.risk_rating}
+                  currentDescription={project.risk_description}
                   onClose={() => setIsRatingOpen(false)}
+                  onUpdate={() => setIsRatingOpen(false)}
                 />
               </DialogContent>
             </Dialog>

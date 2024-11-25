@@ -18,6 +18,7 @@ interface RiskRatingManagerProps {
   currentRating?: string | null;
   currentDescription?: string | null;
   onUpdate?: () => void;
+  onClose: () => void;
 }
 
 export function RiskRatingManager({
@@ -25,11 +26,33 @@ export function RiskRatingManager({
   currentRating,
   currentDescription,
   onUpdate,
+  onClose,
 }: RiskRatingManagerProps) {
   const [rating, setRating] = useState<string>(currentRating || "");
   const [description, setDescription] = useState<string>(currentDescription || "");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const { data: project } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("risk_rating, risk_description")
+        .eq("id", projectId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (project) {
+      setRating(project.risk_rating || "");
+      setDescription(project.risk_description || "");
+    }
+  }, [project]);
 
   useEffect(() => {
     const channel = supabase
@@ -73,6 +96,7 @@ export function RiskRatingManager({
       });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       if (onUpdate) onUpdate();
+      onClose();
     },
     onError: (error) => {
       toast({
@@ -107,12 +131,17 @@ export function RiskRatingManager({
         className="min-h-[100px]"
       />
 
-      <Button 
-        onClick={() => updateRiskRating.mutate()}
-        disabled={!rating || updateRiskRating.isPending}
-      >
-        {updateRiskRating.isPending ? "جاري التحديث..." : "تحديث تقييم المخاطر"}
-      </Button>
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={onClose}>
+          إلغاء
+        </Button>
+        <Button 
+          onClick={() => updateRiskRating.mutate()}
+          disabled={!rating || updateRiskRating.isPending}
+        >
+          {updateRiskRating.isPending ? "جاري التحديث..." : "تحديث تقييم المخاطر"}
+        </Button>
+      </div>
     </div>
   );
 }
