@@ -112,7 +112,7 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
             </TabsList>
 
             <TabsContent value="bank" className="space-y-4">
-              <Alert variant="info">
+              <Alert variant="default">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
                   يرجى استخدام المعلومات البنكية أدناه لإتمام التحويل. سيتم تحديث رصيدك تلقائياً خلال يوم عمل واحد بعد استلام وتأكيد التحويل.
