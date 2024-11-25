@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { RevenueDetails } from "./RevenueDetails"
+import { Toaster } from "sonner"
 
 export function RevenueTracking() {
   return (
@@ -24,6 +25,7 @@ export function RevenueTracking() {
           </div>
         </Card>
       </div>
+      <Toaster />
     </DashboardLayout>
   )
 }

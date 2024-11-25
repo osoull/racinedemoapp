@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, subMonths, startOfYear, endOfYear } from "date-fns";
 import { ar } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface RevenueData {
   period: string;
@@ -18,6 +19,34 @@ interface RevenueData {
 
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Subscribe to changes in transactions and commissions tables
+    const transactionsChannel = supabase
+      .channel('revenue_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'transactions' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["revenue", timeframe] });
+          toast.info("تم تحديث بيانات الإيرادات");
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'commissions' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["revenue", timeframe] });
+          toast.info("تم تحديث معدلات العمولات");
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(transactionsChannel);
+    };
+  }, [timeframe, queryClient]);
 
   const { data: revenueData, isLoading } = useQuery({
     queryKey: ["revenue", timeframe],
