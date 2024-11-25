@@ -64,12 +64,45 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
     }
   };
 
+  const getStatusBadgeVariant = (status: string | null) => {
+    switch (status) {
+      case 'approved':
+      case 'active':
+        return 'default';
+      case 'pending':
+        return 'secondary';
+      case 'rejected':
+        return 'destructive';
+      default:
+        return 'secondary';
+    }
+  };
+
+  const getStatusDisplay = (status: string | null) => {
+    switch (status) {
+      case 'approved':
+      case 'active':
+        return 'نشط';
+      case 'pending':
+        return 'قيد المراجعة';
+      case 'rejected':
+        return 'مرفوض';
+      default:
+        return status;
+    }
+  };
+
   return (
     <Card className="p-6">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="font-semibold text-lg mb-1">{project.title}</h3>
           <p className="text-sm text-muted-foreground">{project.description}</p>
+          <div className="mt-2">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${getStatusBadgeVariant(project.status)}-100 text-${getStatusBadgeVariant(project.status)}-800`}>
+              {getStatusDisplay(project.status)}
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {project.risk_rating && (
