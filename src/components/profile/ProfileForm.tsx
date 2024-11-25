@@ -83,6 +83,7 @@ export function ProfileForm() {
     }
 
     const isValid = validateRequiredFields()
+    if (!isValid) return // Arrêter si la validation échoue
     
     setSaving(true)
     
@@ -91,7 +92,6 @@ export function ProfileForm() {
         .from('profiles')
         .update({
           ...profile,
-          profile_completed: isValid, // Mettre à jour profile_completed en fonction de la validation
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
@@ -100,12 +100,10 @@ export function ProfileForm() {
 
       await queryClient.invalidateQueries({ queryKey: ["profile"] })
       
-      if (isValid) {
-        toast({
-          title: "تم التحديث",
-          description: "تم تحديث معلوماتك الشخصية بنجاح",
-        })
-      }
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث معلوماتك الشخصية بنجاح",
+      })
     } catch (error) {
       console.error('Error in handleSubmit:', error)
       toast({
