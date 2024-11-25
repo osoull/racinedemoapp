@@ -9,13 +9,7 @@ export function InvestorManagement() {
     queryKey: ["investors"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles")
-        .select(`
-          *,
-          investor_kyc (*)
-        `)
-        .eq("user_type", "investor")
-        .order('created_at', { ascending: false })
+        .rpc('get_investors')
 
       if (error) throw error
       return data
