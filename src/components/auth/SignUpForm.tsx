@@ -4,21 +4,18 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface SignUpFormProps {
   userType: "investor" | "borrower"
-  investorType?: "basic" | "qualified"
   onBack: () => void
   onSuccess: () => void
 }
 
-export function SignUpForm({ userType, investorType = "basic", onBack, onSuccess }: SignUpFormProps) {
+export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
-  const [selectedInvestorType, setSelectedInvestorType] = useState(investorType)
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +29,7 @@ export function SignUpForm({ userType, investorType = "basic", onBack, onSuccess
             first_name: firstName,
             last_name: lastName,
             user_type: userType,
-            investor_type: userType === "investor" ? selectedInvestorType : undefined
+            investor_type: userType === "investor" ? "basic" : undefined
           }
         }
       })
@@ -93,20 +90,6 @@ export function SignUpForm({ userType, investorType = "basic", onBack, onSuccess
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {userType === "investor" && (
-              <Select
-                value={selectedInvestorType}
-                onValueChange={(value: "basic" | "qualified") => setSelectedInvestorType(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="نوع المستثمر" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="basic">مستثمر أساسي</SelectItem>
-                  <SelectItem value="qualified">مستثمر مؤهل</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
           </div>
           <div className="flex gap-2">
             <Button type="button" variant="outline" onClick={onBack} className="flex-1">

@@ -13,14 +13,12 @@ import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 type UserType = "investor" | "admin" | "borrower" | "investment_manager";
 type SelectableUserType = Extract<UserType, "investor" | "borrower">;
-type InvestorType = "basic" | "qualified";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState<SelectableUserType>("investor")
-  const [investorType, setInvestorType] = useState<InvestorType>("basic")
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -101,7 +99,6 @@ export function Auth() {
       <div className="flex min-h-[80vh] items-center justify-center flex-col">
         <SignUpForm 
           userType={userType}
-          investorType={investorType}
           onBack={() => setStep("signin")}
           onSuccess={() => setStep("signin")}
         />
