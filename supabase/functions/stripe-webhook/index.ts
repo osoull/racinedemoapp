@@ -41,43 +41,70 @@ serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object
+  try {
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object
 
-    // Update stripe payment status
-    const { data: stripePayment, error: fetchError } = await supabaseClient
-      .from('stripe_payments')
-      .select('transaction_id')
-      .eq('stripe_session_id', session.id)
-      .single()
+      // Récupérer les détails du paiement
+      const { data: stripePayment, error: fetchError } = await supabaseClient
+        .from('stripe_payments')
+        .select('transaction_id')
+        .eq('stripe_session_id', session.id)
+        .single()
 
-    if (fetchError) {
-      console.error('Error fetching stripe payment:', fetchError)
-      return new Response(JSON.stringify({ error: 'Payment not found' }), { status: 404 })
+      if (fetchError) {
+        console.error('Error fetching stripe payment:', fetchError)
+        throw new Error('Payment not found')
+      }
+
+      // Mettre à jour le statut de la transaction
+      const { error: updateError } = await supabaseClient
+        .from('transactions')
+        .update({ status: 'completed' })
+        .eq('id', stripePayment.transaction_id)
+
+      if (updateError) {
+        console.error('Error updating transaction:', updateError)
+        throw new Error('Failed to update transaction')
+      }
+
+      // Mettre à jour le statut du paiement Stripe
+      const { error: stripeUpdateError } = await supabaseClient
+        .from('stripe_payments')
+        .update({ status: 'completed' })
+        .eq('stripe_session_id', session.id)
+
+      if (stripeUpdateError) {
+        console.error('Error updating stripe payment:', stripeUpdateError)
+        throw new Error('Failed to update stripe payment')
+      }
+
+      // Créer une notification pour l'utilisateur
+      const { error: notificationError } = await supabaseClient
+        .from('notifications')
+        .insert({
+          user_id: session.client_reference_id,
+          title: 'تم الدفع بنجاح',
+          message: `تم إيداع ${session.amount_total / 100} ريال في محفظتك`
+        })
+
+      if (notificationError) {
+        console.error('Error creating notification:', notificationError)
+      }
     }
 
-    // Update transaction status
-    const { error: updateError } = await supabaseClient
-      .from('transactions')
-      .update({ status: 'completed' })
-      .eq('id', stripePayment.transaction_id)
-
-    if (updateError) {
-      console.error('Error updating transaction:', updateError)
-      return new Response(JSON.stringify({ error: 'Failed to update transaction' }), { status: 500 })
-    }
-
-    // Update stripe payment status
-    const { error: stripeUpdateError } = await supabaseClient
-      .from('stripe_payments')
-      .update({ status: 'completed' })
-      .eq('stripe_session_id', session.id)
-
-    if (stripeUpdateError) {
-      console.error('Error updating stripe payment:', stripeUpdateError)
-      return new Response(JSON.stringify({ error: 'Failed to update stripe payment' }), { status: 500 })
-    }
+    return new Response(JSON.stringify({ received: true }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200 
+    })
+  } catch (error) {
+    console.error('Error processing webhook:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }), 
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400 
+      }
+    )
   }
-
-  return new Response(JSON.stringify({ received: true }), { status: 200 })
 })

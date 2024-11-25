@@ -20,32 +20,12 @@ serve(async (req) => {
   try {
     const { amount, user_id } = await req.json()
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'sar',
-            product_data: {
-              name: 'إيداع رصيد',
-            },
-            unit_amount: amount * 100, // Stripe uses cents
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${req.headers.get('origin')}/investor/portfolio?success=true`,
-      cancel_url: `${req.headers.get('origin')}/investor/portfolio?canceled=true`,
-    })
-
-    // Create Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Create transaction record
+    // Créer d'abord la transaction
     const { data: transaction, error: transactionError } = await supabaseClient
       .from('transactions')
       .insert({
@@ -59,7 +39,28 @@ serve(async (req) => {
 
     if (transactionError) throw transactionError
 
-    // Create stripe payment record
+    // Créer la session Stripe
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'sar',
+            product_data: {
+              name: 'إيداع رصيد',
+            },
+            unit_amount: amount * 100, // Stripe utilise les centimes
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${req.headers.get('origin')}/investor/wallet?success=true`,
+      cancel_url: `${req.headers.get('origin')}/investor/wallet?canceled=true`,
+      client_reference_id: user_id,
+    })
+
+    // Enregistrer les détails du paiement Stripe
     const { error: stripePaymentError } = await supabaseClient
       .from('stripe_payments')
       .insert({
@@ -67,6 +68,7 @@ serve(async (req) => {
         transaction_id: transaction.id,
         stripe_session_id: session.id,
         amount,
+        status: 'pending'
       })
 
     if (stripePaymentError) throw stripePaymentError
@@ -79,6 +81,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error creating payment:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {
