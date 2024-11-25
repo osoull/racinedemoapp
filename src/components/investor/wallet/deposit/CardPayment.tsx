@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { calculateFees, formatCurrency } from "@/utils/feeCalculations"
+import { formatCurrency } from "@/utils/feeCalculations"
 import { UserType } from "@/types/user"
 
 interface CardPaymentProps {
@@ -17,18 +17,6 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
-
-  const { data: commissions } = useQuery({
-    queryKey: ["commissions"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("commissions")
-        .select("*")
-      
-      if (error) throw error
-      return data
-    },
-  })
 
   const handleCardPayment = async () => {
     if (!user || !amount) {
@@ -50,15 +38,11 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
         .single()
 
       if (!userProfile.data) throw new Error('User profile not found')
-      
-      const fees = calculateFees(amountNumber, commissions || [], userProfile.data.user_type as UserType)
-      const totalAmount = amountNumber + fees.total
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { 
-          amount: totalAmount,
-          user_id: user.id,
-          fees: fees
+          amount: amountNumber,
+          user_id: user.id
         }
       })
 
@@ -84,53 +68,13 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   }
 
   const amountNumber = Number(amount)
-  const { data: userProfile } = useQuery({
-    queryKey: ['userProfile', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single()
-      
-      if (error) throw error
-      return data
-    },
-  })
-
-  const userType = (userProfile?.user_type as UserType) || 'basic_investor'
-  const fees = calculateFees(amountNumber, commissions || [], userType)
-  const totalAmount = amountNumber + fees.total
 
   return (
     <div className="space-y-4">
       <div className="text-sm space-y-2">
-        <div className="flex justify-between">
-          <span>المبلغ الأساسي:</span>
-          <span>{formatCurrency(amountNumber)}</span>
-        </div>
-        {fees.admin > 0 && (
-          <div className="flex justify-between">
-            <span>رسوم الإدارة:</span>
-            <span>{formatCurrency(fees.admin)}</span>
-          </div>
-        )}
-        {fees.collection > 0 && (
-          <div className="flex justify-between">
-            <span>رسوم التحصيل:</span>
-            <span>{formatCurrency(fees.collection)}</span>
-          </div>
-        )}
-        {fees.investor > 0 && (
-          <div className="flex justify-between">
-            <span>رسوم المستثمر:</span>
-            <span>{formatCurrency(fees.investor)}</span>
-          </div>
-        )}
         <div className="flex justify-between font-bold border-t pt-2">
           <span>المبلغ الإجمالي:</span>
-          <span>{formatCurrency(totalAmount)}</span>
+          <span>{formatCurrency(amountNumber)}</span>
         </div>
       </div>
 
@@ -145,7 +89,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
             جاري المعالجة...
           </>
         ) : (
-          `الدفع بالبطاقة (${formatCurrency(totalAmount)})`
+          `الدفع بالبطاقة (${formatCurrency(amountNumber)})`
         )}
       </Button>
     </div>

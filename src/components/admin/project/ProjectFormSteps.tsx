@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BankTransferDetails } from "@/components/investor/wallet/deposit/BankTransferDetails";
 import { supabase } from "@/integrations/supabase/client";
 import { useBankDetails } from "@/hooks/useBankDetails";
+import { useQuery } from "@tanstack/react-query";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
@@ -22,6 +23,27 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
   const [projectData, setProjectData] = useState<any>(project || null);
   const { toast } = useToast();
   const { data: bankDetails, isLoading, error } = useBankDetails();
+
+  const { data: commissions } = useQuery({
+    queryKey: ["commissions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commissions")
+        .select("*")
+      
+      if (error) throw error
+      return data
+    },
+  });
+
+  const calculateTotalFees = (amount: number) => {
+    const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
+    const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
+
+    const calculatedAdminFee = (amount * adminFee) / 100;
+    const calculatedCollectionFee = (amount * collectionFee) / 100;
+    return calculatedAdminFee + calculatedCollectionFee;
+  };
 
   const handleProjectDetailsSubmit = (data: any) => {
     setProjectData(data);
@@ -38,11 +60,13 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
 
   const handleBankTransfer = async () => {
     try {
+      const totalFees = calculateTotalFees(projectData.funding_goal);
+
       const { error: transactionError } = await supabase
         .from('transactions')
         .insert([
           {
-            amount: projectData.funding_goal,
+            amount: totalFees,
             type: 'deposit',
             status: 'pending'
           }
@@ -128,7 +152,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
                   </AlertDescription>
                 </Alert>
                 <CardPayment 
-                  amount={projectData.funding_goal.toString()} 
+                  amount={calculateTotalFees(projectData.funding_goal).toString()} 
                   onSuccess={handlePaymentSuccess}
                 />
               </TabsContent>
