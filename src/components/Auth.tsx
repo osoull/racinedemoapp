@@ -12,14 +12,11 @@ import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { Loader2 } from "lucide-react"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
-type UserType = "basic_investor" | "qualified_investor" | "admin" | "borrower" | "investment_manager";
-type SelectableUserType = Extract<UserType, "basic_investor" | "qualified_investor" | "borrower">;
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState<SelectableUserType>("basic_investor")
   const [isLoading, setIsLoading] = useState(false)
   const { signIn } = useAuth()
   const navigate = useNavigate()
@@ -82,13 +79,12 @@ export function Auth() {
     }
   }
 
-  const handleUserTypeSelect = (type: SelectableUserType | "login") => {
+  const handleUserTypeSelect = (type: "investor" | "borrower" | "login") => {
     if (type === "login") {
       setStep("signin")
     } else if (type === "borrower") {
       setStep("borrower_signup")
     } else {
-      setUserType(type)
       setStep("signup")
     }
   }
@@ -105,7 +101,6 @@ export function Auth() {
     return (
       <div className="flex min-h-[80vh] items-center justify-center flex-col">
         <SignUpForm 
-          userType={userType}
           onBack={() => setStep("signin")}
           onSuccess={() => setStep("signin")}
         />
@@ -183,4 +178,3 @@ export function Auth() {
       </Card>
     </div>
   )
-}

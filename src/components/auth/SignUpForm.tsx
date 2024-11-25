@@ -7,12 +7,11 @@ import { useToast } from "@/components/ui/use-toast"
 import { ArrowRight } from "lucide-react"
 
 interface SignUpFormProps {
-  userType: "investor" | "borrower"
   onBack: () => void
   onSuccess: () => void
 }
 
-export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
+export function SignUpForm({ onBack, onSuccess }: SignUpFormProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [firstName, setFirstName] = useState("")
@@ -45,8 +44,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
             first_name: firstName,
             last_name: lastName,
             national_id: nationalId,
-            user_type: userType === "investor" ? "basic_investor" : "borrower",
-            investor_type: userType === "investor" ? "basic" : null
+            user_type: "basic_investor"
           }
         }
       })
@@ -81,7 +79,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
         </Button>
         <CardTitle>إنشاء حساب جديد</CardTitle>
         <CardDescription>
-          {userType === "investor" ? "مستثمر جديد" : "صاحب مشروع"}
+          مستثمر جديد
         </CardDescription>
       </CardHeader>
       <CardContent>
