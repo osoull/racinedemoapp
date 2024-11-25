@@ -1,0 +1,21 @@
+export const countries = [
+  { value: "SA", label: "المملكة العربية السعودية" },
+  { value: "AE", label: "الإمارات العربية المتحدة" },
+  { value: "KW", label: "الكويت" },
+  { value: "BH", label: "البحرين" },
+  { value: "QA", label: "قطر" },
+  { value: "OM", label: "عمان" },
+  { value: "EG", label: "مصر" },
+  { value: "JO", label: "الأردن" },
+  { value: "IQ", label: "العراق" },
+  { value: "YE", label: "اليمن" },
+  { value: "LB", label: "لبنان" },
+  { value: "PS", label: "فلسطين" },
+  { value: "SY", label: "سوريا" },
+  { value: "SD", label: "السودان" },
+  { value: "LY", label: "ليبيا" },
+  { value: "TN", label: "تونس" },
+  { value: "DZ", label: "الجزائر" },
+  { value: "MA", label: "المغرب" },
+  { value: "MR", label: "موريتانيا" }
+];

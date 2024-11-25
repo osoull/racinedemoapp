@@ -1,4 +1,6 @@
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { countries } from "@/utils/countries"
 
 interface AddressFieldsProps {
   profile: any
@@ -60,12 +62,22 @@ export function AddressFields({ profile, setProfile }: AddressFieldsProps) {
         <label className="text-sm font-medium">
           البلد <span className="text-red-500">*</span>
         </label>
-        <Input
-          value={profile.country || ''}
-          onChange={(e) => setProfile({ ...profile, country: e.target.value })}
-          placeholder="أدخل البلد"
+        <Select 
+          value={profile.country || ''} 
+          onValueChange={(value) => setProfile({ ...profile, country: value })}
           required
-        />
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="اختر البلد" />
+          </SelectTrigger>
+          <SelectContent>
+            {countries.map((country) => (
+              <SelectItem key={country.value} value={country.value}>
+                {country.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   )
