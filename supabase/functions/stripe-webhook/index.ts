@@ -27,7 +27,7 @@ serve(async (req) => {
     event = await stripe.webhooks.constructEventAsync(
       body,
       signature!,
-      'whsec_vgbAclrkWIyvPnFIk1RYa8bKmcAp8fKu',
+      Deno.env.get('STRIPE_WEBHOOK_SIGNING_SECRET')!,
       undefined,
       cryptoProvider
     )
@@ -43,49 +43,42 @@ serve(async (req) => {
 
   try {
     if (event.type === 'checkout.session.completed') {
-      const session = event.data.object
+      const session = event.data.object as Stripe.Checkout.Session
 
-      // Récupérer les détails du paiement
-      const { data: stripePayment, error: fetchError } = await supabaseClient
-        .from('stripe_payments')
-        .select('transaction_id')
-        .eq('stripe_session_id', session.id)
-        .single()
+      // Get the transaction ID from metadata
+      const transactionId = session.metadata?.transaction_id
 
-      if (fetchError) {
-        console.error('Error fetching stripe payment:', fetchError)
-        throw new Error('Payment not found')
+      if (!transactionId) {
+        throw new Error('No transaction ID found in session metadata')
       }
 
-      // Mettre à jour le statut de la transaction
-      const { error: updateError } = await supabaseClient
+      // Update transaction status
+      const { error: transactionError } = await supabaseClient
         .from('transactions')
         .update({ status: 'completed' })
-        .eq('id', stripePayment.transaction_id)
+        .eq('id', transactionId)
 
-      if (updateError) {
-        console.error('Error updating transaction:', updateError)
-        throw new Error('Failed to update transaction')
+      if (transactionError) {
+        throw transactionError
       }
 
-      // Mettre à jour le statut du paiement Stripe
-      const { error: stripeUpdateError } = await supabaseClient
+      // Update stripe payment status
+      const { error: stripePaymentError } = await supabaseClient
         .from('stripe_payments')
         .update({ status: 'completed' })
         .eq('stripe_session_id', session.id)
 
-      if (stripeUpdateError) {
-        console.error('Error updating stripe payment:', stripeUpdateError)
-        throw new Error('Failed to update stripe payment')
+      if (stripePaymentError) {
+        throw stripePaymentError
       }
 
-      // Créer une notification pour l'utilisateur
+      // Create notification for the user
       const { error: notificationError } = await supabaseClient
         .from('notifications')
         .insert({
           user_id: session.client_reference_id,
           title: 'تم الدفع بنجاح',
-          message: `تم إيداع ${session.amount_total / 100} ريال في محفظتك`
+          message: `تم إيداع ${session.amount_total ? session.amount_total / 100 : 0} ريال في محفظتك`
         })
 
       if (notificationError) {

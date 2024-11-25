@@ -16,18 +16,30 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   const { toast } = useToast()
 
   const handleCardPayment = async () => {
-    if (!user) return
+    if (!user || !amount) {
+      toast({
+        title: "خطأ",
+        description: "يرجى إدخال المبلغ وتسجيل الدخول للمتابعة",
+        variant: "destructive"
+      })
+      return
+    }
     
     setIsLoading(true)
     try {
       const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: { amount: Number(amount), user_id: user.id }
+        body: { 
+          amount: Number(amount), 
+          user_id: user.id 
+        }
       })
 
       if (error) throw error
 
-      if (data.sessionUrl) {
+      if (data?.sessionUrl) {
         window.location.href = data.sessionUrl
+      } else {
+        throw new Error('No session URL returned')
       }
 
       onSuccess?.()
@@ -47,7 +59,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     <Button 
       onClick={handleCardPayment} 
       className="w-full"
-      disabled={isLoading}
+      disabled={isLoading || !amount}
     >
       {isLoading ? (
         <>

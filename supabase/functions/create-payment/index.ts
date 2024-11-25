@@ -25,7 +25,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Créer d'abord la transaction
+    // Create the transaction first
     const { data: transaction, error: transactionError } = await supabaseClient
       .from('transactions')
       .insert({
@@ -39,7 +39,7 @@ serve(async (req) => {
 
     if (transactionError) throw transactionError
 
-    // Créer la session Stripe
+    // Create Stripe session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -49,7 +49,7 @@ serve(async (req) => {
             product_data: {
               name: 'إيداع رصيد',
             },
-            unit_amount: amount * 100, // Stripe utilise les centimes
+            unit_amount: Math.round(amount * 100), // Stripe uses cents
           },
           quantity: 1,
         },
@@ -58,9 +58,12 @@ serve(async (req) => {
       success_url: `${req.headers.get('origin')}/investor/wallet?success=true`,
       cancel_url: `${req.headers.get('origin')}/investor/wallet?canceled=true`,
       client_reference_id: user_id,
+      metadata: {
+        transaction_id: transaction.id
+      }
     })
 
-    // Enregistrer les détails du paiement Stripe
+    // Save Stripe payment details
     const { error: stripePaymentError } = await supabaseClient
       .from('stripe_payments')
       .insert({
