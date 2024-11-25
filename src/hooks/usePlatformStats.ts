@@ -6,13 +6,16 @@ export const usePlatformStats = () => {
   const { data: stats, isLoading, refetch } = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      // Get total investments
-      const { data: investments, error: investmentsError } = await supabase
-        .from("investments")
-        .select("amount")
-        .eq("status", "completed")
+      // Get total investments for approved projects
+      const { data: approvedProjects, error: projectsError } = await supabase
+        .from("projects")
+        .select("current_funding")
+        .eq("status", "approved")
       
-      if (investmentsError) throw investmentsError
+      if (projectsError) throw projectsError
+
+      // Calculate total approved funding
+      const totalInvestment = approvedProjects?.reduce((sum, project) => sum + (project.current_funding || 0), 0) || 0
 
       // Get number of unique investors
       const { data: investors, error: investorsError } = await supabase
@@ -24,16 +27,13 @@ export const usePlatformStats = () => {
       if (investorsError) throw investorsError
 
       // Get number of approved projects
-      const { data: projects, error: projectsError } = await supabase
+      const { data: projects, error: activeProjectsError } = await supabase
         .from("projects")
         .select("count")
         .eq("status", "approved")
         .single()
 
-      if (projectsError) throw projectsError
-
-      // Calculate total investment
-      const totalInvestment = investments?.reduce((sum, inv) => sum + (inv.amount || 0), 0) || 0
+      if (activeProjectsError) throw activeProjectsError
 
       return {
         totalInvestment,
@@ -46,14 +46,6 @@ export const usePlatformStats = () => {
 
   useEffect(() => {
     // Subscribe to changes in relevant tables
-    const investmentsChannel = supabase
-      .channel('investments_changes')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'investments' },
-        () => refetch()
-      )
-      .subscribe()
-
     const projectsChannel = supabase
       .channel('projects_changes')
       .on('postgres_changes', 
@@ -71,7 +63,6 @@ export const usePlatformStats = () => {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(investmentsChannel)
       supabase.removeChannel(projectsChannel)
       supabase.removeChannel(profilesChannel)
     }

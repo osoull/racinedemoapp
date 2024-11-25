@@ -28,12 +28,12 @@ export function StatsGrid() {
 
   const items = [
     {
-      title: "حجم المعاملات",
-      value: formatCurrency(stats?.transactionVolume || 0),
+      title: "إجمالي التمويل",
+      value: formatCurrency(stats?.totalInvestment || 0),
       icon: TrendingUp,
-      trend: { value: 4.1, isPositive: false },
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600"
+      trend: { value: 8.3, isPositive: true },
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600"
     },
     {
       title: "المستثمرين النشطين",
@@ -44,12 +44,12 @@ export function StatsGrid() {
       iconColor: "text-blue-600"
     },
     {
-      title: "إجمالي التمويل",
-      value: formatCurrency(stats?.totalInvestment || 0),
+      title: "حجم المعاملات",
+      value: formatCurrency(stats?.transactionVolume || 0),
       icon: Wallet,
-      trend: { value: 8.3, isPositive: true },
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600"
+      trend: { value: 4.1, isPositive: false },
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600"
     },
     {
       title: "المشاريع النشطة",
