@@ -76,6 +76,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     try {
       const fees = calculateFees(projectData.funding_goal);
 
+      // Créer d'abord la transaction pour les frais
       const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
         .insert({
@@ -89,13 +90,13 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
 
       if (transactionError) throw transactionError;
 
+      // Créer ensuite le projet sans lier directement la transaction
       const { error: projectError } = await supabase
         .from('projects')
         .insert({
           ...projectData,
           owner_id: user.id,
-          status: 'pending',
-          fees_transaction_id: transaction.id
+          status: 'draft', // Le projet reste en draft jusqu'à la validation du paiement
         });
 
       if (projectError) throw projectError;
