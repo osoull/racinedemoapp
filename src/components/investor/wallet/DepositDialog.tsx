@@ -9,6 +9,7 @@ import { useBankDetails } from "@/hooks/useBankDetails"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { BankTransferDetails } from "./deposit/BankTransferDetails"
 import { AmountInput } from "./deposit/AmountInput"
+import { CardPayment } from "./deposit/CardPayment"
 
 interface DepositDialogProps {
   onSuccess?: () => void
@@ -33,47 +34,6 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     }
     setAmountError("")
     return true
-  }
-
-  const handleCardDeposit = async () => {
-    toast({
-      title: "قريباً",
-      description: "سيتم إضافة خدمة الدفع بالبطاقة قريباً"
-    })
-  }
-
-  const handleBankTransfer = async () => {
-    if (!validateAmount()) return
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error("User not authenticated")
-
-      const { error } = await supabase
-        .from("transactions")
-        .insert({
-          type: "deposit",
-          amount: Number(amount),
-          status: "pending",
-          user_id: user.id
-        })
-
-      if (error) throw error
-
-      toast({
-        title: "تم تسجيل طلب الإيداع بنجاح",
-        description: "يرجى إتمام التحويل البنكي باستخدام المعلومات المقدمة. سيتم تحديث رصيدك خلال يوم عمل واحد بعد استلام التحويل."
-      })
-      setIsOpen(false)
-      setAmount("")
-      onSuccess?.()
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إرسال طلب الإيداع",
-        variant: "destructive"
-      })
-    }
   }
 
   const handleOpenChange = (open: boolean) => {
@@ -152,15 +112,14 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
               </Button>
             </TabsContent>
 
-            <TabsContent value="card">
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  سيتم تفعيل خدمة الدفع بالبطاقة قريباً
-                </p>
-                <Button onClick={handleCardDeposit} className="w-full" disabled>
-                  الدفع بالبطاقة
-                </Button>
-              </div>
+            <TabsContent value="card" className="space-y-4">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  سيتم تحويلك إلى صفحة الدفع الآمنة لإتمام العملية
+                </AlertDescription>
+              </Alert>
+              <CardPayment amount={amount} onSuccess={onSuccess} />
             </TabsContent>
           </Tabs>
         </div>
