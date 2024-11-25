@@ -15,9 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface RiskRatingManagerProps {
   projectId: string;
+  onClose?: () => void;
 }
 
-export const RiskRatingManager = ({ projectId }: RiskRatingManagerProps) => {
+export const RiskRatingManager = ({ projectId, onClose }: RiskRatingManagerProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [description, setDescription] = useState("");
@@ -56,6 +57,9 @@ export const RiskRatingManager = ({ projectId }: RiskRatingManagerProps) => {
         title: "تم تحديث تصنيف المخاطر بنجاح",
       });
       queryClient.invalidateQueries({ queryKey: ["risk-rating", projectId] });
+      if (onClose) {
+        onClose();
+      }
     },
     onError: (error) => {
       toast({

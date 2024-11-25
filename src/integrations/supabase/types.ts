@@ -907,6 +907,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_risk_rating: {
+        Args: {
+          p_project_id: string
+          p_rating: string
+          p_description: string
+          p_evaluator_id: string
+        }
+        Returns: undefined
+      }
       validate_payment: {
         Args: {
           p_transaction_id: string
