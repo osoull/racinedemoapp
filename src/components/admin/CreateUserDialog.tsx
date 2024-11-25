@@ -19,8 +19,7 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userType, setUserType] = useState("investor");
-  const [investorType, setInvestorType] = useState("basic");
+  const [userType, setUserType] = useState("basic_investor");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -37,7 +36,6 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
             first_name: firstName,
             last_name: lastName,
             user_type: userType,
-            investor_type: userType === "investor" ? investorType : undefined,
           },
         },
       });
@@ -52,7 +50,6 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
           last_name: lastName,
           user_type: userType,
           email: email,
-          investor_type: userType === "investor" ? investorType : undefined,
         })
         .eq('id', authData.user?.id);
 
@@ -74,8 +71,7 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
       setPassword("");
       setFirstName("");
       setLastName("");
-      setUserType("investor");
-      setInvestorType("basic");
+      setUserType("basic_investor");
 
     } catch (error) {
       toast({
@@ -152,28 +148,14 @@ export function CreateUserDialog({ onUserCreated }: CreateUserDialogProps) {
                 <SelectValue placeholder="اختر نوع المستخدم" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="investor">مستثمر</SelectItem>
+                <SelectItem value="basic_investor">مستثمر أساسي</SelectItem>
+                <SelectItem value="qualified_investor">مستثمر مؤهل</SelectItem>
                 <SelectItem value="borrower">طالب تمويل</SelectItem>
                 <SelectItem value="investment_manager">مدير استثمار</SelectItem>
                 <SelectItem value="admin">مشرف</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
-          {userType === "investor" && (
-            <div className="space-y-2">
-              <Label htmlFor="investorType">نوع المستثمر</Label>
-              <Select value={investorType} onValueChange={setInvestorType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر نوع المستثمر" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="basic">مستثمر أساسي</SelectItem>
-                  <SelectItem value="qualified">مستثمر مؤهل</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
 
           <div className="flex justify-end space-x-2">
             <Button type="submit">إنشاء المستخدم</Button>

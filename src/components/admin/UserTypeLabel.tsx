@@ -11,9 +11,11 @@ export function UserTypeLabel({ type }: UserTypeLabelProps) {
         return 'bg-purple-500';
       case 'investment_manager':
         return 'bg-blue-500';
-      case 'investor':
+      case 'basic_investor':
         return 'bg-green-500';
-      case 'project_owner':
+      case 'qualified_investor':
+        return 'bg-green-700';
+      case 'borrower':
         return 'bg-orange-500';
       default:
         return 'bg-gray-500';
@@ -26,9 +28,11 @@ export function UserTypeLabel({ type }: UserTypeLabelProps) {
         return 'مشرف';
       case 'investment_manager':
         return 'مدير استثمار';
-      case 'investor':
-        return 'مستثمر';
-      case 'project_owner':
+      case 'basic_investor':
+        return 'مستثمر أساسي';
+      case 'qualified_investor':
+        return 'مستثمر مؤهل';
+      case 'borrower':
         return 'طالب تمويل';
       default:
         return 'غير محدد';
