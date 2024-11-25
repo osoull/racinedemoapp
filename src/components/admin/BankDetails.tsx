@@ -69,10 +69,9 @@ export default function BankDetails() {
         throw new Error('User not authenticated')
       }
 
-      // Mise à jour ou création des informations bancaires
       const { error } = await supabase
         .from('bank_accounts')
-        .upsert({
+        .upsert({ 
           bank_name: editedDetails.bank_name,
           account_name: editedDetails.account_name,
           swift: editedDetails.swift,
@@ -91,7 +90,6 @@ export default function BankDetails() {
         description: "تم تحديث المعلومات البنكية بنجاح"
       })
     } catch (error) {
-      console.error('Error saving bank details:', error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث المعلومات البنكية",
