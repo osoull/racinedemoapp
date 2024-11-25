@@ -41,22 +41,6 @@ export function ProfileForm() {
     }
   }, [initialProfile])
 
-  const checkProfileCompletion = (profileData: Partial<Profile>) => {
-    const requiredFields = [
-      'first_name',
-      'last_name',
-      'phone',
-      'national_id',
-      'street_number',
-      'street_name',
-      'postal_code',
-      'city',
-      'country'
-    ]
-
-    return requiredFields.every(field => !!profileData[field as keyof Profile])
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -69,7 +53,29 @@ export function ProfileForm() {
       return
     }
 
-    const isProfileComplete = checkProfileCompletion(profile)
+    // Vérification que tous les champs requis sont remplis
+    const requiredFields = [
+      'first_name',
+      'last_name',
+      'phone',
+      'national_id',
+      'street_number',
+      'street_name',
+      'postal_code',
+      'city',
+      'country'
+    ]
+
+    const missingFields = requiredFields.filter(field => !profile[field as keyof Profile])
+
+    if (missingFields.length > 0) {
+      toast({
+        title: "خطأ",
+        description: "يرجى ملء جميع الحقول المطلوبة",
+        variant: "destructive",
+      })
+      return
+    }
 
     setSaving(true)
     
@@ -78,7 +84,7 @@ export function ProfileForm() {
         .from('profiles')
         .update({
           ...profile,
-          profile_completed: isProfileComplete,
+          profile_completed: true,
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
