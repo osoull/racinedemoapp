@@ -6,8 +6,8 @@ type InvestorListProps = {
 }
 
 export function InvestorList({ investors }: InvestorListProps) {
-  const basicInvestors = investors?.filter(inv => inv.investor_type === "basic") || []
-  const qualifiedInvestors = investors?.filter(inv => inv.investor_type === "qualified") || []
+  const basicInvestors = investors?.filter(inv => inv.user_type === "basic_investor") || []
+  const qualifiedInvestors = investors?.filter(inv => inv.user_type === "qualified_investor") || []
 
   return (
     <Tabs defaultValue="all" className="w-full">

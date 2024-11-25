@@ -24,8 +24,8 @@ export function InvestorCard({ investor }: InvestorCardProps) {
           <p className="text-sm text-muted-foreground">{investor.email}</p>
           
           <div className="flex gap-2 mt-4">
-            <Badge variant={investor.investor_type === "qualified" ? "default" : "secondary"}>
-              {investor.investor_type === "qualified" ? "مستثمر مؤهل" : "مستثمر أساسي"}
+            <Badge variant={investor.user_type === "qualified_investor" ? "default" : "secondary"}>
+              {investor.user_type === "qualified_investor" ? "مستثمر مؤهل" : "مستثمر أساسي"}
             </Badge>
             <Badge variant={investor.kyc_status === "verified" ? "success" : "warning"}>
               {investor.kyc_status === "verified" ? "KYC مكتمل" : "KYC معلق"}

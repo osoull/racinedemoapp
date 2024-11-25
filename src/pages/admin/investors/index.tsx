@@ -16,7 +16,7 @@ export default function InvestorsPage() {
           *,
           investor_kyc (*)
         `)
-        .eq("user_type", "investor")
+        .in("user_type", ["basic_investor", "qualified_investor"])
 
       if (error) throw error
       return data
