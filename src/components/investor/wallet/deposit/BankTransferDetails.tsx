@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Copy, Loader2 } from "lucide-react"
+import { Copy } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
@@ -23,28 +23,9 @@ export function BankTransferDetails({ bankDetails, isLoading, error }: BankTrans
     })
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive" className="my-4">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          حدث خطأ أثناء تحميل المعلومات البنكية. يرجى المحاولة مرة أخرى لاحقاً.
-        </AlertDescription>
-      </Alert>
-    )
-  }
-
   if (!bankDetails) {
     return (
-      <Alert className="my-4">
+      <Alert variant="default">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
           لم يتم العثور على معلومات بنكية. يرجى التواصل مع الدعم الفني.

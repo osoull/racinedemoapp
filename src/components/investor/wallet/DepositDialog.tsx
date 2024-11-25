@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { CreditCard, Building2, AlertCircle, ArrowDownLeft } from "lucide-react"
+import { CreditCard, Building2, AlertCircle, ArrowDownLeft, Loader2 } from "lucide-react"
 import { useBankDetails } from "@/hooks/useBankDetails"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { BankTransferDetails } from "./deposit/BankTransferDetails"
@@ -46,12 +46,16 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     if (!validateAmount()) return
 
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error("User not authenticated")
+
       const { error } = await supabase
         .from("transactions")
         .insert({
           type: "deposit",
           amount: Number(amount),
-          status: "pending"
+          status: "pending",
+          user_id: user.id
         })
 
       if (error) throw error
@@ -119,16 +123,30 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
                 </AlertDescription>
               </Alert>
 
-              <BankTransferDetails 
-                bankDetails={bankDetails}
-                isLoading={isLoading}
-                error={error}
-              />
+              {isLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : error ? (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    حدث خطأ أثناء تحميل المعلومات البنكية. يرجى المحاولة مرة أخرى لاحقاً.
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <BankTransferDetails 
+                  bankDetails={bankDetails}
+                  isLoading={isLoading}
+                  error={error}
+                />
+              )}
               
               <Button 
                 onClick={handleBankTransfer} 
                 className="w-full"
                 variant="default"
+                disabled={isLoading || !!error}
               >
                 تأكيد التحويل البنكي
               </Button>
