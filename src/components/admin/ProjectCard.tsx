@@ -14,9 +14,8 @@ type Project = Tables<"projects"> & {
     middle_name: string | null;
     last_name: string | null;
   };
-  risk_rating?: {
-    rating: string;
-  } | null;
+  risk_rating?: string | null;
+  risk_description?: string | null;
 };
 
 interface ProjectCardProps {
@@ -42,7 +41,7 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit, isAdmin }: Pro
         </div>
         <div className="flex items-center gap-2">
           {project.risk_rating && (
-            <RiskRatingBadge rating={project.risk_rating.rating} />
+            <RiskRatingBadge rating={project.risk_rating} description={project.risk_description} />
           )}
           {isAdmin && (
             <Dialog open={isRatingOpen} onOpenChange={setIsRatingOpen}>

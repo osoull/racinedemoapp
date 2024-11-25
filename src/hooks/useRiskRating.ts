@@ -9,16 +9,16 @@ export const useRiskRating = (projectId: string) => {
 
   useEffect(() => {
     const channel = supabase
-      .channel('risk_ratings_changes')
+      .channel('project_changes')
       .on('postgres_changes', 
         { 
           event: '*', 
           schema: 'public', 
-          table: 'risk_ratings',
-          filter: `project_id=eq.${projectId}`
+          table: 'projects',
+          filter: `id=eq.${projectId}`
         }, 
         () => {
-          queryClient.invalidateQueries({ queryKey: ["risk-rating", projectId] });
+          queryClient.invalidateQueries({ queryKey: ["project", projectId] });
           queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
         }
       )
@@ -29,15 +29,13 @@ export const useRiskRating = (projectId: string) => {
     };
   }, [projectId, queryClient]);
 
-  const { data: riskRating, isLoading } = useQuery({
-    queryKey: ["risk-rating", projectId],
+  const { data: project, isLoading } = useQuery({
+    queryKey: ["project", projectId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("risk_ratings")
-        .select("*")
-        .eq("project_id", projectId)
-        .order('created_at', { ascending: false })
-        .limit(1)
+        .from("projects")
+        .select("risk_rating, risk_description")
+        .eq("id", projectId)
         .single();
 
       if (error) throw error;
@@ -48,12 +46,13 @@ export const useRiskRating = (projectId: string) => {
   const updateRiskRating = useMutation({
     mutationFn: async ({ rating, description }: { rating: string; description: string }) => {
       const { error } = await supabase
-        .from("risk_ratings")
-        .insert({
-          project_id: projectId,
-          rating,
-          description,
-        });
+        .from("projects")
+        .update({
+          risk_rating: rating,
+          risk_description: description,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", projectId);
 
       if (error) throw error;
     },
@@ -61,7 +60,7 @@ export const useRiskRating = (projectId: string) => {
       toast({
         title: "تم تحديث تقييم المخاطر بنجاح",
       });
-      queryClient.invalidateQueries({ queryKey: ["risk-rating", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
     },
     onError: (error) => {
@@ -74,7 +73,8 @@ export const useRiskRating = (projectId: string) => {
   });
 
   return {
-    riskRating,
+    riskRating: project?.risk_rating,
+    riskDescription: project?.risk_description,
     isLoading,
     updateRiskRating
   };

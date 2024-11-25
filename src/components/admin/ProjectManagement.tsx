@@ -16,9 +16,8 @@ type Project = Tables<"projects"> & {
     middle_name: string | null;
     last_name: string | null;
   };
-  risk_rating?: {
-    rating: string;
-  } | null;
+  risk_rating?: string | null;
+  risk_description?: string | null;
 };
 
 export interface ProjectManagementProps {
@@ -55,11 +54,9 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
         .from("projects")
         .select(`
           *,
-          owner:profiles(first_name, middle_name, last_name),
-          risk_rating:risk_ratings(rating)
+          owner:profiles(first_name, middle_name, last_name)
         `);
 
-      // Appliquer le filtre de statut si spécifié
       if (filter) {
         if (filter === 'active') {
           query = query.eq('status', 'approved');
@@ -68,16 +65,12 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
         }
       }
 
-      // Ordonner par date de création, plus récent en premier
       query = query.order('created_at', { ascending: false });
 
       const { data, error } = await query;
       if (error) throw error;
       
-      return (data || []).map(project => ({
-        ...project,
-        risk_rating: project.risk_rating?.[0] || null
-      })) as Project[];
+      return data as Project[];
     },
   });
 

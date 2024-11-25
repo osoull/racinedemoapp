@@ -641,6 +641,8 @@ export type Database = {
           id: string
           min_investment: number
           owner_id: string | null
+          risk_description: string | null
+          risk_rating: string | null
           status: string | null
           title: string
           updated_at: string
@@ -654,6 +656,8 @@ export type Database = {
           id?: string
           min_investment?: number
           owner_id?: string | null
+          risk_description?: string | null
+          risk_rating?: string | null
           status?: string | null
           title: string
           updated_at?: string
@@ -667,6 +671,8 @@ export type Database = {
           id?: string
           min_investment?: number
           owner_id?: string | null
+          risk_description?: string | null
+          risk_rating?: string | null
           status?: string | null
           title?: string
           updated_at?: string
@@ -704,41 +710,6 @@ export type Database = {
           upload_date?: string
         }
         Relationships: []
-      }
-      risk_ratings: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          project_id: string | null
-          rating: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          project_id?: string | null
-          rating: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          project_id?: string | null
-          rating?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "risk_ratings_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       stripe_payments: {
         Row: {
