@@ -48,7 +48,6 @@ export function Auth() {
 
       const userType = profile.user_type as UserType
 
-      // Redirection basée sur le type d'utilisateur
       switch (userType) {
         case "borrower":
           navigate("/borrower")

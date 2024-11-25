@@ -105,11 +105,11 @@ export function UserProfileInfo() {
                 </>
               )}
 
-              {profile.user_type === 'investor' && profile.investor_type && (
+              {(profile.user_type === 'basic_investor' || profile.user_type === 'qualified_investor') && (
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">نوع المستثمر</p>
                   <p className="font-medium">
-                    {profile.investor_type === 'basic' ? 'مستثمر أساسي' : 'مستثمر مؤهل'}
+                    {profile.user_type === 'basic_investor' ? 'مستثمر أساسي' : 'مستثمر مؤهل'}
                   </p>
                 </div>
               )}
