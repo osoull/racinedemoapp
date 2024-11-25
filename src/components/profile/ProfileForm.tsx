@@ -10,6 +10,40 @@ import { useToast } from "@/components/ui/use-toast"
 import { PersonalFields } from "./PersonalFields"
 import { AddressFields } from "./AddressFields"
 
+const isProfileComplete = (profile: Partial<Profile>): boolean => {
+  const requiredFields = [
+    'first_name',
+    'last_name',
+    'phone',
+    'national_id',
+    'street_number',
+    'street_name',
+    'postal_code',
+    'city',
+    'country'
+  ] as const;
+
+  const hasAllRequiredFields = requiredFields.every(field => 
+    profile[field] && profile[field]?.toString().trim() !== ''
+  );
+
+  // Pour les emprunteurs, vérifier aussi les champs business
+  if (profile.user_type === 'borrower') {
+    const requiredBusinessFields = [
+      'company_name',
+      'commercial_register',
+      'business_type',
+      'business_description'
+    ] as const;
+
+    return hasAllRequiredFields && requiredBusinessFields.every(field => 
+      profile[field] && profile[field]?.toString().trim() !== ''
+    );
+  }
+
+  return hasAllRequiredFields;
+};
+
 export function ProfileForm() {
   const { user } = useAuth()
   const [saving, setSaving] = useState(false)
@@ -56,8 +90,11 @@ export function ProfileForm() {
     setSaving(true)
     
     try {
+      const profileComplete = isProfileComplete(profile)
+      
       const dataToUpdate = {
         ...profile,
+        profile_completed: profileComplete,
         updated_at: new Date().toISOString()
       }
 
