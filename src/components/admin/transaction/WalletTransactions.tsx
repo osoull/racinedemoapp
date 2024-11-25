@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatCurrency } from "@/utils/feeCalculations"
+import { Card } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 type Transaction = Tables<"transactions"> & {
   user: { first_name: string; last_name: string } | null;
@@ -51,11 +53,15 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
     }
   }, [queryClient])
 
-  if (isLoading) return <div>جاري التحميل...</div>
-
-  const walletTransactions = transactions?.filter(t => 
-    t.type === 'deposit' || t.type === 'withdrawal'
-  )
+  if (isLoading) {
+    return (
+      <Card className="p-8">
+        <div className="flex items-center justify-center">
+          جاري التحميل...
+        </div>
+      </Card>
+    )
+  }
 
   const handleUpdateStatus = async (transactionId: string, newStatus: 'completed' | 'cancelled') => {
     try {
@@ -82,86 +88,111 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
   }
 
   return (
-    <div className="space-y-4">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>المستخدم</TableHead>
-            <TableHead>النوع</TableHead>
-            <TableHead>المبلغ الأساسي</TableHead>
-            <TableHead>الرسوم الإدارية</TableHead>
-            <TableHead>رسوم التحصيل</TableHead>
-            <TableHead>رسوم المستثمر</TableHead>
-            <TableHead>المبلغ الإجمالي</TableHead>
-            <TableHead>الحالة</TableHead>
-            <TableHead>التاريخ</TableHead>
-            <TableHead>الإجراءات</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {walletTransactions?.map((transaction) => {
-            const fees = transaction.fees || {
-              admin: 0,
-              collection: 0,
-              investor: 0,
-              total: 0
-            }
-            
-            const principalAmount = transaction.amount - fees.total
+    <Card className="p-4">
+      <ScrollArea className="h-[600px]">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>رقم المعاملة</TableHead>
+              <TableHead>المستخدم</TableHead>
+              <TableHead>نوع المعاملة</TableHead>
+              <TableHead>المبلغ الأساسي</TableHead>
+              <TableHead>تفاصيل الرسوم</TableHead>
+              <TableHead>إجمالي المعاملة</TableHead>
+              <TableHead>الحالة</TableHead>
+              <TableHead>التاريخ</TableHead>
+              <TableHead>الإجراءات</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {transactions?.map((transaction) => {
+              const fees = transaction.fees || {
+                admin: 0,
+                collection: 0,
+                investor: 0,
+                total: 0
+              }
+              
+              const principalAmount = transaction.amount - fees.total
 
-            return (
-              <TableRow key={transaction.id}>
-                <TableCell>
-                  {transaction.user ? 
-                    `${transaction.user.first_name} ${transaction.user.last_name}` : 
-                    'غير معروف'
-                  }
-                </TableCell>
-                <TableCell>
-                  {transaction.type === 'deposit' ? 'إيداع' : 'سحب'}
-                </TableCell>
-                <TableCell>{formatCurrency(principalAmount)}</TableCell>
-                <TableCell>{formatCurrency(fees.admin)}</TableCell>
-                <TableCell>{formatCurrency(fees.collection)}</TableCell>
-                <TableCell>{formatCurrency(fees.investor)}</TableCell>
-                <TableCell className="font-medium">{formatCurrency(transaction.amount)}</TableCell>
-                <TableCell>
-                  <Badge variant={
-                    transaction.status === 'completed' ? 'default' :
-                    transaction.status === 'pending' ? 'secondary' : 'destructive'
-                  }>
-                    {transaction.status === 'completed' ? 'مكتمل' :
-                     transaction.status === 'pending' ? 'قيد المعالجة' : 'ملغي'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {new Date(transaction.created_at).toLocaleDateString('ar-SA')}
-                </TableCell>
-                <TableCell>
-                  {transaction.status === 'pending' && (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="default"
-                        onClick={() => handleUpdateStatus(transaction.id, 'completed')}
-                      >
-                        اعتماد
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleUpdateStatus(transaction.id, 'cancelled')}
-                      >
-                        رفض
-                      </Button>
+              return (
+                <TableRow key={transaction.id}>
+                  <TableCell className="font-mono text-xs">
+                    {transaction.id.slice(0, 8)}...
+                  </TableCell>
+                  <TableCell>
+                    {transaction.user ? 
+                      `${transaction.user.first_name} ${transaction.user.last_name}` : 
+                      'غير معروف'
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {transaction.type === 'deposit' ? 'إيداع' : 
+                       transaction.type === 'withdrawal' ? 'سحب' :
+                       transaction.type === 'investment' ? 'استثمار' :
+                       transaction.type === 'project_fee' ? 'رسوم مشروع' : 
+                       'غير معروف'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{formatCurrency(principalAmount)}</TableCell>
+                  <TableCell>
+                    <div className="text-xs space-y-1">
+                      {fees.admin > 0 && (
+                        <div>رسوم إدارية: {formatCurrency(fees.admin)}</div>
+                      )}
+                      {fees.collection > 0 && (
+                        <div>رسوم تحصيل: {formatCurrency(fees.collection)}</div>
+                      )}
+                      {fees.investor > 0 && (
+                        <div>رسوم مستثمر: {formatCurrency(fees.investor)}</div>
+                      )}
+                      {fees.total === 0 && (
+                        <div className="text-muted-foreground">لا توجد رسوم</div>
+                      )}
                     </div>
-                  )}
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-    </div>
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {formatCurrency(transaction.amount)}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={
+                      transaction.status === 'completed' ? 'default' :
+                      transaction.status === 'pending' ? 'secondary' : 'destructive'
+                    }>
+                      {transaction.status === 'completed' ? 'مكتمل' :
+                       transaction.status === 'pending' ? 'قيد المعالجة' : 'ملغي'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(transaction.created_at).toLocaleDateString('ar-SA')}
+                  </TableCell>
+                  <TableCell>
+                    {transaction.status === 'pending' && (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => handleUpdateStatus(transaction.id, 'completed')}
+                        >
+                          اعتماد
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleUpdateStatus(transaction.id, 'cancelled')}
+                        >
+                          رفض
+                        </Button>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </ScrollArea>
+    </Card>
   )
 }
