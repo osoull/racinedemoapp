@@ -18,6 +18,40 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   const { user } = useAuth()
   const { toast } = useToast()
 
+  const { data: userProfile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user?.id)
+        .single()
+      return data
+    },
+    enabled: !!user?.id
+  })
+
+  const { data: commissions } = useQuery({
+    queryKey: ["commissions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commissions")
+        .select("*")
+      
+      if (error) throw error
+      return data
+    },
+  })
+
+  const calculateTotalFees = () => {
+    if (!commissions || !amount) return 0
+    const amountNumber = Number(amount)
+    const adminFee = commissions.find(c => c.commission_type === 'admin_fee')?.rate || 0
+    const collectionFee = commissions.find(c => c.commission_type === 'collection_fee')?.rate || 0
+    
+    return (amountNumber * (adminFee + collectionFee)) / 100
+  }
+
   const handleCardPayment = async () => {
     if (!user || !amount) {
       toast({
@@ -30,18 +64,11 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     
     setIsLoading(true)
     try {
-      const amountNumber = Number(amount)
-      const userProfile = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single()
-
-      if (!userProfile.data) throw new Error('User profile not found')
+      const amountToCharge = userProfile?.user_type === 'borrower' ? calculateTotalFees() : Number(amount)
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { 
-          amount: amountNumber,
+          amount: amountToCharge,
           user_id: user.id
         }
       })
@@ -67,14 +94,14 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     }
   }
 
-  const amountNumber = Number(amount)
+  const displayAmount = userProfile?.user_type === 'borrower' ? calculateTotalFees() : Number(amount)
 
   return (
     <div className="space-y-4">
       <div className="text-sm space-y-2">
         <div className="flex justify-between font-bold border-t pt-2">
-          <span>المبلغ الإجمالي:</span>
-          <span>{formatCurrency(amountNumber)}</span>
+          <span>{userProfile?.user_type === 'borrower' ? 'المبلغ الإجمالي للرسوم:' : 'المبلغ الإجمالي:'}</span>
+          <span>{formatCurrency(displayAmount)}</span>
         </div>
       </div>
 
@@ -89,7 +116,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
             جاري المعالجة...
           </>
         ) : (
-          `الدفع بالبطاقة (${formatCurrency(amountNumber)})`
+          `الدفع بالبطاقة (${formatCurrency(displayAmount)})`
         )}
       </Button>
     </div>
