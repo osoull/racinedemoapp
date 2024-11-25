@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { calculateFees, formatCurrency } from "@/utils/feeCalculations"
+import { User } from "@/types/user"
 
 interface CardPaymentProps {
   amount: string
@@ -42,7 +43,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
     setIsLoading(true)
     try {
       const amountNumber = Number(amount)
-      const fees = calculateFees(amountNumber, commissions || [], user.user_type)
+      const fees = calculateFees(amountNumber, commissions || [], user.user_type || 'basic')
       const totalAmount = amountNumber + fees.total
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
@@ -75,7 +76,7 @@ export function CardPayment({ amount, onSuccess }: CardPaymentProps) {
   }
 
   const amountNumber = Number(amount)
-  const fees = calculateFees(amountNumber, commissions || [], user?.user_type)
+  const fees = calculateFees(amountNumber, commissions || [], user?.user_type || 'basic')
   const totalAmount = amountNumber + fees.total
 
   return (
