@@ -1,8 +1,32 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { WalletTransactions } from "./WalletTransactions"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 export function TransactionManagement() {
+  const { data: transactions, isLoading } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          user:profiles(first_name, last_name),
+          investment:investments(
+            amount,
+            project:projects(title)
+          )
+        `)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      return data
+    }
+  })
+
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-6">
@@ -13,14 +37,39 @@ export function TransactionManagement() {
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>المعاملات الحالية</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>قريباً...</p>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="all" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="all">جميع المعاملات</TabsTrigger>
+            <TabsTrigger value="pending">قيد المعالجة</TabsTrigger>
+            <TabsTrigger value="completed">مكتملة</TabsTrigger>
+            <TabsTrigger value="cancelled">ملغاة</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all">
+            <WalletTransactions transactions={transactions} isLoading={isLoading} />
+          </TabsContent>
+
+          <TabsContent value="pending">
+            <WalletTransactions 
+              transactions={transactions?.filter(t => t.status === 'pending')} 
+              isLoading={isLoading} 
+            />
+          </TabsContent>
+
+          <TabsContent value="completed">
+            <WalletTransactions 
+              transactions={transactions?.filter(t => t.status === 'completed')} 
+              isLoading={isLoading} 
+            />
+          </TabsContent>
+
+          <TabsContent value="cancelled">
+            <WalletTransactions 
+              transactions={transactions?.filter(t => t.status === 'cancelled')} 
+              isLoading={isLoading} 
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   )
