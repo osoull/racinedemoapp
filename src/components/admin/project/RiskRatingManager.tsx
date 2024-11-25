@@ -24,7 +24,7 @@ export const RiskRatingManager = ({ projectId, onClose }: RiskRatingManagerProps
   const [description, setDescription] = useState("");
   const [selectedRating, setSelectedRating] = useState<string>("");
 
-  const { data: riskRating, isLoading } = useQuery({
+  const { data: riskRating } = useQuery({
     queryKey: ["risk-rating", projectId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -56,7 +56,9 @@ export const RiskRatingManager = ({ projectId, onClose }: RiskRatingManagerProps
       toast({
         title: "تم تحديث تصنيف المخاطر بنجاح",
       });
+      // Invalidate both the risk rating and the projects queries
       queryClient.invalidateQueries({ queryKey: ["risk-rating", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
       if (onClose) {
         onClose();
       }

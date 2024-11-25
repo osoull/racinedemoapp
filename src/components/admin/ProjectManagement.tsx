@@ -4,13 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 import { useState, useEffect } from "react";
 import { ProjectForm } from "./ProjectForm";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProjectCard } from "./ProjectCard";
-import { RiskRatingManager } from "./project/RiskRatingManager";
 
 type Project = Tables<"projects"> & {
   owner?: {
@@ -32,7 +30,6 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [showRiskRating, setShowRiskRating] = useState(false);
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ["admin-projects", filter],
@@ -144,23 +141,11 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
                 onEdit={() => setEditingProject(project)}
                 onDelete={() => deleteProjectMutation.mutate(project.id)}
                 canEdit={user?.id === project.owner_id}
-                onRiskRating={() => setShowRiskRating(true)}
               />
             ))}
           </div>
         )}
       </CardContent>
-
-      {showRiskRating && (
-        <Dialog open={showRiskRating} onOpenChange={setShowRiskRating}>
-          <DialogContent>
-            <RiskRatingManager 
-              projectId={editingProject?.id || ''} 
-              onClose={() => setShowRiskRating(false)} 
-            />
-          </DialogContent>
-        </Dialog>
-      )}
     </Card>
   );
 };

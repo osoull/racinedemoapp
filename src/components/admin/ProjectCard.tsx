@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tables } from "@/integrations/supabase/types";
 import { RiskRatingBadge } from "./project/RiskRatingBadge";
 import { RiskRatingManager } from "./project/RiskRatingManager";
+import { useState } from "react";
 
 type Project = Tables<"projects"> & {
   owner?: {
@@ -24,6 +25,8 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard = ({ project, onEdit, onDelete, canEdit }: ProjectCardProps) => {
+  const [isRatingOpen, setIsRatingOpen] = useState(false);
+
   return (
     <Card className="p-6">
       <div className="flex justify-between items-start mb-4">
@@ -35,14 +38,17 @@ export const ProjectCard = ({ project, onEdit, onDelete, canEdit }: ProjectCardP
           {project.risk_rating && (
             <RiskRatingBadge rating={project.risk_rating.rating} />
           )}
-          <Dialog>
+          <Dialog open={isRatingOpen} onOpenChange={setIsRatingOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
                 تقييم المخاطر
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <RiskRatingManager projectId={project.id} />
+              <RiskRatingManager 
+                projectId={project.id} 
+                onClose={() => setIsRatingOpen(false)}
+              />
             </DialogContent>
           </Dialog>
         </div>
