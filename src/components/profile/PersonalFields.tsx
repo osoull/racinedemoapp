@@ -1,11 +1,16 @@
 import { Input } from "@/components/ui/input"
+import { Profile } from "@/types/user"
 
 interface PersonalFieldsProps {
-  profile: any
-  setProfile: (profile: any) => void
+  profile: Partial<Profile>;
+  setProfile: (profile: Partial<Profile>) => void;
 }
 
 export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
+  const handleChange = (field: keyof Profile, value: string) => {
+    setProfile({ ...profile, [field]: value })
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="space-y-2">
@@ -14,7 +19,7 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
         </label>
         <Input
           value={profile.first_name || ''}
-          onChange={(e) => setProfile({ ...profile, first_name: e.target.value })}
+          onChange={(e) => handleChange('first_name', e.target.value)}
           placeholder="أدخل اسمك الأول"
           required
         />
@@ -26,7 +31,7 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
         </label>
         <Input
           value={profile.last_name || ''}
-          onChange={(e) => setProfile({ ...profile, last_name: e.target.value })}
+          onChange={(e) => handleChange('last_name', e.target.value)}
           placeholder="أدخل اسم عائلتك"
           required
         />
@@ -38,7 +43,7 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
         </label>
         <Input
           value={profile.phone || ''}
-          onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+          onChange={(e) => handleChange('phone', e.target.value)}
           placeholder="أدخل رقم هاتفك"
           dir="ltr"
           required
@@ -51,7 +56,7 @@ export function PersonalFields({ profile, setProfile }: PersonalFieldsProps) {
         </label>
         <Input
           value={profile.national_id || ''}
-          onChange={(e) => setProfile({ ...profile, national_id: e.target.value })}
+          onChange={(e) => handleChange('national_id', e.target.value)}
           placeholder="أدخل رقم هويتك"
           dir="ltr"
           required

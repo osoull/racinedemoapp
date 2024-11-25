@@ -41,61 +41,6 @@ export function ProfileForm() {
     }
   }, [initialProfile])
 
-  const validatePersonalFields = () => {
-    const requiredPersonalFields = {
-      first_name: 'الاسم الأول',
-      last_name: 'اسم العائلة',
-      phone: 'رقم الهاتف',
-      national_id: 'رقم الهوية',
-      street_number: 'رقم المبنى',
-      street_name: 'اسم الشارع',
-      postal_code: 'الرمز البريدي',
-      city: 'المدينة',
-      country: 'البلد'
-    }
-
-    const missingFields = Object.entries(requiredPersonalFields)
-      .filter(([key]) => !profile[key as keyof Profile])
-      .map(([_, label]) => label)
-
-    if (missingFields.length > 0) {
-      toast({
-        title: "خطأ",
-        description: `يرجى ملء الحقول التالية: ${missingFields.join('، ')}`,
-        variant: "destructive",
-      })
-      return false
-    }
-
-    return true
-  }
-
-  const validateBusinessFields = () => {
-    if (profile.user_type !== 'borrower') return true
-
-    const requiredBusinessFields = {
-      company_name: 'اسم الشركة',
-      commercial_register: 'السجل التجاري',
-      business_type: 'نوع النشاط',
-      business_address: 'عنوان العمل'
-    }
-
-    const missingFields = Object.entries(requiredBusinessFields)
-      .filter(([key]) => !profile[key as keyof Profile])
-      .map(([_, label]) => label)
-
-    if (missingFields.length > 0) {
-      toast({
-        title: "خطأ",
-        description: `يرجى ملء الحقول التالية: ${missingFields.join('، ')}`,
-        variant: "destructive",
-      })
-      return false
-    }
-
-    return true
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -107,12 +52,6 @@ export function ProfileForm() {
       })
       return
     }
-
-    const isPersonalFieldsValid = validatePersonalFields()
-    if (!isPersonalFieldsValid) return
-
-    const isBusinessFieldsValid = validateBusinessFields()
-    if (!isBusinessFieldsValid) return
     
     setSaving(true)
     
