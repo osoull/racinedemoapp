@@ -637,6 +637,8 @@ export type Database = {
           created_at: string
           current_funding: number | null
           description: string | null
+          fees_paid: boolean | null
+          fees_transaction_id: string | null
           funding_goal: number
           id: string
           min_investment: number
@@ -652,6 +654,8 @@ export type Database = {
           created_at?: string
           current_funding?: number | null
           description?: string | null
+          fees_paid?: boolean | null
+          fees_transaction_id?: string | null
           funding_goal: number
           id?: string
           min_investment?: number
@@ -667,6 +671,8 @@ export type Database = {
           created_at?: string
           current_funding?: number | null
           description?: string | null
+          fees_paid?: boolean | null
+          fees_transaction_id?: string | null
           funding_goal?: number
           id?: string
           min_investment?: number
@@ -678,6 +684,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_fees_transaction_id_fkey"
+            columns: ["fees_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_owner_id_fkey"
             columns: ["owner_id"]
