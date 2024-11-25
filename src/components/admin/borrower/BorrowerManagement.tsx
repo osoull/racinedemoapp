@@ -14,17 +14,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 interface Borrower {
   id: string
   created_at: string
-  email: string
-  full_name: string
-  company_name: string
-  status: string
-  kyc_status: string
+  email: string | null
+  first_name: string
+  last_name: string
+  company_name: string | null
+  kyc_status: string | null
+  user_type: string
+  full_name?: string
+  status?: string
 }
 
 const columns: ColumnDef<Borrower>[] = [
   {
     accessorKey: "full_name",
     header: "الاسم الكامل",
+    cell: ({ row }) => `${row.original.first_name} ${row.original.last_name}`,
   },
   {
     accessorKey: "email",
@@ -38,8 +42,8 @@ const columns: ColumnDef<Borrower>[] = [
     accessorKey: "status",
     header: "الحالة",
     cell: ({ row }) => (
-      <Badge variant={row.original.status === "active" ? "default" : "secondary"}>
-        {row.original.status === "active" ? "نشط" : "معلق"}
+      <Badge variant={row.original.user_type === "active" ? "default" : "secondary"}>
+        {row.original.user_type === "active" ? "نشط" : "معلق"}
       </Badge>
     ),
   },
@@ -125,7 +129,7 @@ export default function BorrowerManagement() {
                 ) : (
                   <DataTable 
                     columns={columns} 
-                    data={borrowers?.filter(b => b.status === "active") || []} 
+                    data={borrowers?.filter(b => b.user_type === "active") || []} 
                   />
                 )}
               </TabsContent>
@@ -138,7 +142,7 @@ export default function BorrowerManagement() {
                 ) : (
                   <DataTable 
                     columns={columns} 
-                    data={borrowers?.filter(b => b.status === "pending") || []} 
+                    data={borrowers?.filter(b => b.user_type === "pending") || []} 
                   />
                 )}
               </TabsContent>
@@ -151,7 +155,7 @@ export default function BorrowerManagement() {
                 ) : (
                   <DataTable 
                     columns={columns} 
-                    data={borrowers?.filter(b => b.status === "blocked") || []} 
+                    data={borrowers?.filter(b => b.user_type === "blocked") || []} 
                   />
                 )}
               </TabsContent>
