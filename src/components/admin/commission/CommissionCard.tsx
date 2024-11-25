@@ -2,10 +2,9 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
 import { Tables } from "@/integrations/supabase/types"
+import { useCommissionUpdates } from "@/hooks/useCommissionUpdates"
+import { useToast } from "@/hooks/use-toast"
 
 type Commission = Tables<"commissions">
 
@@ -16,55 +15,11 @@ interface CommissionCardProps {
 
 export const CommissionCard = ({ commission, getArabicCommissionType }: CommissionCardProps) => {
   const { toast } = useToast()
-  const queryClient = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
   const [newRate, setNewRate] = useState(commission.rate.toString())
+  const { updateCommissionRate } = useCommissionUpdates()
 
-  const updateCommissionMutation = useMutation({
-    mutationFn: async (newRate: number) => {
-      const { data, error } = await supabase
-        .from("commissions")
-        .update({ 
-          rate: newRate,
-          updated_at: new Date().toISOString()
-        })
-        .eq("commission_id", commission.commission_id)
-        .select()
-        .single()
-
-      if (error) {
-        console.error("Erreur lors de la mise à jour:", error)
-        throw error
-      }
-
-      return data
-    },
-    onSuccess: (updatedCommission) => {
-      // Mise à jour optimiste du cache
-      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
-        if (!oldData) return [updatedCommission]
-        return oldData.map(commission => 
-          commission.commission_id === updatedCommission.commission_id ? updatedCommission : commission
-        )
-      })
-      
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث معدل العمولة بنجاح",
-      })
-      setIsEditing(false)
-    },
-    onError: (error) => {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث معدل العمولة",
-        variant: "destructive",
-      })
-      console.error("Error updating commission rate:", error)
-    },
-  })
-
-  const handleSave = () => {
+  const handleSave = async () => {
     const rateNumber = parseFloat(newRate)
     if (isNaN(rateNumber) || rateNumber < 0 || rateNumber > 100) {
       toast({
@@ -74,7 +29,13 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
       })
       return
     }
-    updateCommissionMutation.mutate(rateNumber)
+
+    try {
+      await updateCommissionRate(commission.commission_id, rateNumber)
+      setIsEditing(false)
+    } catch (error) {
+      console.error("Error updating commission rate:", error)
+    }
   }
 
   return (
