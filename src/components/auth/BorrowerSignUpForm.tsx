@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/integrations/supabase/client"
 import { ArrowRight } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -19,7 +19,6 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
   const [companyName, setCompanyName] = useState("")
   const [commercialRegister, setCommercialRegister] = useState("")
   const [acceptTerms, setAcceptTerms] = useState(false)
-  const { signUp } = useAuth()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,10 +32,23 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
       return
     }
     try {
-      await signUp(email, password, "borrower")
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            user_type: "borrower",
+            company_name: companyName,
+            commercial_register: commercialRegister
+          }
+        }
+      })
+
+      if (error) throw error
+
       toast({
         title: "تم إنشاء الحساب بنجاح",
-        description: "يرجى تسجيل الدخول للمتابعة",
+        description: "يمكنك الآن تسجيل الدخول باستخدام بريدك الإلكتروني وكلمة المرور",
       })
       onSuccess()
     } catch (error) {

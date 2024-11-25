@@ -21,7 +21,7 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const { data: { user }, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -36,13 +36,11 @@ export function SignUpForm({ userType, onBack, onSuccess }: SignUpFormProps) {
 
       if (error) throw error
 
-      if (user) {
-        toast({
-          title: "تم إنشاء الحساب بنجاح",
-          description: "يمكنك الآن تسجيل الدخول",
-        })
-        onSuccess()
-      }
+      toast({
+        title: "تم إنشاء الحساب بنجاح",
+        description: "يمكنك الآن تسجيل الدخول باستخدام بريدك الإلكتروني وكلمة المرور",
+      })
+      onSuccess()
     } catch (error) {
       console.error("SignUp error:", error)
       toast({
