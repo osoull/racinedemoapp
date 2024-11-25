@@ -5,11 +5,13 @@ import { supabase } from "@/integrations/supabase/client"
 import { Tables } from "@/integrations/supabase/types"
 import { WalletTransactions } from "./WalletTransactions"
 import { FeeDistribution } from "./FeeDistribution"
+import { useEffect } from "react"
+import { toast } from "sonner"
 
 type Transaction = Tables<"transactions">
 
 export function TransactionManagement() {
-  const { data: transactions, isLoading } = useQuery({
+  const { data: transactions, isLoading, refetch } = useQuery({
     queryKey: ["transactions"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -34,6 +36,35 @@ export function TransactionManagement() {
       })[]
     },
   })
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('transaction-changes')
+      .on('postgres_changes', 
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'transactions' 
+        }, 
+        (payload) => {
+          refetch()
+          
+          const status = payload.new.status
+          const type = payload.new.type === 'deposit' ? 'الإيداع' : 'السحب'
+          
+          if (status === 'completed') {
+            toast.success(`تم اعتماد عملية ${type}`)
+          } else if (status === 'cancelled') {
+            toast.error(`تم رفض عملية ${type}`)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [refetch])
 
   return (
     <Card>

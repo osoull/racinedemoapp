@@ -1,6 +1,10 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Tables } from "@/integrations/supabase/types"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
+import { useQueryClient } from "@tanstack/react-query"
 
 type Transaction = Tables<"transactions"> & {
   user: { first_name: string; last_name: string } | null;
@@ -16,6 +20,8 @@ interface WalletTransactionsProps {
 }
 
 export function WalletTransactions({ transactions, isLoading }: WalletTransactionsProps) {
+  const queryClient = useQueryClient()
+
   if (isLoading) return <div>جاري التحميل...</div>
 
   const walletTransactions = transactions?.filter(t => 
@@ -29,6 +35,23 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
     }).format(amount)
   }
 
+  const handleUpdateStatus = async (transactionId: string, newStatus: 'completed' | 'cancelled') => {
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .update({ status: newStatus })
+        .eq('id', transactionId)
+
+      if (error) throw error
+
+      toast.success(newStatus === 'completed' ? 'تم اعتماد المعاملة' : 'تم رفض المعاملة')
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+    } catch (error) {
+      console.error('Error updating transaction:', error)
+      toast.error('حدث خطأ أثناء تحديث حالة المعاملة')
+    }
+  }
+
   return (
     <div className="space-y-4">
       <Table>
@@ -39,6 +62,7 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
             <TableHead>المبلغ</TableHead>
             <TableHead>الحالة</TableHead>
             <TableHead>التاريخ</TableHead>
+            <TableHead>الإجراءات</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,6 +89,25 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
               </TableCell>
               <TableCell>
                 {new Date(transaction.created_at).toLocaleDateString('ar-SA')}
+              </TableCell>
+              <TableCell>
+                {transaction.status === 'pending' && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleUpdateStatus(transaction.id, 'completed')}
+                    >
+                      اعتماد
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleUpdateStatus(transaction.id, 'cancelled')}
+                    >
+                      رفض
+                    </Button>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}
