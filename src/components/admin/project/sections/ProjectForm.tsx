@@ -65,7 +65,7 @@ export function ProjectForm({ project, onSubmit }: ProjectFormProps) {
           </div>
           <div className="space-y-6">
             <ProjectDescription control={form.control} />
-            <ProjectDocuments />
+            <ProjectDocuments control={form.control} />
           </div>
         </div>
         <div className="flex justify-end pt-6 border-t">
