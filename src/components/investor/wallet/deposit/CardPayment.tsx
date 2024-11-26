@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
@@ -10,16 +9,16 @@ interface CardPaymentProps {
 }
 
 export const CardPayment = ({ amount, onSuccess }: CardPaymentProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
 
   const handlePayment = async () => {
     if (!user) {
       toast({
-        variant: "destructive",
         title: "خطأ",
-        description: "يجب تسجيل الدخول لإتمام العملية",
+        description: "يجب تسجيل الدخول لإتمام عملية الدفع",
+        variant: "destructive",
       });
       return;
     }
@@ -62,11 +61,11 @@ export const CardPayment = ({ amount, onSuccess }: CardPaymentProps) => {
         throw new Error('No session URL returned');
       }
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Error creating payment:', error);
       toast({
+        title: "خطأ في عملية الدفع",
+        description: "حدث خطأ أثناء إنشاء عملية الدفع",
         variant: "destructive",
-        title: "خطأ في الدفع",
-        description: "حدث خطأ أثناء إنشاء جلسة الدفع. يرجى المحاولة مرة أخرى.",
       });
     } finally {
       setIsLoading(false);
@@ -74,12 +73,12 @@ export const CardPayment = ({ amount, onSuccess }: CardPaymentProps) => {
   };
 
   return (
-    <Button
+    <button
       onClick={handlePayment}
       disabled={isLoading}
-      className="w-full"
+      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md"
     >
-      {isLoading ? "جاري التحميل..." : "الدفع بالبطاقة"}
-    </Button>
+      {isLoading ? "جاري التجهيز..." : "الدفع بالبطاقة"}
+    </button>
   );
 };

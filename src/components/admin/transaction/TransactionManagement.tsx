@@ -1,9 +1,10 @@
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { WalletTransactions } from "./WalletTransactions"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { TransactionList } from "./TransactionList";
 
 export function TransactionManagement() {
   const { data: transactions, isLoading } = useQuery({
@@ -19,25 +20,10 @@ export function TransactionManagement() {
             project:projects(title)
           )
         `)
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: false });
 
-      if (transactionsError) throw transactionsError
-
-      // Calculate fee summaries
-      const feeSummary = transactionsData.reduce((acc, transaction) => {
-        if (transaction.fee_type && transaction.fee_amount) {
-          if (!acc[transaction.fee_type]) {
-            acc[transaction.fee_type] = 0;
-          }
-          acc[transaction.fee_type] += transaction.fee_amount;
-        }
-        return acc;
-      }, {} as Record<string, number>);
-
-      return {
-        transactions: transactionsData,
-        feeSummary
-      };
+      if (transactionsError) throw transactionsError;
+      return transactionsData;
     }
   });
 
@@ -60,31 +46,39 @@ export function TransactionManagement() {
           </TabsList>
 
           <TabsContent value="all">
-            <WalletTransactions 
-              transactions={transactions?.transactions} 
-              isLoading={isLoading} 
-            />
+            <Card className="p-4">
+              <TransactionList 
+                transactions={transactions} 
+                isLoading={isLoading} 
+              />
+            </Card>
           </TabsContent>
 
           <TabsContent value="pending">
-            <WalletTransactions 
-              transactions={transactions?.transactions.filter(t => t.status === 'pending')} 
-              isLoading={isLoading} 
-            />
+            <Card className="p-4">
+              <TransactionList 
+                transactions={transactions?.filter(t => t.status === 'pending')} 
+                isLoading={isLoading} 
+              />
+            </Card>
           </TabsContent>
 
           <TabsContent value="completed">
-            <WalletTransactions 
-              transactions={transactions?.transactions.filter(t => t.status === 'completed')} 
-              isLoading={isLoading} 
-            />
+            <Card className="p-4">
+              <TransactionList 
+                transactions={transactions?.filter(t => t.status === 'completed')} 
+                isLoading={isLoading} 
+              />
+            </Card>
           </TabsContent>
 
           <TabsContent value="cancelled">
-            <WalletTransactions 
-              transactions={transactions?.transactions.filter(t => t.status === 'cancelled')} 
-              isLoading={isLoading} 
-            />
+            <Card className="p-4">
+              <TransactionList 
+                transactions={transactions?.filter(t => t.status === 'cancelled')} 
+                isLoading={isLoading} 
+              />
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
