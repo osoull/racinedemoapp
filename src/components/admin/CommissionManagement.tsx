@@ -26,24 +26,29 @@ const CommissionManagement = () => {
   })
 
   useEffect(() => {
-    // Subscribe to realtime changes
+    // S'abonner aux changements en temps réel
     const channel = supabase
       .channel('commission_changes')
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
           table: 'commissions'
         },
         (payload) => {
-          // Invalidate and refetch when we receive a change
-          queryClient.invalidateQueries({ queryKey: ["commissions"] })
-          
-          toast({
-            title: "تم تحديث العمولة",
-            description: "تم تحديث معدل العمولة بنجاح",
+          // Invalider et recharger lors d'un changement
+          queryClient.invalidateQueries({ 
+            queryKey: ["commissions"],
+            exact: true
           })
+          
+          if (payload.eventType === 'UPDATE') {
+            toast({
+              title: "تم تحديث العمولة",
+              description: "تم تحديث معدل العمولة بنجاح",
+            })
+          }
         }
       )
       .subscribe()

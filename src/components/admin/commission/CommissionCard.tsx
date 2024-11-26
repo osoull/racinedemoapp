@@ -39,6 +39,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
     setIsSubmitting(true)
 
     try {
+      // Mise à jour avec le nouveau taux et timestamp
       const { error: updateError } = await supabase
         .from("commissions")
         .update({ 
@@ -46,13 +47,17 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
           updated_at: new Date().toISOString()
         })
         .eq("commission_id", commission.commission_id)
+        .select()
 
       if (updateError) throw updateError
 
+      // Attendre que la mise à jour soit terminée avant de continuer
+      await queryClient.invalidateQueries({ 
+        queryKey: ["commissions"],
+        exact: true 
+      })
+
       setIsEditing(false)
-      
-      // Invalidate and refetch
-      await queryClient.invalidateQueries({ queryKey: ["commissions"] })
       
       toast({
         title: "تم التحديث",
