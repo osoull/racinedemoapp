@@ -29,19 +29,19 @@ export function ProjectForm() {
   ];
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-background">
+    <div className="fixed inset-0 w-full h-full bg-background/95 backdrop-blur-sm">
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
           <div className="flex h-full">
-            {/* Sidebar with tabs - Fixed width */}
-            <Card className="w-80 shrink-0 h-full rounded-none border-r">
+            {/* Sidebar with tabs */}
+            <Card className="w-[300px] shrink-0 h-full rounded-none border-l bg-card/50 backdrop-blur-sm">
               <ScrollArea className="h-full">
-                <TabsList className="flex flex-col h-auto p-6 bg-muted/50 w-full space-y-3">
+                <TabsList className="flex flex-col h-auto p-8 w-full space-y-2">
                   {tabs.map((tab) => (
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
-                      className="w-full text-right py-4 px-8 data-[state=active]:bg-background text-lg"
+                      className="w-full justify-start text-right py-3 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-lg"
                     >
                       {tab.label}
                     </TabsTrigger>
@@ -50,81 +50,83 @@ export function ProjectForm() {
               </ScrollArea>
             </Card>
 
-            {/* Main content area - Scrollable */}
-            <Card className="flex-1 h-full rounded-none border-none">
+            {/* Main content area */}
+            <div className="flex-1 h-full">
               <ScrollArea className="h-full">
-                <div className="p-8 lg:p-12">
-                  <TabsContent value="general" className="m-0">
-                    <GeneralInfo control={form.control} />
-                  </TabsContent>
+                <div className="max-w-4xl mx-auto p-8 lg:p-12">
+                  <Card className="border-none shadow-none bg-transparent">
+                    <TabsContent value="general" className="mt-0 space-y-6">
+                      <GeneralInfo control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="description" className="m-0">
-                    <ProjectDescription control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="description" className="mt-0 space-y-6">
+                      <ProjectDescription control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="financial" className="m-0">
-                    <FinancialDetails control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="financial" className="mt-0 space-y-6">
+                      <FinancialDetails control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="timeline" className="m-0">
-                    <ProjectTimeline control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="timeline" className="mt-0 space-y-6">
+                      <ProjectTimeline control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="team" className="m-0">
-                    <TeamMembers control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="team" className="mt-0 space-y-6">
+                      <TeamMembers control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="documents" className="m-0">
-                    <ProjectDocuments control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="documents" className="mt-0 space-y-6">
+                      <ProjectDocuments control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="additional" className="m-0">
-                    <AdditionalInfo control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="additional" className="mt-0 space-y-6">
+                      <AdditionalInfo control={form.control} />
+                    </TabsContent>
 
-                  <TabsContent value="payment" className="m-0">
-                    <PaymentSection control={form.control} />
-                  </TabsContent>
+                    <TabsContent value="payment" className="mt-0 space-y-6">
+                      <PaymentSection control={form.control} />
+                    </TabsContent>
 
-                  {/* Navigation buttons */}
-                  <div className="flex justify-between mt-12 pt-8 border-t">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        const currentIndex = tabs.findIndex(t => t.value === currentTab);
-                        if (currentIndex > 0) {
-                          setCurrentTab(tabs[currentIndex - 1].value);
-                        }
-                      }}
-                      disabled={currentTab === "general"}
-                      className="w-40 text-lg"
-                    >
-                      السابق
-                    </Button>
-
-                    {currentTab !== "payment" ? (
+                    {/* Navigation buttons */}
+                    <div className="flex justify-between mt-12 pt-8 border-t">
                       <Button
                         type="button"
+                        variant="outline"
                         onClick={() => {
                           const currentIndex = tabs.findIndex(t => t.value === currentTab);
-                          if (currentIndex < tabs.length - 1) {
-                            setCurrentTab(tabs[currentIndex + 1].value);
+                          if (currentIndex > 0) {
+                            setCurrentTab(tabs[currentIndex - 1].value);
                           }
                         }}
+                        disabled={currentTab === "general"}
                         className="w-40 text-lg"
                       >
-                        التالي
+                        السابق
                       </Button>
-                    ) : (
-                      <Button type="submit" disabled={isSubmitting} className="w-40 text-lg">
-                        {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
-                      </Button>
-                    )}
-                  </div>
+
+                      {currentTab !== "payment" ? (
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const currentIndex = tabs.findIndex(t => t.value === currentTab);
+                            if (currentIndex < tabs.length - 1) {
+                              setCurrentTab(tabs[currentIndex + 1].value);
+                            }
+                          }}
+                          className="w-40 text-lg"
+                        >
+                          التالي
+                        </Button>
+                      ) : (
+                        <Button type="submit" disabled={isSubmitting} className="w-40 text-lg">
+                          {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
+                        </Button>
+                      )}
+                    </div>
+                  </Card>
                 </div>
               </ScrollArea>
-            </Card>
+            </div>
           </div>
         </Tabs>
       </form>
