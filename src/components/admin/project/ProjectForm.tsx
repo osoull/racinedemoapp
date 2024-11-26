@@ -29,19 +29,19 @@ export function ProjectForm() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background w-full">
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
           <div className="flex flex-col lg:flex-row h-full">
             {/* Sidebar with tabs - Fixed width on desktop */}
-            <Card className="lg:w-80 mb-6 lg:mb-0 shrink-0 lg:min-h-screen lg:rounded-none">
+            <Card className="lg:w-96 mb-6 lg:mb-0 shrink-0 lg:min-h-screen lg:rounded-none">
               <ScrollArea className="h-[calc(100vh-4rem)]">
-                <TabsList className="flex flex-row lg:flex-col h-auto p-4 bg-muted/50 w-full space-y-2">
+                <TabsList className="flex flex-row lg:flex-col h-auto p-6 bg-muted/50 w-full space-y-3">
                   {tabs.map((tab) => (
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
-                      className="w-full text-right py-4 px-6 data-[state=active]:bg-background"
+                      className="w-full text-right py-4 px-8 data-[state=active]:bg-background text-lg"
                     >
                       {tab.label}
                     </TabsTrigger>
@@ -53,7 +53,7 @@ export function ProjectForm() {
             {/* Main content area - Scrollable */}
             <Card className="flex-1 lg:min-h-screen lg:rounded-none">
               <ScrollArea className="h-[calc(100vh-4rem)]">
-                <div className="p-8 lg:p-12 max-w-[1600px] mx-auto">
+                <div className="p-8 lg:p-16 max-w-[2000px] mx-auto">
                   <TabsContent value="general" className="m-0">
                     <GeneralInfo control={form.control} />
                   </TabsContent>
@@ -98,7 +98,7 @@ export function ProjectForm() {
                         }
                       }}
                       disabled={currentTab === "general"}
-                      className="w-32"
+                      className="w-40 text-lg"
                     >
                       السابق
                     </Button>
@@ -112,12 +112,12 @@ export function ProjectForm() {
                             setCurrentTab(tabs[currentIndex + 1].value);
                           }
                         }}
-                        className="w-32"
+                        className="w-40 text-lg"
                       >
                         التالي
                       </Button>
                     ) : (
-                      <Button type="submit" disabled={isSubmitting} className="w-32">
+                      <Button type="submit" disabled={isSubmitting} className="w-40 text-lg">
                         {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
                       </Button>
                     )}
