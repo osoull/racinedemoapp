@@ -10,7 +10,6 @@ import {
   Shield,
   Wallet,
   PieChart,
-  MessageSquare,
   Users,
   DollarSign
 } from "lucide-react"
@@ -57,12 +56,6 @@ const menuItems = [
     icon: Shield,
     path: "/admin/compliance",
     description: "إدارة التحقق والامتثال"
-  },
-  {
-    title: "الدعم الفني",
-    icon: MessageSquare,
-    path: "/admin/support",
-    description: "إدارة طلبات الدعم"
   },
   {
     title: "الإعدادات",
