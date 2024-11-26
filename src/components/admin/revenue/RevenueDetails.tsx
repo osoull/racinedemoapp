@@ -6,17 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, subMonths, startOfYear, endOfYear } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { RevenueTable } from "./RevenueTable";
+import { RevenueTable, FeeData } from "./RevenueTable";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-
-interface FeeData {
-  period: string;
-  admin_fees: number;
-  collection_fees: number;
-  basic_investor_fees: number;
-  qualified_investor_fees: number;
-  total_fees: number;
-}
 
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
@@ -74,7 +65,8 @@ export function RevenueDetails() {
     collection_fees: 0,
     basic_investor_fees: 0,
     qualified_investor_fees: 0,
-    total_fees: 0
+    total_fees: 0,
+    period: ''
   };
 
   return (
