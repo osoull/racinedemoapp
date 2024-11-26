@@ -1,6 +1,5 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { WalletTransactions } from "./WalletTransactions"
 import { useQuery } from "@tanstack/react-query"
@@ -10,7 +9,6 @@ export function TransactionManagement() {
   const { data: transactions, isLoading } = useQuery({
     queryKey: ['transactions'],
     queryFn: async () => {
-      // Récupérer les transactions avec les frais associés
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select(`
@@ -25,31 +23,23 @@ export function TransactionManagement() {
 
       if (transactionsError) throw transactionsError
 
-      // Récupérer les frais pour chaque transaction
-      const { data: feesData, error: feesError } = await supabase
-        .from('fee_tracking')
-        .select('*')
-        .in('transaction_id', transactionsData.map(t => t.id))
-
-      if (feesError) throw feesError
-
-      // Associer les frais aux transactions
-      const transactionsWithFees = transactionsData.map(transaction => {
-        const transactionFees = feesData.filter(f => f.transaction_id === transaction.id)
-        const fees = {
-          admin: transactionFees.find(f => f.fee_type === 'admin_fee')?.fee_amount || 0,
-          collection: transactionFees.find(f => f.fee_type === 'collection_fee')?.fee_amount || 0,
-          investor: transactionFees.find(f => 
-            f.fee_type === 'basic_investor_fee' || f.fee_type === 'qualified_investor_fee'
-          )?.fee_amount || 0,
-          total: transactionFees.reduce((sum, fee) => sum + fee.fee_amount, 0)
+      // Calculate fee summaries
+      const feeSummary = transactionsData.reduce((acc, transaction) => {
+        if (transaction.fee_type && transaction.fee_amount) {
+          if (!acc[transaction.fee_type]) {
+            acc[transaction.fee_type] = 0;
+          }
+          acc[transaction.fee_type] += transaction.fee_amount;
         }
-        return { ...transaction, fees }
-      })
+        return acc;
+      }, {} as Record<string, number>);
 
-      return transactionsWithFees
+      return {
+        transactions: transactionsData,
+        feeSummary
+      };
     }
-  })
+  });
 
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
@@ -70,31 +60,34 @@ export function TransactionManagement() {
           </TabsList>
 
           <TabsContent value="all">
-            <WalletTransactions transactions={transactions} isLoading={isLoading} />
+            <WalletTransactions 
+              transactions={transactions?.transactions} 
+              isLoading={isLoading} 
+            />
           </TabsContent>
 
           <TabsContent value="pending">
             <WalletTransactions 
-              transactions={transactions?.filter(t => t.status === 'pending')} 
+              transactions={transactions?.transactions.filter(t => t.status === 'pending')} 
               isLoading={isLoading} 
             />
           </TabsContent>
 
           <TabsContent value="completed">
             <WalletTransactions 
-              transactions={transactions?.filter(t => t.status === 'completed')} 
+              transactions={transactions?.transactions.filter(t => t.status === 'completed')} 
               isLoading={isLoading} 
             />
           </TabsContent>
 
           <TabsContent value="cancelled">
             <WalletTransactions 
-              transactions={transactions?.filter(t => t.status === 'cancelled')} 
+              transactions={transactions?.transactions.filter(t => t.status === 'cancelled')} 
               isLoading={isLoading} 
             />
           </TabsContent>
         </Tabs>
       </div>
     </DashboardLayout>
-  )
+  );
 }

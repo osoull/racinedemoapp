@@ -10,20 +10,21 @@ export function TotalFeesCard() {
     queryKey: ["total-fees"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('fee_tracking')
+        .from('transactions')
         .select('fee_amount')
+        .not('fee_amount', 'is', null);
       
       if (error) throw error;
       
       // Calculate total fees by summing all fee_amounts
-      const total = data.reduce((sum, fee) => sum + fee.fee_amount, 0);
+      const total = data.reduce((sum, fee) => sum + (fee.fee_amount || 0), 0);
       return total;
     }
   });
 
-  // Subscribe to real-time changes in fee_tracking
+  // Subscribe to real-time changes in transactions
   useRealtimeSubscription(
-    ['fee_tracking'],
+    ['transactions'],
     {
       onInsert: () => {
         refetch();
