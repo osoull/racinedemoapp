@@ -1,16 +1,17 @@
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { UserList } from "./users/UserList"
-import { useToast } from "@/components/ui/use-toast"
-import { useEffect } from "react"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { UserList } from "./users/UserList";
+import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
+import { AddUserDialog } from "./users/AddUserDialog";
 
 export function UserManagement() {
-  const [activeTab, setActiveTab] = useState("all")
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
+  const [activeTab, setActiveTab] = useState("all");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["users", activeTab],
@@ -18,17 +19,17 @@ export function UserManagement() {
       let query = supabase
         .from("profiles")
         .select("*")
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false });
 
       if (activeTab !== "all") {
-        query = query.eq("user_type", activeTab)
+        query = query.eq("user_type", activeTab);
       }
 
-      const { data, error } = await query
-      if (error) throw error
-      return data
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
     }
-  })
+  });
 
   useEffect(() => {
     const channel = supabase
@@ -44,15 +45,15 @@ export function UserManagement() {
           queryClient.invalidateQueries({ 
             queryKey: ["users"],
             exact: true 
-          })
+          });
         }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [queryClient])
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   return (
     <Card>
@@ -71,32 +72,40 @@ export function UserManagement() {
           </TabsList>
 
           <TabsContent value="all">
+            <div className="flex justify-between items-center">
+              <AddUserDialog />
+            </div>
             <UserList users={users} isLoading={isLoading} />
           </TabsContent>
+
           <TabsContent value="basic_investor">
             <UserList 
               users={users?.filter(u => u.user_type === "basic_investor")} 
               isLoading={isLoading} 
             />
           </TabsContent>
+
           <TabsContent value="qualified_investor">
             <UserList 
               users={users?.filter(u => u.user_type === "qualified_investor")} 
               isLoading={isLoading} 
             />
           </TabsContent>
+
           <TabsContent value="borrower">
             <UserList 
               users={users?.filter(u => u.user_type === "borrower")} 
               isLoading={isLoading} 
             />
           </TabsContent>
+
           <TabsContent value="investment_manager">
             <UserList 
               users={users?.filter(u => u.user_type === "investment_manager")} 
               isLoading={isLoading} 
             />
           </TabsContent>
+
           <TabsContent value="admin">
             <UserList 
               users={users?.filter(u => u.user_type === "admin")} 
@@ -106,5 +115,5 @@ export function UserManagement() {
         </Tabs>
       </CardContent>
     </Card>
-  )
+  );
 }

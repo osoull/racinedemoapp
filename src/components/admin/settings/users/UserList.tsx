@@ -1,114 +1,72 @@
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { UserList } from "./users/UserList"
-import { useToast } from "@/components/ui/use-toast"
-import { useEffect } from "react"
-import { AddUserDialog } from "./AddUserDialog"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { TransactionActions } from "@/components/admin/transaction/TransactionActions";
+import { formatCurrency } from "@/utils/feeCalculations";
 
-export function UserManagement() {
-  const [activeTab, setActiveTab] = useState("all")
-  const { toast } = useToast()
-  const queryClient = useQueryClient()
+interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+  user_type: string;
+  email: string;
+  created_at: string;
+  kyc_status: string;
+}
 
-  const { data: users, isLoading } = useQuery({
-    queryKey: ["users", activeTab],
-    queryFn: async () => {
-      let query = supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false })
+interface UserListProps {
+  users?: User[];
+  isLoading: boolean;
+}
 
-      if (activeTab !== "all") {
-        query = query.eq("user_type", activeTab)
-      }
-
-      const { data, error } = await query
-      if (error) throw error
-      return data
-    }
-  })
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("user_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "profiles"
-        },
-        () => {
-          queryClient.invalidateQueries({ 
-            queryKey: ["users"],
-            exact: true 
-          })
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [queryClient])
+export function UserList({ users, isLoading }: UserListProps) {
+  if (isLoading) {
+    return <div className="text-center py-4">جاري التحميل...</div>;
+  }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>إدارة المستخدمين</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="all" className="space-y-4" onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="all">جميع المستخدمين</TabsTrigger>
-            <TabsTrigger value="basic_investor">المستثمرون الأساسيون</TabsTrigger>
-            <TabsTrigger value="qualified_investor">المستثمرون المؤهلون</TabsTrigger>
-            <TabsTrigger value="borrower">طالبو التمويل</TabsTrigger>
-            <TabsTrigger value="investment_manager">مديرو الاستثمار</TabsTrigger>
-            <TabsTrigger value="admin">المشرفون</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="all">
-            <div className="flex justify-between items-center">
-              <AddUserDialog />
-            </div>
-            <UserList users={users} isLoading={isLoading} />
-          </TabsContent>
-          <TabsContent value="basic_investor">
-            <UserList 
-              users={users?.filter(u => u.user_type === "basic_investor")} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-          <TabsContent value="qualified_investor">
-            <UserList 
-              users={users?.filter(u => u.user_type === "qualified_investor")} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-          <TabsContent value="borrower">
-            <UserList 
-              users={users?.filter(u => u.user_type === "borrower")} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-          <TabsContent value="investment_manager">
-            <UserList 
-              users={users?.filter(u => u.user_type === "investment_manager")} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-          <TabsContent value="admin">
-            <UserList 
-              users={users?.filter(u => u.user_type === "admin")} 
-              isLoading={isLoading} 
-            />
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  )
+    <div className="relative overflow-x-auto">
+      <Table>
+        <thead>
+          <tr>
+            <th className="text-right py-3 px-4">الاسم</th>
+            <th className="text-right py-3 px-4">البريد الإلكتروني</th>
+            <th className="text-right py-3 px-4">نوع المستخدم</th>
+            <th className="text-right py-3 px-4">حالة KYC</th>
+            <th className="text-right py-3 px-4">تاريخ التسجيل</th>
+          </tr>
+        </thead>
+        <TableBody>
+          {users?.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell>
+                {user.first_name} {user.last_name}
+              </TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
+                <Badge variant="outline">
+                  {user.user_type === 'basic_investor' && 'مستثمر أساسي'}
+                  {user.user_type === 'qualified_investor' && 'مستثمر مؤهل'}
+                  {user.user_type === 'borrower' && 'طالب تمويل'}
+                  {user.user_type === 'investment_manager' && 'مدير استثمار'}
+                  {user.user_type === 'admin' && 'مشرف'}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge variant={
+                  user.kyc_status === 'approved' ? 'default' :
+                  user.kyc_status === 'pending' ? 'secondary' : 'destructive'
+                }>
+                  {user.kyc_status === 'approved' ? 'معتمد' :
+                   user.kyc_status === 'pending' ? 'قيد المراجعة' : 'مرفوض'}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                {new Date(user.created_at).toLocaleDateString('ar-SA')}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
 }
