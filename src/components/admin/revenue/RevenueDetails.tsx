@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, subMonths, startOfYear, endOfYear } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { RevenueTable, FeeData } from "./RevenueTable";
+import { RevenueTable } from "./RevenueTable";
+import type { FeeData } from "./RevenueTable";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 export function RevenueDetails() {
@@ -15,23 +16,15 @@ export function RevenueDetails() {
   const { data: revenueData, isLoading, refetch } = useQuery<FeeData[]>({
     queryKey: ["revenue", timeframe],
     queryFn: async () => {
-      let startDate, endDate;
-      
-      if (timeframe === "year") {
-        startDate = startOfYear(new Date());
-        endDate = endOfYear(new Date());
-      } else {
-        startDate = subMonths(new Date(), 12);
-        endDate = new Date();
-      }
-
-      const { data, error } = await supabase.rpc(
-        'calculate_revenue_by_period',
-        {
-          start_date: startDate.toISOString(),
-          end_date: endDate.toISOString()
-        }
-      );
+      const { data, error } = await supabase
+        .from('fee_tracking')
+        .select(`
+          *,
+          transaction:transaction_id (
+            created_at
+          )
+        `)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data;
@@ -60,13 +53,14 @@ export function RevenueDetails() {
     );
   }
 
-  const currentPeriodData = revenueData?.[0] || {
-    admin_fees: 0,
-    collection_fees: 0,
-    basic_investor_fees: 0,
-    qualified_investor_fees: 0,
-    total_fees: 0,
-    period: ''
+  const currentPeriodData = {
+    admin_fees: revenueData?.filter(fee => fee.fee_type === 'admin_fee')
+      .reduce((sum, fee) => sum + fee.fee_amount, 0) || 0,
+    collection_fees: revenueData?.filter(fee => fee.fee_type === 'collection_fee')
+      .reduce((sum, fee) => sum + fee.fee_amount, 0) || 0,
+    investor_fees: revenueData?.filter(fee => 
+      fee.fee_type === 'basic_investor_fee' || fee.fee_type === 'qualified_investor_fee'
+    ).reduce((sum, fee) => sum + fee.fee_amount, 0) || 0
   };
 
   return (
@@ -106,15 +100,13 @@ export function RevenueDetails() {
             </Card>
             <Card className="p-4">
               <p className="text-sm text-muted-foreground">رسوم المستثمرين</p>
-              <p className="text-2xl font-bold">
-                {(currentPeriodData.basic_investor_fees + currentPeriodData.qualified_investor_fees).toLocaleString('ar-SA')} ريال
-              </p>
+              <p className="text-2xl font-bold">{currentPeriodData.investor_fees.toLocaleString('ar-SA')} ريال</p>
             </Card>
           </div>
 
           <div className="rounded-lg border bg-card">
             <div className="p-6">
-              <h3 className="font-semibold mb-4">التفاصيل الشهرية</h3>
+              <h3 className="font-semibold mb-4">التفاصيل</h3>
               <RevenueTable revenueData={revenueData || []} />
             </div>
           </div>

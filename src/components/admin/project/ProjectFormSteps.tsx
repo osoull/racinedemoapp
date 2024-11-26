@@ -11,7 +11,7 @@ import { ProjectPaymentStep } from "./ProjectPaymentStep";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
-  onSuccess?: () => void;
+  onSuccess?: (transactionId?: string) => void;
 }
 
 export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) => {
@@ -86,7 +86,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
       });
 
       setIsSubmitted(true);
-      onSuccess?.();
+      onSuccess?.(transactionId);
     } catch (err) {
       console.error('Error creating project:', err);
       toast({
