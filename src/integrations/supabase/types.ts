@@ -940,6 +940,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_platform_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_investments: number
+          investment_growth: number
+          active_investors: number
+          investor_growth: number
+          total_revenue: number
+          revenue_growth: number
+          active_projects: number
+          project_growth: number
+        }[]
+      }
       calculate_revenue_by_period: {
         Args: {
           start_date: string
