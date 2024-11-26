@@ -6,6 +6,7 @@ import { Tables } from "@/integrations/supabase/types"
 import { useToast } from "@/hooks/use-toast"
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
+import { Loader2 } from "lucide-react"
 
 type Commission = Tables<"commissions">
 
@@ -18,6 +19,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
   const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [newRate, setNewRate] = useState(commission.rate.toString())
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const queryClient = useQueryClient()
 
   const handleSave = async () => {
@@ -32,6 +34,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
     }
 
     try {
+      setIsSubmitting(true)
       const { error } = await supabase
         .from("commissions")
         .update({ 
@@ -59,6 +62,8 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
         description: "حدث خطأ أثناء تحديث معدل العمولة",
         variant: "destructive",
       })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -93,8 +98,18 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
           <div className="space-x-2 flex flex-row-reverse">
             {isEditing ? (
               <>
-                <Button onClick={handleSave}>
-                  حفظ
+                <Button 
+                  onClick={handleSave}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                      جاري الحفظ...
+                    </>
+                  ) : (
+                    "حفظ"
+                  )}
                 </Button>
                 <Button
                   variant="outline"
@@ -103,6 +118,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
                     setNewRate(commission.rate.toString())
                   }}
                   className="mr-2"
+                  disabled={isSubmitting}
                 >
                   إلغاء
                 </Button>
