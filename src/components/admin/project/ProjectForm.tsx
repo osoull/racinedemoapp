@@ -29,12 +29,12 @@ export function ProjectForm() {
   ];
 
   return (
-    <div className="container mx-auto px-4 min-h-screen">
+    <div className="container max-w-[1400px] mx-auto px-4 min-h-screen">
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
           <div className="flex flex-col lg:flex-row lg:gap-8 h-full">
             {/* Sidebar with tabs - Fixed width on desktop */}
-            <Card className="lg:w-64 mb-6 lg:mb-0 shrink-0">
+            <Card className="lg:w-72 mb-6 lg:mb-0 shrink-0">
               <ScrollArea className="h-[calc(100vh-12rem)]">
                 <TabsList className="flex flex-row lg:flex-col h-auto p-2 bg-muted/50 w-full">
                   {tabs.map((tab) => (
@@ -53,7 +53,7 @@ export function ProjectForm() {
             {/* Main content area - Scrollable */}
             <Card className="flex-1">
               <ScrollArea className="h-[calc(100vh-12rem)]">
-                <div className="p-6">
+                <div className="p-8">
                   <TabsContent value="general" className="m-0">
                     <GeneralInfo control={form.control} />
                   </TabsContent>
@@ -87,7 +87,7 @@ export function ProjectForm() {
                   </TabsContent>
 
                   {/* Navigation buttons */}
-                  <div className="flex justify-between mt-6 pt-6 border-t">
+                  <div className="flex justify-between mt-8 pt-6 border-t">
                     <Button
                       type="button"
                       variant="outline"
