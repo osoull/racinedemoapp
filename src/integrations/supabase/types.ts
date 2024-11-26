@@ -196,6 +196,54 @@ export type Database = {
         }
         Relationships: []
       }
+      fee_tracking: {
+        Row: {
+          amount: number
+          commission_id: string
+          created_at: string | null
+          fee_amount: number
+          fee_type: string
+          id: string
+          transaction_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          commission_id: string
+          created_at?: string | null
+          fee_amount: number
+          fee_type: string
+          id?: string
+          transaction_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          commission_id?: string
+          created_at?: string | null
+          fee_amount?: number
+          fee_type?: string
+          id?: string
+          transaction_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_tracking_commission_id_fkey"
+            columns: ["commission_id"]
+            isOneToOne: false
+            referencedRelation: "commissions"
+            referencedColumns: ["commission_id"]
+          },
+          {
+            foreignKeyName: "fee_tracking_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       investments: {
         Row: {
           amount: number
