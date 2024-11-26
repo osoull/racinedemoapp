@@ -22,6 +22,7 @@ export function UserManagement() {
         .select("*")
         .order("created_at", { ascending: false });
 
+      // Seulement filtrer si on n'est pas sur l'onglet "all"
       if (activeTab !== "all") {
         query = query.eq("user_type", activeTab);
       }
