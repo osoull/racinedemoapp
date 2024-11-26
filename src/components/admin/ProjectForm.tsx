@@ -4,6 +4,7 @@ import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProjectFormProps {
   project?: Tables<"projects"> | null;
@@ -13,6 +14,7 @@ interface ProjectFormProps {
 export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const [step, setStep] = useState<"details" | "payment">("details");
   const [projectData, setProjectData] = useState<any>(null);
+  const { toast } = useToast();
 
   const { data: commissions } = useQuery({
     queryKey: ["commissions"],
@@ -29,9 +31,31 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
   const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
 
-  const handleProjectSubmit = (data: any) => {
-    setProjectData(data);
-    setStep("payment");
+  const handleProjectSubmit = async (data: any) => {
+    try {
+      // Create the project first
+      const { data: projectResponse, error: projectError } = await supabase
+        .from('projects')
+        .insert({
+          ...data,
+          owner_id: (await supabase.auth.getUser()).data.user?.id,
+          status: 'draft'
+        })
+        .select()
+        .single();
+
+      if (projectError) throw projectError;
+
+      setProjectData(projectResponse);
+      setStep("payment");
+    } catch (error) {
+      console.error('Error creating project:', error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء إنشاء المشروع",
+        variant: "destructive",
+      });
+    }
   };
 
   const fees = {
