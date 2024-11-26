@@ -68,7 +68,7 @@ export function ProjectForm() {
           </TabsContent>
 
           <TabsContent value="payment">
-            <PaymentSection />
+            <PaymentSection control={form.control} />
           </TabsContent>
         </Tabs>
 
