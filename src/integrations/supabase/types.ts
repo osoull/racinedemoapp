@@ -64,35 +64,44 @@ export type Database = {
       }
       bank_transactions: {
         Row: {
+          amount: number
           bank_account_id: string | null
           bank_status: string | null
           created_at: string | null
           id: string
           reference_number: string | null
+          status: string | null
           transaction_id: string | null
           updated_at: string | null
+          user_id: string | null
           verification_date: string | null
           verification_notes: string | null
         }
         Insert: {
+          amount: number
           bank_account_id?: string | null
           bank_status?: string | null
           created_at?: string | null
           id?: string
           reference_number?: string | null
+          status?: string | null
           transaction_id?: string | null
           updated_at?: string | null
+          user_id?: string | null
           verification_date?: string | null
           verification_notes?: string | null
         }
         Update: {
+          amount?: number
           bank_account_id?: string | null
           bank_status?: string | null
           created_at?: string | null
           id?: string
           reference_number?: string | null
+          status?: string | null
           transaction_id?: string | null
           updated_at?: string | null
+          user_id?: string | null
           verification_date?: string | null
           verification_notes?: string | null
         }
@@ -109,6 +118,13 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

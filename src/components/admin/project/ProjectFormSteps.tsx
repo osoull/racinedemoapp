@@ -58,32 +58,37 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
       return;
     }
 
+    setProjectData({
+      ...data,
+      owner_id: user.id,
+      status: 'draft',
+    });
+    setStep(2);
+  };
+
+  const createProject = async (transactionId?: string) => {
     try {
-      // Create the project first
       const { data: newProject, error: projectError } = await supabase
         .from('projects')
         .insert({
-          ...data,
-          owner_id: user.id,
-          status: 'draft',
+          ...projectData,
+          fees_transaction_id: transactionId,
+          status: 'pending'
         })
         .select()
         .single();
 
       if (projectError) throw projectError;
 
-      // Call the finalize_project_submission function
-      const { error: finalizationError } = await supabase
-        .rpc('finalize_project_submission', {
-          p_project_id: newProject.id
-        });
+      toast({
+        title: "تم إنشاء المشروع بنجاح",
+        description: "سيتم مراجعة مشروعك من قبل فريق الإدارة"
+      });
 
-      if (finalizationError) throw finalizationError;
-
-      setProjectData(newProject);
-      setStep(2);
+      setIsSubmitted(true);
+      onSuccess?.();
     } catch (err) {
-      console.error('Error submitting project:', err);
+      console.error('Error creating project:', err);
       toast({
         variant: "destructive",
         title: "خطأ",
@@ -92,14 +97,9 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     }
   };
 
-  const handlePaymentSuccess = () => {
-    setIsSubmitted(true);
+  const handlePaymentSuccess = async (transactionId: string) => {
+    await createProject(transactionId);
     setSubmissionType("card");
-    toast({
-      title: "تم الدفع بنجاح",
-      description: "سيتم مراجعة طلبك من قبل فريق الإدارة"
-    });
-    onSuccess?.();
   };
 
   const handleBankTransfer = async () => {
@@ -115,14 +115,36 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     try {
       const fees = calculateFees(projectData.funding_goal);
 
-      setIsSubmitted(true);
-      setSubmissionType("bank");
-      toast({
-        title: "تم تسجيل طلب التحويل",
-        description: "سيتم تحديث رصيدك بعد التأكد من التحويل",
-      });
+      // Create transaction first
+      const { data: transaction, error: transactionError } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: user.id,
+          amount: fees.total,
+          type: 'project_fee',
+          status: 'pending'
+        })
+        .select()
+        .single();
 
-      onSuccess?.();
+      if (transactionError) throw transactionError;
+
+      // Create bank transaction record
+      const { error: bankTransactionError } = await supabase
+        .from('bank_transactions')
+        .insert({
+          transaction_id: transaction.id,
+          user_id: user.id,
+          amount: fees.total,
+          status: 'pending'
+        });
+
+      if (bankTransactionError) throw bankTransactionError;
+
+      // Create the project with the transaction ID
+      await createProject(transaction.id);
+      setSubmissionType("bank");
+
     } catch (err) {
       console.error('Error creating bank transfer:', err);
       toast({
