@@ -3,19 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format, subMonths, startOfYear, endOfYear } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { RevenueTable } from "./RevenueTable";
-import type { FeeData } from "./RevenueTable";
+import type { RevenueStats, FeeData } from "@/types/revenue";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-
-interface RevenueStats {
-  currentTotal: number;
-  lastYearTotal: number;
-  yearlyChange: number;
-  fees: FeeData[];
-}
 
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
@@ -61,7 +53,7 @@ export function RevenueDetails() {
         currentTotal,
         lastYearTotal,
         yearlyChange,
-        fees: currentFees
+        fees: currentFees as FeeData[]
       };
     }
   });

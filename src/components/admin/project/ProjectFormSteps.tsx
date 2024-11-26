@@ -27,26 +27,12 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     queryFn: async () => {
       const { data, error } = await supabase
         .from("commissions")
-        .select("*")
+        .select("*");
       
-      if (error) throw error
-      return data
+      if (error) throw error;
+      return data;
     },
   });
-
-  const calculateFees = (amount: number) => {
-    const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
-    const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
-    
-    const calculatedAdminFee = (amount * adminFee) / 100;
-    const calculatedCollectionFee = (amount * collectionFee) / 100;
-    
-    return {
-      admin: calculatedAdminFee,
-      collection: calculatedCollectionFee,
-      total: calculatedAdminFee + calculatedCollectionFee
-    };
-  };
 
   const handleProjectDetailsSubmit = async (data: any) => {
     if (!user) {
@@ -86,7 +72,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
       });
 
       setIsSubmitted(true);
-      onSuccess?.(transactionId);
+      if (onSuccess) onSuccess(transactionId);
     } catch (err) {
       console.error('Error creating project:', err);
       toast({
