@@ -29,14 +29,14 @@ export function ProjectForm() {
   ];
 
   return (
-    <div className="w-full h-screen bg-background">
+    <div className="fixed inset-0 w-full h-full bg-background">
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
-          <div className="flex flex-col lg:flex-row h-full">
-            {/* Sidebar with tabs - Fixed width on desktop */}
-            <Card className="lg:w-96 mb-6 lg:mb-0 shrink-0 lg:h-screen lg:rounded-none">
-              <ScrollArea className="h-[calc(100vh-4rem)]">
-                <TabsList className="flex flex-row lg:flex-col h-auto p-6 bg-muted/50 w-full space-y-3">
+          <div className="flex h-full">
+            {/* Sidebar with tabs - Fixed width */}
+            <Card className="w-80 shrink-0 h-full rounded-none border-r">
+              <ScrollArea className="h-full">
+                <TabsList className="flex flex-col h-auto p-6 bg-muted/50 w-full space-y-3">
                   {tabs.map((tab) => (
                     <TabsTrigger
                       key={tab.value}
@@ -51,9 +51,9 @@ export function ProjectForm() {
             </Card>
 
             {/* Main content area - Scrollable */}
-            <Card className="flex-1 lg:h-screen lg:rounded-none">
-              <ScrollArea className="h-[calc(100vh-4rem)]">
-                <div className="p-8 lg:p-16">
+            <Card className="flex-1 h-full rounded-none border-none">
+              <ScrollArea className="h-full">
+                <div className="p-8 lg:p-12">
                   <TabsContent value="general" className="m-0">
                     <GeneralInfo control={form.control} />
                   </TabsContent>
