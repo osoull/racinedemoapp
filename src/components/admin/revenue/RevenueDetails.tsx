@@ -6,15 +6,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format, subMonths, startOfYear, endOfYear } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { RevenueSummary } from "./RevenueSummary";
 import { RevenueTable } from "./RevenueTable";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-import { TotalFeesCard } from "./TotalFeesCard";
+
+interface RevenueData {
+  period: string;
+  admin_fees: number;
+  collection_fees: number;
+  basic_investor_fees: number;
+  qualified_investor_fees: number;
+  total_fees: number;
+}
 
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
   
-  const { data: revenueData, isLoading, refetch } = useQuery({
+  const { data: revenueData, isLoading, refetch } = useQuery<RevenueData[]>({
     queryKey: ["revenue", timeframe],
     queryFn: async () => {
       let startDate, endDate;
@@ -35,13 +42,13 @@ export function RevenueDetails() {
           fee_amount
         `)
         .gte('created_at', startDate.toISOString())
-        .lte('created_at', endOfDate.toISOString())
+        .lte('created_at', endDate.toISOString())
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
       // Group fees by month
-      const monthlyData = data.reduce((acc: any, fee) => {
+      const monthlyData = data.reduce((acc: { [key: string]: RevenueData }, fee) => {
         const month = format(new Date(fee.created_at), 'yyyy-MM');
         
         if (!acc[month]) {
@@ -101,62 +108,7 @@ export function RevenueDetails() {
     );
   }
 
-  const totals = calculateTotals(revenueData);
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="col-span-full">
-          <TotalFeesCard />
-        </div>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>تفاصيل الإيرادات</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="summary" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="summary">ملخص</TabsTrigger>
-              <TabsTrigger value="monthly">تفاصيل شهرية</TabsTrigger>
-            </TabsList>
-
-            <div className="mb-4">
-              <TabsList>
-                <TabsTrigger
-                  value="year"
-                  onClick={() => setTimeframe("year")}
-                  className={timeframe === "year" ? "bg-primary" : ""}
-                >
-                  السنة الحالية
-                </TabsTrigger>
-                <TabsTrigger
-                  value="last12"
-                  onClick={() => setTimeframe("last12")}
-                  className={timeframe === "last12" ? "bg-primary" : ""}
-                >
-                  آخر 12 شهر
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="summary">
-              <RevenueSummary totals={totals} />
-            </TabsContent>
-
-            <TabsContent value="monthly">
-              <RevenueTable revenueData={revenueData || []} />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-const calculateTotals = (data: any[] | null) => {
-  if (!data) return {
+  const currentPeriodData = revenueData?.[0] || {
     admin_fees: 0,
     collection_fees: 0,
     basic_investor_fees: 0,
@@ -164,17 +116,57 @@ const calculateTotals = (data: any[] | null) => {
     total_fees: 0
   };
 
-  return data.reduce((acc, curr) => ({
-    admin_fees: acc.admin_fees + curr.admin_fees,
-    collection_fees: acc.collection_fees + curr.collection_fees,
-    basic_investor_fees: acc.basic_investor_fees + curr.basic_investor_fees,
-    qualified_investor_fees: acc.qualified_investor_fees + curr.qualified_investor_fees,
-    total_fees: acc.total_fees + curr.total_fees
-  }), {
-    admin_fees: 0,
-    collection_fees: 0,
-    basic_investor_fees: 0,
-    qualified_investor_fees: 0,
-    total_fees: 0
-  });
-};
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>تفاصيل الإيرادات</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-6">
+            <TabsList>
+              <TabsTrigger
+                value="year"
+                onClick={() => setTimeframe("year")}
+                className={timeframe === "year" ? "bg-primary" : ""}
+              >
+                السنة الحالية
+              </TabsTrigger>
+              <TabsTrigger
+                value="last12"
+                onClick={() => setTimeframe("last12")}
+                className={timeframe === "last12" ? "bg-primary" : ""}
+              >
+                آخر 12 شهر
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <Card className="p-4">
+              <p className="text-sm text-muted-foreground">رسوم الإدارة</p>
+              <p className="text-2xl font-bold">{currentPeriodData.admin_fees.toLocaleString('ar-SA')} ريال</p>
+            </Card>
+            <Card className="p-4">
+              <p className="text-sm text-muted-foreground">رسوم التحصيل</p>
+              <p className="text-2xl font-bold">{currentPeriodData.collection_fees.toLocaleString('ar-SA')} ريال</p>
+            </Card>
+            <Card className="p-4">
+              <p className="text-sm text-muted-foreground">رسوم المستثمرين</p>
+              <p className="text-2xl font-bold">
+                {(currentPeriodData.basic_investor_fees + currentPeriodData.qualified_investor_fees).toLocaleString('ar-SA')} ريال
+              </p>
+            </Card>
+          </div>
+
+          <div className="rounded-lg border bg-card">
+            <div className="p-6">
+              <h3 className="font-semibold mb-4">التفاصيل الشهرية</h3>
+              <RevenueTable revenueData={revenueData || []} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

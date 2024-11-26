@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { RevenueDetails } from "./RevenueDetails"
@@ -16,14 +15,6 @@ export function RevenueTracking() {
         </div>
 
         <RevenueDetails />
-
-        <Card className="p-6">
-          <div className="h-[300px] flex items-center justify-center">
-            <p className="text-muted-foreground">
-              سيتم إضافة الرسم البياني قريباً
-            </p>
-          </div>
-        </Card>
       </div>
       <Toaster />
     </DashboardLayout>
