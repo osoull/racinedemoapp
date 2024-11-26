@@ -9,6 +9,12 @@ import { useQueryClient } from "@tanstack/react-query"
 import { formatCurrency } from "@/utils/feeCalculations"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 type Transaction = Tables<"transactions"> & {
   user: { first_name: string; last_name: string } | null;
@@ -16,6 +22,10 @@ type Transaction = Tables<"transactions"> & {
     amount: number;
     project: { title: string } | null;
   } | null;
+  fee_details?: {
+    type: string;
+    amount: number;
+  }[];
 }
 
 interface WalletTransactionsProps {
@@ -81,6 +91,21 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
     }
   }
 
+  const getFeeTypeLabel = (feeType: string) => {
+    switch (feeType) {
+      case 'admin_fee':
+        return 'رسوم إدارية'
+      case 'collection_fee':
+        return 'رسوم تحصيل'
+      case 'basic_investor_fee':
+        return 'رسوم مستثمر أساسي'
+      case 'qualified_investor_fee':
+        return 'رسوم مستثمر مؤهل'
+      default:
+        return feeType
+    }
+  }
+
   return (
     <Card className="p-4">
       <ScrollArea className="h-[600px]">
@@ -125,20 +150,24 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
                   </TableCell>
                   <TableCell>{formatCurrency(principalAmount)}</TableCell>
                   <TableCell>
-                    <div className="text-xs space-y-1">
-                      {transaction.fee_amount > 0 && (
-                        <div>
-                          {transaction.fee_type === 'admin_fee' && 'رسوم إدارية'}
-                          {transaction.fee_type === 'collection_fee' && 'رسوم تحصيل'}
-                          {transaction.fee_type === 'basic_investor_fee' && 'رسوم مستثمر أساسي'}
-                          {transaction.fee_type === 'qualified_investor_fee' && 'رسوم مستثمر مؤهل'}
-                          : {formatCurrency(transaction.fee_amount)}
-                        </div>
-                      )}
-                      {!transaction.fee_amount && (
-                        <div className="text-muted-foreground">لا توجد رسوم</div>
-                      )}
-                    </div>
+                    {transaction.fee_amount > 0 ? (
+                      <Collapsible>
+                        <CollapsibleTrigger className="flex items-center text-sm text-muted-foreground hover:text-foreground">
+                          <ChevronDown className="h-4 w-4" />
+                          <span>عرض التفاصيل</span>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="space-y-2 pt-2">
+                          {transaction.fee_details?.map((fee, index) => (
+                            <div key={index} className="flex justify-between text-xs">
+                              <span>{getFeeTypeLabel(fee.type)}:</span>
+                              <span>{formatCurrency(fee.amount)}</span>
+                            </div>
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">لا توجد رسوم</span>
+                    )}
                   </TableCell>
                   <TableCell className="font-medium">
                     {formatCurrency(transaction.amount)}
