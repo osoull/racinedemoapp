@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 type Commission = Tables<"commissions">
 
@@ -20,34 +21,37 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
   const [isEditing, setIsEditing] = useState(false)
   const [newRate, setNewRate] = useState(commission.rate.toString())
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
+  const validateRate = (rate: string): boolean => {
+    const rateNumber = parseFloat(rate)
+    return !isNaN(rateNumber) && rateNumber >= 0 && rateNumber <= 100
+  }
+
   const handleSave = async () => {
-    const rateNumber = parseFloat(newRate)
-    if (isNaN(rateNumber) || rateNumber < 0 || rateNumber > 100) {
-      toast({
-        title: "خطأ",
-        description: "يرجى إدخال نسبة صحيحة بين 0 و 100",
-        variant: "destructive",
-      })
+    if (!validateRate(newRate)) {
+      setError("يرجى إدخال نسبة صحيحة بين 0 و 100")
       return
     }
 
+    setError(null)
+    setIsSubmitting(true)
+
     try {
-      setIsSubmitting(true)
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from("commissions")
         .update({ 
-          rate: rateNumber,
+          rate: parseFloat(newRate),
           updated_at: new Date().toISOString()
         })
         .eq("commission_id", commission.commission_id)
 
-      if (error) throw error
+      if (updateError) throw updateError
 
       setIsEditing(false)
       
-      // Invalidate the commissions query to force a refetch
+      // Invalidate and refetch
       await queryClient.invalidateQueries({ queryKey: ["commissions"] })
       
       toast({
@@ -56,6 +60,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
       })
     } catch (error) {
       console.error("Error updating commission rate:", error)
+      setError("حدث خطأ أثناء تحديث معدل العمولة")
       setNewRate(commission.rate.toString())
       toast({
         title: "خطأ",
@@ -67,27 +72,44 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
     }
   }
 
+  const handleCancel = () => {
+    setIsEditing(false)
+    setNewRate(commission.rate.toString())
+    setError(null)
+  }
+
   return (
     <Card>
       <CardContent className="p-4">
         <div className="flex justify-between items-center">
-          <div>
+          <div className="space-y-2">
             <h3 className="font-semibold text-lg">
               {getArabicCommissionType(commission.commission_type)}
             </h3>
             {isEditing ? (
-              <div className="flex items-center gap-2 mt-2">
-                <Input
-                  type="number"
-                  value={newRate}
-                  onChange={(e) => setNewRate(e.target.value)}
-                  className="w-24 text-right"
-                  min="0"
-                  max="100"
-                  step="0.01"
-                  dir="ltr"
-                />
-                <span>%</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    value={newRate}
+                    onChange={(e) => {
+                      setNewRate(e.target.value)
+                      setError(null)
+                    }}
+                    className="w-24 text-right"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    dir="ltr"
+                    disabled={isSubmitting}
+                  />
+                  <span>%</span>
+                </div>
+                {error && (
+                  <Alert variant="destructive" className="py-2">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
               </div>
             ) : (
               <p className="text-sm text-gray-500">
@@ -100,7 +122,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
               <>
                 <Button 
                   onClick={handleSave}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !validateRate(newRate)}
                 >
                   {isSubmitting ? (
                     <>
@@ -113,10 +135,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setIsEditing(false)
-                    setNewRate(commission.rate.toString())
-                  }}
+                  onClick={handleCancel}
                   className="mr-2"
                   disabled={isSubmitting}
                 >
