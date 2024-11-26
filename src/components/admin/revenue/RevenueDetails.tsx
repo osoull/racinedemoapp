@@ -23,7 +23,7 @@ export function RevenueDetails() {
         .from('fee_tracking')
         .select(`
           *,
-          transaction:transaction_id (
+          transaction:transactions!inner(
             created_at
           )
         `)
@@ -46,14 +46,14 @@ export function RevenueDetails() {
       
       // Calculate yearly change percentage
       const yearlyChange = lastYearTotal === 0 
-        ? 100 // If last year was 0, consider it as 100% increase
+        ? 100 
         : ((currentTotal - lastYearTotal) / lastYearTotal) * 100;
 
       // Transform the data to match FeeData type
       const transformedFees: FeeData[] = currentFees.map(fee => ({
         ...fee,
         transaction: {
-          created_at: fee.transaction?.[0]?.created_at || new Date().toISOString()
+          created_at: fee.transaction?.created_at || new Date().toISOString()
         }
       }));
 
