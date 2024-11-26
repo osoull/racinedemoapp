@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Tables } from "@/integrations/supabase/types"
 import { useCommissionUpdates } from "@/hooks/useCommissionUpdates"
 import { useToast } from "@/hooks/use-toast"
+import { useQueryClient } from "@tanstack/react-query"
 
 type Commission = Tables<"commissions">
 
@@ -18,6 +19,7 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
   const [isEditing, setIsEditing] = useState(false)
   const [newRate, setNewRate] = useState(commission.rate.toString())
   const { updateCommissionRate } = useCommissionUpdates()
+  const queryClient = useQueryClient()
 
   const handleSave = async () => {
     const rateNumber = parseFloat(newRate)
@@ -32,11 +34,31 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
 
     try {
       await updateCommissionRate(commission.commission_id, rateNumber)
+      
+      // Optimistically update the UI
+      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
+        if (!oldData) return oldData
+        return oldData.map(c => 
+          c.commission_id === commission.commission_id 
+            ? { ...c, rate: rateNumber }
+            : c
+        )
+      })
+
       setIsEditing(false)
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث معدل العمولة بنجاح",
+      })
     } catch (error) {
       console.error("Error updating commission rate:", error)
       // Reset to original value on error
       setNewRate(commission.rate.toString())
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث معدل العمولة",
+        variant: "destructive",
+      })
     }
   }
 
