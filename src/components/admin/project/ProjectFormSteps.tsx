@@ -48,9 +48,48 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     };
   };
 
-  const handleProjectDetailsSubmit = (data: any) => {
-    setProjectData(data);
-    setStep(2);
+  const handleProjectDetailsSubmit = async (data: any) => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "يجب تسجيل الدخول لإتمام العملية",
+      });
+      return;
+    }
+
+    try {
+      // Create the project first
+      const { data: newProject, error: projectError } = await supabase
+        .from('projects')
+        .insert({
+          ...data,
+          owner_id: user.id,
+          status: 'draft',
+        })
+        .select()
+        .single();
+
+      if (projectError) throw projectError;
+
+      // Call the finalize_project_submission function
+      const { error: finalizationError } = await supabase
+        .rpc('finalize_project_submission', {
+          p_project_id: newProject.id
+        });
+
+      if (finalizationError) throw finalizationError;
+
+      setProjectData(newProject);
+      setStep(2);
+    } catch (err) {
+      console.error('Error submitting project:', err);
+      toast({
+        variant: "destructive",
+        title: "خطأ",
+        description: "حدث خطأ أثناء إنشاء المشروع. يرجى المحاولة مرة أخرى.",
+      });
+    }
   };
 
   const handlePaymentSuccess = () => {
@@ -75,31 +114,6 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
 
     try {
       const fees = calculateFees(projectData.funding_goal);
-
-      // Créer d'abord la transaction pour les frais
-      const { data: transaction, error: transactionError } = await supabase
-        .from('transactions')
-        .insert({
-          amount: fees.total,
-          type: 'project_fee',
-          status: 'pending',
-          user_id: user.id,
-        })
-        .select()
-        .single();
-
-      if (transactionError) throw transactionError;
-
-      // Créer ensuite le projet sans lier directement la transaction
-      const { error: projectError } = await supabase
-        .from('projects')
-        .insert({
-          ...projectData,
-          owner_id: user.id,
-          status: 'draft', // Le projet reste en draft jusqu'à la validation du paiement
-        });
-
-      if (projectError) throw projectError;
 
       setIsSubmitted(true);
       setSubmissionType("bank");

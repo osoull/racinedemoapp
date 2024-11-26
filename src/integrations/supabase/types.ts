@@ -945,6 +945,12 @@ export type Database = {
         }
         Returns: Json
       }
+      finalize_project_submission: {
+        Args: {
+          p_project_id: string
+        }
+        Returns: undefined
+      }
       get_investors: {
         Args: Record<PropertyKey, never>
         Returns: {
