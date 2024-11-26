@@ -1,9 +1,13 @@
 import { Card } from "@/components/ui/card"
 import { Briefcase, Users, Wallet, TrendingUp, ArrowUp, ArrowDown } from "lucide-react"
 import { usePlatformStats } from "@/hooks/usePlatformStats"
+import { useRevenueStats } from "@/hooks/useRevenueStats"
 
 export function StatsGrid() {
-  const { stats, isLoading } = usePlatformStats()
+  const { stats, isLoading: statsLoading } = usePlatformStats()
+  const { data: revenueStats, isLoading: revenueLoading } = useRevenueStats()
+
+  const isLoading = statsLoading || revenueLoading
 
   if (isLoading) {
     return (
@@ -28,10 +32,13 @@ export function StatsGrid() {
 
   const items = [
     {
-      title: "إجمالي التمويل",
-      value: formatCurrency(stats?.totalInvestment || 0),
+      title: "إجمالي الإيرادات",
+      value: formatCurrency(revenueStats?.totalRevenue || 0),
       icon: TrendingUp,
-      trend: { value: 8.3, isPositive: true },
+      trend: { 
+        value: Number(revenueStats?.monthlyGrowth.toFixed(1)) || 0, 
+        isPositive: (revenueStats?.monthlyGrowth || 0) > 0 
+      },
       bgColor: "bg-green-50",
       iconColor: "text-green-600"
     },
