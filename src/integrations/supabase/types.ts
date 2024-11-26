@@ -196,54 +196,6 @@ export type Database = {
         }
         Relationships: []
       }
-      fee_tracking: {
-        Row: {
-          amount: number
-          commission_id: string | null
-          created_at: string | null
-          fee_amount: number
-          fee_type: string
-          id: string
-          transaction_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          amount: number
-          commission_id?: string | null
-          created_at?: string | null
-          fee_amount: number
-          fee_type: string
-          id?: string
-          transaction_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          amount?: number
-          commission_id?: string | null
-          created_at?: string | null
-          fee_amount?: number
-          fee_type?: string
-          id?: string
-          transaction_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fee_tracking_commission_id_fkey"
-            columns: ["commission_id"]
-            isOneToOne: false
-            referencedRelation: "commissions"
-            referencedColumns: ["commission_id"]
-          },
-          {
-            foreignKeyName: "fee_tracking_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "transactions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       investments: {
         Row: {
           amount: number
@@ -861,7 +813,10 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          commission_id: string | null
           created_at: string
+          fee_amount: number | null
+          fee_type: string | null
           id: string
           investment_id: string | null
           status: string | null
@@ -870,7 +825,10 @@ export type Database = {
         }
         Insert: {
           amount: number
+          commission_id?: string | null
           created_at?: string
+          fee_amount?: number | null
+          fee_type?: string | null
           id?: string
           investment_id?: string | null
           status?: string | null
@@ -879,7 +837,10 @@ export type Database = {
         }
         Update: {
           amount?: number
+          commission_id?: string | null
           created_at?: string
+          fee_amount?: number | null
+          fee_type?: string | null
           id?: string
           investment_id?: string | null
           status?: string | null
@@ -887,6 +848,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "transactions_commission_id_fkey"
+            columns: ["commission_id"]
+            isOneToOne: false
+            referencedRelation: "commissions"
+            referencedColumns: ["commission_id"]
+          },
           {
             foreignKeyName: "transactions_investment_id_fkey"
             columns: ["investment_id"]

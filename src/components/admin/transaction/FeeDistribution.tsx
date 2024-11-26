@@ -38,11 +38,11 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
 
   if (isLoading) return <div>جاري التحميل...</div>
 
-  const investmentTransactions = transactions?.filter(t => 
-    t.type === 'investment'
+  const feeTransactions = transactions?.filter(t => 
+    t.type === 'fee'
   ) || []
 
-  const calculateFees = (amount: number) => {
+  const calculateFees = (transactions: Transaction[]) => {
     const fees = {
       admin: 0,
       collection: 0,
@@ -50,28 +50,22 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
       qualified_investor: 0
     }
 
-    commissions?.forEach(commission => {
-      switch (commission.commission_type) {
-        case 'admin_fee':
-          fees.admin = amount * (commission.rate / 100)
-          break
-        case 'collection_fee':
-          fees.collection = amount * (commission.rate / 100)
-          break
-        case 'basic_investor_fee':
-          fees.basic_investor = amount * (commission.rate / 100)
-          break
-        case 'qualified_investor_fee':
-          fees.qualified_investor = amount * (commission.rate / 100)
-          break
+    transactions.forEach(transaction => {
+      if (transaction.fee_type === 'admin_fee') {
+        fees.admin += transaction.fee_amount || 0
+      } else if (transaction.fee_type === 'collection_fee') {
+        fees.collection += transaction.fee_amount || 0
+      } else if (transaction.fee_type === 'basic_investor_fee') {
+        fees.basic_investor += transaction.fee_amount || 0
+      } else if (transaction.fee_type === 'qualified_investor_fee') {
+        fees.qualified_investor += transaction.fee_amount || 0
       }
     })
 
     return fees
   }
 
-  const totalInvestments = investmentTransactions.reduce((sum, t) => sum + t.amount, 0)
-  const totalFees = calculateFees(totalInvestments)
+  const totalFees = calculateFees(feeTransactions)
 
   return (
     <div className="space-y-6">
@@ -97,11 +91,7 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
       <div className="rounded-lg border bg-card p-4">
         <h3 className="font-medium mb-4">تفاصيل المعاملات الاستثمارية</h3>
         <div className="space-y-4">
-          {investmentTransactions.map(transaction => {
-            const fees = calculateFees(transaction.amount)
-            const netAmount = transaction.amount - 
-              (fees.admin + fees.collection + fees.basic_investor + fees.qualified_investor)
-
+          {feeTransactions.map(transaction => {
             return (
               <div key={transaction.id} className="border-b pb-4">
                 <div className="flex justify-between items-start mb-2">
@@ -120,24 +110,21 @@ export function FeeDistribution({ transactions, isLoading }: FeeDistributionProp
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <span className="text-muted-foreground">رسوم الإدارة:</span>
-                    <span className="float-left">{formatCurrency(fees.admin)}</span>
+                    <span className="text-muted-foreground">نوع الرسوم:</span>
+                    <span className="float-left">
+                      {transaction.fee_type === 'admin_fee' && 'رسوم إدارية'}
+                      {transaction.fee_type === 'collection_fee' && 'رسوم تحصيل'}
+                      {transaction.fee_type === 'basic_investor_fee' && 'رسوم مستثمر أساسي'}
+                      {transaction.fee_type === 'qualified_investor_fee' && 'رسوم مستثمر مؤهل'}
+                    </span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">رسوم التحصيل:</span>
-                    <span className="float-left">{formatCurrency(fees.collection)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">رسوم المستثمر الأساسي:</span>
-                    <span className="float-left">{formatCurrency(fees.basic_investor)}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">رسوم المستثمر المؤهل:</span>
-                    <span className="float-left">{formatCurrency(fees.qualified_investor)}</span>
+                    <span className="text-muted-foreground">مبلغ الرسوم:</span>
+                    <span className="float-left">{formatCurrency(transaction.fee_amount || 0)}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="font-medium">صافي الاستثمار:</span>
-                    <span className="float-left font-medium">{formatCurrency(netAmount)}</span>
+                    <span className="font-medium">المبلغ الإجمالي:</span>
+                    <span className="float-left font-medium">{formatCurrency(transaction.amount)}</span>
                   </div>
                 </div>
               </div>

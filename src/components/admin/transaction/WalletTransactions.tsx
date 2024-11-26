@@ -16,12 +16,6 @@ type Transaction = Tables<"transactions"> & {
     amount: number;
     project: { title: string } | null;
   } | null;
-  fees?: {
-    admin: number;
-    collection: number;
-    investor: number;
-    total: number;
-  }
 }
 
 interface WalletTransactionsProps {
@@ -106,14 +100,7 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
           </TableHeader>
           <TableBody>
             {transactions?.map((transaction) => {
-              const fees = transaction.fees || {
-                admin: 0,
-                collection: 0,
-                investor: 0,
-                total: 0
-              }
-              
-              const principalAmount = transaction.amount - fees.total
+              const principalAmount = transaction.amount - (transaction.fee_amount || 0)
 
               return (
                 <TableRow key={transaction.id}>
@@ -132,22 +119,23 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
                        transaction.type === 'withdrawal' ? 'سحب' :
                        transaction.type === 'investment' ? 'استثمار' :
                        transaction.type === 'project_fee' ? 'رسوم مشروع' : 
+                       transaction.type === 'fee' ? 'رسوم' :
                        'غير معروف'}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatCurrency(principalAmount)}</TableCell>
                   <TableCell>
                     <div className="text-xs space-y-1">
-                      {fees.admin > 0 && (
-                        <div>رسوم إدارية: {formatCurrency(fees.admin)}</div>
+                      {transaction.fee_amount > 0 && (
+                        <div>
+                          {transaction.fee_type === 'admin_fee' && 'رسوم إدارية'}
+                          {transaction.fee_type === 'collection_fee' && 'رسوم تحصيل'}
+                          {transaction.fee_type === 'basic_investor_fee' && 'رسوم مستثمر أساسي'}
+                          {transaction.fee_type === 'qualified_investor_fee' && 'رسوم مستثمر مؤهل'}
+                          : {formatCurrency(transaction.fee_amount)}
+                        </div>
                       )}
-                      {fees.collection > 0 && (
-                        <div>رسوم تحصيل: {formatCurrency(fees.collection)}</div>
-                      )}
-                      {fees.investor > 0 && (
-                        <div>رسوم مستثمر: {formatCurrency(fees.investor)}</div>
-                      )}
-                      {fees.total === 0 && (
+                      {!transaction.fee_amount && (
                         <div className="text-muted-foreground">لا توجد رسوم</div>
                       )}
                     </div>
