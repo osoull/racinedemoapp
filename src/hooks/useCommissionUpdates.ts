@@ -11,6 +11,17 @@ export const useCommissionUpdates = () => {
 
   const updateCommissionRate = async (commissionId: string, newRate: number) => {
     try {
+      // First, optimistically update the UI
+      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
+        if (!oldData) return oldData
+        return oldData.map(commission => 
+          commission.commission_id === commissionId 
+            ? { ...commission, rate: newRate, updated_at: new Date().toISOString() }
+            : commission
+        )
+      })
+
+      // Then perform the actual update
       const { error } = await supabase
         .from("commissions")
         .update({ 
@@ -21,19 +32,11 @@ export const useCommissionUpdates = () => {
 
       if (error) throw error
 
-      // Optimistically update the cache
-      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
-        if (!oldData) return oldData
-        return oldData.map(commission => 
-          commission.commission_id === commissionId 
-            ? { ...commission, rate: newRate, updated_at: new Date().toISOString() }
-            : commission
-        )
-      })
-
-      // Invalidate queries to ensure data consistency
-      await queryClient.invalidateQueries({ queryKey: ["commissions"] })
-      await queryClient.invalidateQueries({ queryKey: ["transactions"] })
+      // Invalidate and refetch to ensure data consistency
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["commissions"] }),
+        queryClient.invalidateQueries({ queryKey: ["transactions"] })
+      ])
 
       toast({
         title: "تم تحديث العمولة",
@@ -42,6 +45,17 @@ export const useCommissionUpdates = () => {
 
     } catch (error) {
       console.error("Error updating commission rate:", error)
+      
+      // Revert the optimistic update in case of error
+      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
+        if (!oldData) return oldData
+        return oldData.map(commission => 
+          commission.commission_id === commissionId 
+            ? { ...commission, rate: commission.rate }
+            : commission
+        )
+      })
+
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث معدل العمولة",
