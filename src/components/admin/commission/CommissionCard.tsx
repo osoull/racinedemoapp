@@ -35,6 +35,8 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
       setIsEditing(false)
     } catch (error) {
       console.error("Error updating commission rate:", error)
+      // Reset to original value on error
+      setNewRate(commission.rate.toString())
     }
   }
 

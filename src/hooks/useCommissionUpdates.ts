@@ -32,11 +32,8 @@ export const useCommissionUpdates = () => {
 
       if (error) throw error
 
-      // Invalidate and refetch to ensure data consistency
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["commissions"] }),
-        queryClient.invalidateQueries({ queryKey: ["transactions"] })
-      ])
+      // Force a refetch to ensure data consistency
+      await queryClient.invalidateQueries({ queryKey: ["commissions"] })
 
       toast({
         title: "تم تحديث العمولة",
