@@ -11,36 +11,37 @@ export const useCommissionUpdates = () => {
 
   const updateCommissionRate = async (commissionId: string, newRate: number) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("commissions")
         .update({ 
           rate: newRate,
           updated_at: new Date().toISOString()
         })
         .eq("commission_id", commissionId)
-        .select()
-        .single()
 
       if (error) throw error
 
-      // Mise à jour optimiste du cache
+      // Optimistically update the cache
       queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
         if (!oldData) return oldData
         return oldData.map(commission => 
-          commission.commission_id === commissionId ? data : commission
+          commission.commission_id === commissionId 
+            ? { ...commission, rate: newRate, updated_at: new Date().toISOString() }
+            : commission
         )
       })
 
-      // Invalider les requêtes liées aux transactions pour forcer leur mise à jour
-      queryClient.invalidateQueries({ queryKey: ["transactions"] })
+      // Invalidate queries to ensure data consistency
+      await queryClient.invalidateQueries({ queryKey: ["commissions"] })
+      await queryClient.invalidateQueries({ queryKey: ["transactions"] })
 
       toast({
         title: "تم تحديث العمولة",
         description: "تم تحديث معدل العمولة بنجاح",
       })
 
-      return data
     } catch (error) {
+      console.error("Error updating commission rate:", error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث معدل العمولة",
