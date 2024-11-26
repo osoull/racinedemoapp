@@ -28,86 +28,99 @@ export function ProjectForm() {
   ];
 
   return (
-    <Card className="p-6">
+    <div className="container mx-auto px-4">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Tabs value={currentTab} onValueChange={setCurrentTab}>
-          <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-8">
-            {tabs.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+          <div className="flex flex-col lg:flex-row lg:gap-8">
+            {/* Sidebar with tabs */}
+            <div className="lg:w-64 mb-6 lg:mb-0">
+              <TabsList className="flex flex-row lg:flex-col h-auto p-1 bg-muted/50">
+                {tabs.map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="w-full text-right py-3 px-4 data-[state=active]:bg-background"
+                  >
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
-          <TabsContent value="general">
-            <GeneralInfo control={form.control} />
-          </TabsContent>
+            {/* Main content area */}
+            <div className="flex-1">
+              <Card className="p-6">
+                <TabsContent value="general">
+                  <GeneralInfo control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="description">
-            <ProjectDescription control={form.control} />
-          </TabsContent>
+                <TabsContent value="description">
+                  <ProjectDescription control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="financial">
-            <FinancialDetails control={form.control} />
-          </TabsContent>
+                <TabsContent value="financial">
+                  <FinancialDetails control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="timeline">
-            <ProjectTimeline control={form.control} />
-          </TabsContent>
+                <TabsContent value="timeline">
+                  <ProjectTimeline control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="team">
-            <TeamMembers control={form.control} />
-          </TabsContent>
+                <TabsContent value="team">
+                  <TeamMembers control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="documents">
-            <ProjectDocuments control={form.control} />
-          </TabsContent>
+                <TabsContent value="documents">
+                  <ProjectDocuments control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="additional">
-            <AdditionalInfo control={form.control} />
-          </TabsContent>
+                <TabsContent value="additional">
+                  <AdditionalInfo control={form.control} />
+                </TabsContent>
 
-          <TabsContent value="payment">
-            <PaymentSection control={form.control} />
-          </TabsContent>
+                <TabsContent value="payment">
+                  <PaymentSection control={form.control} />
+                </TabsContent>
+
+                {/* Navigation buttons */}
+                <div className="flex justify-between mt-6 pt-6 border-t">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      const currentIndex = tabs.findIndex(t => t.value === currentTab);
+                      if (currentIndex > 0) {
+                        setCurrentTab(tabs[currentIndex - 1].value);
+                      }
+                    }}
+                    disabled={currentTab === "general"}
+                  >
+                    السابق
+                  </Button>
+
+                  {currentTab !== "payment" ? (
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const currentIndex = tabs.findIndex(t => t.value === currentTab);
+                        if (currentIndex < tabs.length - 1) {
+                          setCurrentTab(tabs[currentIndex + 1].value);
+                        }
+                      }}
+                    >
+                      التالي
+                    </Button>
+                  ) : (
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            </div>
+          </div>
         </Tabs>
-
-        <div className="flex justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              const currentIndex = tabs.findIndex(t => t.value === currentTab);
-              if (currentIndex > 0) {
-                setCurrentTab(tabs[currentIndex - 1].value);
-              }
-            }}
-            disabled={currentTab === "general"}
-          >
-            السابق
-          </Button>
-
-          {currentTab !== "payment" && (
-            <Button
-              type="button"
-              onClick={() => {
-                const currentIndex = tabs.findIndex(t => t.value === currentTab);
-                if (currentIndex < tabs.length - 1) {
-                  setCurrentTab(tabs[currentIndex + 1].value);
-                }
-              }}
-            >
-              التالي
-            </Button>
-          )}
-
-          {currentTab === "payment" && (
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
-            </Button>
-          )}
-        </div>
       </form>
-    </Card>
+    </div>
   );
 }

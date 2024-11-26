@@ -1,51 +1,37 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, CreditCard } from "lucide-react";
-import { BankTransferDetails } from "@/components/investor/wallet/deposit/BankTransferDetails";
-import { CardPayment } from "@/components/investor/wallet/deposit/CardPayment";
-import { ProjectFeeBreakdown } from "../ProjectFeeBreakdown";
-import { useBankDetails } from "@/hooks/useBankDetails";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Control } from "react-hook-form";
 
 interface PaymentSectionProps {
   control: Control<any>;
 }
 
 export function PaymentSection({ control }: PaymentSectionProps) {
-  const { data: bankDetails, isLoading, error } = useBankDetails();
-
   return (
     <div className="space-y-6">
-      <Alert>
-        <AlertDescription>
-          يرجى اختيار طريقة الدفع المناسبة لإتمام عملية تسجيل المشروع
-        </AlertDescription>
-      </Alert>
-
-      <Tabs defaultValue="bank" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="bank" className="space-x-2">
-            <Building2 className="h-4 w-4" />
-            <span>تحويل بنكي</span>
-          </TabsTrigger>
-          <TabsTrigger value="card" className="space-x-2">
-            <CreditCard className="h-4 w-4" />
-            <span>بطاقة ائتمان</span>
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="bank" className="space-y-4">
-          <BankTransferDetails 
-            bankDetails={bankDetails}
-            isLoading={isLoading}
-            error={error}
-          />
-        </TabsContent>
-
-        <TabsContent value="card" className="space-y-4">
-          <CardPayment amount="0" onSuccess={() => {}} />
-        </TabsContent>
-      </Tabs>
+      <CardHeader>
+        <CardTitle>معلومات الدفع</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <Label>رقم البطاقة</Label>
+            <Input type="text" placeholder="**** **** **** ****" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>تاريخ الانتهاء</Label>
+              <Input type="text" placeholder="MM/YY" />
+            </div>
+            <div className="space-y-2">
+              <Label>رمز الأمان</Label>
+              <Input type="text" placeholder="CVV" />
+            </div>
+          </div>
+        </div>
+      </CardContent>
     </div>
   );
 }
