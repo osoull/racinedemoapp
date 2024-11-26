@@ -7,6 +7,7 @@ import { UserList } from "./users/UserList";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import { AddUserDialog } from "./users/AddUserDialog";
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
 export function UserManagement() {
   const [activeTab, setActiveTab] = useState("all");
@@ -31,29 +32,33 @@ export function UserManagement() {
     }
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel("user_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "profiles"
-        },
-        () => {
-          queryClient.invalidateQueries({ 
-            queryKey: ["users"],
-            exact: true 
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  // Utilisation du hook useRealtimeSubscription pour les mises à jour en temps réel
+  useRealtimeSubscription(
+    "profiles",
+    {
+      onInsert: () => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        toast({
+          title: "تم إضافة مستخدم جديد",
+          description: "تم تحديث قائمة المستخدمين"
+        });
+      },
+      onUpdate: () => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        toast({
+          title: "تم تحديث بيانات المستخدم",
+          description: "تم تحديث قائمة المستخدمين"
+        });
+      },
+      onDelete: () => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        toast({
+          title: "تم حذف المستخدم",
+          description: "تم تحديث قائمة المستخدمين"
+        });
+      }
+    }
+  );
 
   return (
     <Card>
