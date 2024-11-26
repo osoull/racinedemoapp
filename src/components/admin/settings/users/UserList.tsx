@@ -7,9 +7,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Loader2, MoreVertical, UserCog, UserX } from "lucide-react"
+import { Loader2, MoreVertical, UserCog, UserPlus, UserX } from "lucide-react"
 import { useState } from "react"
 import { UserEditDialog } from "./UserEditDialog"
+import { UserAddDialog } from "./UserAddDialog"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { format } from "date-fns"
@@ -23,6 +24,7 @@ interface UserListProps {
 export function UserList({ users, isLoading }: UserListProps) {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
   const { toast } = useToast()
 
   const handleDeleteUser = async (userId: string) => {
@@ -53,6 +55,13 @@ export function UserList({ users, isLoading }: UserListProps) {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button onClick={() => setIsAdding(true)}>
+          <UserPlus className="h-4 w-4 ml-2" />
+          إضافة مستخدم
+        </Button>
+      </div>
+
       <div className="rounded-md border">
         <div className="grid grid-cols-6 gap-4 p-4 font-medium">
           <div className="col-span-2">المستخدم</div>
@@ -135,6 +144,11 @@ export function UserList({ users, isLoading }: UserListProps) {
         user={selectedUser}
         open={isEditing}
         onOpenChange={setIsEditing}
+      />
+
+      <UserAddDialog 
+        open={isAdding}
+        onOpenChange={setIsAdding}
       />
     </div>
   )
