@@ -1,13 +1,11 @@
 import { useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Tables } from "@/integrations/supabase/types"
-import { useToast } from "@/components/ui/use-toast"
 
 type Commission = Tables<"commissions">
 
 export const useCommissionUpdates = () => {
   const queryClient = useQueryClient()
-  const { toast } = useToast()
 
   const updateCommissionRate = async (commissionId: string, newRate: number) => {
     try {

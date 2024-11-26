@@ -34,25 +34,17 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
 
     try {
       await updateCommissionRate(commission.commission_id, rateNumber)
-      
-      // Optimistically update the UI
-      queryClient.setQueryData(["commissions"], (oldData: Commission[] | undefined) => {
-        if (!oldData) return oldData
-        return oldData.map(c => 
-          c.commission_id === commission.commission_id 
-            ? { ...c, rate: rateNumber }
-            : c
-        )
-      })
-
       setIsEditing(false)
+      
+      // Invalidate the commissions query to force a refetch
+      await queryClient.invalidateQueries({ queryKey: ["commissions"] })
+      
       toast({
         title: "تم التحديث",
         description: "تم تحديث معدل العمولة بنجاح",
       })
     } catch (error) {
       console.error("Error updating commission rate:", error)
-      // Reset to original value on error
       setNewRate(commission.rate.toString())
       toast({
         title: "خطأ",
