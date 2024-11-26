@@ -10,13 +10,24 @@ import { RevenueTable } from "./RevenueTable";
 import type { FeeData } from "./RevenueTable";
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
 
+interface RevenueStats {
+  currentTotal: number;
+  lastYearTotal: number;
+  yearlyChange: number;
+  fees: FeeData[];
+}
+
 export function RevenueDetails() {
   const [timeframe, setTimeframe] = useState<"year" | "last12">("year");
   
-  const { data: revenueData, isLoading, refetch } = useQuery<FeeData[]>({
+  const { data: revenueData, isLoading, refetch } = useQuery<RevenueStats>({
     queryKey: ["revenue", timeframe],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const now = new Date();
+      const lastYear = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+
+      // Get current period fees
+      const { data: currentFees, error: currentError } = await supabase
         .from('fee_tracking')
         .select(`
           *,
@@ -24,10 +35,34 @@ export function RevenueDetails() {
             created_at
           )
         `)
+        .gte('created_at', lastYear.toISOString())
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (currentError) throw currentError;
+
+      // Get last year's total for comparison
+      const { data: lastYearData, error: lastYearError } = await supabase
+        .from('fee_tracking')
+        .select('fee_amount')
+        .lt('created_at', lastYear.toISOString())
+        .gte('created_at', new Date(lastYear.getFullYear() - 1, lastYear.getMonth(), lastYear.getDate()).toISOString());
+
+      if (lastYearError) throw lastYearError;
+
+      const currentTotal = currentFees.reduce((sum, fee) => sum + (fee.fee_amount || 0), 0);
+      const lastYearTotal = lastYearData.reduce((sum, fee) => sum + (fee.fee_amount || 0), 0);
+      
+      // Calculate yearly change percentage
+      const yearlyChange = lastYearTotal === 0 
+        ? 100 // If last year was 0, consider it as 100% increase
+        : ((currentTotal - lastYearTotal) / lastYearTotal) * 100;
+
+      return {
+        currentTotal,
+        lastYearTotal,
+        yearlyChange,
+        fees: currentFees
+      };
     }
   });
 
@@ -53,14 +88,21 @@ export function RevenueDetails() {
     );
   }
 
+  if (!revenueData) {
+    return null;
+  }
+
   const currentPeriodData = {
-    admin_fees: revenueData?.filter(fee => fee.fee_type === 'admin_fee')
-      .reduce((sum, fee) => sum + fee.fee_amount, 0) || 0,
-    collection_fees: revenueData?.filter(fee => fee.fee_type === 'collection_fee')
-      .reduce((sum, fee) => sum + fee.fee_amount, 0) || 0,
-    investor_fees: revenueData?.filter(fee => 
-      fee.fee_type === 'basic_investor_fee' || fee.fee_type === 'qualified_investor_fee'
-    ).reduce((sum, fee) => sum + fee.fee_amount, 0) || 0
+    admin_fees: revenueData.fees
+      .filter(fee => fee.fee_type === 'admin_fee')
+      .reduce((sum, fee) => sum + fee.fee_amount, 0),
+    collection_fees: revenueData.fees
+      .filter(fee => fee.fee_type === 'collection_fee')
+      .reduce((sum, fee) => sum + fee.fee_amount, 0),
+    investor_fees: revenueData.fees
+      .filter(fee => 
+        fee.fee_type === 'basic_investor_fee' || fee.fee_type === 'qualified_investor_fee'
+      ).reduce((sum, fee) => sum + fee.fee_amount, 0)
   };
 
   return (
@@ -70,6 +112,22 @@ export function RevenueDetails() {
           <CardTitle>تفاصيل الإيرادات</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-8">
+            <Card className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">إجمالي الإيرادات</p>
+                  <p className="text-3xl font-bold mt-2">
+                    {(revenueData.currentTotal / 1000000).toFixed(1)} مليون ريال
+                  </p>
+                </div>
+                <div className={`text-sm font-medium ${revenueData.yearlyChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {revenueData.yearlyChange >= 0 ? '↑' : '↓'} {Math.abs(revenueData.yearlyChange).toFixed(1)}%
+                </div>
+              </div>
+            </Card>
+          </div>
+
           <div className="mb-6">
             <TabsList>
               <TabsTrigger
@@ -107,7 +165,7 @@ export function RevenueDetails() {
           <div className="rounded-lg border bg-card">
             <div className="p-6">
               <h3 className="font-semibold mb-4">التفاصيل</h3>
-              <RevenueTable revenueData={revenueData || []} />
+              <RevenueTable revenueData={revenueData.fees} />
             </div>
           </div>
         </CardContent>
