@@ -1,46 +1,47 @@
-import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Wallet } from "lucide-react";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-import { toast } from "sonner";
+import { Card } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { formatCurrency } from "@/utils/feeCalculations";
 
 export function TotalFeesCard() {
-  const { data: totalFees, isLoading, refetch } = useQuery({
+  const { data: totalFees, isLoading } = useQuery({
     queryKey: ["total-fees"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('transactions')
-        .select('fee_amount')
-        .not('fee_amount', 'is', null);
-      
+        .from('fee_tracking')
+        .select('fee_type, fee_amount');
+
       if (error) throw error;
-      
-      // Calculate total fees by summing all fee_amounts
-      const total = data.reduce((sum, fee) => sum + (fee.fee_amount || 0), 0);
-      return total;
+
+      return data.reduce((acc: any, fee) => {
+        acc.total += fee.fee_amount;
+        
+        switch (fee.fee_type) {
+          case 'admin_fee':
+            acc.admin += fee.fee_amount;
+            break;
+          case 'collection_fee':
+            acc.collection += fee.fee_amount;
+            break;
+          case 'basic_investor_fee':
+            acc.basic_investor += fee.fee_amount;
+            break;
+          case 'qualified_investor_fee':
+            acc.qualified_investor += fee.fee_amount;
+            break;
+        }
+        
+        return acc;
+      }, {
+        admin: 0,
+        collection: 0,
+        basic_investor: 0,
+        qualified_investor: 0,
+        total: 0
+      });
     }
   });
-
-  // Subscribe to real-time changes in transactions
-  useRealtimeSubscription(
-    ['transactions'],
-    {
-      onInsert: () => {
-        refetch();
-        toast.info("تم تحديث إجمالي الرسوم");
-      },
-      onUpdate: () => {
-        refetch();
-        toast.info("تم تحديث إجمالي الرسوم");
-      }
-    }
-  );
-
-  const formatMillions = (amount: number) => {
-    const millions = amount / 1000000;
-    return `${millions.toFixed(1)}`;
-  };
 
   if (isLoading) {
     return (
@@ -52,29 +53,28 @@ export function TotalFeesCard() {
     );
   }
 
-  const amount = totalFees || 0;
-  const trend = { value: 4.1, isPositive: true }; // You can make this dynamic based on your needs
-
   return (
     <Card className="p-6">
-      <div className="flex items-center justify-between">
-        <div className="rounded-xl bg-primary/10 p-3">
-          <Wallet className="h-5 w-5 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">إجمالي الإيرادات</h3>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees?.total || 0)}</p>
         </div>
-        {trend && (
-          <div className={`flex items-center gap-1 text-sm ${
-            trend.isPositive ? 'text-green-600' : 'text-red-600'
-          }`}>
-            <span>{trend.value}%</span>
-            <span>{trend.isPositive ? '↑' : '↓'}</span>
-          </div>
-        )}
-      </div>
-      <div className="mt-4">
-        <p className="text-sm text-muted-foreground">إجمالي الرسوم</p>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-2xl font-bold">{formatMillions(amount)}</h3>
-          <p className="text-sm text-muted-foreground">مليون ريال</p>
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">عمولات الإدارة</h3>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees?.admin || 0)}</p>
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">عمولات التحصيل</h3>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees?.collection || 0)}</p>
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">عمولات المستثمر الأساسي</h3>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees?.basic_investor || 0)}</p>
+        </div>
+        <div>
+          <h3 className="text-sm font-medium text-muted-foreground">عمولات المستثمر المؤهل</h3>
+          <p className="text-2xl font-bold">{formatCurrency(totalFees?.qualified_investor || 0)}</p>
         </div>
       </div>
     </Card>

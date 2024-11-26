@@ -27,22 +27,60 @@ export function RevenueDetails() {
         endDate = new Date();
       }
 
-      const { data, error } = await supabase.rpc(
-        'calculate_revenue_by_period',
-        {
-          start_date: startDate.toISOString(),
-          end_date: endDate.toISOString()
-        }
-      );
+      const { data, error } = await supabase
+        .from('fee_tracking')
+        .select(`
+          created_at,
+          fee_type,
+          fee_amount
+        `)
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endOfDate.toISOString())
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      // Group fees by month
+      const monthlyData = data.reduce((acc: any, fee) => {
+        const month = format(new Date(fee.created_at), 'yyyy-MM');
+        
+        if (!acc[month]) {
+          acc[month] = {
+            period: month,
+            admin_fees: 0,
+            collection_fees: 0,
+            basic_investor_fees: 0,
+            qualified_investor_fees: 0,
+            total_fees: 0
+          };
+        }
+
+        switch (fee.fee_type) {
+          case 'admin_fee':
+            acc[month].admin_fees += fee.fee_amount;
+            break;
+          case 'collection_fee':
+            acc[month].collection_fees += fee.fee_amount;
+            break;
+          case 'basic_investor_fee':
+            acc[month].basic_investor_fees += fee.fee_amount;
+            break;
+          case 'qualified_investor_fee':
+            acc[month].qualified_investor_fees += fee.fee_amount;
+            break;
+        }
+
+        acc[month].total_fees += fee.fee_amount;
+        return acc;
+      }, {});
+
+      return Object.values(monthlyData);
     }
   });
 
-  // Subscribe to real-time changes in transactions and fee tracking
+  // Subscribe to real-time changes in fee_tracking
   useRealtimeSubscription(
-    ['transactions', 'fee_tracking'],
+    'fee_tracking',
     {
       onInsert: () => {
         refetch();
