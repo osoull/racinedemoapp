@@ -1,31 +1,26 @@
-import { useEffect } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tables } from "@/integrations/supabase/types"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
-import { useQueryClient } from "@tanstack/react-query"
 import { formatCurrency } from "@/utils/feeCalculations"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { TransactionTableHeader } from "./TransactionTableHeader"
+import { TransactionFeeDetails } from "./TransactionFeeDetails"
+import { TransactionStatusBadge } from "./TransactionStatusBadge"
 
 type Transaction = Tables<"transactions"> & {
-  user: { first_name: string; last_name: string } | null;
+  user: { first_name: string; last_name: string } | null
   investment: {
-    amount: number;
-    project: { title: string } | null;
-  } | null;
+    amount: number
+    project: { title: string } | null
+  } | null
   fee_details?: {
-    type: string;
-    amount: number;
-  }[];
+    type: string
+    amount: number
+  }[]
 }
 
 interface WalletTransactionsProps {
@@ -34,28 +29,25 @@ interface WalletTransactionsProps {
 }
 
 export function WalletTransactions({ transactions, isLoading }: WalletTransactionsProps) {
-  const queryClient = useQueryClient()
+  const handleUpdateStatus = async (transactionId: string, newStatus: 'completed' | 'cancelled') => {
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .update({ status: newStatus })
+        .eq('id', transactionId)
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('transactions_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'transactions'
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['transactions'] })
-        }
+      if (error) throw error
+
+      toast.success(
+        newStatus === 'completed' 
+          ? 'تم اعتماد المعاملة بنجاح' 
+          : 'تم رفض المعاملة بنجاح'
       )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
+    } catch (error) {
+      console.error('Error updating transaction:', error)
+      toast.error('حدث خطأ أثناء تحديث حالة المعاملة')
     }
-  }, [queryClient])
+  }
 
   if (isLoading) {
     return (
@@ -67,62 +59,11 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
     )
   }
 
-  const handleUpdateStatus = async (transactionId: string, newStatus: 'completed' | 'cancelled') => {
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .update({ status: newStatus })
-        .eq('id', transactionId)
-
-      if (error) {
-        toast.error('حدث خطأ أثناء تحديث حالة المعاملة')
-        throw error
-      }
-
-      queryClient.invalidateQueries({ queryKey: ['transactions'] })
-
-      toast.success(
-        newStatus === 'completed' 
-          ? 'تم اعتماد المعاملة بنجاح' 
-          : 'تم رفض المعاملة بنجاح'
-      )
-    } catch (error) {
-      console.error('Error updating transaction:', error)
-    }
-  }
-
-  const getFeeTypeLabel = (feeType: string) => {
-    switch (feeType) {
-      case 'admin_fee':
-        return 'رسوم إدارية'
-      case 'collection_fee':
-        return 'رسوم تحصيل'
-      case 'basic_investor_fee':
-        return 'رسوم مستثمر أساسي'
-      case 'qualified_investor_fee':
-        return 'رسوم مستثمر مؤهل'
-      default:
-        return feeType
-    }
-  }
-
   return (
     <Card className="p-4">
       <ScrollArea className="h-[600px]">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>رقم المعاملة</TableHead>
-              <TableHead>المستخدم</TableHead>
-              <TableHead>نوع المعاملة</TableHead>
-              <TableHead>المبلغ الأساسي</TableHead>
-              <TableHead>تفاصيل الرسوم</TableHead>
-              <TableHead>إجمالي المعاملة</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead>التاريخ</TableHead>
-              <TableHead>الإجراءات</TableHead>
-            </TableRow>
-          </TableHeader>
+          <TransactionTableHeader />
           <TableBody>
             {transactions?.map((transaction) => {
               const principalAmount = transaction.amount - (transaction.fee_amount || 0)
@@ -150,36 +91,16 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
                   </TableCell>
                   <TableCell>{formatCurrency(principalAmount)}</TableCell>
                   <TableCell>
-                    {transaction.fee_amount > 0 ? (
-                      <Collapsible>
-                        <CollapsibleTrigger className="flex items-center text-sm text-muted-foreground hover:text-foreground">
-                          <ChevronDown className="h-4 w-4" />
-                          <span>عرض التفاصيل</span>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="space-y-2 pt-2">
-                          {transaction.fee_details?.map((fee, index) => (
-                            <div key={index} className="flex justify-between text-xs">
-                              <span>{getFeeTypeLabel(fee.type)}:</span>
-                              <span>{formatCurrency(fee.amount)}</span>
-                            </div>
-                          ))}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">لا توجد رسوم</span>
-                    )}
+                    <TransactionFeeDetails 
+                      feeAmount={transaction.fee_amount}
+                      feeDetails={transaction.fee_details}
+                    />
                   </TableCell>
                   <TableCell className="font-medium">
                     {formatCurrency(transaction.amount)}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={
-                      transaction.status === 'completed' ? 'default' :
-                      transaction.status === 'pending' ? 'secondary' : 'destructive'
-                    }>
-                      {transaction.status === 'completed' ? 'مكتمل' :
-                       transaction.status === 'pending' ? 'قيد المعالجة' : 'ملغي'}
-                    </Badge>
+                    <TransactionStatusBadge status={transaction.status} />
                   </TableCell>
                   <TableCell>
                     {new Date(transaction.created_at).toLocaleDateString('ar-SA')}
