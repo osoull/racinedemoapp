@@ -3,9 +3,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tables } from "@/integrations/supabase/types"
-import { useCommissionUpdates } from "@/hooks/useCommissionUpdates"
 import { useToast } from "@/hooks/use-toast"
 import { useQueryClient } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 type Commission = Tables<"commissions">
 
@@ -18,7 +18,6 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
   const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [newRate, setNewRate] = useState(commission.rate.toString())
-  const { updateCommissionRate } = useCommissionUpdates()
   const queryClient = useQueryClient()
 
   const handleSave = async () => {
@@ -33,7 +32,16 @@ export const CommissionCard = ({ commission, getArabicCommissionType }: Commissi
     }
 
     try {
-      await updateCommissionRate(commission.commission_id, rateNumber)
+      const { error } = await supabase
+        .from("commissions")
+        .update({ 
+          rate: rateNumber,
+          updated_at: new Date().toISOString()
+        })
+        .eq("commission_id", commission.commission_id)
+
+      if (error) throw error
+
       setIsEditing(false)
       
       // Invalidate the commissions query to force a refetch

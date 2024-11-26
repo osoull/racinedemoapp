@@ -3,13 +3,14 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Tables } from "@/integrations/supabase/types"
 import { CommissionCard } from "./commission/CommissionCard"
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import { useToast } from "@/components/ui/use-toast"
+import { useEffect } from "react"
 
 type Commission = Tables<"commissions">
 
 const CommissionManagement = () => {
   const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   const { data: commissions, isLoading } = useQuery({
     queryKey: ["commissions"],
@@ -24,17 +25,33 @@ const CommissionManagement = () => {
     },
   })
 
-  useRealtimeSubscription(
-    "commissions",
-    {
-      onUpdate: (payload) => {
-        toast({
-          title: "تم تحديث العمولة",
-          description: "تم تحديث معدل العمولة بنجاح",
-        })
-      }
+  useEffect(() => {
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel('commission_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'commissions'
+        },
+        (payload) => {
+          // Invalidate and refetch when we receive a change
+          queryClient.invalidateQueries({ queryKey: ["commissions"] })
+          
+          toast({
+            title: "تم تحديث العمولة",
+            description: "تم تحديث معدل العمولة بنجاح",
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
     }
-  )
+  }, [queryClient, toast])
 
   const getArabicCommissionType = (type: string) => {
     switch (type) {
