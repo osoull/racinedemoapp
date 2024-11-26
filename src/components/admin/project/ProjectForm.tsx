@@ -29,19 +29,19 @@ export function ProjectForm() {
   ];
 
   return (
-    <div className="container max-w-[1400px] mx-auto px-4 min-h-screen">
+    <div className="min-h-screen bg-background">
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
-          <div className="flex flex-col lg:flex-row lg:gap-8 h-full">
+          <div className="flex flex-col lg:flex-row h-full">
             {/* Sidebar with tabs - Fixed width on desktop */}
-            <Card className="lg:w-72 mb-6 lg:mb-0 shrink-0">
-              <ScrollArea className="h-[calc(100vh-12rem)]">
-                <TabsList className="flex flex-row lg:flex-col h-auto p-2 bg-muted/50 w-full">
+            <Card className="lg:w-80 mb-6 lg:mb-0 shrink-0 lg:min-h-screen lg:rounded-none">
+              <ScrollArea className="h-[calc(100vh-4rem)]">
+                <TabsList className="flex flex-row lg:flex-col h-auto p-4 bg-muted/50 w-full space-y-2">
                   {tabs.map((tab) => (
                     <TabsTrigger
                       key={tab.value}
                       value={tab.value}
-                      className="w-full text-right py-3 px-4 data-[state=active]:bg-background"
+                      className="w-full text-right py-4 px-6 data-[state=active]:bg-background"
                     >
                       {tab.label}
                     </TabsTrigger>
@@ -51,9 +51,9 @@ export function ProjectForm() {
             </Card>
 
             {/* Main content area - Scrollable */}
-            <Card className="flex-1">
-              <ScrollArea className="h-[calc(100vh-12rem)]">
-                <div className="p-8">
+            <Card className="flex-1 lg:min-h-screen lg:rounded-none">
+              <ScrollArea className="h-[calc(100vh-4rem)]">
+                <div className="p-8 lg:p-12 max-w-[1600px] mx-auto">
                   <TabsContent value="general" className="m-0">
                     <GeneralInfo control={form.control} />
                   </TabsContent>
@@ -87,7 +87,7 @@ export function ProjectForm() {
                   </TabsContent>
 
                   {/* Navigation buttons */}
-                  <div className="flex justify-between mt-8 pt-6 border-t">
+                  <div className="flex justify-between mt-12 pt-8 border-t">
                     <Button
                       type="button"
                       variant="outline"
@@ -98,6 +98,7 @@ export function ProjectForm() {
                         }
                       }}
                       disabled={currentTab === "general"}
+                      className="w-32"
                     >
                       السابق
                     </Button>
@@ -111,11 +112,12 @@ export function ProjectForm() {
                             setCurrentTab(tabs[currentIndex + 1].value);
                           }
                         }}
+                        className="w-32"
                       >
                         التالي
                       </Button>
                     ) : (
-                      <Button type="submit" disabled={isSubmitting}>
+                      <Button type="submit" disabled={isSubmitting} className="w-32">
                         {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
                       </Button>
                     )}
