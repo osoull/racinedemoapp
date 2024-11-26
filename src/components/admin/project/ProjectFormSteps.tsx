@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectPaymentStep } from "./ProjectPaymentStep";
+import { calculateFees } from "@/utils/feeCalculations";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
@@ -99,7 +100,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     }
 
     try {
-      const fees = calculateFees(projectData.funding_goal);
+      const fees = calculateFees(projectData.funding_goal, commissions || [], 'borrower');
 
       // Create transaction first
       const { data: transaction, error: transactionError } = await supabase
@@ -166,7 +167,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
     );
   }
 
-  const fees = projectData ? calculateFees(projectData.funding_goal) : { admin: 0, collection: 0, total: 0 };
+  const fees = projectData ? calculateFees(projectData.funding_goal, commissions || [], 'borrower') : { admin: 0, collection: 0, total: 0 };
 
   return (
     <div className="space-y-6">

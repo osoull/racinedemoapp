@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { RevenueTable } from "./RevenueTable";
@@ -49,11 +49,19 @@ export function RevenueDetails() {
         ? 100 // If last year was 0, consider it as 100% increase
         : ((currentTotal - lastYearTotal) / lastYearTotal) * 100;
 
+      // Transform the data to match FeeData type
+      const transformedFees: FeeData[] = currentFees.map(fee => ({
+        ...fee,
+        transaction: {
+          created_at: fee.transaction?.[0]?.created_at || new Date().toISOString()
+        }
+      }));
+
       return {
         currentTotal,
         lastYearTotal,
         yearlyChange,
-        fees: currentFees as FeeData[]
+        fees: transformedFees
       };
     }
   });
