@@ -18,7 +18,6 @@ import ProjectsPage from "@/pages/admin/projects"
 import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement"
 import { TransactionManagement } from "@/components/admin/transaction/TransactionManagement"
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
-import SupportTools from "@/components/admin/SupportTools"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking"
 import { useAuth } from "@/contexts/AuthContext"
@@ -126,7 +125,6 @@ function App() {
                           <Route path="borrowers" element={<BorrowerManagement />} />
                           <Route path="transactions" element={<TransactionManagement />} />
                           <Route path="compliance" element={<KYCManagement />} />
-                          <Route path="support" element={<SupportTools />} />
                           <Route path="settings/*" element={<PlatformSettings />} />
                           <Route path="revenue" element={<RevenueTracking />} />
                         </Routes>

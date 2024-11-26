@@ -12,7 +12,7 @@ import { calculateFees } from "@/utils/feeCalculations";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
-  onSuccess?: (transactionId?: string) => void;  // Updated type definition here
+  onSuccess?: () => void;
 }
 
 export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) => {
@@ -73,7 +73,7 @@ export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) 
       });
 
       setIsSubmitted(true);
-      if (onSuccess) onSuccess(transactionId);
+      if (onSuccess) onSuccess();
     } catch (err) {
       console.error('Error creating project:', err);
       toast({
