@@ -45,21 +45,28 @@ export function DepositDialog({ onSuccess }: DepositDialogProps) {
     try {
       setIsSubmitting(true)
 
-      const { data, error: transactionError } = await supabase
+      // First create the transaction
+      const { data: transaction, error: transactionError } = await supabase
         .from('transactions')
-        .insert([
-          {
-            user_id: user.id,
-            amount: Number(amount),
-            type: 'deposit',
-            status: 'pending'
-          }
-        ])
+        .insert({
+          user_id: user.id,
+          amount: Number(amount),
+          type: 'deposit',
+          status: 'pending'
+        })
         .select()
         .single()
 
-      if (transactionError) {
-        throw transactionError
+      if (transactionError) throw transactionError
+
+      // If this is a project fee payment, update the project status to 'pending'
+      if (transaction.type === 'project_fee') {
+        const { error: projectError } = await supabase
+          .from('projects')
+          .update({ status: 'pending' })
+          .eq('fees_transaction_id', transaction.id)
+
+        if (projectError) throw projectError
       }
 
       toast({
