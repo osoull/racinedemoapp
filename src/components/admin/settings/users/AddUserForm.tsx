@@ -52,19 +52,26 @@ export function AddUserForm({ onSuccess, onCancel }: AddUserFormProps) {
 
   const onSubmit = async (values: z.infer<typeof userFormSchema>) => {
     try {
-      const { error } = await supabase.auth.admin.createUser({
+      const { data, error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
-        email_confirm: true,
-        user_metadata: {
-          first_name: values.first_name,
-          last_name: values.last_name,
-          user_type: values.user_type,
+        options: {
+          data: {
+            first_name: values.first_name,
+            last_name: values.last_name,
+            user_type: values.user_type,
+          },
         },
       })
 
       if (error) throw error
 
+      // Le trigger handle_new_user s'occupera de créer le profil
+
+      toast({
+        title: "تم إنشاء المستخدم",
+        description: "تم إرسال رابط تأكيد البريد الإلكتروني",
+      })
       onSuccess()
     } catch (error) {
       console.error("Error creating user:", error)
