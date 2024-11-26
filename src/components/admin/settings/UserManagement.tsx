@@ -43,7 +43,7 @@ export function UserManagement() {
         () => {
           queryClient.invalidateQueries({ 
             queryKey: ["users"],
-            exact: false 
+            exact: true 
           })
         }
       )
