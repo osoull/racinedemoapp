@@ -12,7 +12,7 @@ import { calculateFees } from "@/utils/feeCalculations";
 
 interface ProjectFormStepsProps {
   project?: Tables<"projects"> | null;
-  onSuccess?: (transactionId?: string) => void;
+  onSuccess?: (transactionId?: string) => void;  // Updated type definition here
 }
 
 export const ProjectFormSteps = ({ project, onSuccess }: ProjectFormStepsProps) => {
