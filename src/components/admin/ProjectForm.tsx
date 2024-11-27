@@ -33,7 +33,6 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
   const handleProjectSubmit = async (data: any) => {
     try {
-      // Create the project first
       const { data: projectResponse, error: projectError } = await supabase
         .from('projects')
         .insert({
@@ -77,9 +76,13 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   }
 
   return (
-    <ProjectDetails 
-      project={project} 
-      onSubmit={handleProjectSubmit} 
-    />
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm">
+      <div className="container flex items-center justify-center min-h-screen py-8">
+        <ProjectDetails 
+          project={project} 
+          onSubmit={handleProjectSubmit} 
+        />
+      </div>
+    </div>
   );
 };
