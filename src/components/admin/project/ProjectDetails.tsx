@@ -1,12 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Tables } from "@/integrations/supabase/types";
 
 const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
@@ -16,24 +13,15 @@ const projectSchema = z.object({
   min_investment: z.number().min(1000, "الحد الأدنى للاستثمار يجب أن يكون أكبر من 1000 ريال"),
 });
 
-const PROJECT_CATEGORIES = [
-  { value: "real_estate", label: "مشاريع عقارية" },
-  { value: "technology", label: "تقنية المعلومات" },
-  { value: "healthcare", label: "الرعاية الصحية" },
-  { value: "education", label: "التعليم" },
-  { value: "retail", label: "التجزئة" },
-  { value: "manufacturing", label: "التصنيع" },
-  { value: "services", label: "الخدمات" },
-  { value: "agriculture", label: "الزراعة" }
-];
+type ProjectFormValues = z.infer<typeof projectSchema>;
 
 interface ProjectDetailsProps {
-  project?: any;
-  onSubmit: (data: any) => void;
+  project?: Tables<"projects"> | null;
+  onSubmit: (data: ProjectFormValues) => void;
 }
 
-export function ProjectDetails({ project, onSubmit }: ProjectDetailsProps) {
-  const form = useForm({
+export const ProjectDetails = ({ project, onSubmit }: ProjectDetailsProps) => {
+  const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: project?.title || "",
@@ -45,107 +33,69 @@ export function ProjectDetails({ project, onSubmit }: ProjectDetailsProps) {
   });
 
   return (
-    <Card className="p-6 max-w-2xl mx-auto bg-white/50 backdrop-blur-sm">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-right block">عنوان المشروع</FormLabel>
-                <FormControl>
-                  <Input {...field} className="text-right" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium">عنوان المشروع</label>
+          <input
+            id="title"
+            {...form.register("title")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
+          {form.formState.errors.title && <p className="mt-1 text-red-600">{form.formState.errors.title.message}</p>}
+        </div>
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-right block">وصف المشروع</FormLabel>
-                <FormControl>
-                  <Textarea {...field} className="text-right min-h-[100px]" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium">وصف المشروع</label>
+          <textarea
+            id="description"
+            {...form.register("description")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
+          {form.formState.errors.description && <p className="mt-1 text-red-600">{form.formState.errors.description.message}</p>}
+        </div>
 
-          <FormField
-            control={form.control}
-            name="funding_goal"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-right block">المبلغ المستهدف (ريال)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    {...field} 
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    min={1000}
-                    className="text-right"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div>
+          <label htmlFor="funding_goal" className="block text-sm font-medium">المبلغ المستهدف (ريال)</label>
+          <input
+            id="funding_goal"
+            type="number"
+            {...form.register("funding_goal")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
+          {form.formState.errors.funding_goal && <p className="mt-1 text-red-600">{form.formState.errors.funding_goal.message}</p>}
+        </div>
 
-          <FormField
-            control={form.control}
-            name="classification"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-right block">تصنيف المشروع</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="اختر تصنيف المشروع" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {PROJECT_CATEGORIES.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div>
+          <label htmlFor="classification" className="block text-sm font-medium">تصنيف المشروع</label>
+          <input
+            id="classification"
+            {...form.register("classification")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
+          {form.formState.errors.classification && <p className="mt-1 text-red-600">{form.formState.errors.classification.message}</p>}
+        </div>
 
-          <FormField
-            control={form.control}
-            name="min_investment"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-right block">الحد الأدنى للاستثمار (ريال)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    {...field} 
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    min={1000}
-                    className="text-right"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div>
+          <label htmlFor="min_investment" className="block text-sm font-medium">الحد الأدنى للاستثمار (ريال)</label>
+          <input
+            id="min_investment"
+            type="number"
+            {...form.register("min_investment")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
           />
-
-          <Button type="submit" className="w-full">
-            متابعة لدفع الرسوم
+          {form.formState.errors.min_investment && <p className="mt-1 text-red-600">{form.formState.errors.min_investment.message}</p>}
+        </div>
+        
+        <div className="flex justify-end">
+          <Button 
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "جاري الحفظ..." : "متابعة لدفع الرسوم"}
           </Button>
-        </form>
-      </Form>
-    </Card>
+        </div>
+      </form>
+    </Form>
   );
-}
+};

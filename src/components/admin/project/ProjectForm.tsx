@@ -1,118 +1,135 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Coins, Upload, Building2 } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { GeneralInfo } from "./sections/GeneralInfo";
 import { ProjectDescription } from "./sections/ProjectDescription";
 import { FinancialDetails } from "./sections/FinancialDetails";
+import { ProjectTimeline } from "./sections/ProjectTimeline";
+import { TeamMembers } from "./sections/TeamMembers";
 import { ProjectDocuments } from "./sections/ProjectDocuments";
+import { AdditionalInfo } from "./sections/AdditionalInfo";
+import { PaymentSection } from "./sections/PaymentSection";
+import { Button } from "@/components/ui/button";
+import { useProjectSubmission } from "@/hooks/useProjectSubmission";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface ProjectFormProps {
-  onSuccess?: () => void;
-}
+export function ProjectForm() {
+  const [currentTab, setCurrentTab] = useState("general");
+  const { form, onSubmit, isSubmitting } = useProjectSubmission();
 
-export function ProjectForm({ onSuccess }: ProjectFormProps) {
-  const { toast } = useToast();
-  const form = useForm();
-
-  const { data: commissions } = useQuery({
-    queryKey: ["commissions"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("commissions").select("*");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const handleProjectSubmit = async (data: any) => {
-    try {
-      const { data: projectResponse, error: projectError } = await supabase
-        .from("projects")
-        .insert({
-          ...data,
-          owner_id: (await supabase.auth.getUser()).data.user?.id,
-          status: "draft",
-        })
-        .select()
-        .single();
-
-      if (projectError) throw projectError;
-
-      toast({
-        title: "تم إنشاء المشروع بنجاح",
-        description: "سيتم مراجعة المشروع من قبل الإدارة",
-      });
-
-      if (onSuccess) {
-        onSuccess();
-      }
-    } catch (error) {
-      console.error("Error creating project:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إنشاء المشروع",
-        variant: "destructive",
-      });
-    }
-  };
+  const tabs = [
+    { value: "general", label: "معلومات عامة" },
+    { value: "description", label: "وصف المشروع" },
+    { value: "financial", label: "التفاصيل المالية" },
+    { value: "timeline", label: "الجدول الزمني" },
+    { value: "team", label: "فريق العمل" },
+    { value: "documents", label: "المستندات" },
+    { value: "additional", label: "معلومات إضافية" },
+    { value: "payment", label: "الدفع" }
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold">إنشاء مشروع جديد</h2>
-        <p className="text-muted-foreground mt-2">
-          قم بملء المعلومات التالية لإنشاء مشروعك الجديد
-        </p>
-      </div>
+    <div className="fixed inset-0 w-full h-full bg-background/95 backdrop-blur-sm">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
+        <Tabs value={currentTab} onValueChange={setCurrentTab} className="h-full">
+          <div className="flex h-full">
+            {/* Sidebar with tabs */}
+            <Card className="w-[300px] shrink-0 h-full rounded-none border-l bg-card/50 backdrop-blur-sm">
+              <ScrollArea className="h-full">
+                <TabsList className="flex flex-col h-auto p-8 w-full space-y-2">
+                  {tabs.map((tab) => (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="w-full justify-start text-right py-3 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-lg"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </ScrollArea>
+            </Card>
 
-      <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="basic" className="space-x-2">
-            <Building2 className="w-4 h-4" />
-            <span>معلومات أساسية</span>
-          </TabsTrigger>
-          <TabsTrigger value="description" className="space-x-2">
-            <FileText className="w-4 h-4" />
-            <span>وصف المشروع</span>
-          </TabsTrigger>
-          <TabsTrigger value="financial" className="space-x-2">
-            <Coins className="w-4 h-4" />
-            <span>التفاصيل المالية</span>
-          </TabsTrigger>
-          <TabsTrigger value="documents" className="space-x-2">
-            <Upload className="w-4 h-4" />
-            <span>المستندات</span>
-          </TabsTrigger>
-        </TabsList>
+            {/* Main content area */}
+            <div className="flex-1 h-full">
+              <ScrollArea className="h-full">
+                <div className="max-w-4xl mx-auto p-8 lg:p-12">
+                  <Card className="border-none shadow-none bg-transparent">
+                    <TabsContent value="general" className="mt-0 space-y-6">
+                      <GeneralInfo control={form.control} />
+                    </TabsContent>
 
-        <form onSubmit={form.handleSubmit(handleProjectSubmit)} className="mt-8 space-y-8">
-          <TabsContent value="basic">
-            <GeneralInfo control={form.control} />
-          </TabsContent>
+                    <TabsContent value="description" className="mt-0 space-y-6">
+                      <ProjectDescription control={form.control} />
+                    </TabsContent>
 
-          <TabsContent value="description">
-            <ProjectDescription control={form.control} />
-          </TabsContent>
+                    <TabsContent value="financial" className="mt-0 space-y-6">
+                      <FinancialDetails control={form.control} />
+                    </TabsContent>
 
-          <TabsContent value="financial">
-            <FinancialDetails control={form.control} />
-          </TabsContent>
+                    <TabsContent value="timeline" className="mt-0 space-y-6">
+                      <ProjectTimeline control={form.control} />
+                    </TabsContent>
 
-          <TabsContent value="documents">
-            <ProjectDocuments control={form.control} />
-          </TabsContent>
+                    <TabsContent value="team" className="mt-0 space-y-6">
+                      <TeamMembers control={form.control} />
+                    </TabsContent>
 
-          <div className="flex justify-end pt-6 border-t">
-            <Button type="submit" size="lg">
-              إنشاء المشروع
-            </Button>
+                    <TabsContent value="documents" className="mt-0 space-y-6">
+                      <ProjectDocuments control={form.control} />
+                    </TabsContent>
+
+                    <TabsContent value="additional" className="mt-0 space-y-6">
+                      <AdditionalInfo control={form.control} />
+                    </TabsContent>
+
+                    <TabsContent value="payment" className="mt-0 space-y-6">
+                      <PaymentSection control={form.control} />
+                    </TabsContent>
+
+                    {/* Navigation buttons */}
+                    <div className="flex justify-between mt-12 pt-8 border-t">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          const currentIndex = tabs.findIndex(t => t.value === currentTab);
+                          if (currentIndex > 0) {
+                            setCurrentTab(tabs[currentIndex - 1].value);
+                          }
+                        }}
+                        disabled={currentTab === "general"}
+                        className="w-40 text-lg"
+                      >
+                        السابق
+                      </Button>
+
+                      {currentTab !== "payment" ? (
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const currentIndex = tabs.findIndex(t => t.value === currentTab);
+                            if (currentIndex < tabs.length - 1) {
+                              setCurrentTab(tabs[currentIndex + 1].value);
+                            }
+                          }}
+                          className="w-40 text-lg"
+                        >
+                          التالي
+                        </Button>
+                      ) : (
+                        <Button type="submit" disabled={isSubmitting} className="w-40 text-lg">
+                          {isSubmitting ? "جاري الحفظ..." : "تأكيد وإرسال"}
+                        </Button>
+                      )}
+                    </div>
+                  </Card>
+                </div>
+              </ScrollArea>
+            </div>
           </div>
-        </form>
-      </Tabs>
+        </Tabs>
+      </form>
     </div>
   );
 }
