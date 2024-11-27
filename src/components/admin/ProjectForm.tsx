@@ -98,62 +98,58 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm">
-      <div className="container flex items-center justify-center min-h-screen py-8">
-        <div className="w-full max-w-4xl space-y-8 bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">{project ? 'تعديل المشروع' : 'إنشاء مشروع جديد'}</h1>
-            <p className="text-muted-foreground mt-2">
-              قم بملء المعلومات التالية {project ? 'لتعديل' : 'لإنشاء'} مشروعك
-            </p>
-          </div>
-
-          <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="basic" className="space-x-2">
-                <Building2 className="w-4 h-4" />
-                <span>معلومات أساسية</span>
-              </TabsTrigger>
-              <TabsTrigger value="description" className="space-x-2">
-                <FileText className="w-4 h-4" />
-                <span>وصف المشروع</span>
-              </TabsTrigger>
-              <TabsTrigger value="financial" className="space-x-2">
-                <Coins className="w-4 h-4" />
-                <span>التفاصيل المالية</span>
-              </TabsTrigger>
-              <TabsTrigger value="documents" className="space-x-2">
-                <Upload className="w-4 h-4" />
-                <span>المستندات</span>
-              </TabsTrigger>
-            </TabsList>
-
-            <form onSubmit={form.handleSubmit(handleProjectSubmit)} className="mt-8 space-y-8">
-              <TabsContent value="basic">
-                <ProjectBasicInfo control={form.control} project={project} />
-              </TabsContent>
-
-              <TabsContent value="description">
-                <ProjectDescription control={form.control} project={project} />
-              </TabsContent>
-
-              <TabsContent value="financial">
-                <FinancialDetails control={form.control} project={project} />
-              </TabsContent>
-
-              <TabsContent value="documents">
-                <ProjectDocuments control={form.control} />
-              </TabsContent>
-
-              <div className="flex justify-end pt-6 border-t">
-                <Button type="submit" size="lg">
-                  {project ? 'حفظ التغييرات' : 'متابعة لدفع الرسوم'}
-                </Button>
-              </div>
-            </form>
-          </Tabs>
-        </div>
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold">{project ? 'تعديل المشروع' : 'إنشاء مشروع جديد'}</h2>
+        <p className="text-muted-foreground mt-2">
+          قم بملء المعلومات التالية {project ? 'لتعديل' : 'لإنشاء'} مشروعك
+        </p>
       </div>
+
+      <Tabs defaultValue="basic" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="basic" className="space-x-2">
+            <Building2 className="w-4 h-4" />
+            <span>معلومات أساسية</span>
+          </TabsTrigger>
+          <TabsTrigger value="description" className="space-x-2">
+            <FileText className="w-4 h-4" />
+            <span>وصف المشروع</span>
+          </TabsTrigger>
+          <TabsTrigger value="financial" className="space-x-2">
+            <Coins className="w-4 h-4" />
+            <span>التفاصيل المالية</span>
+          </TabsTrigger>
+          <TabsTrigger value="documents" className="space-x-2">
+            <Upload className="w-4 h-4" />
+            <span>المستندات</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <form onSubmit={form.handleSubmit(handleProjectSubmit)} className="mt-8 space-y-8">
+          <TabsContent value="basic">
+            <ProjectBasicInfo control={form.control} project={project} />
+          </TabsContent>
+
+          <TabsContent value="description">
+            <ProjectDescription control={form.control} project={project} />
+          </TabsContent>
+
+          <TabsContent value="financial">
+            <FinancialDetails control={form.control} project={project} />
+          </TabsContent>
+
+          <TabsContent value="documents">
+            <ProjectDocuments control={form.control} />
+          </TabsContent>
+
+          <div className="flex justify-end pt-6 border-t">
+            <Button type="submit" size="lg">
+              {project ? 'حفظ التغييرات' : 'متابعة لدفع الرسوم'}
+            </Button>
+          </div>
+        </form>
+      </Tabs>
     </div>
   );
 };
