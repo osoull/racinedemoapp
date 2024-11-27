@@ -44,6 +44,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   const isAdmin = user?.user_metadata?.user_type === 'admin' || user?.user_metadata?.user_type === 'investment_manager';
 
@@ -99,6 +100,11 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
     },
   });
 
+  const handleEdit = (project: Project) => {
+    setEditingProject(project);
+    setIsDialogOpen(true);
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -110,10 +116,14 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl">
-            <ProjectForm onSuccess={() => {
-              setIsDialogOpen(false);
-              queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-            }} />
+            <ProjectForm 
+              project={editingProject}
+              onSuccess={() => {
+                setIsDialogOpen(false);
+                setEditingProject(null);
+                queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+              }} 
+            />
           </DialogContent>
         </Dialog>
       </CardHeader>
@@ -131,6 +141,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
                 key={project.id}
                 project={project}
                 onDelete={() => deleteProjectMutation.mutate(project.id)}
+                onEdit={() => handleEdit(project)}
                 canEdit={user?.id === project.owner_id}
                 isAdmin={isAdmin}
               />
