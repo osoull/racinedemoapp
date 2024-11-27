@@ -1,31 +1,34 @@
-import { Control } from "react-hook-form";
+import { Card } from "@/components/ui/card";
 import { ProjectDocumentUpload } from "../ProjectDocumentUpload";
+import { FileText, FileSpreadsheet, Presentation } from "lucide-react";
 
-interface ProjectDocumentsProps {
-  control: Control<any>;
-}
-
-export function ProjectDocuments({ control }: ProjectDocumentsProps) {
+export function ProjectDocuments() {
   return (
     <div className="space-y-6">
-      <h3 className="font-semibold">المستندات المطلوبة *</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <ProjectDocumentUpload
-          title="عرض تقديمي للمشروع"
-          description="يرجى رفع الملف بصيغة PDF"
-          type="presentation"
-        />
-        <ProjectDocumentUpload
-          title="دراسة الجدوى"
-          description="يرجى رفع الملف بصيغة PDF"
-          type="feasibility"
-        />
-        <ProjectDocumentUpload
-          title="التقرير المالي"
-          description="يرجى رفع الملف بصيغة PDF"
-          type="financial"
-        />
-      </div>
+      <Card className="p-6">
+        <h3 className="font-semibold mb-4">المستندات المطلوبة</h3>
+        <p className="text-sm text-muted-foreground mb-6">
+          قم برفع المستندات التالية لدعم طلب مشروعك. جميع الملفات يجب أن تكون بصيغة PDF.
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <ProjectDocumentUpload
+            title="العرض التقديمي"
+            description="عرض تفصيلي للمشروع وخطة العمل"
+            type="presentation"
+          />
+          <ProjectDocumentUpload
+            title="دراسة الجدوى"
+            description="تحليل تفصيلي لجدوى المشروع"
+            type="feasibility"
+          />
+          <ProjectDocumentUpload
+            title="النموذج المالي"
+            description="التوقعات والتحليلات المالية"
+            type="financial"
+          />
+        </div>
+      </Card>
     </div>
   );
 }

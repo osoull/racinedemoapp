@@ -1,101 +1,89 @@
-import { Control } from "react-hook-form";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { InfoIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { InfoIcon, Coins, TrendingUp } from "lucide-react";
 
 interface FinancialDetailsProps {
-  control: Control<any>;
+  project?: any;
 }
 
-export function FinancialDetails({ control }: FinancialDetailsProps) {
+export function FinancialDetails({ project }: FinancialDetailsProps) {
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-semibold mb-4">التفاصيل المالية</h2>
-        <p className="text-muted-foreground mb-6">
-          حدد احتياجاتك المالية وكيفية استخدام التمويل. كن واقعياً في تقديراتك.
-        </p>
-      </div>
-
-      <Card className="p-4 bg-muted/50">
-        <div className="flex items-start gap-3">
-          <InfoIcon className="w-5 h-5 text-muted-foreground mt-0.5" />
+      <Card className="p-6 bg-gradient-to-br from-green-50 to-white">
+        <div className="flex items-center gap-3 mb-6">
+          <Coins className="w-5 h-5 text-green-600" />
           <div>
-            <h3 className="font-medium mb-1">نصائح مهمة</h3>
-            <p className="text-sm text-muted-foreground">
-              - حدد مبلغاً واقعياً يتناسب مع حجم مشروعك
-              <br />
-              - فكر في جميع التكاليف المحتملة
-              <br />
-              - ضع في اعتبارك مصاريف التشغيل الأولية
+            <h3 className="font-semibold">التفاصيل المالية</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              حدد احتياجاتك المالية وكيفية استخدام التمويل
             </p>
+          </div>
+        </div>
+
+        <div className="grid gap-6">
+          <div className="space-y-2">
+            <Label>المبلغ المستهدف (ريال)</Label>
+            <Input
+              type="number"
+              min={1000}
+              placeholder="مثال: 100,000"
+              defaultValue={project?.funding_goal}
+            />
+            <p className="text-sm text-muted-foreground">
+              الحد الأدنى 1000 ريال
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>الحد الأدنى للاستثمار (ريال)</Label>
+            <Input
+              type="number"
+              min={1000}
+              placeholder="مثال: 5,000"
+              defaultValue={project?.min_investment}
+            />
+            <p className="text-sm text-muted-foreground">
+              الحد الأدنى المسموح به 1000 ريال
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>خطة استخدام التمويل</Label>
+            <Textarea
+              placeholder="اشرح بالتفصيل كيف سيتم استخدام التمويل في المشروع"
+              className="min-h-[150px]"
+              defaultValue={project?.funding_usage}
+            />
           </div>
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          control={control}
-          name="funding_goal"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>المبلغ المستهدف (ريال) *</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  {...field} 
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                  min={1000}
-                  placeholder="مثال: 100000"
-                />
-              </FormControl>
-              <p className="text-sm text-muted-foreground">الحد الأدنى 1000 ريال</p>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="min_investment"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>الحد الأدنى للاستثمار (ريال) *</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  {...field} 
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                  min={1000}
-                  placeholder="مثال: 5000"
-                />
-              </FormControl>
-              <p className="text-sm text-muted-foreground">الحد الأدنى المسموح به 1000 ريال</p>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <FormField
-        control={control}
-        name="funding_usage"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>خطة استخدام التمويل *</FormLabel>
-            <FormControl>
-              <Textarea 
-                placeholder="اشرح بالتفصيل كيف سيتم استخدام التمويل في المشروع"
-                className="min-h-[150px]"
-                {...field}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <Card className="p-6 bg-gradient-to-br from-blue-50 to-white">
+        <div className="flex items-center gap-3 mb-4">
+          <TrendingUp className="w-5 h-5 text-blue-600" />
+          <h3 className="font-semibold">التوقعات المالية</h3>
+        </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>العائد المتوقع</Label>
+            <Input
+              type="number"
+              placeholder="النسبة المئوية المتوقعة للعائد"
+              defaultValue={project?.expected_return}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>فترة الاستثمار المتوقعة (بالأشهر)</Label>
+            <Input
+              type="number"
+              placeholder="عدد الأشهر"
+              defaultValue={project?.investment_period}
+            />
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

@@ -1,13 +1,18 @@
-import { Tables } from "@/integrations/supabase/types";
-import { ProjectDetails } from "./project/ProjectDetails";
-import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ProjectBasicInfo } from "./project/sections/ProjectBasicInfo";
+import { ProjectDescription } from "./project/sections/ProjectDescription";
+import { FinancialDetails } from "./project/sections/FinancialDetails";
+import { ProjectDocuments } from "./project/sections/ProjectDocuments";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
+import { FileText, Coins, Upload, Building2 } from "lucide-react";
 
 interface ProjectFormProps {
-  project?: Tables<"projects"> | null;
+  project?: any;
   onSuccess?: () => void;
 }
 
@@ -19,26 +24,25 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const { data: commissions } = useQuery({
     queryKey: ["commissions"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("commissions")
-        .select("*")
-      
-      if (error) throw error
-      return data
+      const { data, error } = await supabase.from("commissions").select("*");
+      if (error) throw error;
+      return data;
     },
   });
 
-  const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
-  const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
+  const adminFee =
+    commissions?.find((c) => c.commission_type === "admin_fee")?.rate || 0;
+  const collectionFee =
+    commissions?.find((c) => c.commission_type === "collection_fee")?.rate || 0;
 
   const handleProjectSubmit = async (data: any) => {
     try {
       const { data: projectResponse, error: projectError } = await supabase
-        .from('projects')
+        .from("projects")
         .insert({
           ...data,
           owner_id: (await supabase.auth.getUser()).data.user?.id,
-          status: 'draft'
+          status: "draft",
         })
         .select()
         .single();
@@ -48,7 +52,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
       setProjectData(projectResponse);
       setStep("payment");
     } catch (error) {
-      console.error('Error creating project:', error);
+      console.error("Error creating project:", error);
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء إنشاء المشروع",
@@ -60,7 +64,9 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const fees = {
     admin: projectData ? (projectData.funding_goal * adminFee) / 100 : 0,
     collection: projectData ? (projectData.funding_goal * collectionFee) / 100 : 0,
-    total: projectData ? ((projectData.funding_goal * (adminFee + collectionFee)) / 100) : 0
+    total: projectData
+      ? (projectData.funding_goal * (adminFee + collectionFee)) / 100
+      : 0,
   };
 
   if (step === "payment" && projectData) {
@@ -78,10 +84,59 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm">
       <div className="container flex items-center justify-center min-h-screen py-8">
-        <ProjectDetails 
-          project={project} 
-          onSubmit={handleProjectSubmit} 
-        />
+        <div className="w-full max-w-4xl space-y-8 bg-white rounded-lg shadow-lg p-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold">إنشاء مشروع جديد</h1>
+            <p className="text-muted-foreground mt-2">
+              قم بملء المعلومات التالية لإنشاء مشروعك الجديد
+            </p>
+          </div>
+
+          <Tabs defaultValue="basic" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="basic" className="space-x-2">
+                <Building2 className="w-4 h-4" />
+                <span>معلومات أساسية</span>
+              </TabsTrigger>
+              <TabsTrigger value="description" className="space-x-2">
+                <FileText className="w-4 h-4" />
+                <span>وصف المشروع</span>
+              </TabsTrigger>
+              <TabsTrigger value="financial" className="space-x-2">
+                <Coins className="w-4 h-4" />
+                <span>التفاصيل المالية</span>
+              </TabsTrigger>
+              <TabsTrigger value="documents" className="space-x-2">
+                <Upload className="w-4 h-4" />
+                <span>المستندات</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <form onSubmit={handleProjectSubmit} className="mt-8 space-y-8">
+              <TabsContent value="basic">
+                <ProjectBasicInfo project={project} />
+              </TabsContent>
+
+              <TabsContent value="description">
+                <ProjectDescription project={project} />
+              </TabsContent>
+
+              <TabsContent value="financial">
+                <FinancialDetails project={project} />
+              </TabsContent>
+
+              <TabsContent value="documents">
+                <ProjectDocuments />
+              </TabsContent>
+
+              <div className="flex justify-end pt-6 border-t">
+                <Button type="submit" size="lg">
+                  متابعة لدفع الرسوم
+                </Button>
+              </div>
+            </form>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

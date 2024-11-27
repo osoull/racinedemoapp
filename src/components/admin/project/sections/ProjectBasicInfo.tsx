@@ -1,70 +1,73 @@
-import { Control } from "react-hook-form";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProjectFormValues } from "./ProjectForm";
+import { InfoIcon } from "lucide-react";
+
+const PROJECT_CATEGORIES = [
+  { value: "real_estate", label: "مشاريع عقارية" },
+  { value: "technology", label: "تقنية المعلومات" },
+  { value: "healthcare", label: "الرعاية الصحية" },
+  { value: "education", label: "التعليم" },
+  { value: "retail", label: "التجزئة" },
+  { value: "manufacturing", label: "التصنيع" },
+  { value: "services", label: "الخدمات" },
+  { value: "agriculture", label: "الزراعة" },
+];
 
 interface ProjectBasicInfoProps {
-  control: Control<ProjectFormValues>;
+  project?: any;
 }
 
-export function ProjectBasicInfo({ control }: ProjectBasicInfoProps) {
+export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">معلومات عامة</h3>
-      <div className="space-y-4">
-        <FormField
-          control={control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>عنوان المشروع *</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <div className="space-y-6">
+      <div className="grid gap-6">
+        <Card className="p-6">
+          <div className="flex items-start gap-4">
+            <InfoIcon className="w-5 h-5 text-primary mt-1" />
+            <div>
+              <h3 className="font-semibold mb-2">المعلومات الأساسية</h3>
+              <p className="text-sm text-muted-foreground">
+                هذه المعلومات ستكون ظاهرة للمستثمرين المحتملين. تأكد من أن تكون دقيقة وواضحة.
+              </p>
+            </div>
+          </div>
+        </Card>
 
-        <FormField
-          control={control}
-          name="classification"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>تصنيف المشروع *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر تصنيف المشروع" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="تمويل مشاريع طرف ثاني">تمويل مشاريع طرف ثاني</SelectItem>
-                  <SelectItem value="تمويل الفواتير">تمويل الفواتير</SelectItem>
-                  <SelectItem value="تمويل رأس المال العامل">تمويل رأس المال العامل</SelectItem>
-                  <SelectItem value="تمويل التوسع">تمويل التوسع</SelectItem>
-                  <SelectItem value="تمويل المشاريع العقارية">تمويل المشاريع العقارية</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid gap-4">
+          <div className="space-y-2">
+            <Label>عنوان المشروع</Label>
+            <Input
+              placeholder="أدخل عنواناً واضحاً ومميزاً لمشروعك"
+              defaultValue={project?.title}
+            />
+          </div>
 
-        <FormField
-          control={control}
-          name="location"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>موقع المشروع *</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <div className="space-y-2">
+            <Label>تصنيف المشروع</Label>
+            <Select defaultValue={project?.classification}>
+              <SelectTrigger>
+                <SelectValue placeholder="اختر تصنيف المشروع" />
+              </SelectTrigger>
+              <SelectContent>
+                {PROJECT_CATEGORIES.map((category) => (
+                  <SelectItem key={category.value} value={category.value}>
+                    {category.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>موقع المشروع</Label>
+            <Input
+              placeholder="المدينة أو المنطقة الرئيسية للمشروع"
+              defaultValue={project?.location}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
