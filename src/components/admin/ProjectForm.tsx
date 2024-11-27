@@ -23,7 +23,7 @@ type Project = Tables<"projects"> & {
   risk_description?: string | null;
 };
 
-interface ProjectFormProps {
+export interface ProjectFormProps {
   project?: Project | null;
   onSuccess?: () => void;
 }
