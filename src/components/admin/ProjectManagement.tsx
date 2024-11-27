@@ -5,7 +5,7 @@ import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { ProjectForm } from "./project/ProjectForm";
+import { ProjectForm } from "./ProjectForm";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProjectCard } from "./ProjectCard";
@@ -115,7 +115,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
               إضافة مشروع جديد
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <ProjectForm 
               project={editingProject}
               onSuccess={() => {

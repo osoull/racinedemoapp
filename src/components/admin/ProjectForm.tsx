@@ -2,16 +2,15 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FileText, Coins, Upload, Building2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Tables } from "@/integrations/supabase/types";
 import { ProjectBasicInfo } from "./project/sections/ProjectBasicInfo";
 import { ProjectDescription } from "./project/sections/ProjectDescription";
 import { FinancialDetails } from "./project/sections/FinancialDetails";
 import { ProjectDocuments } from "./project/sections/ProjectDocuments";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
-import { FileText, Coins, Upload, Building2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { Tables } from "@/integrations/supabase/types";
 
 type Project = Tables<"projects"> & {
   owner?: {
@@ -29,8 +28,6 @@ export interface ProjectFormProps {
 }
 
 export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
-  const [step, setStep] = useState<"details" | "payment">("details");
-  const [projectData, setProjectData] = useState<any>(null);
   const { toast } = useToast();
   const form = useForm({
     defaultValues: project || {}
@@ -44,11 +41,6 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
       return data;
     },
   });
-
-  const adminFee =
-    commissions?.find((c) => c.commission_type === "admin_fee")?.rate || 0;
-  const collectionFee =
-    commissions?.find((c) => c.commission_type === "collection_fee")?.rate || 0;
 
   const handleProjectSubmit = async (data: any) => {
     try {
@@ -65,37 +57,23 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
       if (projectError) throw projectError;
 
-      setProjectData(projectResponse);
-      setStep("payment");
+      toast({
+        title: project ? "تم تحديث المشروع" : "تم إنشاء المشروع",
+        description: project ? "تم تحديث المشروع بنجاح" : "تم إنشاء المشروع بنجاح",
+      });
+
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error("Error creating/updating project:", error);
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء إنشاء المشروع",
+        description: "حدث خطأ أثناء حفظ المشروع",
         variant: "destructive",
       });
     }
   };
-
-  const fees = {
-    admin: projectData ? (projectData.funding_goal * adminFee) / 100 : 0,
-    collection: projectData ? (projectData.funding_goal * collectionFee) / 100 : 0,
-    total: projectData
-      ? (projectData.funding_goal * (adminFee + collectionFee)) / 100
-      : 0,
-  };
-
-  if (step === "payment" && projectData) {
-    return (
-      <ProjectPaymentStep
-        projectData={projectData}
-        fees={fees}
-        onBankTransfer={onSuccess}
-        onPaymentSuccess={onSuccess}
-        onBack={() => setStep("details")}
-      />
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -128,15 +106,15 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
         <form onSubmit={form.handleSubmit(handleProjectSubmit)} className="mt-8 space-y-8">
           <TabsContent value="basic">
-            <ProjectBasicInfo control={form.control} project={project} />
+            <ProjectBasicInfo control={form.control} />
           </TabsContent>
 
           <TabsContent value="description">
-            <ProjectDescription control={form.control} project={project} />
+            <ProjectDescription control={form.control} />
           </TabsContent>
 
           <TabsContent value="financial">
-            <FinancialDetails control={form.control} project={project} />
+            <FinancialDetails control={form.control} />
           </TabsContent>
 
           <TabsContent value="documents">
@@ -145,7 +123,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
           <div className="flex justify-end pt-6 border-t">
             <Button type="submit" size="lg">
-              {project ? 'حفظ التغييرات' : 'متابعة لدفع الرسوم'}
+              {project ? 'حفظ التغييرات' : 'إنشاء المشروع'}
             </Button>
           </div>
         </form>
