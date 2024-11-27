@@ -11,9 +11,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
 import { FileText, Coins, Upload, Building2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Tables } from "@/integrations/supabase/types";
+
+type Project = Tables<"projects"> & {
+  owner?: {
+    first_name: string | null;
+    middle_name: string | null;
+    last_name: string | null;
+  };
+  risk_rating?: string | null;
+  risk_description?: string | null;
+};
 
 interface ProjectFormProps {
-  project?: any;
+  project?: Project | null;
   onSuccess?: () => void;
 }
 
@@ -21,7 +32,9 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const [step, setStep] = useState<"details" | "payment">("details");
   const [projectData, setProjectData] = useState<any>(null);
   const { toast } = useToast();
-  const form = useForm();
+  const form = useForm({
+    defaultValues: project || {}
+  });
 
   const { data: commissions } = useQuery({
     queryKey: ["commissions"],
@@ -41,10 +54,11 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
     try {
       const { data: projectResponse, error: projectError } = await supabase
         .from("projects")
-        .insert({
+        .upsert({
           ...data,
+          id: project?.id,
           owner_id: (await supabase.auth.getUser()).data.user?.id,
-          status: "draft",
+          status: project ? project.status : "draft",
         })
         .select()
         .single();
@@ -88,9 +102,9 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
       <div className="container flex items-center justify-center min-h-screen py-8">
         <div className="w-full max-w-4xl space-y-8 bg-white rounded-lg shadow-lg p-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold">إنشاء مشروع جديد</h1>
+            <h1 className="text-3xl font-bold">{project ? 'تعديل المشروع' : 'إنشاء مشروع جديد'}</h1>
             <p className="text-muted-foreground mt-2">
-              قم بملء المعلومات التالية لإنشاء مشروعك الجديد
+              قم بملء المعلومات التالية {project ? 'لتعديل' : 'لإنشاء'} مشروعك
             </p>
           </div>
 
@@ -133,7 +147,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
 
               <div className="flex justify-end pt-6 border-t">
                 <Button type="submit" size="lg">
-                  متابعة لدفع الرسوم
+                  {project ? 'حفظ التغييرات' : 'متابعة لدفع الرسوم'}
                 </Button>
               </div>
             </form>
