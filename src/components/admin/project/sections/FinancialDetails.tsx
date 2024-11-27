@@ -1,16 +1,16 @@
 import { Control } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { InfoIcon, Coins, TrendingUp } from "lucide-react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
-interface FinancialDetailsProps {
+export interface FinancialDetailsProps {
   control: Control<any>;
+  project?: any;
 }
 
-export function FinancialDetails({ control }: FinancialDetailsProps) {
+export function FinancialDetails({ control, project }: FinancialDetailsProps) {
   return (
     <div className="space-y-8">
       <Card className="p-6 bg-gradient-to-br from-green-50 to-white">

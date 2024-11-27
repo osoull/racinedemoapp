@@ -1,8 +1,10 @@
+import { Control } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { InfoIcon } from "lucide-react";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 const PROJECT_CATEGORIES = [
   { value: "real_estate", label: "مشاريع عقارية" },
@@ -15,11 +17,12 @@ const PROJECT_CATEGORIES = [
   { value: "agriculture", label: "الزراعة" },
 ];
 
-interface ProjectBasicInfoProps {
+export interface ProjectBasicInfoProps {
+  control: Control<any>;
   project?: any;
 }
 
-export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {
+export function ProjectBasicInfo({ control, project }: ProjectBasicInfoProps) {
   return (
     <div className="space-y-6">
       <div className="grid gap-6">
@@ -36,37 +39,64 @@ export function ProjectBasicInfo({ project }: ProjectBasicInfoProps) {
         </Card>
 
         <div className="grid gap-4">
-          <div className="space-y-2">
-            <Label>عنوان المشروع</Label>
-            <Input
-              placeholder="أدخل عنواناً واضحاً ومميزاً لمشروعك"
-              defaultValue={project?.title}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>عنوان المشروع</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="أدخل عنواناً واضحاً ومميزاً لمشروعك"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="space-y-2">
-            <Label>تصنيف المشروع</Label>
-            <Select defaultValue={project?.classification}>
-              <SelectTrigger>
-                <SelectValue placeholder="اختر تصنيف المشروع" />
-              </SelectTrigger>
-              <SelectContent>
-                {PROJECT_CATEGORIES.map((category) => (
-                  <SelectItem key={category.value} value={category.value}>
-                    {category.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <FormField
+            control={control}
+            name="classification"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>تصنيف المشروع</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر تصنيف المشروع" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {PROJECT_CATEGORIES.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="space-y-2">
-            <Label>موقع المشروع</Label>
-            <Input
-              placeholder="المدينة أو المنطقة الرئيسية للمشروع"
-              defaultValue={project?.location}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="location"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>موقع المشروع</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="المدينة أو المنطقة الرئيسية للمشروع"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </div>
     </div>

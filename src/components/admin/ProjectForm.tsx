@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
 import { FileText, Coins, Upload, Building2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 interface ProjectFormProps {
   project?: any;
@@ -20,6 +21,7 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
   const [step, setStep] = useState<"details" | "payment">("details");
   const [projectData, setProjectData] = useState<any>(null);
   const { toast } = useToast();
+  const form = useForm();
 
   const { data: commissions } = useQuery({
     queryKey: ["commissions"],
@@ -112,21 +114,21 @@ export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
               </TabsTrigger>
             </TabsList>
 
-            <form onSubmit={handleProjectSubmit} className="mt-8 space-y-8">
+            <form onSubmit={form.handleSubmit(handleProjectSubmit)} className="mt-8 space-y-8">
               <TabsContent value="basic">
-                <ProjectBasicInfo project={project} />
+                <ProjectBasicInfo control={form.control} project={project} />
               </TabsContent>
 
               <TabsContent value="description">
-                <ProjectDescription project={project} />
+                <ProjectDescription control={form.control} project={project} />
               </TabsContent>
 
               <TabsContent value="financial">
-                <FinancialDetails project={project} />
+                <FinancialDetails control={form.control} project={project} />
               </TabsContent>
 
               <TabsContent value="documents">
-                <ProjectDocuments />
+                <ProjectDocuments control={form.control} />
               </TabsContent>
 
               <div className="flex justify-end pt-6 border-t">

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Upload } from "lucide-react";
 
-interface ProjectDocumentsProps {
+export interface ProjectDocumentsProps {
   control: Control<any>;
 }
 

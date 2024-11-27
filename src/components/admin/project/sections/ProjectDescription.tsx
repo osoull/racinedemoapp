@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Plus, Target, Lightbulb, TrendingUp } from "lucide-react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
-interface ProjectDescriptionProps {
+export interface ProjectDescriptionProps {
   control: Control<any>;
+  project?: any;
 }
 
-export function ProjectDescription({ control }: ProjectDescriptionProps) {
+export function ProjectDescription({ control, project }: ProjectDescriptionProps) {
   return (
     <div className="space-y-8">
       <Card className="p-6 bg-gradient-to-br from-purple-50 to-white">
