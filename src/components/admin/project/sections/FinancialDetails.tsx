@@ -1,14 +1,16 @@
+import { Control } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { InfoIcon, Coins, TrendingUp } from "lucide-react";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 interface FinancialDetailsProps {
-  project?: any;
+  control: Control<any>;
 }
 
-export function FinancialDetails({ project }: FinancialDetailsProps) {
+export function FinancialDetails({ control }: FinancialDetailsProps) {
   return (
     <div className="space-y-8">
       <Card className="p-6 bg-gradient-to-br from-green-50 to-white">
@@ -23,40 +25,67 @@ export function FinancialDetails({ project }: FinancialDetailsProps) {
         </div>
 
         <div className="grid gap-6">
-          <div className="space-y-2">
-            <Label>المبلغ المستهدف (ريال)</Label>
-            <Input
-              type="number"
-              min={1000}
-              placeholder="مثال: 100,000"
-              defaultValue={project?.funding_goal}
-            />
-            <p className="text-sm text-muted-foreground">
-              الحد الأدنى 1000 ريال
-            </p>
-          </div>
+          <FormField
+            control={control}
+            name="funding_goal"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>المبلغ المستهدف (ريال)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1000}
+                    placeholder="مثال: 100,000"
+                    {...field}
+                  />
+                </FormControl>
+                <p className="text-sm text-muted-foreground">
+                  الحد الأدنى 1000 ريال
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="space-y-2">
-            <Label>الحد الأدنى للاستثمار (ريال)</Label>
-            <Input
-              type="number"
-              min={1000}
-              placeholder="مثال: 5,000"
-              defaultValue={project?.min_investment}
-            />
-            <p className="text-sm text-muted-foreground">
-              الحد الأدنى المسموح به 1000 ريال
-            </p>
-          </div>
+          <FormField
+            control={control}
+            name="min_investment"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>الحد الأدنى للاستثمار (ريال)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1000}
+                    placeholder="مثال: 5,000"
+                    {...field}
+                  />
+                </FormControl>
+                <p className="text-sm text-muted-foreground">
+                  الحد الأدنى المسموح به 1000 ريال
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="space-y-2">
-            <Label>خطة استخدام التمويل</Label>
-            <Textarea
-              placeholder="اشرح بالتفصيل كيف سيتم استخدام التمويل في المشروع"
-              className="min-h-[150px]"
-              defaultValue={project?.funding_usage}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="funding_usage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>خطة استخدام التمويل</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="اشرح بالتفصيل كيف سيتم استخدام التمويل في المشروع"
+                    className="min-h-[150px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </Card>
 
@@ -66,22 +95,40 @@ export function FinancialDetails({ project }: FinancialDetailsProps) {
           <h3 className="font-semibold">التوقعات المالية</h3>
         </div>
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>العائد المتوقع</Label>
-            <Input
-              type="number"
-              placeholder="النسبة المئوية المتوقعة للعائد"
-              defaultValue={project?.expected_return}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>فترة الاستثمار المتوقعة (بالأشهر)</Label>
-            <Input
-              type="number"
-              placeholder="عدد الأشهر"
-              defaultValue={project?.investment_period}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="expected_return"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>العائد المتوقع</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="النسبة المئوية المتوقعة للعائد"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="investment_period"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>فترة الاستثمار المتوقعة (بالأشهر)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="عدد الأشهر"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </Card>
     </div>

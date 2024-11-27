@@ -1,31 +1,68 @@
+import { Control } from "react-hook-form";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ProjectDocumentUpload } from "../ProjectDocumentUpload";
-import { FileText, FileSpreadsheet, Presentation } from "lucide-react";
+import { Upload } from "lucide-react";
 
-export function ProjectDocuments() {
+interface ProjectDocumentsProps {
+  control: Control<any>;
+}
+
+export function ProjectDocuments({ control }: ProjectDocumentsProps) {
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <h3 className="font-semibold mb-4">المستندات المطلوبة</h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          قم برفع المستندات التالية لدعم طلب مشروعك. جميع الملفات يجب أن تكون بصيغة PDF.
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <ProjectDocumentUpload
-            title="العرض التقديمي"
-            description="عرض تفصيلي للمشروع وخطة العمل"
-            type="presentation"
+        <div className="flex items-center gap-3 mb-6">
+          <Upload className="w-5 h-5 text-primary" />
+          <div>
+            <h3 className="font-semibold">المستندات المطلوبة</h3>
+            <p className="text-sm text-muted-foreground">
+              قم بتحميل المستندات المطلوبة للمشروع
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <FormField
+            control={control}
+            name="business_plan"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>خطة العمل</FormLabel>
+                <FormControl>
+                  <Input type="file" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <ProjectDocumentUpload
-            title="دراسة الجدوى"
-            description="تحليل تفصيلي لجدوى المشروع"
-            type="feasibility"
+
+          <FormField
+            control={control}
+            name="financial_projections"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>التوقعات المالية</FormLabel>
+                <FormControl>
+                  <Input type="file" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <ProjectDocumentUpload
-            title="النموذج المالي"
-            description="التوقعات والتحليلات المالية"
-            type="financial"
+
+          <FormField
+            control={control}
+            name="additional_documents"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>مستندات إضافية</FormLabel>
+                <FormControl>
+                  <Input type="file" multiple {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
       </Card>

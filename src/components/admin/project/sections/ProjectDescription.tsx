@@ -1,15 +1,17 @@
+import { Control } from "react-hook-form";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Target, Lightbulb, TrendingUp } from "lucide-react";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 interface ProjectDescriptionProps {
-  project?: any;
+  control: Control<any>;
 }
 
-export function ProjectDescription({ project }: ProjectDescriptionProps) {
+export function ProjectDescription({ control }: ProjectDescriptionProps) {
   return (
     <div className="space-y-8">
       <Card className="p-6 bg-gradient-to-br from-purple-50 to-white">
@@ -17,16 +19,19 @@ export function ProjectDescription({ project }: ProjectDescriptionProps) {
           <Target className="w-5 h-5 text-primary" />
           <h3 className="font-semibold">الأهداف الرئيسية</h3>
         </div>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>الهدف الرئيسي</Label>
-            <Input placeholder="ما هو الهدف الرئيسي لمشروعك؟" />
-          </div>
-          <Button type="button" variant="outline" className="w-full">
-            <Plus className="w-4 h-4 mr-2" />
-            إضافة هدف آخر
-          </Button>
-        </div>
+        <FormField
+          control={control}
+          name="objectives"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>الهدف الرئيسي</FormLabel>
+              <FormControl>
+                <Input placeholder="ما هو الهدف الرئيسي لمشروعك؟" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </Card>
 
       <Card className="p-6 bg-gradient-to-br from-orange-50 to-white">
@@ -35,20 +40,40 @@ export function ProjectDescription({ project }: ProjectDescriptionProps) {
           <h3 className="font-semibold">المشكلة والحل</h3>
         </div>
         <div className="space-y-6">
-          <div className="space-y-2">
-            <Label>المشكلة التي يعالجها المشروع</Label>
-            <Textarea
-              placeholder="صف المشكلة أو الحاجة التي يلبيها مشروعك"
-              className="min-h-[100px]"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>الحل المقترح</Label>
-            <Textarea
-              placeholder="اشرح كيف يقدم مشروعك حلاً للمشكلة المذكورة"
-              className="min-h-[100px]"
-            />
-          </div>
+          <FormField
+            control={control}
+            name="problem"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>المشكلة التي يعالجها المشروع</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="صف المشكلة أو الحاجة التي يلبيها مشروعك"
+                    className="min-h-[100px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="solution"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>الحل المقترح</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="اشرح كيف يقدم مشروعك حلاً للمشكلة المذكورة"
+                    className="min-h-[100px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </Card>
 
@@ -57,13 +82,23 @@ export function ProjectDescription({ project }: ProjectDescriptionProps) {
           <TrendingUp className="w-5 h-5 text-blue-500" />
           <h3 className="font-semibold">الأثر والنتائج المتوقعة</h3>
         </div>
-        <div className="space-y-2">
-          <Label>الأثر المتوقع</Label>
-          <Textarea
-            placeholder="صف الأثر المتوقع لمشروعك على السوق والمجتمع"
-            className="min-h-[150px]"
-          />
-        </div>
+        <FormField
+          control={control}
+          name="impact"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>الأثر المتوقع</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="صف الأثر المتوقع لمشروعك على السوق والمجتمع"
+                  className="min-h-[150px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </Card>
     </div>
   );
