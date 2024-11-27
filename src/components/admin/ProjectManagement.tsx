@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useState, useEffect } from "react";
-import { ProjectForm } from "./ProjectForm";
+import { useState } from "react";
+import { ProjectForm } from "./project/ProjectForm";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { ProjectCard } from "./ProjectCard";
@@ -43,7 +43,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const isAdmin = user?.user_metadata?.user_type === 'admin' || user?.user_metadata?.user_type === 'investment_manager';
 
@@ -74,33 +74,6 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
     },
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('public:projects')
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'projects' 
-        }, 
-        (payload) => {
-          queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-          
-          if (payload.eventType === 'INSERT') {
-            toast({
-              title: "مشروع جديد",
-              description: `تم إنشاء مشروع جديد: ${payload.new.title}`,
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient, toast]);
-
   const deleteProjectMutation = useMutation({
     mutationFn: async (projectId: string) => {
       const { error } = await supabase
@@ -130,20 +103,17 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>إدارة المشاريع</CardTitle>
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingProject(null)}>
+            <Button>
               إضافة مشروع جديد
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
-            <ProjectForm
-              project={editingProject}
-              onSuccess={() => {
-                setEditingProject(null);
-                queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-              }}
-            />
+          <DialogContent className="max-w-4xl">
+            <ProjectForm onSuccess={() => {
+              setIsDialogOpen(false);
+              queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+            }} />
           </DialogContent>
         </Dialog>
       </CardHeader>
@@ -160,7 +130,6 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
               <ProjectCard
                 key={project.id}
                 project={project}
-                onEdit={() => setEditingProject(project)}
                 onDelete={() => deleteProjectMutation.mutate(project.id)}
                 canEdit={user?.id === project.owner_id}
                 isAdmin={isAdmin}
