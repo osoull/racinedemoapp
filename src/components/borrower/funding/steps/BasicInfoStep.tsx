@@ -54,13 +54,12 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
                   <SelectValue placeholder="اختر تصنيف" />
                 </SelectTrigger>
               </FormControl>
-              <SelectContent align="end">
+              <SelectContent align="end" className="text-right" dir="rtl">
                 {categories.map((category) => (
                   <SelectItem 
                     key={category.id} 
                     value={category.id}
                     className="text-right"
-                    dir="rtl"
                   >
                     {category.label}
                   </SelectItem>
