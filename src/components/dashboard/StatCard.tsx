@@ -8,12 +8,13 @@ interface StatCardProps {
   icon: LucideIcon
   trend?: number
   showAsCurrency?: boolean
+  suffix?: string
 }
 
-export function StatCard({ title, value, icon: Icon, trend, showAsCurrency }: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, trend, showAsCurrency, suffix }: StatCardProps) {
   const formattedValue = showAsCurrency 
     ? new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(value)
-    : value.toLocaleString('ar-SA')
+    : value.toLocaleString('ar-SA') + (suffix || '')
 
   return (
     <Card>

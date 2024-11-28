@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface BorrowerStats {
   total_requested: number;
@@ -25,7 +25,7 @@ export function useBorrowerStats() {
       );
 
       if (error) throw error;
-      return data as BorrowerStats;
+      return data[0] as BorrowerStats; // Get first row since RPC returns array
     },
     enabled: !!user,
   });
