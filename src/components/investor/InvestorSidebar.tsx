@@ -47,7 +47,7 @@ export const InvestorSidebar = () => {
         <div className="text-center space-y-2">
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
             <Shield className="h-4 w-4" />
-            ﻣﺼﺮﺣﺔ ﻣﻦ ﻫﻴﺌﺔ اﻟﺴﻮق اﻟﻤﺎﻟﻴﺔ
+            مرخصة من البنك المركزي السعودي
           </p>
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
             <CheckCircle className="h-4 w-4" />
