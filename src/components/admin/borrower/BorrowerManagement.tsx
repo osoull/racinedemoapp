@@ -37,7 +37,7 @@ export function BorrowerManagement() {
         ) : (
           <div className="space-y-4">
             {borrowers?.map((borrower) => (
-              <BorrowerDetailsDialog key={borrower.id} borrower={borrower} />
+              <BorrowerDetailsDialog key={borrower.id} borrowerId={borrower.id} />
             ))}
           </div>
         )}

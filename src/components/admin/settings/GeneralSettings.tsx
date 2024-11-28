@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 
-export default function GeneralSettings() {
+export const GeneralSettings = () => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
