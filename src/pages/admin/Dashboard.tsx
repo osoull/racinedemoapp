@@ -50,20 +50,22 @@ export default function AdminDashboard() {
           <StatCard
             icon={TrendingUp}
             title="إجمالي التمويل"
-            value={`${fundingStats?.total_amount_approved?.toLocaleString() || 0} ريال`}
-            trend={{ value: 12.5, isPositive: true }}
+            value={fundingStats?.total_amount_approved || 0}
+            trend={12.5}
+            showAsCurrency
           />
           <StatCard
             icon={Users}
             title="المستثمرون النشطون"
             value={stats?.active_investors || 0}
-            trend={{ value: stats?.investor_growth || 0, isPositive: true }}
+            trend={stats?.investor_growth || 0}
           />
           <StatCard
             icon={Wallet}
             title="الإيرادات"
-            value={`${stats?.total_revenue?.toLocaleString() || 0} ريال`}
-            trend={{ value: stats?.revenue_growth || 0, isPositive: true }}
+            value={stats?.total_revenue || 0}
+            trend={stats?.revenue_growth || 0}
+            showAsCurrency
           />
         </div>
 

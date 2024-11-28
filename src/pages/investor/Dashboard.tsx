@@ -70,26 +70,27 @@ const InvestorDashboard = () => {
           <StatCard
             icon={TrendingUp}
             title="إجمالي الاستثمارات"
-            value={`${totalInvestments.toLocaleString()} ريال`}
-            trend={{ value: 8.2, isPositive: true }}
+            value={totalInvestments}
+            trend={8.2}
+            showAsCurrency
           />
           <StatCard
             icon={Activity}
             title="الاستثمارات النشطة"
             value={activeInvestments}
-            trend={{ value: 12.5, isPositive: true }}
+            trend={12.5}
           />
           <StatCard
             icon={FileText}
             title="العائد المتوقع"
-            value="15%"
-            trend={{ value: 15.2, isPositive: true }}
+            value={15}
+            trend={15.2}
           />
           <StatCard
             icon={Wallet}
             title="نسبة النجاح"
-            value="85%"
-            trend={{ value: 4.1, isPositive: true }}
+            value={85}
+            trend={4.1}
           />
         </div>
 
