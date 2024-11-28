@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext"
 import { UserNav } from "./UserNav"
 import { cn } from "@/lib/utils"
-import { Bell, Menu } from "lucide-react"
+import { Bell, Menu, Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -21,7 +21,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -62,7 +62,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       </header>
 
       {/* Main layout */}
-      <div className="flex min-h-[calc(100vh-3.5rem)]">
+      <div className="flex flex-1 min-h-[calc(100vh-3.5rem-4rem)]"> {/* Adjusted to account for footer */}
         {/* Sidebar - Desktop */}
         <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background overflow-y-auto">
           {sidebar}
@@ -78,6 +78,46 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </div>
         </main>
       </div>
+
+      {/* Footer */}
+      <footer className="h-16 border-t bg-background mt-auto">
+        <div className="container max-w-screen-2xl h-full flex items-center justify-between px-6">
+          {/* Social Media Links */}
+          <div className="flex items-center gap-4">
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Facebook className="h-5 w-5" />
+            </a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Twitter className="h-5 w-5" />
+            </a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Instagram className="h-5 w-5" />
+            </a>
+            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Linkedin className="h-5 w-5" />
+            </a>
+          </div>
+
+          {/* Copyright Text */}
+          <div className="text-sm text-muted-foreground">
+            © 2024 الحقوق محفوظة لشركة رسين للاستثمار
+          </div>
+
+          {/* Logo */}
+          <div className="h-10">
+            <img 
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
+              alt="رسين"
+              className="h-full w-auto object-contain dark:hidden" 
+            />
+            <img 
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
+              alt="رسين"
+              className="h-full w-auto object-contain hidden dark:block" 
+            />
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
