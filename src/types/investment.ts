@@ -16,6 +16,7 @@ export interface Investment {
     last_name: string
   }
   funding_request: {
+    id: string
     title: string
     description?: string
     funding_goal?: number
