@@ -82,8 +82,8 @@ export const AdminSidebar = () => {
   const { signOut } = useAuth()
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex-1 space-y-1 p-4">
+    <div className="flex h-full flex-col border-l">
+      <div className="flex-1 space-y-1">
         {menuItems.map((item) => (
           <SidebarItem
             key={item.path}
