@@ -1,52 +1,53 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/contexts/AuthContext"
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatDistanceToNow } from "date-fns";
+import { ar } from "date-fns/locale";
 
 export function ActivityFeed() {
-  const { user } = useAuth()
-
-  const { data: activities } = useQuery({
-    queryKey: ["activities", user?.id],
+  const { data: transactions } = useQuery({
+    queryKey: ["recent-transactions"],
     queryFn: async () => {
-      const { data: transactions } = await supabase
+      const { data, error } = await supabase
         .from("transactions")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(10)
+        .select(`
+          *,
+          user:profiles(first_name, last_name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
-      return transactions
-    },
-    enabled: !!user?.id
-  })
+  if (!transactions?.length) {
+    return <div className="text-center text-muted-foreground">لا يوجد نشاط حديث</div>;
+  }
 
   return (
-    <Card className="col-span-1">
-      <CardHeader>
-        <CardTitle>النشاط الأخير</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-4">
-            {activities?.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-start gap-4 p-4 rounded-lg bg-muted/50"
-              >
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium">
-                    {activity.type === 'deposit' ? 'إيداع' : 'سحب'}: {activity.amount} ريال
-                  </p>
-                  <time className="text-sm text-muted-foreground">
-                    {new Date(activity.created_at).toLocaleString('ar-SA')}
-                  </time>
-                </div>
-              </div>
-            ))}
+    <ScrollArea className="h-[400px]">
+      <div className="space-y-4">
+        {transactions.map((transaction) => (
+          <div key={transaction.id} className="flex items-center gap-4">
+            <div className="flex-1">
+              <p className="text-sm font-medium">
+                {transaction.user?.first_name} {transaction.user?.last_name}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {transaction.type === 'deposit' ? 'إيداع' : 'سحب'} مبلغ {transaction.amount.toLocaleString()} ريال
+              </p>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {formatDistanceToNow(new Date(transaction.created_at), { 
+                addSuffix: true,
+                locale: ar 
+              })}
+            </div>
           </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
-  )
+        ))}
+      </div>
+    </ScrollArea>
+  );
 }
