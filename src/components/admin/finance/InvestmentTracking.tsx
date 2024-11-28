@@ -6,7 +6,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/utils/feeCalculations"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { Loader2 } from "lucide-react"
 
 interface Investment {
   id: string
@@ -69,7 +68,11 @@ const columns: ColumnDef<Investment>[] = [
   },
 ]
 
-export function InvestmentTracking() {
+interface InvestmentTrackingProps {
+  showOnlyChart?: boolean
+}
+
+export function InvestmentTracking({ showOnlyChart = false }: InvestmentTrackingProps) {
   const { data: investments, isLoading } = useQuery({
     queryKey: ["investments"],
     queryFn: async () => {
@@ -106,6 +109,20 @@ export function InvestmentTracking() {
     
     return acc
   }, []).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime()) || []
+
+  if (showOnlyChart) {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Bar dataKey="amount" fill="#0ea5e9" name="مبلغ الاستثمار" />
+        </BarChart>
+      </ResponsiveContainer>
+    )
+  }
 
   return (
     <div className="space-y-6">

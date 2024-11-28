@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client"
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
 import { formatCurrency } from "@/utils/feeCalculations"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
@@ -70,9 +69,11 @@ const columns: ColumnDef<BorrowerPayment>[] = [
   },
 ]
 
-export function BorrowerPayments() {
-  const { toast } = useToast()
+interface BorrowerPaymentsProps {
+  showOnlyChart?: boolean
+}
 
+export function BorrowerPayments({ showOnlyChart = false }: BorrowerPaymentsProps) {
   const { data: payments, isLoading } = useQuery({
     queryKey: ["borrower-payments"],
     queryFn: async () => {
@@ -109,6 +110,22 @@ export function BorrowerPayments() {
     
     return acc
   }, []).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime()) || []
+
+  if (showOnlyChart) {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis yAxisId="left" />
+          <YAxis yAxisId="right" orientation="right" />
+          <Tooltip />
+          <Line yAxisId="left" type="monotone" dataKey="amount" stroke="#0ea5e9" name="مبلغ المدفوعات" />
+          <Line yAxisId="right" type="monotone" dataKey="count" stroke="#22c55e" name="عدد المدفوعات" />
+        </LineChart>
+      </ResponsiveContainer>
+    )
+  }
 
   return (
     <div className="space-y-6">

@@ -16,7 +16,34 @@ export function FinanceOverview() {
         </p>
       </div>
 
-      <FeesChart />
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>رسوم المنصة</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <FeesChart />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>متابعة الاستثمارات الشهرية</CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <InvestmentTracking showOnlyChart />
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>تتبع المدفوعات الشهرية</CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            <BorrowerPayments showOnlyChart />
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
