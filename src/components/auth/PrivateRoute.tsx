@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ interface PrivateRouteProps {
 
 export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
   const { user } = useAuth();
+  const location = useLocation();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", user?.id],
@@ -26,10 +27,12 @@ export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
       return data;
     },
     enabled: !!user,
+    staleTime: 30000, // Cache for 30 seconds
+    cacheTime: 60000, // Keep in cache for 1 minute
   });
 
   if (!user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   if (isLoading) {
@@ -41,22 +44,26 @@ export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
   }
 
   if (!profile) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
-  // Vérifier si le type d'utilisateur est autorisé
   if (!allowedTypes.includes(profile.user_type as UserType)) {
-    // Rediriger vers la page appropriée en fonction du type d'utilisateur
-    switch (profile.user_type) {
-      case "admin":
-        return <Navigate to="/admin/dashboard" />;
-      case "borrower":
-        return <Navigate to="/borrower/dashboard" />;
-      case "basic_investor":
-      case "qualified_investor":
-        return <Navigate to="/investor/dashboard" />;
-      default:
-        return <Navigate to="/" />;
+    const redirectPath = (() => {
+      switch (profile.user_type) {
+        case "admin":
+          return "/admin/dashboard";
+        case "borrower":
+          return "/borrower/dashboard";
+        case "basic_investor":
+        case "qualified_investor":
+          return "/investor/dashboard";
+        default:
+          return "/";
+      }
+    })();
+
+    if (location.pathname !== redirectPath) {
+      return <Navigate to={redirectPath} replace />;
     }
   }
 

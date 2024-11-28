@@ -14,12 +14,14 @@ type AuthStep = "selection" | "signup" | "signin" | "borrower_signup"
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [isLoading, setIsLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
   useEffect(() => {
-    if (user) {
+    if (user && !isRedirecting) {
+      setIsRedirecting(true)
       checkUserTypeAndRedirect()
     }
   }, [user])
@@ -38,6 +40,7 @@ export function Auth() {
       redirectBasedOnUserType(profile.user_type as UserType)
     } catch (error: any) {
       console.error("Error fetching user type:", error)
+      setIsRedirecting(false)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء توجيهك للوحة التحكم",
@@ -47,26 +50,28 @@ export function Auth() {
   }
 
   const redirectBasedOnUserType = (userType: UserType) => {
+    let path = "/"
     switch (userType) {
       case "admin":
-        navigate("/admin/dashboard")
+        path = "/admin/dashboard"
         break
       case "investment_manager":
-        navigate("/investment-manager/dashboard")
+        path = "/investment-manager/dashboard"
         break
       case "borrower":
-        navigate("/borrower/dashboard")
+        path = "/borrower/dashboard"
         break
       case "basic_investor":
       case "qualified_investor":
-        navigate("/investor/dashboard")
+        path = "/investor/dashboard"
         break
-      default:
-        navigate("/")
     }
+    navigate(path, { replace: true })
   }
 
   const handleSignIn = async (email: string, password: string) => {
+    if (isLoading) return
+    
     setIsLoading(true)
     try {
       const { error } = await signIn(email, password)
