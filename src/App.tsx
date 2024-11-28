@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
 import { Toaster } from "@/components/ui/toaster";
@@ -8,16 +8,31 @@ import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { Auth } from "@/components/Auth";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
+          {/* Route par défaut - redirige vers l'authentification */}
+          <Route path="/" element={<Auth />} />
+
+          {/* Routes Admin */}
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <FinanceOverview />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/admin/finance"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
                   <FinanceOverview />
                 </DashboardLayout>
@@ -27,7 +42,7 @@ function App() {
           <Route
             path="/admin/finance/transactions"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
                   <TransactionManagement />
                 </DashboardLayout>
@@ -37,13 +52,16 @@ function App() {
           <Route
             path="/admin/finance/revenue"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
                   <RevenueTracking />
                 </DashboardLayout>
               </PrivateRoute>
             }
           />
+
+          {/* Route de fallback - redirige vers l'authentification */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
       <Toaster />
