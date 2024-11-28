@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/utils/feeCalculations";
+import { formatCurrency, getFeeTypeLabel } from "@/utils/feeCalculations";
 
 interface AdminFee {
   id: string;
@@ -42,9 +42,23 @@ const columns: ColumnDef<AdminFee>[] = [
     header: "المشروع",
   },
   {
+    accessorKey: "fee_type",
+    header: "نوع الرسوم",
+    cell: ({ row }) => (
+      <Badge variant="outline">
+        {getFeeTypeLabel(row.original.fee_type)}
+      </Badge>
+    ),
+  },
+  {
     accessorKey: "amount",
-    header: "المبلغ",
+    header: "المبلغ الأساسي",
     cell: ({ row }) => formatCurrency(row.original.amount),
+  },
+  {
+    accessorKey: "fee_amount",
+    header: "مبلغ الرسوم",
+    cell: ({ row }) => formatCurrency(row.original.fee_amount),
   },
   {
     accessorKey: "status",
@@ -85,7 +99,6 @@ export function AdminFeesManagement() {
           funding_request:funding_requests(title),
           user:profiles(first_name, last_name)
         `)
-        .eq("fee_type", "admin_fee")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -103,7 +116,7 @@ export function AdminFeesManagement() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>إدارة الرسوم الإدارية</CardTitle>
+        <CardTitle>إدارة الرسوم</CardTitle>
       </CardHeader>
       <CardContent>
         <DataTable
