@@ -28,7 +28,7 @@ export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
     },
     enabled: !!user,
     staleTime: 30000, // Cache for 30 seconds
-    cacheTime: 60000, // Keep in cache for 1 minute
+    gcTime: 60000, // Keep in cache for 1 minute (renamed from cacheTime)
   });
 
   if (!user) {
