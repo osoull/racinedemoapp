@@ -83,6 +83,12 @@ export const AdminSidebar = () => {
           />
         ))}
       </div>
+      <div className="border-t p-4 space-y-4">
+        <div className="text-center space-y-2">
+          <p className="text-xs text-muted-foreground">ﻣﺼﺮﺣﺔ ﻣﻦ ﻫﻴﺌﺔ اﻟﺴﻮق اﻟﻤﺎﻟﻴﺔ</p>
+          <p className="text-xs text-muted-foreground">معتمد - اللجنة الشرعية شركة رسين للاستثمار</p>
+        </div>
+      </div>
     </div>
   )
 }
