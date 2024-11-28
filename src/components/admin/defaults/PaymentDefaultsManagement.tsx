@@ -21,7 +21,7 @@ export function PaymentDefaultsManagement() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as PaymentDefault[];
+      return data as unknown as PaymentDefault[];
     },
   });
 

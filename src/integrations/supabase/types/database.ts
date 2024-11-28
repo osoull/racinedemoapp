@@ -14,6 +14,10 @@ import {
   KYCDocumentsTable,
   KYCStatusHistoryTable,
   NotificationsTable,
+  PaymentDefaultsTable,
+  PaymentResolutionPlansTable,
+  ResolutionPlanInstallmentsTable,
+  DefaultActionHistoryTable,
   PlatformLicensesTable,
   PlatformSettingsTable,
   PlatformStatisticsTable,
@@ -42,6 +46,10 @@ export interface Database {
       kyc_documents: KYCDocumentsTable
       kyc_status_history: KYCStatusHistoryTable
       notifications: NotificationsTable
+      payment_defaults: PaymentDefaultsTable
+      payment_resolution_plans: PaymentResolutionPlansTable
+      resolution_plan_installments: ResolutionPlanInstallmentsTable
+      default_action_history: DefaultActionHistoryTable
       platform_licenses: PlatformLicensesTable
       platform_settings: PlatformSettingsTable
       platform_statistics: PlatformStatisticsTable

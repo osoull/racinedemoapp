@@ -212,6 +212,48 @@ export type Database = {
         }
         Relationships: []
       }
+      default_action_history: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          default_id: string
+          details: Json
+          id: string
+          performed_by: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          default_id: string
+          details: Json
+          id?: string
+          performed_by: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          default_id?: string
+          details?: Json
+          id?: string
+          performed_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "default_action_history_default_id_fkey"
+            columns: ["default_id"]
+            isOneToOne: false
+            referencedRelation: "payment_defaults"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "default_action_history_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_tracking: {
         Row: {
           amount: number
@@ -701,6 +743,117 @@ export type Database = {
           },
         ]
       }
+      payment_defaults: {
+        Row: {
+          borrower_id: string
+          created_at: string | null
+          funding_request_id: string
+          id: string
+          resolution_date: string | null
+          resolution_notes: string | null
+          start_date: string
+          status: string
+          total_amount_due: number
+          updated_at: string | null
+        }
+        Insert: {
+          borrower_id: string
+          created_at?: string | null
+          funding_request_id: string
+          id?: string
+          resolution_date?: string | null
+          resolution_notes?: string | null
+          start_date?: string
+          status?: string
+          total_amount_due: number
+          updated_at?: string | null
+        }
+        Update: {
+          borrower_id?: string
+          created_at?: string | null
+          funding_request_id?: string
+          id?: string
+          resolution_date?: string | null
+          resolution_notes?: string | null
+          start_date?: string
+          status?: string
+          total_amount_due?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_defaults_borrower_id_fkey"
+            columns: ["borrower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_defaults_funding_request_id_fkey"
+            columns: ["funding_request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_resolution_plans: {
+        Row: {
+          created_at: string | null
+          default_id: string
+          end_date: string
+          id: string
+          installments_count: number
+          new_amount: number
+          original_amount: number
+          proposed_by: string
+          start_date: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          default_id: string
+          end_date: string
+          id?: string
+          installments_count: number
+          new_amount: number
+          original_amount: number
+          proposed_by: string
+          start_date: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          default_id?: string
+          end_date?: string
+          id?: string
+          installments_count?: number
+          new_amount?: number
+          original_amount?: number
+          proposed_by?: string
+          start_date?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_resolution_plans_default_id_fkey"
+            columns: ["default_id"]
+            isOneToOne: false
+            referencedRelation: "payment_defaults"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_resolution_plans_proposed_by_fkey"
+            columns: ["proposed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       platform_licenses: {
         Row: {
           created_at: string
@@ -892,6 +1045,44 @@ export type Database = {
           upload_date?: string
         }
         Relationships: []
+      }
+      resolution_plan_installments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          due_date: string
+          id: string
+          plan_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          due_date: string
+          id?: string
+          plan_id: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          due_date?: string
+          id?: string
+          plan_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resolution_plan_installments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "payment_resolution_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stripe_payments: {
         Row: {

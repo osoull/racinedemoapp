@@ -22,18 +22,18 @@ export function DefaultActionsCell({ default: defaultCase }: DefaultActionsCellP
 
   const handleSendReminder = async () => {
     try {
-      // Enregistrer l'action
+      const user = await supabase.auth.getUser();
+      
       await supabase.from("default_action_history").insert({
         default_id: defaultCase.id,
         action_type: "send_reminder",
-        performed_by: (await supabase.auth.getUser()).data.user?.id,
+        performed_by: user.data.user?.id,
         details: {
           type: "email",
           timestamp: new Date().toISOString(),
         },
       });
 
-      // Créer une notification
       await supabase.from("notifications").insert({
         user_id: defaultCase.borrower_id,
         title: "تذكير بالدفع المتأخر",

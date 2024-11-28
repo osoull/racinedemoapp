@@ -40,7 +40,6 @@ export function CreateResolutionPlanDialog({
       const endDate = new Date();
       endDate.setMonth(endDate.getMonth() + installments);
 
-      // Créer le plan de résolution
       const { data: plan, error: planError } = await supabase
         .from("payment_resolution_plans")
         .insert({
@@ -57,7 +56,6 @@ export function CreateResolutionPlanDialog({
 
       if (planError) throw planError;
 
-      // Créer les échéances
       const installmentAmount = defaultCase.total_amount_due / installments;
       const installmentPromises = Array.from({ length: installments }).map((_, i) => {
         const dueDate = new Date(startDate);
@@ -72,7 +70,6 @@ export function CreateResolutionPlanDialog({
 
       await Promise.all(installmentPromises);
 
-      // Notifier l'emprunteur
       await supabase.from("notifications").insert({
         user_id: defaultCase.borrower_id,
         title: "خطة تسوية جديدة",
