@@ -6,16 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { formatCurrency } from "@/utils/feeCalculations"
 import { format } from "date-fns"
 import { Loader2 } from "lucide-react"
-
-interface Investment {
-  id: string
-  funding_request: {
-    title: string
-    funding_goal: number
-    current_funding: number
-    status: string
-  }
-}
+import { Investment } from "@/types/investment"
 
 export function InvestmentsList() {
   const { data: investments, isLoading } = useQuery<Investment[]>({
@@ -24,7 +15,11 @@ export function InvestmentsList() {
       const { data, error } = await supabase
         .from("transactions")
         .select(`
-          *,
+          id,
+          amount,
+          type,
+          status,
+          created_at,
           funding_request:funding_requests(
             title,
             funding_goal,
@@ -36,7 +31,10 @@ export function InvestmentsList() {
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data
+      return data.map(item => ({
+        ...item,
+        funding_request: item.funding_request[0]
+      }))
     },
   })
 
@@ -45,7 +43,7 @@ export function InvestmentsList() {
       <div className="flex items-center justify-center p-8">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
-    );
+    )
   }
 
   if (!investments?.length) {
@@ -55,7 +53,7 @@ export function InvestmentsList() {
           لا توجد استثمارات حالياً
         </p>
       </Card>
-    );
+    )
   }
 
   return (
@@ -66,7 +64,7 @@ export function InvestmentsList() {
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-semibold">
-                  {investment.funding_request?.title}
+                  {investment.funding_request.title}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {formatCurrency(investment.amount)}
@@ -75,8 +73,8 @@ export function InvestmentsList() {
               <div className="space-y-1 text-right">
                 <Progress
                   value={
-                    ((investment.funding_request?.current_funding || 0) /
-                      (investment.funding_request?.funding_goal || 1)) *
+                    ((investment.funding_request.current_funding || 0) /
+                      (investment.funding_request.funding_goal || 1)) *
                     100
                   }
                   className="h-2"
@@ -105,5 +103,5 @@ export function InvestmentsList() {
         </Card>
       ))}
     </div>
-  );
+  )
 }

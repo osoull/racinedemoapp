@@ -2,37 +2,16 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Card } from "@/components/ui/card"
-import { Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw } from "lucide-react"
+import { Wallet, ArrowUpRight, ArrowDownLeft } from "lucide-react"
 import { WalletTransactions } from "@/components/admin/transaction/WalletTransactions"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { DepositDialog } from "./DepositDialog"
-
-export interface Transaction {
-  id: string
-  amount: number
-  type: string
-  status: string
-  created_at: string
-  user: {
-    first_name: string
-    last_name: string
-  }
-  investment?: {
-    amount: number
-    project: {
-      title: string
-    }
-  }
-  fee_details?: {
-    type: string
-    amount: number
-  }[]
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Transaction } from "@/types/investment"
 
 export function WalletOverview() {
   const { user } = useAuth()
@@ -40,18 +19,14 @@ export function WalletOverview() {
   const [amount, setAmount] = useState("")
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false)
 
-  const { data: transactions, isLoading, refetch } = useQuery({
+  const { data: transactions, isLoading, refetch } = useQuery<Transaction[]>({
     queryKey: ["transactions", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("transactions")
         .select(`
           *,
-          user:profiles(first_name, last_name),
-          investment:investments(
-            amount,
-            project:projects(title)
-          )
+          user:profiles(first_name, last_name)
         `)
         .eq("user_id", user?.id)
         .order("created_at", { ascending: false })
@@ -69,7 +44,8 @@ export function WalletOverview() {
         .insert({
           type: "withdrawal",
           amount: Number(amount),
-          status: "pending"
+          status: "pending",
+          user_id: user?.id
         })
 
       if (error) throw error
@@ -111,7 +87,7 @@ export function WalletOverview() {
             </div>
           </div>
           <div className="flex gap-2">
-            <DepositDialog onSuccess={refetch} />
+            <DepositDialog open={false} onOpenChange={() => {}} />
 
             <Dialog open={isWithdrawOpen} onOpenChange={setIsWithdrawOpen}>
               <DialogTrigger asChild>
@@ -146,7 +122,7 @@ export function WalletOverview() {
 
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">سجل المعاملات</h3>
-        <WalletTransactions transactions={transactions as Transaction[]} isLoading={isLoading} />
+        <WalletTransactions transactions={transactions} isLoading={isLoading} />
       </Card>
     </div>
   )

@@ -1,24 +1,43 @@
-export interface InvestmentOpportunity {
+export interface Investment {
   id: string
-  funding_request_id: string
+  amount: number
+  type: string
   status: string
-  start_date: string | null
-  end_date: string | null
-  total_invested: number
+  created_at: string
   funding_request: {
-    id: string
     title: string
-    description: string
-    category: string
     funding_goal: number
     current_funding: number
-    risk_rating: string | null
-    risk_description: string | null
-    owner: {
-      id: string
-      first_name: string
-      last_name: string
-      company_name: string | null
+    status: string
+  }
+  user: {
+    first_name: string
+    last_name: string
+  }
+}
+
+export interface Transaction {
+  id: string
+  amount: number
+  type: string
+  status: string
+  created_at: string
+  user_id: string
+  commission_id: string | null
+  fee_amount: number | null
+  fee_type: string | null
+  user: {
+    first_name: string
+    last_name: string
+  }
+  investment?: {
+    amount: number
+    project: {
+      title: string
     }
   }
+  fee_details?: {
+    type: string
+    amount: number
+  }[]
 }

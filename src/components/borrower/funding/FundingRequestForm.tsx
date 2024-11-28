@@ -1,119 +1,93 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
-import { BasicInfoStep } from "./steps/BasicInfoStep";
-import { DocumentsStep } from "./steps/DocumentsStep";
-import { PaymentStep } from "./steps/PaymentStep";
-import { useProjectSubmission } from "@/hooks/useProjectSubmission";
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import { Form } from "@/components/ui/form"
+import { toast } from "sonner"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/contexts/AuthContext"
 
-const steps = [
-  { id: "basic-info", title: "المعلومات الأساسية" },
-  { id: "documents", title: "المستندات المطلوبة" },
-  { id: "payment", title: "دفع الرسوم" },
-];
+const fundingRequestSchema = z.object({
+  title: z.string().min(1, "العنوان مطلوب"),
+  description: z.string().min(1, "الوصف مطلوب"),
+  category: z.string().min(1, "الفئة مطلوبة"),
+  funding_goal: z.number().min(1, "هدف التمويل مطلوب"),
+  campaign_duration: z.number().min(1, "مدة الحملة مطلوبة"),
+  fund_usage_plan: z.array(z.object({
+    item: z.string(),
+    amount: z.number()
+  }))
+})
+
+type FundingRequestFormData = z.infer<typeof fundingRequestSchema>
 
 export function FundingRequestForm() {
-  const [currentStep, setCurrentStep] = useState(0);
-  const { form, onSubmit, isSubmitting } = useProjectSubmission();
-  const { toast } = useToast();
-
-  const nextStep = () => {
-    const fields = steps[currentStep].id === "basic-info" 
-      ? ["title", "category", "funding_goal", "campaign_duration", "description", "fund_usage_plan"]
-      : [];
-
-    form.trigger(fields).then((isValid) => {
-      if (isValid) {
-        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-      }
-    });
-  };
-
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
-  };
-
-  const handleSubmit = async (data: z.infer<typeof projectSchema>) => {
-    try {
-      await onSubmit(data);
-      toast({
-        title: "تم إرسال الطلب",
-        description: "سيتم مراجعة طلبك في أقرب وقت ممكن",
-      });
-    } catch (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إرسال الطلب",
-        variant: "destructive",
-      });
+  const { user } = useAuth()
+  const form = useForm<FundingRequestFormData>({
+    resolver: zodResolver(fundingRequestSchema),
+    defaultValues: {
+      fund_usage_plan: [{ item: "", amount: 0 }]
     }
-  };
+  })
+
+  const onSubmit = async (data: FundingRequestFormData) => {
+    try {
+      const { error } = await supabase
+        .from("funding_requests")
+        .insert({
+          ...data,
+          owner_id: user?.id,
+          status: "draft"
+        })
+
+      if (error) throw error
+
+      toast.success("تم حفظ طلب التمويل بنجاح")
+      form.reset()
+    } catch (error) {
+      toast.error("حدث خطأ أثناء حفظ طلب التمويل")
+    }
+  }
 
   return (
-    <DashboardLayout sidebar={<BorrowerSidebar />}>
-      <div className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">طلب تمويل جديد</h2>
-          <p className="text-muted-foreground">
-            قم بتعبئة النموذج التالي لتقديم طلب تمويل جديد
-          </p>
+          <label htmlFor="title">العنوان</label>
+          <input {...form.register("title")} id="title" />
+          {form.formState.errors.title && <p>{form.formState.errors.title.message}</p>}
         </div>
-
-        <Card className="p-6">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">
-                {steps[currentStep].title}
-              </h3>
-              <span className="text-sm text-muted-foreground">
-                الخطوة {currentStep + 1} من {steps.length}
-              </span>
+        <div>
+          <label htmlFor="description">الوصف</label>
+          <textarea {...form.register("description")} id="description" />
+          {form.formState.errors.description && <p>{form.formState.errors.description.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="category">الفئة</label>
+          <input {...form.register("category")} id="category" />
+          {form.formState.errors.category && <p>{form.formState.errors.category.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="funding_goal">هدف التمويل</label>
+          <input type="number" {...form.register("funding_goal")} id="funding_goal" />
+          {form.formState.errors.funding_goal && <p>{form.formState.errors.funding_goal.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="campaign_duration">مدة الحملة</label>
+          <input type="number" {...form.register("campaign_duration")} id="campaign_duration" />
+          {form.formState.errors.campaign_duration && <p>{form.formState.errors.campaign_duration.message}</p>}
+        </div>
+        <div>
+          <label htmlFor="fund_usage_plan">خطة استخدام الأموال</label>
+          {form.watch("fund_usage_plan").map((item, index) => (
+            <div key={index}>
+              <input {...form.register(`fund_usage_plan.${index}.item`)} placeholder="العنصر" />
+              <input type="number" {...form.register(`fund_usage_plan.${index}.amount`)} placeholder="المبلغ" />
             </div>
-
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              {currentStep === 0 && <BasicInfoStep control={form.control} />}
-              {currentStep === 1 && <DocumentsStep control={form.control} />}
-              {currentStep === 2 && (
-                <PaymentStep 
-                  amount={form.getValues("funding_goal")} 
-                  control={form.control}
-                />
-              )}
-
-              <div className="flex justify-between pt-4 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={prevStep}
-                  disabled={currentStep === 0 || isSubmitting}
-                >
-                  السابق
-                </Button>
-
-                {currentStep === steps.length - 1 ? (
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting && (
-                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    )}
-                    إرسال الطلب
-                  </Button>
-                ) : (
-                  <Button type="button" onClick={nextStep}>
-                    التالي
-                  </Button>
-                )}
-              </div>
-            </form>
-          </div>
-        </Card>
-      </div>
-    </DashboardLayout>
-  );
+          ))}
+        </div>
+        <Button type="submit">حفظ الطلب</Button>
+      </form>
+    </Form>
+  )
 }
