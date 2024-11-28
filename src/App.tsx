@@ -9,6 +9,12 @@ import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
+import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
+import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
+import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
+import { FundingRequestForm } from "@/components/borrower/funding/FundingRequestForm";
+import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
 
 function App() {
   const { loading } = useAuth();
@@ -45,7 +51,62 @@ function App() {
             element={
               <PrivateRoute allowedTypes={["borrower"]}>
                 <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <DashboardOverview />
+                  <BorrowerDashboardOverview />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/funding-requests"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <FundingRequestsList />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/funding-requests/new"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <FundingRequestForm />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/payments"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerPayments />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/profile"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerProfile />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/kyc"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerKYCForm />
                 </DashboardLayout>
               </PrivateRoute>
             }
