@@ -9,7 +9,7 @@ import { InvestorList } from "./InvestorList"
 import { InvestmentsTable } from "../finance/InvestmentsTable"
 import { InvestmentDetailsDialog } from "../finance/InvestmentDetailsDialog"
 import { RefundDialog } from "../finance/RefundDialog"
-import { Download, Loader2 } from "lucide-react"
+import { Download, Filter, Search, Users, Wallet } from "lucide-react"
 import { toast } from "sonner"
 import * as XLSX from 'xlsx'
 import { format } from "date-fns"
@@ -29,6 +29,7 @@ export function InvestorManagement() {
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
   const [showRefundDialog, setShowRefundDialog] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   const { data: investors, isLoading: isLoadingInvestors } = useQuery({
     queryKey: ["investors"],
@@ -80,28 +81,48 @@ export function InvestorManagement() {
 
   return (
     <div className="space-y-6" dir="rtl">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">إدارة المستثمرين والاستثمارات</h2>
-        <p className="text-muted-foreground">
-          إدارة وتتبع المستثمرين واستثماراتهم في المنصة
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">إدارة المستثمرين والاستثمارات</h2>
+          <p className="text-muted-foreground">
+            إدارة وتتبع المستثمرين واستثماراتهم في المنصة
+          </p>
+        </div>
+        <Button onClick={handleExportExcel}>
+          <Download className="ml-2 h-4 w-4" />
+          تصدير البيانات
+        </Button>
       </div>
 
       <Tabs defaultValue="investors" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="investors">المستثمرون</TabsTrigger>
-          <TabsTrigger value="investments">الاستثمارات</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="investors">
+            <Users className="h-4 w-4 ml-2" />
+            المستثمرون
+          </TabsTrigger>
+          <TabsTrigger value="investments">
+            <Wallet className="h-4 w-4 ml-2" />
+            الاستثمارات
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="investors">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle>المستثمرون</CardTitle>
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="بحث..."
+                  className="w-[300px]"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
             </CardHeader>
             <CardContent>
               {isLoadingInvestors ? (
                 <div className="flex items-center justify-center h-96">
-                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
                 </div>
               ) : (
                 <InvestorList investors={investors || []} />
@@ -112,54 +133,60 @@ export function InvestorManagement() {
 
         <TabsContent value="investments">
           <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>الاستثمارات</CardTitle>
-                <Button onClick={handleExportExcel}>
-                  <Download className="ml-2 h-4 w-4" />
-                  تصدير البيانات
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle>الاستثمارات</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <Filter className="h-4 w-4 ml-2" />
+                  الفلترة
                 </Button>
+                <Input
+                  placeholder="بحث..."
+                  className="w-[300px]"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  leftIcon={<Search className="h-4 w-4" />}
+                />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Input
-                    placeholder="بحث..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="text-right"
-                  />
+              {showFilters && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <Select value={selectedStatus || ""} onValueChange={setSelectedStatus}>
-                    <SelectTrigger className="text-right">
+                    <SelectTrigger>
                       <SelectValue placeholder="الحالة" />
                     </SelectTrigger>
-                    <SelectContent className="text-right">
+                    <SelectContent>
                       <SelectItem value="">جميع الحالات</SelectItem>
                       <SelectItem value="completed">مكتمل</SelectItem>
                       <SelectItem value="pending">قيد المعالجة</SelectItem>
                       <SelectItem value="failed">فشل</SelectItem>
                     </SelectContent>
                   </Select>
+
                   <DatePickerWithRange 
                     date={dateRange}
                     setDate={setDateRange}
                   />
                 </div>
+              )}
 
-                <InvestmentsTable 
-                  investments={filteredInvestments || []}
-                  isLoading={isLoadingInvestments}
-                  onViewDetails={(investment) => {
-                    setSelectedInvestment(investment)
-                    setShowDetailsDialog(true)
-                  }}
-                  onRefund={(investment) => {
-                    setSelectedInvestment(investment)
-                    setShowRefundDialog(true)
-                  }}
-                />
-              </div>
+              <InvestmentsTable 
+                investments={filteredInvestments || []}
+                isLoading={isLoadingInvestments}
+                onViewDetails={(investment) => {
+                  setSelectedInvestment(investment)
+                  setShowDetailsDialog(true)
+                }}
+                onRefund={(investment) => {
+                  setSelectedInvestment(investment)
+                  setShowRefundDialog(true)
+                }}
+              />
             </CardContent>
           </Card>
         </TabsContent>
