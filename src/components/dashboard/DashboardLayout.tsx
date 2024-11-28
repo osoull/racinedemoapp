@@ -24,7 +24,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 max-w-screen-2xl items-center px-4">
+        <div className="container flex h-14 max-w-screen-2xl items-center">
           {/* Mobile menu button */}
           <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
             <SheetTrigger asChild>
@@ -38,16 +38,16 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </Sheet>
 
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center h-14">
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
-              className="h-8 w-auto object-contain dark:hidden" 
+              className="h-14 w-auto object-contain py-2 dark:hidden" 
             />
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
               alt="رسين"
-              className="h-8 w-auto object-contain hidden dark:block" 
+              className="h-14 w-auto object-contain py-2 hidden dark:block" 
             />
           </div>
 
