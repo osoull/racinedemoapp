@@ -36,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Auth />} />
 
+          {/* Admin Routes */}
           <Route
             path="/admin/dashboard"
             element={
@@ -124,9 +125,9 @@ function App() {
             }
           />
 
-          {/* Nouvelle route pour les investissements */}
+          {/* Investor Routes */}
           <Route
-            path="/investor/investments"
+            path="/investor/opportunities"
             element={
               <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
                 <Investments />
@@ -134,7 +135,7 @@ function App() {
             }
           />
 
-          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
       <Toaster />
