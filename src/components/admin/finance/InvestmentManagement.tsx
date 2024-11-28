@@ -1,6 +1,4 @@
 import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -14,33 +12,9 @@ import { Download } from "lucide-react"
 import { toast } from "sonner"
 import * as XLSX from 'xlsx'
 import { DateRange } from "react-day-picker"
-
-interface Investment {
-  id: string
-  amount: number
-  status: string
-  created_at: string
-  user: {
-    id: string
-    first_name: string
-    last_name: string
-  }
-  investment: {
-    id: string
-    funding_request: {
-      title: string
-      description: string
-    }
-  }
-  stripe_payments?: {
-    stripe_session_id: string
-    status: string
-  }[]
-  bank_transactions?: {
-    bank_status: string
-    reference_number: string
-  }[]
-}
+import { useInvestments } from "@/hooks/useInvestments"
+import { filterInvestments } from "@/utils/investmentFilters"
+import { Investment } from "@/types/investment"
 
 export function InvestmentManagement() {
   const [search, setSearch] = useState("")
@@ -52,75 +26,14 @@ export function InvestmentManagement() {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
   const [showRefundDialog, setShowRefundDialog] = useState(false)
 
-  const { data: investments, isLoading } = useQuery({
-    queryKey: ["investments"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select(`
-          *,
-          user:profiles(
-            id,
-            first_name,
-            last_name
-          ),
-          investment:investment_opportunities(
-            id,
-            funding_request:funding_requests(
-              title,
-              description
-            )
-          ),
-          stripe_payments(
-            stripe_session_id,
-            status
-          ),
-          bank_transactions(
-            bank_status,
-            reference_number
-          )
-        `)
-        .eq("type", "investment")
-        .order("created_at", { ascending: false })
+  const { data: investments, isLoading } = useInvestments()
 
-      if (error) throw error
-      return data as Investment[]
-    }
-  })
-
-  const filteredInvestments = investments?.filter(investment => {
-    if (search) {
-      const searchLower = search.toLowerCase()
-      const investorName = `${investment.user.first_name} ${investment.user.last_name}`.toLowerCase()
-      const opportunityTitle = investment.investment.funding_request.title.toLowerCase()
-      
-      if (!investorName.includes(searchLower) && 
-          !opportunityTitle.includes(searchLower) && 
-          !investment.id.toLowerCase().includes(searchLower)) {
-        return false
-      }
-    }
-
-    if (selectedStatus && investment.status !== selectedStatus) {
-      return false
-    }
-
-    if (selectedInvestor && investment.user.id !== selectedInvestor) {
-      return false
-    }
-
-    if (selectedOpportunity && investment.investment.id !== selectedOpportunity) {
-      return false
-    }
-
-    if (dateRange?.from) {
-      const investmentDate = new Date(investment.created_at)
-      if (investmentDate < dateRange.from || (dateRange.to && investmentDate > dateRange.to)) {
-        return false
-      }
-    }
-
-    return true
+  const filteredInvestments = filterInvestments(investments, {
+    search,
+    status: selectedStatus,
+    investor: selectedInvestor,
+    opportunity: selectedOpportunity,
+    dateRange
   })
 
   const handleExportExcel = () => {
@@ -191,7 +104,7 @@ export function InvestmentManagement() {
             </div>
 
             <InvestmentsTable 
-              investments={filteredInvestments || []}
+              investments={filteredInvestments}
               isLoading={isLoading}
               onViewDetails={(investment) => {
                 setSelectedInvestment(investment)
