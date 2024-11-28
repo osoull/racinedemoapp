@@ -1048,6 +1048,9 @@ export type Database = {
           basic_investor_fees: number
           qualified_investor_fees: number
           total_fees: number
+          total_investments: number
+          total_borrower_payments: number
+          active_opportunities: number
         }[]
       }
       calculate_transaction_fees: {

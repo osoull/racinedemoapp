@@ -9,6 +9,7 @@ import { formatCurrency } from "@/utils/feeCalculations";
 interface AdminFee {
   id: string;
   amount: number;
+  fee_amount: number;
   fee_type: string;
   status: string;
   created_at: string;
@@ -88,7 +89,14 @@ export function AdminFeesManagement() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as AdminFee[];
+      
+      // Transform the data to match the AdminFee interface
+      return (data as any[]).map(fee => ({
+        ...fee,
+        status: fee.status || 'pending',
+        funding_request: fee.funding_request?.[0] || { title: 'N/A' },
+        user: fee.user?.[0] || { first_name: 'N/A', last_name: '' }
+      })) as AdminFee[];
     },
   });
 

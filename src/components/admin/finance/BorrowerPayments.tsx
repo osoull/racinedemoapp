@@ -87,7 +87,13 @@ export function BorrowerPayments() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as BorrowerPayment[];
+
+      // Transform the data to match the BorrowerPayment interface
+      return (data as any[]).map(payment => ({
+        ...payment,
+        borrower: payment.borrower?.[0] || { first_name: 'N/A', last_name: '' },
+        funding_request: payment.funding_request?.[0] || { title: 'N/A', current_funding: 0 }
+      })) as BorrowerPayment[];
     },
   });
 

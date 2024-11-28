@@ -11,6 +11,10 @@ interface FinancialReport {
   total_fees: number;
   total_borrower_payments: number;
   active_opportunities: number;
+  admin_fees: number;
+  collection_fees: number;
+  basic_investor_fees: number;
+  qualified_investor_fees: number;
 }
 
 const columns: ColumnDef<FinancialReport>[] = [
@@ -49,7 +53,13 @@ export function FinancialReports() {
       });
 
       if (error) throw error;
-      return data as FinancialReport[];
+
+      // Transform the data to match the FinancialReport interface
+      return (data as any[]).map(report => ({
+        ...report,
+        total_fees: report.admin_fees + report.collection_fees + 
+                   report.basic_investor_fees + report.qualified_investor_fees
+      })) as FinancialReport[];
     },
   });
 

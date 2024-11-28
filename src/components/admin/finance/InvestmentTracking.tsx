@@ -82,7 +82,13 @@ export function InvestmentTracking() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Investment[];
+
+      // Transform the data to match the Investment interface
+      return (data as any[]).map(investment => ({
+        ...investment,
+        investor: investment.investor?.[0] || { first_name: 'N/A', last_name: '' },
+        funding_request: investment.funding_request?.[0] || { title: 'N/A' }
+      })) as Investment[];
     },
   });
 
