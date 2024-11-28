@@ -1,36 +1,58 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
 import { DataTable } from "@/components/ui/data-table"
 import { Loader2 } from "lucide-react"
-import { columns } from "./payments/columns"
+import { useBorrowerPayments } from "@/hooks/useBorrowerPayments"
+import { Badge } from "@/components/ui/badge"
+import { formatCurrency } from "@/utils/feeCalculations"
+import { ColumnDef } from "@tanstack/react-table"
+
+const columns: ColumnDef<any>[] = [
+  {
+    accessorKey: "payment_date",
+    header: "التاريخ",
+    cell: ({ row }) => new Date(row.getValue("payment_date")).toLocaleDateString("ar-SA"),
+  },
+  {
+    accessorKey: "amount",
+    header: "المبلغ",
+    cell: ({ row }) => formatCurrency(row.getValue("amount")),
+  },
+  {
+    accessorKey: "status",
+    header: "الحالة",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string
+      return (
+        <Badge variant={
+          status === "completed" ? "default" :
+          status === "pending" ? "secondary" :
+          "destructive"
+        }>
+          {status === "completed" ? "مكتمل" :
+           status === "pending" ? "قيد المعالجة" :
+           "فشل"}
+        </Badge>
+      )
+    },
+  },
+  {
+    accessorKey: "payment_type",
+    header: "نوع الدفع",
+    cell: ({ row }) => {
+      const type = row.getValue("payment_type") as string
+      return type === "fee_payment" ? "رسوم" : "دفعة"
+    },
+  },
+  {
+    accessorKey: "funding_request_title",
+    header: "المشروع",
+  },
+]
 
 export function BorrowerPayments() {
   const { user } = useAuth()
-
-  const { data: payments, isLoading } = useQuery({
-    queryKey: ["borrower-payments", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select(`
-          id,
-          amount,
-          status,
-          created_at,
-          type,
-          fee_amount
-        `)
-        .eq("user_id", user?.id)
-        .in("type", ["payment", "borrower_payment"])
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-      return data
-    },
-    enabled: !!user,
-  })
+  const { data: payments, isLoading } = useBorrowerPayments()
 
   if (isLoading) {
     return (

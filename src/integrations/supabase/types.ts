@@ -1247,6 +1247,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_borrower_detailed_stats: {
+        Args: {
+          p_borrower_id: string
+        }
+        Returns: {
+          total_requested: number
+          total_funded: number
+          active_requests: number
+          total_requests: number
+          pending_payments: number
+          success_rate: number
+          average_funding_time: unknown
+          total_fees_paid: number
+        }[]
+      }
       calculate_borrower_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1324,6 +1339,20 @@ export type Database = {
           user_type: string
         }
         Returns: Json
+      }
+      get_borrower_payment_history: {
+        Args: {
+          p_borrower_id: string
+        }
+        Returns: {
+          payment_id: string
+          payment_date: string
+          amount: number
+          status: string
+          payment_type: string
+          funding_request_id: string
+          funding_request_title: string
+        }[]
       }
       get_investors: {
         Args: Record<PropertyKey, never>
