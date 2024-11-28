@@ -17,7 +17,7 @@ import { InvestorManagement } from "@/components/admin/investors/InvestorManagem
 import { FundingRequestList } from "@/components/admin/funding/FundingRequestList";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { PaymentDefaultsManagement } from "@/components/admin/defaults/PaymentDefaultsManagement";
-import Investments from "@/pages/investor/Investments";
+import { InvestmentOpportunities } from "@/components/admin/investors/InvestmentOpportunities";
 
 function App() {
   const { loading } = useAuth();
@@ -81,6 +81,17 @@ function App() {
           />
 
           <Route
+            path="/admin/investment-opportunities"
+            element={
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <InvestmentOpportunities />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
             path="/admin/borrowers"
             element={
               <PrivateRoute allowedTypes={["admin"]}>
@@ -120,16 +131,6 @@ function App() {
                 <DashboardLayout sidebar={<AdminSidebar />}>
                   <PlatformSettings />
                 </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          {/* Nouvelle route pour les investissements */}
-          <Route
-            path="/investor/investments"
-            element={
-              <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-                <Investments />
               </PrivateRoute>
             }
           />

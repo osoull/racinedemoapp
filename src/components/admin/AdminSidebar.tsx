@@ -11,7 +11,8 @@ import {
   FileText,
   Building2,
   Wallet,
-  AlertCircle
+  AlertCircle,
+  LineChart
 } from "lucide-react"
 
 const menuItems = [
@@ -38,6 +39,12 @@ const menuItems = [
     icon: Users,
     path: "/admin/investors",
     description: "إدارة وتتبع المستثمرين"
+  },
+  {
+    title: "الاستثمارات",
+    icon: LineChart,
+    path: "/admin/investment-opportunities",
+    description: "إدارة فرص الاستثمار"
   },
   {
     title: "المقترضين",
