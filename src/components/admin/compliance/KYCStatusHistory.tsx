@@ -1,24 +1,24 @@
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Loader2 } from "lucide-react"
 
 interface KYCHistoryEntry {
-  id: string;
-  user_id: string | null;
-  old_status: string | null;
-  new_status: string | null;
-  changed_by: string | null;
-  notes: string | null;
-  created_at: string | null;
+  id: string
+  user_id: string | null
+  old_status: string | null
+  new_status: string | null
+  changed_by: string | null
+  notes: string | null
+  created_at: string | null
   user: {
-    first_name: string;
-    last_name: string;
-  };
+    first_name: string
+    last_name: string
+  }
   admin: {
-    first_name: string;
-    last_name: string;
-  };
+    first_name: string
+    last_name: string
+  }
 }
 
 export function KYCStatusHistory() {
@@ -39,49 +39,46 @@ export function KYCStatusHistory() {
           )
         `)
         .order('created_at', { ascending: false })
+        .limit(10)
       
       if (error) throw error
       
-      // Transform the data to match KYCHistoryEntry type
       return (data as any[]).map(entry => ({
         ...entry,
-        user: entry.user?.[0] || { first_name: 'Unknown', last_name: 'User' },
-        admin: entry.admin?.[0] || { first_name: 'Unknown', last_name: 'Admin' }
+        user: entry.user || { first_name: 'مستخدم', last_name: 'محذوف' },
+        admin: entry.admin || { first_name: 'مشرف', last_name: 'النظام' }
       }))
     }
   })
 
   if (isLoading) {
-    return <div>جاري التحميل...</div>
+    return (
+      <div className="flex items-center justify-center p-4">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    )
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>سجل التغييرات</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[300px]">
-          <div className="space-y-4">
-            {history?.map((entry) => (
-              <div key={entry.id} className="border-b pb-2">
-                <p className="font-medium">
-                  {entry.user.first_name} {entry.user.last_name}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  تم تغيير الحالة من {entry.old_status} إلى {entry.new_status}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  بواسطة: {entry.admin.first_name} {entry.admin.last_name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(entry.created_at || '').toLocaleString('ar-SA')}
-                </p>
-              </div>
-            ))}
+    <ScrollArea className="h-[300px]">
+      <div className="space-y-4">
+        {history?.map((entry) => (
+          <div key={entry.id} className="border-b pb-2">
+            <p className="font-medium">
+              {entry.user.first_name} {entry.user.last_name}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              تم تغيير الحالة من {entry.old_status || 'غير محدد'} إلى {entry.new_status}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              بواسطة: {entry.admin.first_name} {entry.admin.last_name}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {new Date(entry.created_at || '').toLocaleString('ar-SA')}
+            </p>
           </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+    </ScrollArea>
   )
 }
