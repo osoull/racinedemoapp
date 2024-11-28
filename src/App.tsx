@@ -18,6 +18,7 @@ import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
 import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
+import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
 
 function App() {
   return (
@@ -51,7 +52,7 @@ function App() {
                   <DashboardLayout sidebar={<BorrowerSidebar />}>
                     <Routes>
                       <Route index element={<Navigate to="dashboard" />} />
-                      <Route path="dashboard" element={<BorrowerDashboard />} />
+                      <Route path="dashboard" element={<BorrowerDashboardOverview />} />
                       <Route path="profile" element={<BorrowerProfile />} />
                       <Route path="kyc" element={<BorrowerKYCForm />} />
                       <Route path="funding-requests" element={<FundingRequestsList />} />
