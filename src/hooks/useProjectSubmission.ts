@@ -6,40 +6,16 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
-const projectSchema = z.object({
+export const projectSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
   category: z.string().min(1, "تصنيف المشروع مطلوب"),
-  location: z.string().min(1, "موقع المشروع مطلوب"),
-  summary: z.string().min(50, "يجب أن يكون الملخص 50 حرفاً على الأقل"),
-  objectives: z.array(z.string()).min(1, "يجب إضافة هدف واحد على الأقل"),
-  problem: z.string().min(1, "وصف المشكلة مطلوب"),
-  solution: z.string().min(1, "وصف الحل مطلوب"),
-  impact: z.string().min(1, "وصف الأثر المتوقع مطلوب"),
   funding_goal: z.number().min(1000, "المبلغ المستهدف يجب أن يكون أكبر من 1000 ريال"),
-  fund_allocation: z.array(z.object({
+  campaign_duration: z.number().min(1, "مدة الحملة مطلوبة"),
+  description: z.string().min(50, "يجب أن يكون الوصف 50 حرفاً على الأقل"),
+  fund_usage_plan: z.array(z.object({
     item: z.string(),
     amount: z.number()
-  })).min(1, "يجب إضافة بند واحد على الأقل"),
-  repayment_plan: z.string().min(1, "خطة السداد مطلوبة"),
-  start_date: z.date(),
-  end_date: z.date(),
-  milestones: z.array(z.object({
-    title: z.string(),
-    date: z.date(),
-    description: z.string()
-  })).min(1, "يجب إضافة مرحلة واحدة على الأقل"),
-  team_members: z.array(z.object({
-    name: z.string(),
-    role: z.string(),
-    experience: z.string(),
-    linkedin: z.string().optional()
-  })).min(1, "يجب إضافة عضو واحد على الأقل"),
-  risks: z.array(z.object({
-    description: z.string(),
-    mitigation: z.string()
-  })),
-  partnerships: z.array(z.string()),
-  market_research: z.string()
+  })).min(1, "يجب إضافة بند واحد على الأقل")
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -52,12 +28,7 @@ export function useProjectSubmission() {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      objectives: [""],
-      fund_allocation: [{ item: "", amount: 0 }],
-      milestones: [{ title: "", date: new Date(), description: "" }],
-      team_members: [{ name: "", role: "", experience: "" }],
-      risks: [{ description: "", mitigation: "" }],
-      partnerships: [""],
+      fund_usage_plan: [{ item: "", amount: 0 }],
     }
   });
 
@@ -74,32 +45,16 @@ export function useProjectSubmission() {
     setIsSubmitting(true);
     try {
       const { error } = await supabase
-        .from('projects')
+        .from('funding_requests')
         .insert({
           owner_id: user.id,
           title: data.title,
-          description: data.summary,
+          description: data.description,
           funding_goal: data.funding_goal,
-          classification: data.category,
-          status: 'draft',
-          metadata: {
-            location: data.location,
-            objectives: data.objectives,
-            problem: data.problem,
-            solution: data.solution,
-            impact: data.impact,
-            fund_allocation: data.fund_allocation,
-            repayment_plan: data.repayment_plan,
-            timeline: {
-              start_date: data.start_date,
-              end_date: data.end_date,
-              milestones: data.milestones
-            },
-            team_members: data.team_members,
-            risks: data.risks,
-            partnerships: data.partnerships,
-            market_research: data.market_research
-          }
+          category: data.category,
+          campaign_duration: data.campaign_duration,
+          fund_usage_plan: data.fund_usage_plan,
+          status: 'draft'
         });
 
       if (error) throw error;

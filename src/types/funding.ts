@@ -31,3 +31,12 @@ export type FundingRequestStatus =
   | 'approved'
   | 'rejected'
   | 'completed';
+
+export interface Project extends FundingRequest {
+  investments?: Array<{
+    id: string;
+    amount: number;
+    status: string;
+    created_at: string;
+  }>;
+}
