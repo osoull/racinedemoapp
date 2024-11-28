@@ -5,11 +5,9 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { 
   LayoutDashboard, 
-  FileText,
   Settings,
   Shield,
   Wallet,
-  PieChart,
   Users,
   DollarSign
 } from "lucide-react"
@@ -26,12 +24,6 @@ const menuItems = [
     icon: Users,
     path: "/admin/investors",
     description: "إدارة المستثمرين"
-  },
-  {
-    title: "المشاريع",
-    icon: FileText,
-    path: "/admin/projects",
-    description: "إدارة المشاريع"
   },
   {
     title: "المقترضين",

@@ -10,7 +10,6 @@ import InvestorDashboard from "@/pages/investor/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import InvestorsPage from "@/pages/admin/investors"
-import Portfolio from "@/pages/investor/Portfolio"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
 import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement"
@@ -18,6 +17,7 @@ import { TransactionManagement } from "@/components/admin/transaction/Transactio
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking"
+
 import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useEffect, useState } from "react"
@@ -93,7 +93,6 @@ function App() {
                       <PrivateRoute allowedRoles={["investor"]}>
                         <Routes>
                           <Route index element={<InvestorDashboard />} />
-                          <Route path="portfolio" element={<Portfolio />} />
                           <Route path="reports" element={<div>Reports Page</div>} />
                           <Route path="verification" element={<div>Verification Page</div>} />
                           <Route path="support" element={<div>Support Page</div>} />
