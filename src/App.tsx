@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 function App() {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
   const { data: profile, isLoading: profileLoading } = useQuery({
@@ -38,9 +38,21 @@ function App() {
       return data;
     },
     enabled: !!user,
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  if (loading || profileLoading) {
+  // Show loading spinner while authentication is being checked
+  if (authLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Show loading spinner while profile is being fetched (only if user is authenticated)
+  if (user && profileLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -52,7 +64,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Route publique pour l'authentification */}
           <Route 
             path="/" 
             element={
@@ -72,7 +83,6 @@ function App() {
             } 
           />
 
-          {/* Routes protégées */}
           <Route 
             path="/admin/*" 
             element={
@@ -100,7 +110,6 @@ function App() {
             } 
           />
 
-          {/* Redirection par défaut */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
