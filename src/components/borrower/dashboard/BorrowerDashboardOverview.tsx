@@ -4,12 +4,15 @@ import { useAuth } from "@/hooks/useAuth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { KycStatusLabel } from "@/components/admin/KycStatusLabel"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
-import { Loader2 } from "lucide-react"
+import { Loader2, Wallet, FileText, PieChart, TrendingUp } from "lucide-react"
+import { StatCard } from "@/components/dashboard/StatCard"
+import { useBorrowerStats } from "@/hooks/useBorrowerStats"
 
 export function BorrowerDashboardOverview() {
   const { user } = useAuth()
+  const { data: stats, isLoading: isLoadingStats } = useBorrowerStats()
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ["borrower-profile", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,7 +30,7 @@ export function BorrowerDashboardOverview() {
     enabled: !!user,
   })
 
-  if (isLoading) {
+  if (isLoadingProfile || isLoadingStats) {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -37,6 +40,7 @@ export function BorrowerDashboardOverview() {
 
   return (
     <div className="space-y-6">
+      {/* KYC Status Card */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -60,6 +64,35 @@ export function BorrowerDashboardOverview() {
           )}
         </CardContent>
       </Card>
+
+      {/* Statistics Grid */}
+      {profile?.kyc_status === "approved" && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="إجمالي التمويل المطلوب"
+            value={stats?.total_requested || 0}
+            icon={Wallet}
+            showAsCurrency
+          />
+          <StatCard
+            title="التمويل المستلم"
+            value={stats?.total_funded || 0}
+            icon={TrendingUp}
+            showAsCurrency
+          />
+          <StatCard
+            title="الطلبات النشطة"
+            value={stats?.active_requests || 0}
+            icon={FileText}
+          />
+          <StatCard
+            title="نسبة النجاح"
+            value={stats?.success_rate || 0}
+            icon={PieChart}
+            suffix="%"
+          />
+        </div>
+      )}
     </div>
   )
 }
