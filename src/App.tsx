@@ -44,7 +44,6 @@ function App() {
             element={user ? <Navigate to={getUserRedirectPath()} replace /> : <Auth />} 
           />
 
-          {/* Include the routes directly instead of components */}
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="/borrower/*" element={<BorrowerRoutes />} />
           <Route path="/investor/*" element={<InvestorRoutes />} />
