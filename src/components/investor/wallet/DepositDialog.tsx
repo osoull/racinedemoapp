@@ -1,189 +1,114 @@
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/components/ui/use-toast"
-import { supabase } from "@/integrations/supabase/client"
-import { CreditCard, Building2, AlertCircle, ArrowDownLeft, Loader2 } from "lucide-react"
-import { useBankDetails } from "@/hooks/useBankDetails"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { BankTransferDetails } from "./deposit/BankTransferDetails"
-import { AmountInput } from "./deposit/AmountInput"
-import { CardPayment } from "./deposit/CardPayment"
-import { useAuth } from "@/contexts/AuthContext"
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { formatCurrency } from "@/utils/feeCalculations";
 
-interface DepositDialogProps {
-  onSuccess?: () => void
-}
+export function DepositDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const [amount, setAmount] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState("");
+  const { user } = useAuth();
+  const { toast } = useToast();
 
-export function DepositDialog({ onSuccess }: DepositDialogProps) {
-  const [amount, setAmount] = useState("")
-  const [isOpen, setIsOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [amountError, setAmountError] = useState<string>("")
-  const { toast } = useToast()
-  const { data: bankDetails, isLoading, error } = useBankDetails()
-  const { user } = useAuth()
+  const { data: requests } = useQuery({
+    queryKey: ["funding-requests"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("funding_requests")
+        .select("*")
+        .eq("status", "active");
 
-  const validateAmount = () => {
-    if (!amount) {
-      setAmountError("يرجى إدخال المبلغ")
-      return false
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const handleDeposit = async () => {
+    if (!amount || !selectedRequest) {
+      toast({
+        title: "خطأ",
+        description: "يرجى تعبئة جميع الحقول المطلوبة",
+        variant: "destructive",
+      });
+      return;
     }
-    const numAmount = Number(amount)
-    if (isNaN(numAmount) || numAmount <= 0) {
-      setAmountError("يرجى إدخال مبلغ صحيح")
-      return false
-    }
-    setAmountError("")
-    return true
-  }
-
-  const handleBankTransfer = async () => {
-    if (!validateAmount() || !user) return
 
     try {
-      setIsSubmitting(true)
-
-      // First create the transaction
-      const { data: transaction, error: transactionError } = await supabase
-        .from('transactions')
+      const { data, error } = await supabase
+        .from("transactions")
         .insert({
-          user_id: user.id,
           amount: Number(amount),
-          type: 'deposit',
-          status: 'pending'
+          type: "investment",
+          user_id: user?.id,
+          status: "pending",
         })
         .select()
-        .single()
+        .single();
 
-      if (transactionError) throw transactionError
-
-      // If this is a project fee payment, update the project status to 'pending'
-      if (transaction.type === 'project_fee') {
-        const { error: projectError } = await supabase
-          .from('projects')
-          .update({ status: 'pending' })
-          .eq('fees_transaction_id', transaction.id)
-
-        if (projectError) throw projectError
-      }
+      if (error) throw error;
 
       toast({
-        title: "تم تسجيل طلب التحويل",
-        description: "سيتم تحديث رصيدك بعد التأكد من التحويل",
-      })
+        title: "تم إنشاء الطلب",
+        description: "سيتم تحويلك إلى صفحة الدفع",
+      });
 
-      setIsOpen(false)
-      onSuccess?.()
-    } catch (err) {
-      console.error('Error creating bank transfer:', err)
+      // Reset form
+      setAmount("");
+      setSelectedRequest("");
+      onOpenChange(false);
+    } catch (error) {
       toast({
-        variant: "destructive",
         title: "خطأ",
-        description: "حدث خطأ أثناء تسجيل التحويل. يرجى المحاولة مرة أخرى.",
-      })
-    } finally {
-      setIsSubmitting(false)
+        description: "حدث خطأ أثناء معالجة الطلب",
+        variant: "destructive",
+      });
     }
-  }
-
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open)
-    if (!open) {
-      setAmount("")
-      setAmountError("")
-      setIsSubmitting(false)
-    }
-  }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <ArrowDownLeft className="ml-2 h-4 w-4" />
-          إيداع رصيد
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>إيداع رصيد</DialogTitle>
+          <DialogTitle>إيداع مبلغ</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 py-4">
-          <AmountInput 
-            amount={amount} 
-            setAmount={setAmount} 
-            error={amountError}
-          />
 
-          <Tabs defaultValue="bank" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="bank" className="space-x-2">
-                <Building2 className="h-4 w-4" />
-                <span>تحويل بنكي</span>
-              </TabsTrigger>
-              <TabsTrigger value="card" className="space-x-2">
-                <CreditCard className="h-4 w-4" />
-                <span>بطاقة ائتمان</span>
-              </TabsTrigger>
-            </TabsList>
+        <div className="space-y-4 pt-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">المشروع</label>
+            <Select value={selectedRequest} onValueChange={setSelectedRequest}>
+              <SelectTrigger>
+                <SelectValue placeholder="اختر المشروع" />
+              </SelectTrigger>
+              <SelectContent>
+                {requests?.map((request) => (
+                  <SelectItem key={request.id} value={request.id}>
+                    {request.title} - {formatCurrency(request.funding_goal)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            <TabsContent value="bank" className="space-y-4">
-              <Alert variant="default">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  يرجى استخدام المعلومات البنكية أدناه لإتمام التحويل. سيتم تحديث رصيدك تلقائياً خلال يوم عمل واحد بعد استلام وتأكيد التحويل.
-                </AlertDescription>
-              </Alert>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">المبلغ</label>
+            <Input
+              type="number"
+              placeholder="أدخل المبلغ"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
 
-              {isLoading ? (
-                <div className="flex items-center justify-center p-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-              ) : error ? (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    حدث خطأ أثناء تحميل المعلومات البنكية. يرجى المحاولة مرة أخرى لاحقاً.
-                  </AlertDescription>
-                </Alert>
-              ) : (
-                <BankTransferDetails 
-                  bankDetails={bankDetails}
-                  isLoading={isLoading}
-                  error={error}
-                />
-              )}
-              
-              <Button 
-                onClick={handleBankTransfer} 
-                className="w-full"
-                variant="default"
-                disabled={isLoading || !!error || isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    جاري التسجيل...
-                  </>
-                ) : (
-                  "تأكيد التحويل البنكي"
-                )}
-              </Button>
-            </TabsContent>
-
-            <TabsContent value="card" className="space-y-4">
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  سيتم تحويلك إلى صفحة الدفع الآمنة لإتمام العملية
-                </AlertDescription>
-              </Alert>
-              <CardPayment amount={amount} onSuccess={onSuccess} />
-            </TabsContent>
-          </Tabs>
+          <Button onClick={handleDeposit} className="w-full">
+            إيداع
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
