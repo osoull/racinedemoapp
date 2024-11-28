@@ -38,21 +38,21 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </Sheet>
 
           {/* Logo */}
-          <div className="flex items-center gap-2 mr-4">
+          <div className="flex items-center mr-auto">
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
-              className="h-8 w-auto object-contain dark:hidden" 
+              className="h-10 w-auto object-contain dark:hidden" 
             />
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
               alt="رسين"
-              className="h-8 w-auto object-contain hidden dark:block" 
+              className="h-10 w-auto object-contain hidden dark:block" 
             />
           </div>
 
           {/* Right side actions */}
-          <div className="mr-auto flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
