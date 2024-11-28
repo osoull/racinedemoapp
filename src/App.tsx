@@ -32,7 +32,9 @@ function App() {
               path="/admin"
               element={
                 <PrivateRoute allowedTypes={["admin"]}>
-                  <DashboardLayout sidebar={<AdminSidebar />} />
+                  <DashboardLayout sidebar={<AdminSidebar />}>
+                    <Outlet />
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             >
@@ -52,7 +54,9 @@ function App() {
               path="/borrower"
               element={
                 <PrivateRoute allowedTypes={["borrower"]}>
-                  <DashboardLayout sidebar={<BorrowerSidebar />} />
+                  <DashboardLayout sidebar={<BorrowerSidebar />}>
+                    <Outlet />
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             >
@@ -69,7 +73,9 @@ function App() {
               path="/investor"
               element={
                 <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-                  <DashboardLayout sidebar={<div>Investor Sidebar</div>} />
+                  <DashboardLayout sidebar={<div>Investor Sidebar</div>}>
+                    <Outlet />
+                  </DashboardLayout>
                 </PrivateRoute>
               }
             >
