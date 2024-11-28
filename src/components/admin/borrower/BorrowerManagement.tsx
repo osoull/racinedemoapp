@@ -2,8 +2,11 @@ import { Card } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { BorrowerDetailsDialog } from "./BorrowerDetailsDialog"
+import { useState } from "react"
 
 export function BorrowerManagement() {
+  const [selectedBorrowerId, setSelectedBorrowerId] = useState<string | null>(null)
+
   const { data: borrowers, isLoading } = useQuery({
     queryKey: ["borrowers"],
     queryFn: async () => {
@@ -37,7 +40,25 @@ export function BorrowerManagement() {
         ) : (
           <div className="space-y-4">
             {borrowers?.map((borrower) => (
-              <BorrowerDetailsDialog key={borrower.id} borrowerId={borrower.id} />
+              <div 
+                key={borrower.id} 
+                className="p-4 border rounded-lg cursor-pointer hover:bg-accent"
+                onClick={() => setSelectedBorrowerId(borrower.id)}
+              >
+                <h3 className="font-medium">{borrower.company_name || `${borrower.first_name} ${borrower.last_name}`}</h3>
+                <p className="text-sm text-muted-foreground">{borrower.email}</p>
+              </div>
+            ))}
+
+            {borrowers?.map((borrower) => (
+              <BorrowerDetailsDialog 
+                key={borrower.id}
+                borrowerId={borrower.id}
+                open={selectedBorrowerId === borrower.id}
+                onOpenChange={(open) => {
+                  if (!open) setSelectedBorrowerId(null)
+                }}
+              />
             ))}
           </div>
         )}
