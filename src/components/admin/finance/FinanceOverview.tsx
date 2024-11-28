@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AdminFeesManagement } from "./AdminFeesManagement"
+import { FeesManagement } from "./FeesManagement"
 import { FinancialReports } from "./FinancialReports"
 import { InvestmentTracking } from "./InvestmentTracking"
 import { BorrowerPayments } from "./BorrowerPayments"
@@ -22,7 +22,7 @@ export function FinanceOverview() {
             </TabsList>
             
             <TabsContent value="fees">
-              <AdminFeesManagement />
+              <FeesManagement />
             </TabsContent>
             
             <TabsContent value="reports">
