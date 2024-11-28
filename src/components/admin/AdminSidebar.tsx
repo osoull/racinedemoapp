@@ -1,8 +1,5 @@
 import { useLocation } from "react-router-dom"
-import { LogOut } from "lucide-react"
 import { SidebarItem } from "./SidebarItem"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/contexts/AuthContext"
 import { 
   LayoutDashboard, 
   Settings,
@@ -74,7 +71,6 @@ const menuItems = [
 
 export const AdminSidebar = () => {
   const location = useLocation()
-  const { signOut } = useAuth()
 
   return (
     <div className="flex h-full flex-col border-l">
@@ -86,16 +82,6 @@ export const AdminSidebar = () => {
             isActive={location.pathname === item.path}
           />
         ))}
-      </div>
-      <div className="border-t p-4">
-        <Button 
-          variant="ghost" 
-          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={() => signOut?.()}
-        >
-          <LogOut className="ml-2 h-5 w-5" />
-          تسجيل الخروج
-        </Button>
       </div>
     </div>
   )
