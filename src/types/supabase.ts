@@ -43,11 +43,7 @@ export interface Investor {
   last_name: string
   created_at: string
   kyc_status: string
-  investor_type: string
-  avatar_url: string
-  annual_income: number
-  risk_tolerance: string
-  investment_experience: string
+  user_type: string
   investor_kyc: {
     verification_status: string
   }

@@ -9,16 +9,13 @@ export function FeesChart() {
   const { data: feesData, isLoading } = useQuery({
     queryKey: ["fees-chart"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc<RevenueByPeriod[], any>(
-        'calculate_revenue_by_period',
-        {
-          start_date: new Date(new Date().setMonth(new Date().getMonth() - 6)).toISOString(),
-          end_date: new Date().toISOString()
-        }
-      )
+      const { data, error } = await supabase.rpc('calculate_revenue_by_period', {
+        start_date: new Date(new Date().setMonth(new Date().getMonth() - 6)).toISOString(),
+        end_date: new Date().toISOString()
+      })
 
       if (error) throw error
-      return data || []
+      return data as RevenueByPeriod[]
     }
   })
 
@@ -30,13 +27,13 @@ export function FeesChart() {
     )
   }
 
-  const chartData = feesData.map(period => ({
+  const chartData = feesData?.map(period => ({
     name: period.period,
     'عمولة الإدارة': period.admin_fees,
     'عمولة التحصيل': period.collection_fees,
     'عمولة المستثمر الأساسي': period.basic_investor_fees,
     'عمولة المستثمر المؤهل': period.qualified_investor_fees
-  }))
+  })) || []
 
   return (
     <Card className="col-span-4">

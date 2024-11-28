@@ -5,6 +5,7 @@ import { InvestorList } from "@/components/admin/investors/InvestorList"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
+import { Investor } from "@/types/supabase"
 
 export default function InvestorsPage() {
   const { data: investors, isLoading } = useQuery({
@@ -14,12 +15,12 @@ export default function InvestorsPage() {
         .from("profiles")
         .select(`
           *,
-          investor_kyc (*)
+          investor_kyc (verification_status)
         `)
         .in("user_type", ["basic_investor", "qualified_investor"])
 
       if (error) throw error
-      return data
+      return data as Investor[]
     }
   })
 
