@@ -12,29 +12,26 @@ export function PendingActionsAlert() {
   const { data: pendingActions } = useQuery({
     queryKey: ["pending-actions"],
     queryFn: async () => {
-      const [pendingRequests, pendingPayments, pendingDocs] = await Promise.all([
+      const [{ count: pendingRequests }, { count: pendingPayments }, { count: pendingDocs }] = await Promise.all([
         supabase
           .from("funding_requests")
-          .select("id")
-          .eq("status", "submitted")
-          .count(),
+          .select("*", { count: 'exact', head: true })
+          .eq("status", "submitted"),
         supabase
           .from("transactions")
-          .select("id")
-          .eq("status", "pending")
-          .count(),
+          .select("*", { count: 'exact', head: true })
+          .eq("status", "pending"),
         supabase
           .from("funding_request_documents")
-          .select("request_id")
+          .select("*", { count: 'exact', head: true })
           .eq("document_type", "required")
           .is("document_url", null)
-          .count()
       ])
 
       return {
-        pendingRequests: pendingRequests.count || 0,
-        pendingPayments: pendingPayments.count || 0,
-        pendingDocs: pendingDocs.count || 0
+        pendingRequests: pendingRequests || 0,
+        pendingPayments: pendingPayments || 0,
+        pendingDocs: pendingDocs || 0
       }
     }
   })

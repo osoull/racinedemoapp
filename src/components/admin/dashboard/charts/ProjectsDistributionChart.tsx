@@ -12,7 +12,7 @@ export function ProjectsDistributionChart() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("calculate_funding_request_stats")
       if (error) throw error
-      return data
+      return data[0]
     },
   })
 
@@ -24,10 +24,12 @@ export function ProjectsDistributionChart() {
     )
   }
 
-  const chartData = Object.entries(stats.requests_by_category || {}).map(([name, value]) => ({
-    name,
-    value: Number(value)
-  }))
+  const chartData = stats?.requests_by_category 
+    ? Object.entries(stats.requests_by_category).map(([name, value]) => ({
+        name,
+        value: typeof value === 'number' ? value : 0
+      }))
+    : []
 
   return (
     <Card className="col-span-2">

@@ -7,9 +7,14 @@ export function DashboardStats() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["funding-stats"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("calculate_funding_request_stats")
-      if (error) throw error
-      return data
+      const [fundingStats, platformStats] = await Promise.all([
+        supabase.rpc("calculate_funding_request_stats").then(res => res.data?.[0] || {}),
+        supabase.rpc("calculate_platform_stats").then(res => res.data?.[0] || {})
+      ])
+      return {
+        ...fundingStats,
+        active_users: platformStats.active_investors || 0
+      }
     },
   })
 
@@ -29,9 +34,9 @@ export function DashboardStats() {
           <FileCheck className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.total_requests}</div>
+          <div className="text-2xl font-bold">{stats?.total_requests || 0}</div>
           <div className="text-xs text-muted-foreground">
-            {stats.approved_requests} تمت الموافقة عليها
+            {stats?.approved_requests || 0} تمت الموافقة عليها
           </div>
         </CardContent>
       </Card>
@@ -43,10 +48,10 @@ export function DashboardStats() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {stats.total_amount_approved?.toLocaleString()} ريال
+            {(stats?.total_amount_approved || 0).toLocaleString()} ريال
           </div>
           <div className="text-xs text-muted-foreground">
-            نسبة النجاح: {((stats.approved_requests / stats.total_requests) * 100).toFixed(1)}%
+            نسبة النجاح: {(((stats?.approved_requests || 0) / (stats?.total_requests || 1)) * 100).toFixed(1)}%
           </div>
         </CardContent>
       </Card>
@@ -57,9 +62,9 @@ export function DashboardStats() {
           <AlertCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.pending_requests}</div>
+          <div className="text-2xl font-bold">{stats?.pending_requests || 0}</div>
           <div className="text-xs text-muted-foreground">
-            {stats.rejected_requests} تم رفضها
+            {stats?.rejected_requests || 0} تم رفضها
           </div>
         </CardContent>
       </Card>
@@ -70,7 +75,7 @@ export function DashboardStats() {
           <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.active_users}</div>
+          <div className="text-2xl font-bold">{stats?.active_users || 0}</div>
         </CardContent>
       </Card>
     </div>
