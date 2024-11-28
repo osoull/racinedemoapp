@@ -65,4 +65,15 @@ export interface DatabaseFunctions {
       investment_experience: string
     }[]
   }
+  calculate_borrower_stats: {
+    Args: Record<PropertyKey, never>
+    Returns: {
+      total_borrowers: number
+      active_borrowers: number
+      borrower_growth: number
+      active_growth: number
+      total_requests: number
+      total_borrowed: number
+    }[]
+  }
 }

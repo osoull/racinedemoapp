@@ -997,6 +997,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_borrower_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_borrowers: number
+          active_borrowers: number
+          borrower_growth: number
+          active_growth: number
+          total_requests: number
+          total_borrowed: number
+        }[]
+      }
       calculate_funding_request_stats: {
         Args: {
           start_date?: string

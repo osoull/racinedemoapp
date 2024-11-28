@@ -85,7 +85,7 @@ export default function BorrowerManagement() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('calculate_borrower_stats')
       if (error) throw error
-      return data
+      return data[0]
     },
   })
 
@@ -148,7 +148,7 @@ export default function BorrowerManagement() {
             title="إجمالي التمويل"
             value={stats?.total_borrowed || 0}
             icon={Wallet}
-            formatAsCurrency
+            showAsCurrency
           />
         </div>
 
@@ -173,7 +173,6 @@ export default function BorrowerManagement() {
                 <DataTable 
                   columns={columns} 
                   data={borrowers || []}
-                  searchPlaceholder="البحث عن طريق اسم الشركة أو السجل التجاري..."
                 />
               )}
             </Tabs>

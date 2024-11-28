@@ -1,61 +1,39 @@
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 
 interface StatCardProps {
-  icon: LucideIcon;
-  title: string;
-  value: string | number;
-  subtitle?: string;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-  iconBgColor?: string;
-  iconColor?: string;
+  title: string
+  value: number
+  icon: LucideIcon
+  trend?: number
+  showAsCurrency?: boolean
 }
 
-export function StatCard({ 
-  icon: Icon, 
-  title, 
-  value, 
-  subtitle, 
-  trend,
-  iconBgColor = "bg-primary-50",
-  iconColor = "text-primary"
-}: StatCardProps) {
-  const formatCurrency = (value: string | number) => {
-    if (typeof value === 'number') {
-      return new Intl.NumberFormat('ar-SA', {
-        style: 'currency',
-        currency: 'SAR'
-      }).format(value)
-    }
-    return value
-  }
+export function StatCard({ title, value, icon: Icon, trend, showAsCurrency }: StatCardProps) {
+  const formattedValue = showAsCurrency 
+    ? new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(value)
+    : value.toLocaleString('ar-SA')
 
   return (
-    <div className="rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md">
-      <div className="flex items-center justify-between">
-        <div className={`rounded-lg ${iconBgColor} p-3`}>
-          <Icon className={`h-6 w-6 ${iconColor}`} />
-        </div>
-        {trend && (
-          <div className={`flex items-center gap-1 text-sm ${
-            trend.isPositive ? 'text-green-600' : 'text-red-600'
-          }`}>
-            <span>{trend.value}%</span>
-            <span>{trend.isPositive ? '↑' : '↓'}</span>
-          </div>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">
+          {title}
+        </CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{formattedValue}</div>
+        {trend !== undefined && (
+          <p className={cn(
+            "text-xs",
+            trend > 0 ? "text-green-600" : trend < 0 ? "text-red-600" : "text-gray-600"
+          )}>
+            {trend > 0 ? "+" : ""}{trend}% منذ الشهر الماضي
+          </p>
         )}
-      </div>
-      <div className="mt-4">
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <div className="flex items-baseline gap-2">
-          <h3 className="text-2xl font-bold">{formatCurrency(value)}</h3>
-          {subtitle && (
-            <p className="text-sm text-muted-foreground">{subtitle}</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+      </CardContent>
+    </Card>
+  )
 }
