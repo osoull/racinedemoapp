@@ -463,6 +463,54 @@ export type Database = {
           },
         ]
       }
+      investment_opportunities: {
+        Row: {
+          created_at: string | null
+          end_date: string | null
+          funding_request_id: string
+          id: string
+          start_date: string | null
+          status: string
+          total_invested: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date?: string | null
+          funding_request_id: string
+          id?: string
+          start_date?: string | null
+          status?: string
+          total_invested?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string | null
+          funding_request_id?: string
+          id?: string
+          start_date?: string | null
+          status?: string
+          total_invested?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_funding_request"
+            columns: ["funding_request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "investment_opportunities_funding_request_id_fkey"
+            columns: ["funding_request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       investor_kyc: {
         Row: {
           annual_income: number | null
