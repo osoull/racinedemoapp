@@ -1,19 +1,19 @@
-import { Navigate, Routes, Route } from "react-router-dom";
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
-import { InvestorSidebar } from "@/components/investor/InvestorSidebar";
-import { PrivateRoute } from "@/components/auth/PrivateRoute";
-import { useAuth } from "@/contexts/AuthContext";
-import DashboardOverview from "@/components/admin/dashboard/DashboardOverview";
-import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
-import InvestorDashboard from "@/pages/investor/Dashboard";
+import { Navigate, Routes, Route } from "react-router-dom"
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar"
+import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
+import { PrivateRoute } from "@/components/auth/PrivateRoute"
+import { useAuth } from "@/contexts/AuthContext"
+import AdminDashboard from "@/pages/admin/Dashboard"
+import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
+import InvestorDashboard from "@/pages/investor/Dashboard"
 
 export const RoleRoutes = () => {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/auth" replace />
   }
 
   return (
@@ -21,9 +21,7 @@ export const RoleRoutes = () => {
       {/* Admin Dashboard */}
       <Route path="/admin" element={
         <PrivateRoute allowedTypes={["admin"]}>
-          <DashboardLayout sidebar={<AdminSidebar />}>
-            <DashboardOverview />
-          </DashboardLayout>
+          <AdminDashboard />
         </PrivateRoute>
       } />
 
@@ -55,5 +53,5 @@ export const RoleRoutes = () => {
       {/* Catch all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  );
-};
+  )
+}
