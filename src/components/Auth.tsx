@@ -71,19 +71,21 @@ export function Auth() {
     setIsLoading(true)
     try {
       const { error } = await signIn(email, password)
-      if (error) throw error
+      if (error) {
+        toast({
+          title: "خطأ",
+          description: error.message,
+          variant: "destructive",
+        })
+        throw error
+      }
       
       toast({
         title: "تم تسجيل الدخول بنجاح",
         description: "مرحباً بك في لوحة التحكم",
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error("Auth error:", error)
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تسجيل الدخول",
-        variant: "destructive",
-      })
     } finally {
       setIsLoading(false)
     }
