@@ -35,7 +35,12 @@ export function FundingRequestForm() {
       const { error } = await supabase
         .from("funding_requests")
         .insert({
-          ...data,
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          funding_goal: data.funding_goal,
+          campaign_duration: data.campaign_duration,
+          fund_usage_plan: data.fund_usage_plan,
           owner_id: user?.id,
           status: "draft"
         })

@@ -1,10 +1,29 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+import { Json } from './json'
+import {
+  BankAccountsTable,
+  BankTransactionsTable,
+  BorrowerKYCTable,
+  CommissionsTable,
+  FeeTrackingTable,
+  FundingRequestCommentsTable,
+  FundingRequestDocumentsTable,
+  FundingRequestStatusHistoryTable,
+  FundingRequestsTable,
+  InvestmentOpportunitiesTable,
+  InvestorKYCTable,
+  KYCDocumentsTable,
+  KYCStatusHistoryTable,
+  NotificationsTable,
+  PlatformLicensesTable,
+  PlatformSettingsTable,
+  PlatformStatisticsTable,
+  ProfilesTable,
+  RegulatoryReportsTable,
+  StripePaymentsTable,
+  TransactionsTable
+} from './tables'
+import { DatabaseFunctions } from './functions'
+import { DatabaseEnums } from './enums'
 
 export interface Database {
   public: {

@@ -32,7 +32,7 @@ const InvestorDashboard = () => {
         .from("transactions")
         .select(`
           *,
-          funding_request:funding_requests(
+          funding_request:funding_requests!inner(
             title,
             funding_goal,
             current_funding,
