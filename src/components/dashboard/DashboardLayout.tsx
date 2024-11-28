@@ -24,7 +24,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 max-w-screen-2xl items-center">
+        <div className="container flex h-14 max-w-screen-2xl items-center px-4">
           {/* Mobile menu button */}
           <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
             <SheetTrigger asChild>
@@ -38,22 +38,22 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </Sheet>
 
           {/* Logo */}
-          <div className="flex items-center mr-0">
+          <div className="flex items-center">
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
-              className="h-10 w-auto object-contain dark:hidden" 
+              className="h-8 w-auto object-contain dark:hidden" 
             />
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
               alt="رسين"
-              className="h-10 w-auto object-contain hidden dark:block" 
+              className="h-8 w-auto object-contain hidden dark:block" 
             />
           </div>
 
           {/* Right side actions */}
           <div className="flex items-center gap-2 mr-auto">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
               <Bell className="h-5 w-5" />
             </Button>
             <UserNav />
@@ -73,7 +73,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           "flex-1 lg:mr-64",
           className
         )}>
-          <div className="container max-w-screen-2xl py-6">
+          <div className="container max-w-screen-2xl p-6">
             {children}
           </div>
         </main>
