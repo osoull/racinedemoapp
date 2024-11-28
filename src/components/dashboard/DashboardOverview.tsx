@@ -1,68 +1,47 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { ActivityFeed } from "./activity/ActivityFeed";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-import { useToast } from "@/components/ui/use-toast";
-import { Wallet, TrendingUp, Users } from "lucide-react";
-import { StatCard } from "./StatCard";
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { StatsGrid } from "./stats/StatsGrid"
+import { FundingChart } from "./charts/FundingChart"
+import { useAuth } from "@/hooks/useAuth"
 
 export function DashboardOverview() {
-  const { toast } = useToast();
-  
-  const { data: platformStats, isLoading, refetch } = useQuery({
-    queryKey: ["platform-stats"],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('calculate_platform_stats');
-      if (error) throw error;
-      return data?.[0] || null;
-    }
-  });
+  const { user } = useAuth()
 
-  // Subscribe to real-time updates
-  useRealtimeSubscription(
-    ['transactions', 'fee_tracking'],
-    {
-      onInsert: () => {
-        refetch();
-        toast({
-          title: "تم تحديث البيانات",
-          description: "تم تحديث إحصائيات المنصة"
-        });
-      },
-      onUpdate: () => {
-        refetch();
-      }
-    }
-  );
+  const { data: profile } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
+        .single()
+
+      if (error) throw error
+      return data
+    },
+    enabled: !!user,
+  })
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard
-          icon={TrendingUp}
-          title="إجمالي الإيرادات"
-          value={`${platformStats?.total_revenue.toLocaleString()} ريال`}
-          trend={{ value: platformStats?.revenue_growth || 0, isPositive: (platformStats?.revenue_growth || 0) > 0 }}
-        />
-        <StatCard
-          icon={Users}
-          title="المستثمرون النشطون"
-          value={platformStats?.active_investors || 0}
-          trend={{ value: platformStats?.investor_growth || 0, isPositive: true }}
-        />
-        <StatCard
-          icon={Wallet}
-          title="نسبة النمو"
-          value={`${((platformStats?.revenue_growth || 0) + 100).toFixed(1)}%`}
-          trend={{ value: platformStats?.revenue_growth || 0, isPositive: (platformStats?.revenue_growth || 0) > 0 }}
-        />
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
+        <p className="text-muted-foreground">
+          {profile?.user_type === "admin"
+            ? "نظرة عامة على أداء المنصة"
+            : profile?.user_type === "borrower"
+            ? "نظرة عامة على طلبات التمويل"
+            : "نظرة عامة على محفظتك الاستثمارية"}
+        </p>
       </div>
 
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">النشاط الأخير</h3>
-        <ActivityFeed />
-      </Card>
+      <StatsGrid />
+      
+      {profile?.user_type === "admin" && (
+        <div className="grid gap-4">
+          <FundingChart />
+        </div>
+      )}
     </div>
-  );
+  )
 }

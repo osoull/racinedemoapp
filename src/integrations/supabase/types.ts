@@ -388,6 +388,7 @@ export type Database = {
           campaign_duration: number
           category: string
           created_at: string | null
+          current_funding: number | null
           description: string
           fees_paid: boolean
           fees_transaction_id: string | null
@@ -396,6 +397,8 @@ export type Database = {
           id: string
           metadata: Json | null
           owner_id: string
+          risk_description: string | null
+          risk_rating: string | null
           status: string
           submitted_at: string | null
           title: string
@@ -406,6 +409,7 @@ export type Database = {
           campaign_duration: number
           category: string
           created_at?: string | null
+          current_funding?: number | null
           description: string
           fees_paid?: boolean
           fees_transaction_id?: string | null
@@ -414,6 +418,8 @@ export type Database = {
           id?: string
           metadata?: Json | null
           owner_id: string
+          risk_description?: string | null
+          risk_rating?: string | null
           status?: string
           submitted_at?: string | null
           title: string
@@ -424,6 +430,7 @@ export type Database = {
           campaign_duration?: number
           category?: string
           created_at?: string | null
+          current_funding?: number | null
           description?: string
           fees_paid?: boolean
           fees_transaction_id?: string | null
@@ -432,6 +439,8 @@ export type Database = {
           id?: string
           metadata?: Json | null
           owner_id?: string
+          risk_description?: string | null
+          risk_rating?: string | null
           status?: string
           submitted_at?: string | null
           title?: string

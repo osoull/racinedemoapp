@@ -1,42 +1,34 @@
 export interface FundingRequest {
-  id: string;
-  owner_id: string;
-  title: string;
-  description: string;
-  category: string;
-  funding_goal: number;
-  current_funding: number;
-  campaign_duration: number;
-  fund_usage_plan: any;
-  status: string;
-  fees_paid: boolean;
-  fees_transaction_id?: string;
-  risk_rating?: string;
-  risk_description?: string;
-  created_at: string;
-  updated_at: string;
-  submitted_at?: string;
-  approved_at?: string;
-  metadata?: any;
+  id: string
+  title: string
+  description: string
+  category: string
+  funding_goal: number
+  current_funding: number
+  campaign_duration: number
+  fund_usage_plan: Record<string, any>
+  status: string
+  fees_paid: boolean
+  owner_id: string
+  created_at: string
+  submitted_at?: string
+  approved_at?: string
+  risk_rating?: string
+  risk_description?: string
   owner?: {
-    first_name: string;
-    last_name: string;
-  };
+    first_name: string
+    last_name: string
+  }
 }
 
-export type FundingRequestStatus = 
-  | 'draft'
-  | 'submitted'
-  | 'under_review'
-  | 'approved'
-  | 'rejected'
-  | 'completed';
-
-export interface Project extends FundingRequest {
-  investments?: Array<{
-    id: string;
-    amount: number;
-    status: string;
-    created_at: string;
-  }>;
+export interface FundingStats {
+  total_requests: number
+  approved_requests: number
+  rejected_requests: number
+  pending_requests: number
+  total_amount_requested: number
+  total_amount_approved: number
+  total_fees_collected: number
+  requests_by_category: Record<string, number>
+  requests_by_status: Record<string, number>
 }
