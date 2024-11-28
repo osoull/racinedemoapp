@@ -1,6 +1,5 @@
 import { Navigate, Routes, Route } from "react-router-dom"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
@@ -18,8 +17,8 @@ export const RoleRoutes = () => {
 
   return (
     <Routes>
-      {/* Admin Dashboard */}
-      <Route path="/admin" element={
+      {/* Admin Routes */}
+      <Route path="/admin/*" element={
         <PrivateRoute allowedTypes={["admin"]}>
           <AdminDashboard />
         </PrivateRoute>
