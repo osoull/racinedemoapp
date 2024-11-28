@@ -6,6 +6,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/utils/feeCalculations";
 import { Investment } from "@/types/investment";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 const columns: ColumnDef<Investment>[] = [
   {
@@ -60,6 +62,8 @@ interface InvestmentTrackingProps {
 }
 
 export function InvestmentTracking({ showOnlyChart = false, onExportData }: InvestmentTrackingProps) {
+  const [groupBy, setGroupBy] = useState<"none" | "project" | "investor">("none");
+
   const { data: investments, isLoading } = useQuery({
     queryKey: ["investments"],
     queryFn: async () => {
@@ -92,6 +96,24 @@ export function InvestmentTracking({ showOnlyChart = false, onExportData }: Inve
     },
   });
 
+  const groupedData = () => {
+    if (!investments || groupBy === "none") return investments;
+
+    const grouped = investments.reduce((acc: { [key: string]: Investment[] }, investment) => {
+      const key = groupBy === "project" 
+        ? investment.funding_request.title 
+        : `${investment.user?.first_name} ${investment.user?.last_name}`;
+      
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(investment);
+      return acc;
+    }, {});
+
+    return Object.values(grouped).flat();
+  };
+
   if (showOnlyChart) {
     return null;
   }
@@ -99,12 +121,24 @@ export function InvestmentTracking({ showOnlyChart = false, onExportData }: Inve
   return (
     <Card>
       <CardHeader>
-        <CardTitle>قائمة الاستثمارات</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle>قائمة الاستثمارات</CardTitle>
+          <Select value={groupBy} onValueChange={(value: "none" | "project" | "investor") => setGroupBy(value)}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="تجميع حسب..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">بدون تجميع</SelectItem>
+              <SelectItem value="project">تجميع حسب المشروع</SelectItem>
+              <SelectItem value="investor">تجميع حسب المستثمر</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent>
         <DataTable
           columns={columns}
-          data={investments || []}
+          data={groupedData() || []}
           isLoading={isLoading}
         />
       </CardContent>
