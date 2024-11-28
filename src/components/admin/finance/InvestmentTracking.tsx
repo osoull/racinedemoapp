@@ -1,32 +1,32 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { DataTable } from "@/components/ui/data-table";
-import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/utils/feeCalculations";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { DataTable } from "@/components/ui/data-table"
+import { ColumnDef } from "@tanstack/react-table"
+import { Badge } from "@/components/ui/badge"
+import { formatCurrency } from "@/utils/feeCalculations"
 
 interface Investment {
-  id: string;
-  amount: number;
-  status: string;
-  created_at: string;
-  investor: {
-    first_name: string;
-    last_name: string;
-  };
+  id: string
+  amount: number
+  status: string
+  created_at: string
   funding_request: {
-    title: string;
-  };
+    title: string
+  }
+  user: {
+    first_name: string
+    last_name: string
+  }
 }
 
 const columns: ColumnDef<Investment>[] = [
   {
-    accessorKey: "investor",
+    accessorKey: "user",
     header: "المستثمر",
     cell: ({ row }) => (
       <span>
-        {row.original.investor.first_name} {row.original.investor.last_name}
+        {row.original.user.first_name} {row.original.user.last_name}
       </span>
     ),
   },
@@ -65,7 +65,7 @@ const columns: ColumnDef<Investment>[] = [
     header: "تاريخ الاستثمار",
     cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString("ar-SA"),
   },
-];
+]
 
 export function InvestmentTracking() {
   const { data: investments, isLoading } = useQuery({
@@ -75,22 +75,16 @@ export function InvestmentTracking() {
         .from("transactions")
         .select(`
           *,
-          investor:profiles(first_name, last_name),
-          funding_request:funding_requests(title)
+          funding_request:funding_requests(title),
+          user:profiles(first_name, last_name)
         `)
         .eq("type", "investment")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
 
-      if (error) throw error;
-
-      // Transform the data to match the Investment interface
-      return (data as any[]).map(investment => ({
-        ...investment,
-        investor: investment.investor?.[0] || { first_name: 'N/A', last_name: '' },
-        funding_request: investment.funding_request?.[0] || { title: 'N/A' }
-      })) as Investment[];
+      if (error) throw error
+      return data as Investment[]
     },
-  });
+  })
 
   return (
     <Card>
@@ -105,5 +99,5 @@ export function InvestmentTracking() {
         />
       </CardContent>
     </Card>
-  );
+  )
 }

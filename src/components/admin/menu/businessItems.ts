@@ -4,15 +4,8 @@ import {
   Wallet,
   GraduationCap,
   FileText,
-  FileSpreadsheet,
-  FileCheck,
-  Banknote,
-  FileSearch,
   Building,
   UserCog,
-  Receipt,
-  PieChart,
-  ArrowLeftRight,
 } from "lucide-react";
 
 const investorManagementItems = [
@@ -36,33 +29,6 @@ const investorManagementItems = [
   }
 ];
 
-const financeManagementItems = [
-  {
-    title: "نظرة عامة",
-    path: "/admin/finance/overview",
-    icon: PieChart,
-    description: "نظرة عامة على الأداء المالي"
-  },
-  {
-    title: "المعاملات",
-    path: "/admin/finance/transactions",
-    icon: ArrowLeftRight,
-    description: "إدارة جميع المعاملات المالية"
-  },
-  {
-    title: "الرسوم الإدارية",
-    path: "/admin/finance/fees",
-    icon: Receipt,
-    description: "إدارة الرسوم الإدارية"
-  },
-  {
-    title: "التقارير المالية",
-    path: "/admin/finance/reports",
-    icon: FileSpreadsheet,
-    description: "عرض وتصدير التقارير المالية"
-  }
-];
-
 export const businessMenuItems = [
   {
     title: "نظرة عامة",
@@ -71,18 +37,17 @@ export const businessMenuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "إدارة المستثمرين",
-    icon: Users,
-    path: "/admin/investors",
-    description: "إدارة حسابات المستثمرين",
-    subItems: investorManagementItems
-  },
-  {
     title: "الإدارة المالية",
     icon: Wallet,
     path: "/admin/finance",
-    description: "إدارة المعاملات والتقارير المالية",
-    subItems: financeManagementItems
+    description: "إدارة المعاملات والتقارير المالية"
+  },
+  {
+    title: "المستثمرين",
+    icon: Users,
+    path: "/admin/investors",
+    description: "إدارة المستثمرين",
+    subItems: investorManagementItems
   },
   {
     title: "التحقق والامتثال",
@@ -93,7 +58,7 @@ export const businessMenuItems = [
       {
         title: "التحقق من الهوية",
         path: "/admin/compliance/kyc",
-        icon: FileSearch
+        icon: FileText
       },
       {
         title: "المراجعة الشرعية",
