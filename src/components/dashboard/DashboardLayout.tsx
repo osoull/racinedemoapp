@@ -38,7 +38,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </Sheet>
 
           {/* Logo */}
-          <div className="flex items-center mr-2">
+          <div className="flex items-center mr-16">
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
