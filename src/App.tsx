@@ -14,6 +14,7 @@ import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
 import { PlatformSettings } from "@/components/admin/PlatformSettings";
 import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement";
 import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
+import { FundingRequestList } from "@/components/admin/funding/FundingRequestList";
 
 function App() {
   const { loading } = useAuth();
@@ -35,7 +36,7 @@ function App() {
 
           {/* Admin routes */}
           <Route
-            path="/admin"
+            path="/admin/dashboard"
             element={
               <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
@@ -99,6 +100,18 @@ function App() {
             }
           />
 
+          {/* Funding Requests */}
+          <Route
+            path="/admin/funding-requests"
+            element={
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <FundingRequestList />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
           {/* Compliance */}
           <Route
             path="/admin/compliance"
@@ -124,7 +137,7 @@ function App() {
           />
 
           {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </Router>
       <Toaster />

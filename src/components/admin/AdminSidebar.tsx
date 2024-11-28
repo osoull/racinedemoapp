@@ -17,7 +17,7 @@ const menuItems = [
   {
     title: "نظرة عامة",
     icon: LayoutDashboard,
-    path: "/admin",
+    path: "/admin/dashboard",
     description: "لوحة المعلومات والإحصائيات"
   },
   {
