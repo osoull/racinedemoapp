@@ -69,10 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
         options: {
-          data: {
-            ...metadata,
-            user_type: "borrower",
-          }
+          data: metadata
         }
       })
 

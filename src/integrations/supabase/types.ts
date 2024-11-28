@@ -1354,6 +1354,21 @@ export type Database = {
           funding_request_title: string
         }[]
       }
+      get_borrowers_by_status: {
+        Args: {
+          status_filter?: string
+        }
+        Returns: {
+          id: string
+          email: string
+          first_name: string
+          last_name: string
+          company_name: string
+          kyc_status: string
+          created_at: string
+          borrower_details: Json
+        }[]
+      }
       get_investors: {
         Args: Record<PropertyKey, never>
         Returns: {
