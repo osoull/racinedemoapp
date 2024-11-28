@@ -4,7 +4,6 @@ import {
   Settings,
   FileText,
   CreditCard,
-  CheckCircle,
   Building2,
   FileCheck
 } from "lucide-react"
@@ -40,12 +39,6 @@ const menuItems = [
     icon: FileCheck,
     path: "/borrower/kyc",
     description: "إدارة وثائق التحقق"
-  },
-  {
-    title: "الإعدادات",
-    icon: Settings,
-    path: "/borrower/settings",
-    description: "إعدادات الحساب"
   }
 ]
 
@@ -74,7 +67,7 @@ export function BorrowerSidebar() {
             مرخصة من البنك المركزي السعودي
           </p>
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
-            <CheckCircle className="h-4 w-4" />
+            <FileCheck className="h-4 w-4" />
             معتمد - اللجنة الشرعية شركة رسين للاستثمار
           </p>
         </div>

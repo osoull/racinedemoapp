@@ -14,6 +14,10 @@ import { InvestorSidebar } from "@/components/investor/InvestorSidebar";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import BorrowerDashboard from "@/pages/borrower/Dashboard";
 import InvestorDashboard from "@/pages/investor/Dashboard";
+import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
+import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
+import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
+import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
 
 function App() {
   return (
@@ -48,6 +52,10 @@ function App() {
                     <Routes>
                       <Route index element={<Navigate to="dashboard" />} />
                       <Route path="dashboard" element={<BorrowerDashboard />} />
+                      <Route path="profile" element={<BorrowerProfile />} />
+                      <Route path="kyc" element={<BorrowerKYCForm />} />
+                      <Route path="funding-requests" element={<FundingRequestsList />} />
+                      <Route path="payments" element={<BorrowerPayments />} />
                     </Routes>
                   </DashboardLayout>
                 </PrivateRoute>
