@@ -3,98 +3,21 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { Auth } from "@/components/Auth";
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-
-// Sidebars
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
-import { InvestorSidebar } from "@/components/investor/InvestorSidebar";
-
-// Routes - Admin
-import AdminDashboard from "@/pages/admin/Dashboard";
-
-// Routes - Borrower
-import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
-import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
-import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
-import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
-import { NewFundingRequest } from "@/components/borrower/funding/NewFundingRequest";
-import { EditFundingRequest } from "@/components/borrower/funding/EditFundingRequest";
-import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
-
-// Routes - Investor
-import InvestorDashboard from "@/pages/investor/Dashboard";
-
-const AppRoutes = () => {
-  return (
-    <Routes>
-      {/* Page d'accueil - Authentification */}
-      <Route path="/" element={<Auth />} />
-
-      {/* Routes Admin */}
-      <Route path="/admin" element={
-        <PrivateRoute allowedTypes={["admin"]}>
-          <DashboardLayout sidebar={<AdminSidebar />}>
-            <Routes>
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="finance" element={<div>Finance</div>} />
-              <Route path="payment-defaults" element={<div>Payment Defaults</div>} />
-              <Route path="investors" element={<div>Investors</div>} />
-              <Route path="investment-opportunities" element={<div>Investment Opportunities</div>} />
-              <Route path="borrowers" element={<div>Borrowers</div>} />
-              <Route path="funding-requests" element={<div>Funding Requests</div>} />
-              <Route path="compliance" element={<div>Compliance</div>} />
-              <Route path="settings" element={<div>Settings</div>} />
-            </Routes>
-          </DashboardLayout>
-        </PrivateRoute>
-      } />
-
-      {/* Routes Emprunteur */}
-      <Route path="/borrower" element={
-        <PrivateRoute allowedTypes={["borrower"]}>
-          <DashboardLayout sidebar={<BorrowerSidebar />}>
-            <Routes>
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<BorrowerDashboardOverview />} />
-              <Route path="profile" element={<BorrowerProfile />} />
-              <Route path="kyc" element={<BorrowerKYCForm />} />
-              <Route path="funding-requests" element={<FundingRequestsList />} />
-              <Route path="funding-requests/new" element={<NewFundingRequest />} />
-              <Route path="funding-requests/:id/edit" element={<EditFundingRequest />} />
-              <Route path="payments" element={<BorrowerPayments />} />
-            </Routes>
-          </DashboardLayout>
-        </PrivateRoute>
-      } />
-
-      {/* Routes Investisseur */}
-      <Route path="/investor" element={
-        <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-          <DashboardLayout sidebar={<InvestorSidebar />}>
-            <Routes>
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<InvestorDashboard />} />
-            </Routes>
-          </DashboardLayout>
-        </PrivateRoute>
-      } />
-
-      {/* Route 404 */}
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
-  );
-};
+import { RoleRoutes } from "@/components/auth/RoleRoutes";
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <Routes>
+            {/* Page d'accueil - Authentification */}
+            <Route path="/" element={<Auth />} />
+            
+            {/* Routes basées sur les rôles */}
+            <Route path="/*" element={<RoleRoutes />} />
+          </Routes>
           <Toaster />
         </AuthProvider>
       </BrowserRouter>
