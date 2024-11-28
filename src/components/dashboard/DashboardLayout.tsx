@@ -38,7 +38,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </Sheet>
 
           {/* Logo */}
-          <div className="flex items-center mr-auto">
+          <div className="flex items-center mr-2">
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
@@ -52,7 +52,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mr-auto">
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
