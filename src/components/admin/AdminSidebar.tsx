@@ -11,6 +11,7 @@ import {
   FileText,
   Building2,
   Wallet,
+  AlertCircle
 } from "lucide-react"
 
 const menuItems = [
@@ -35,6 +36,12 @@ const menuItems = [
         title: "الإيرادات",
         path: "/admin/finance/revenue",
         description: "تتبع الإيرادات"
+      },
+      {
+        title: "التعثرات المالية",
+        path: "/admin/finance/defaults",
+        description: "إدارة التعثرات المالية",
+        icon: AlertCircle
       }
     ]
   },
