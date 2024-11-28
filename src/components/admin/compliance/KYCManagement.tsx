@@ -4,6 +4,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { KYCVerificationList } from "./KYCVerificationList"
 import { KYCStatusHistory } from "./KYCStatusHistory"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
 
 export function KYCManagement() {
   return (
