@@ -9,12 +9,30 @@ import { BorrowerRoutes } from "@/routes/BorrowerRoutes";
 import { InvestorRoutes } from "@/routes/InvestorRoutes";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 function App() {
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
-  if (loading) {
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ["profile", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  if (loading || profileLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -23,11 +41,11 @@ function App() {
   }
 
   const getUserRedirectPath = () => {
-    if (!user) return '/';
+    if (!user || !profile) return '/';
     
     try {
-      const userType = user.user_metadata?.user_type;
-      console.log("User metadata:", user.user_metadata); // Debug log
+      const userType = profile.user_type;
+      console.log("Profile:", profile); // Debug log
       console.log("User type:", userType); // Debug log
       
       switch (userType) {
@@ -71,7 +89,7 @@ function App() {
           <Route 
             path="/admin/*" 
             element={
-              user?.user_metadata?.user_type === 'admin' ? (
+              profile?.user_type === 'admin' ? (
                 <AdminRoutes />
               ) : (
                 <Navigate to="/" replace />
@@ -82,7 +100,7 @@ function App() {
           <Route 
             path="/borrower/*" 
             element={
-              user?.user_metadata?.user_type === 'borrower' ? (
+              profile?.user_type === 'borrower' ? (
                 <BorrowerRoutes />
               ) : (
                 <Navigate to="/" replace />
@@ -93,7 +111,7 @@ function App() {
           <Route 
             path="/investor/*" 
             element={
-              ['basic_investor', 'qualified_investor'].includes(user?.user_metadata?.user_type || '') ? (
+              ['basic_investor', 'qualified_investor'].includes(profile?.user_type || '') ? (
                 <InvestorRoutes />
               ) : (
                 <Navigate to="/" replace />
