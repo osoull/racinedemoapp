@@ -7,6 +7,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocat
 import { ErrorMessage } from "@/components/ui/error-message";
 import { useEffect, useRef } from "react";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
+import BorrowerDashboard from "@/pages/borrower/Dashboard";
+import InvestorDashboard from "@/pages/investor/Dashboard";
+import AdminDashboard from "@/pages/admin/Dashboard";
 
 // Navigation throttling component
 const NavigationThrottler = ({ children }: { children: React.ReactNode }) => {
@@ -60,7 +63,7 @@ function App() {
               path="/borrower/dashboard"
               element={
                 <PrivateRoute allowedTypes={["borrower"]}>
-                  <div>Borrower Dashboard (à implémenter)</div>
+                  <BorrowerDashboard />
                 </PrivateRoute>
               }
             />
@@ -70,7 +73,7 @@ function App() {
               path="/investor/dashboard"
               element={
                 <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-                  <div>Investor Dashboard (à implémenter)</div>
+                  <InvestorDashboard />
                 </PrivateRoute>
               }
             />
@@ -80,7 +83,7 @@ function App() {
               path="/admin/dashboard"
               element={
                 <PrivateRoute allowedTypes={["admin"]}>
-                  <div>Admin Dashboard (à implémenter)</div>
+                  <AdminDashboard />
                 </PrivateRoute>
               }
             />
