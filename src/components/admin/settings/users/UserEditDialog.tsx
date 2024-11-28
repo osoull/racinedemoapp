@@ -73,7 +73,6 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.id)
-        .select()
 
       if (updateError) throw updateError
 
@@ -84,6 +83,7 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
 
       onOpenChange(false)
     } catch (error) {
+      console.error("Error updating user:", error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء تحديث معلومات المستخدم",
@@ -94,7 +94,7 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>تعديل معلومات المستخدم</DialogTitle>
         </DialogHeader>
@@ -107,7 +107,7 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
                 <FormItem>
                   <FormLabel>الاسم الأول</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="text-right" dir="rtl" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,7 +120,7 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
                 <FormItem>
                   <FormLabel>اسم العائلة</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} className="text-right" dir="rtl" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -133,7 +133,7 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
                 <FormItem>
                   <FormLabel>البريد الإلكتروني</FormLabel>
                   <FormControl>
-                    <Input {...field} type="email" />
+                    <Input {...field} type="email" className="text-right" dir="rtl" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -150,11 +150,11 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-right">
                         <SelectValue placeholder="اختر نوع المستخدم" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent align="end" className="text-right" dir="rtl">
                       <SelectItem value="basic_investor">مستثمر أساسي</SelectItem>
                       <SelectItem value="qualified_investor">مستثمر مؤهل</SelectItem>
                       <SelectItem value="borrower">طالب تمويل</SelectItem>
@@ -177,11 +177,11 @@ export function UserEditDialog({ user, open, onOpenChange }: UserEditDialogProps
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="text-right">
                         <SelectValue placeholder="اختر حالة KYC" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent align="end" className="text-right" dir="rtl">
                       <SelectItem value="pending">قيد المراجعة</SelectItem>
                       <SelectItem value="approved">معتمد</SelectItem>
                       <SelectItem value="rejected">مرفوض</SelectItem>
