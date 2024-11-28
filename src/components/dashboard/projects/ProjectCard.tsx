@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Link } from "react-router-dom"
+import { formatCurrency } from "@/utils/feeCalculations"
 
 interface ProjectCardProps {
   title: string
@@ -22,14 +23,6 @@ export function ProjectCard({
   currentFunding,
   projectId
 }: ProjectCardProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency',
-      currency: 'SAR',
-      maximumFractionDigits: 0
-    }).format(amount)
-  }
-
   return (
     <Link to={`/investor/projects/${projectId}`}>
       <Card className="p-6 hover:shadow-md transition-all h-full">
@@ -40,12 +33,13 @@ export function ProjectCard({
           </div>
           <Badge variant={
             status === 'approved' ? 'default' :
+            status === 'active' ? 'default' :
             status === 'pending' ? 'secondary' :
             'destructive'
           } className="mr-4 whitespace-nowrap">
-            {status === 'approved' ? 'معتمد' :
+            {status === 'approved' || status === 'active' ? 'نشط' :
              status === 'pending' ? 'قيد المراجعة' :
-             'مرفوض'}
+             'مغلق'}
           </Badge>
         </div>
         <div className="space-y-4">
