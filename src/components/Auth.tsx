@@ -22,7 +22,7 @@ export function Auth() {
     if (user) {
       checkUserTypeAndRedirect()
     }
-  }, [user, navigate])
+  }, [user])
 
   const checkUserTypeAndRedirect = async () => {
     try {
@@ -49,18 +49,15 @@ export function Auth() {
 
   const redirectBasedOnUserType = (userType: UserType) => {
     switch (userType) {
+      case "admin":
+        navigate("/admin/dashboard")
+        break
       case "borrower":
         navigate("/borrower/dashboard")
         break
       case "basic_investor":
       case "qualified_investor":
         navigate("/investor/dashboard")
-        break
-      case "admin":
-        navigate("/admin/dashboard")
-        break
-      case "investment_manager":
-        navigate("/investment-manager/dashboard")
         break
       default:
         navigate("/")
