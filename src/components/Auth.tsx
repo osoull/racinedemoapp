@@ -20,16 +20,16 @@ export function Auth() {
 
   useEffect(() => {
     if (user) {
-      checkUserTypeAndRedirect(user.id)
+      checkUserTypeAndRedirect()
     }
   }, [user, navigate])
 
-  const checkUserTypeAndRedirect = async (userId: string) => {
+  const checkUserTypeAndRedirect = async () => {
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('user_type')
-        .eq('id', userId)
+        .eq('id', user?.id)
         .single()
 
       if (error) throw error
@@ -37,7 +37,7 @@ export function Auth() {
 
       const userType = profile.user_type as UserType
       redirectBasedOnUserType(userType)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching user type:", error)
       toast({
         title: "خطأ",
