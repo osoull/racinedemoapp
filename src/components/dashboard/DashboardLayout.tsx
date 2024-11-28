@@ -38,16 +38,16 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </Sheet>
 
           {/* Logo */}
-          <div className="flex items-center mr-0">
+          <div className="flex items-center mr-0 px-4">
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
-              className="h-10 w-auto object-contain dark:hidden" 
+              className="h-8 w-auto object-contain dark:hidden" 
             />
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
               alt="رسين"
-              className="h-10 w-auto object-contain hidden dark:block" 
+              className="h-8 w-auto object-contain hidden dark:block" 
             />
           </div>
 
