@@ -17,10 +17,10 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "محفظتي",
+    title: "الاستثمارات",
     icon: Wallet,
     path: "/investor/investments",
-    description: "إدارة محفظتي الاستثمارية"
+    description: "إدارة استثماراتك"
   },
   {
     title: "الإعدادات",
