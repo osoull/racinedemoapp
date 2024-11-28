@@ -1,3 +1,5 @@
+import { DateRange as DayPickerDateRange } from "react-day-picker"
+
 export interface Investment {
   id: string
   amount: number
@@ -35,5 +37,19 @@ export interface InvestmentFilters {
   status: string | null
   investor: string | null
   opportunity: string | null
-  dateRange: DateRange | undefined
+  dateRange: DayPickerDateRange | undefined
+}
+
+export interface Transaction {
+  id: string
+  amount: number
+  type: string
+  status: string
+  created_at: string
+  funding_request?: {
+    title: string
+    funding_goal: number
+    current_funding: number
+    status: string
+  }
 }
