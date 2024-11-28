@@ -2,6 +2,8 @@ import { useLocation } from "react-router-dom"
 import { 
   LayoutDashboard, 
   Settings,
+  FileText,
+  CreditCard,
   CheckCircle
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
@@ -10,8 +12,20 @@ const menuItems = [
   {
     title: "نظرة عامة",
     icon: LayoutDashboard,
-    path: "/borrower",
+    path: "/borrower/dashboard",
     description: "لوحة المعلومات والإحصائيات"
+  },
+  {
+    title: "طلبات التمويل",
+    icon: FileText,
+    path: "/borrower/funding-requests",
+    description: "إدارة طلبات التمويل"
+  },
+  {
+    title: "المدفوعات",
+    icon: CreditCard,
+    path: "/borrower/payments",
+    description: "إدارة المدفوعات والأقساط"
   },
   {
     title: "الإعدادات",

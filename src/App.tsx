@@ -2,22 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
 import { Toaster } from "@/components/ui/toaster";
-import { FinanceOverview } from "@/components/admin/finance/FinanceOverview";
-import { TransactionManagement } from "@/components/admin/finance/TransactionManagement";
-import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
-import { PlatformSettings } from "@/components/admin/PlatformSettings";
-import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement";
-import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
-import { FundingRequestList } from "@/components/admin/funding/FundingRequestList";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
-import { PaymentDefaultsManagement } from "@/components/admin/defaults/PaymentDefaultsManagement";
-import { InvestmentOpportunities } from "@/components/admin/investors/InvestmentOpportunities";
 
 function App() {
   const { loading } = useAuth();
@@ -53,7 +44,7 @@ function App() {
             path="/borrower/dashboard"
             element={
               <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
                   <DashboardOverview />
                 </DashboardLayout>
               </PrivateRoute>
@@ -61,88 +52,14 @@ function App() {
           />
 
           <Route
-            path="/admin/finance"
+            path="/borrower/settings"
             element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <FinanceOverview />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/payment-defaults"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <PaymentDefaultsManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/investors"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <InvestorManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/investment-opportunities"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <InvestmentOpportunities />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/borrowers"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <BorrowerManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/funding-requests"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <FundingRequestList />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/compliance"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <ComplianceAudit />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/settings"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <PlatformSettings />
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <div className="space-y-6">
+                    <h2 className="text-3xl font-bold tracking-tight">إعدادات الحساب</h2>
+                    {/* Settings content will be added later */}
+                  </div>
                 </DashboardLayout>
               </PrivateRoute>
             }
