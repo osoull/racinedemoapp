@@ -6,8 +6,13 @@ import './index.css'
 const rootElement = document.getElementById("root")
 if (!rootElement) throw new Error("Failed to find the root element")
 
+// Clear any existing content and create fresh root
+while (rootElement.firstChild) {
+  rootElement.removeChild(rootElement.firstChild)
+}
+
 createRoot(rootElement).render(
   <AuthProvider>
-    <App />
+    <App key={Date.now()} /> {/* Force remount with unique key */}
   </AuthProvider>
 )
