@@ -23,7 +23,7 @@ export interface User {
   country?: string | null;
 }
 
-export type UserType = 'admin' | 'basic_investor' | 'qualified_investor' | 'borrower' | 'investment_manager';
+export type UserType = 'admin' | 'investment_manager' | 'basic_investor' | 'qualified_investor' | 'borrower';
 
 export interface Profile extends User {
   avatar_url?: string | null;

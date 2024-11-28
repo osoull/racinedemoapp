@@ -39,6 +39,17 @@ export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
     )
   }
 
+  // Les administrateurs ont accès à tout
+  if (profile?.user_type === "admin") {
+    return <>{children}</>
+  }
+
+  // Les managers d'investissement ont accès aux routes spécifiées
+  if (profile?.user_type === "investment_manager" && allowedTypes?.includes("investment_manager")) {
+    return <>{children}</>
+  }
+
+  // Vérification des autres types d'utilisateurs
   if (allowedTypes && profile?.user_type && !allowedTypes.includes(profile.user_type)) {
     return <Navigate to="/" />
   }

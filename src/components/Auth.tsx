@@ -52,6 +52,9 @@ export function Auth() {
       case "admin":
         navigate("/admin/dashboard")
         break
+      case "investment_manager":
+        navigate("/investment-manager/dashboard")
+        break
       case "borrower":
         navigate("/borrower/dashboard")
         break
