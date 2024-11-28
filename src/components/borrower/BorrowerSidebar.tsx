@@ -2,6 +2,8 @@ import { useLocation } from "react-router-dom"
 import { 
   LayoutDashboard, 
   Settings,
+  Shield,
+  CheckCircle
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
 
@@ -36,8 +38,14 @@ export const BorrowerSidebar = () => {
       </nav>
       <div className="border-t p-4 space-y-4">
         <div className="text-center space-y-2">
-          <p className="text-xs text-muted-foreground">ﻣﺼﺮﺣﺔ ﻣﻦ ﻫﻴﺌﺔ اﻟﺴﻮق اﻟﻤﺎﻟﻴﺔ</p>
-          <p className="text-xs text-muted-foreground">معتمد - اللجنة الشرعية شركة رسين للاستثمار</p>
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
+            <Shield className="h-4 w-4" />
+            ﻣﺼﺮﺣﺔ ﻣﻦ ﻫﻴﺌﺔ اﻟﺴﻮق اﻟﻤﺎﻟﻴﺔ
+          </p>
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            معتمد - اللجنة الشرعية شركة رسين للاستثمار
+          </p>
         </div>
       </div>
     </div>

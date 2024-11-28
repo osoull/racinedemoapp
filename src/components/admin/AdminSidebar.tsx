@@ -9,7 +9,8 @@ import {
   Building2,
   Wallet,
   AlertCircle,
-  LineChart
+  LineChart,
+  CheckCircle
 } from "lucide-react"
 
 const menuItems = [
@@ -85,8 +86,14 @@ export const AdminSidebar = () => {
       </div>
       <div className="border-t p-4 space-y-4">
         <div className="text-center space-y-2">
-          <p className="text-xs text-muted-foreground">ﻣﺼﺮﺣﺔ ﻣﻦ ﻫﻴﺌﺔ اﻟﺴﻮق اﻟﻤﺎﻟﻴﺔ</p>
-          <p className="text-xs text-muted-foreground">معتمد - اللجنة الشرعية شركة رسين للاستثمار</p>
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
+            <Shield className="h-4 w-4" />
+            ﻣﺼﺮﺣﺔ ﻣﻦ ﻫﻴﺌﺔ اﻟﺴﻮق اﻟﻤﺎﻟﻴﺔ
+          </p>
+          <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            معتمد - اللجنة الشرعية شركة رسين للاستثمار
+          </p>
         </div>
       </div>
     </div>
