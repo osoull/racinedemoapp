@@ -3,17 +3,17 @@ import { useAuth } from "@/contexts/AuthContext"
 
 interface PrivateRouteProps {
   children: React.ReactNode
-  allowedRoles?: string[]
+  allowedTypes?: string[]
 }
 
-export const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
+export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
   const { user } = useAuth()
 
   if (!user) {
-    return <Navigate to="/login" />
+    return <Navigate to="/auth" />
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedTypes && !allowedTypes.includes(user.user_type)) {
     return <Navigate to="/unauthorized" />
   }
 

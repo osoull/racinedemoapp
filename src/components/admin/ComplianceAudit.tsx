@@ -6,7 +6,7 @@ interface ComplianceAuditProps {
   tab?: string;
 }
 
-export default function ComplianceAudit({ tab = "cma" }: ComplianceAuditProps) {
+export function ComplianceAudit({ tab = "cma" }: ComplianceAuditProps) {
   return (
     <Card>
       <CardHeader>

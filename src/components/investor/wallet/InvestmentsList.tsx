@@ -34,7 +34,7 @@ export function InvestmentsList() {
       return data.map(item => ({
         ...item,
         funding_request: item.funding_request[0]
-      }))
+      })) as Investment[]
     },
   })
 

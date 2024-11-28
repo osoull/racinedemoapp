@@ -10,7 +10,7 @@ export interface Investment {
     current_funding: number
     status: string
   }
-  user: {
+  user?: {
     first_name: string
     last_name: string
   }
@@ -23,10 +23,10 @@ export interface Transaction {
   status: string
   created_at: string
   user_id: string
-  commission_id: string | null
-  fee_amount: number | null
-  fee_type: string | null
-  user: {
+  commission_id?: string
+  fee_amount?: number
+  fee_type?: string
+  user?: {
     first_name: string
     last_name: string
   }
