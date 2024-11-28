@@ -27,7 +27,9 @@ export function InvestmentSection() {
   const filteredInvestments = filterInvestments(investments, {
     search,
     status: selectedStatus,
-    dateRange
+    dateRange,
+    investor: null, // Add missing property
+    opportunity: null // Add missing property
   })
 
   return (
