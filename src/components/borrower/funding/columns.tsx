@@ -1,66 +1,85 @@
+"use client"
+
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { format } from "date-fns"
-import { ar } from "date-fns/locale"
+import { Button } from "@/components/ui/button"
+import { Eye, PencilIcon } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "title",
-    header: "عنوان الطلب",
+    header: "عنوان المشروع",
   },
   {
     accessorKey: "funding_goal",
     header: "المبلغ المطلوب",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("funding_goal"))
-      const formatted = new Intl.NumberFormat("ar-SA", {
-        style: "currency",
-        currency: "SAR",
-      }).format(amount)
-      return formatted
-    },
+    cell: ({ row }) => (
+      <span>{row.original.funding_goal.toLocaleString()} ريال</span>
+    ),
   },
   {
     accessorKey: "current_funding",
-    header: "التمويل الحالي",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("current_funding"))
-      const formatted = new Intl.NumberFormat("ar-SA", {
-        style: "currency",
-        currency: "SAR",
-      }).format(amount)
-      return formatted
-    },
+    header: "المبلغ المجمع",
+    cell: ({ row }) => (
+      <span>{(row.original.current_funding || 0).toLocaleString()} ريال</span>
+    ),
   },
   {
     accessorKey: "status",
     header: "الحالة",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string
+      const status = row.original.status
       return (
-        <Badge variant={
-          status === "approved" ? "success" :
-          status === "rejected" ? "destructive" :
-          status === "under_review" ? "warning" :
-          "secondary"
-        }>
-          {
-            status === "draft" ? "مسودة" :
-            status === "submitted" ? "تم التقديم" :
-            status === "under_review" ? "قيد المراجعة" :
-            status === "approved" ? "تمت الموافقة" :
-            status === "rejected" ? "مرفوض" :
-            status
+        <Badge
+          variant={
+            status === "approved"
+              ? "success"
+              : status === "rejected"
+              ? "destructive"
+              : "default"
           }
+        >
+          {status === "draft"
+            ? "مسودة"
+            : status === "submitted"
+            ? "قيد المراجعة"
+            : status === "approved"
+            ? "تمت الموافقة"
+            : status === "rejected"
+            ? "مرفوض"
+            : status}
         </Badge>
       )
     },
   },
   {
-    accessorKey: "created_at",
-    header: "تاريخ الإنشاء",
+    id: "actions",
     cell: ({ row }) => {
-      return format(new Date(row.getValue("created_at")), "PPP", { locale: ar })
+      const navigate = useNavigate()
+      const request = row.original
+      
+      return (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/borrower/funding-requests/${request.id}`)}
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+          
+          {request.status === "draft" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/borrower/funding-requests/${request.id}/edit`)}
+            >
+              <PencilIcon className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )
     },
   },
 ]
