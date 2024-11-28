@@ -4,7 +4,6 @@ import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import { useAuth } from "@/contexts/AuthContext"
-import AdminDashboard from "@/pages/admin/Dashboard"
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 
@@ -17,13 +16,6 @@ export const RoleRoutes = () => {
 
   return (
     <Routes>
-      {/* Admin Routes */}
-      <Route path="/admin/*" element={
-        <PrivateRoute allowedTypes={["admin"]}>
-          <AdminDashboard />
-        </PrivateRoute>
-      } />
-
       {/* Borrower Dashboard */}
       <Route path="/borrower" element={
         <PrivateRoute allowedTypes={["borrower"]}>
@@ -44,7 +36,6 @@ export const RoleRoutes = () => {
 
       {/* Default redirect based on user type */}
       <Route path="/" element={
-        user?.user_metadata?.user_type === "admin" ? <Navigate to="/admin/dashboard" replace /> :
         user?.user_metadata?.user_type === "borrower" ? <Navigate to="/borrower" replace /> :
         <Navigate to="/investor" replace />
       } />
