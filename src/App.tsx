@@ -16,6 +16,7 @@ import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManageme
 import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
 import { FundingRequestList } from "@/components/admin/funding/FundingRequestList";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { PaymentDefaultsManagement } from "@/components/admin/defaults/PaymentDefaultsManagement";
 
 function App() {
   const { loading } = useAuth();
@@ -32,10 +33,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Public route - Authentication */}
           <Route path="/" element={<Auth />} />
 
-          {/* Admin routes */}
           <Route
             path="/admin/dashboard"
             element={
@@ -47,7 +46,6 @@ function App() {
             }
           />
 
-          {/* Finance Management */}
           <Route
             path="/admin/finance"
             element={
@@ -58,28 +56,18 @@ function App() {
               </PrivateRoute>
             }
           />
+
           <Route
-            path="/admin/finance/transactions"
+            path="/admin/payment-defaults"
             element={
               <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
-                  <TransactionManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/finance/revenue"
-            element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <RevenueTracking />
+                  <PaymentDefaultsManagement />
                 </DashboardLayout>
               </PrivateRoute>
             }
           />
 
-          {/* User Management */}
           <Route
             path="/admin/investors"
             element={
@@ -90,6 +78,7 @@ function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/admin/borrowers"
             element={
@@ -101,7 +90,6 @@ function App() {
             }
           />
 
-          {/* Funding Requests */}
           <Route
             path="/admin/funding-requests"
             element={
@@ -113,7 +101,6 @@ function App() {
             }
           />
 
-          {/* Compliance */}
           <Route
             path="/admin/compliance"
             element={
@@ -125,7 +112,6 @@ function App() {
             }
           />
 
-          {/* Settings */}
           <Route
             path="/admin/settings"
             element={
@@ -137,7 +123,6 @@ function App() {
             }
           />
 
-          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </Router>
