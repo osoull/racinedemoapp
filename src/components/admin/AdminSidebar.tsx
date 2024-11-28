@@ -21,7 +21,31 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "الإدارة المالية",
+    title: "المقترضين",
+    icon: Building2,
+    path: "/admin/borrowers",
+    description: "إدارة المقترضين"
+  },
+  {
+    title: "المستثمرين",
+    icon: Users,
+    path: "/admin/investors",
+    description: "إدارة وتتبع المستثمرين"
+  },
+  {
+    title: "طلبات التمويل",
+    icon: FileText,
+    path: "/admin/funding-requests",
+    description: "إدارة طلبات التمويل"
+  },
+  {
+    title: "الفرص الاستثمارية",
+    icon: LineChart,
+    path: "/admin/investment-opportunities",
+    description: "إدارة فرص الاستثمار"
+  },
+  {
+    title: "المعاملات المالية",
     icon: Wallet,
     path: "/admin/finance",
     description: "إدارة المعاملات والتقارير المالية"
@@ -31,30 +55,6 @@ const menuItems = [
     icon: AlertCircle,
     path: "/admin/payment-defaults",
     description: "إدارة حالات التعثر عن السداد"
-  },
-  {
-    title: "إدارة المستثمرين",
-    icon: Users,
-    path: "/admin/investors",
-    description: "إدارة وتتبع المستثمرين"
-  },
-  {
-    title: "الاستثمارات",
-    icon: LineChart,
-    path: "/admin/investment-opportunities",
-    description: "إدارة فرص الاستثمار"
-  },
-  {
-    title: "المقترضين",
-    icon: Building2,
-    path: "/admin/borrowers",
-    description: "إدارة المقترضين"
-  },
-  {
-    title: "طلبات التمويل",
-    icon: FileText,
-    path: "/admin/funding-requests",
-    description: "إدارة طلبات التمويل"
   },
   {
     title: "التحقق والامتثال",
