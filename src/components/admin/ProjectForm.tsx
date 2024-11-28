@@ -1,10 +1,19 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Tables } from "@/integrations/supabase/types";
-import { ProjectDetails } from "./project/ProjectDetails";
-import { ProjectPaymentStep } from "./project/ProjectPaymentStep";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+
+const projectSchema = z.object({
+  title: z.string().min(1, "عنوان المشروع مطلوب"),
+  description: z.string().min(1, "وصف المشروع مطلوب"),
+  funding_goal: z.number().min(1000, "المبلغ المستهدف يجب أن يكون أكبر من 1000 ريال"),
+  classification: z.string().min(1, "تصنيف المشروع مطلوب"),
+  min_investment: z.number().min(1000, "الحد الأدنى للاستثمار يجب أن يكون أكبر من 1000 ريال"),
+});
+
+type ProjectFormValues = z.infer<typeof projectSchema>;
 
 interface ProjectFormProps {
   project?: Tables<"projects"> | null;
@@ -12,74 +21,100 @@ interface ProjectFormProps {
 }
 
 export const ProjectForm = ({ project, onSuccess }: ProjectFormProps) => {
-  const [step, setStep] = useState<"details" | "payment">("details");
-  const [projectData, setProjectData] = useState<any>(null);
-  const { toast } = useToast();
-
-  const { data: commissions } = useQuery({
-    queryKey: ["commissions"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("commissions")
-        .select("*")
-      
-      if (error) throw error
-      return data
+  const form = useForm<ProjectFormValues>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: {
+      title: project?.title || "",
+      description: project?.description || "",
+      funding_goal: project?.funding_goal || 0,
+      classification: project?.classification || "",
+      min_investment: project?.min_investment || 1000,
     },
   });
 
-  const adminFee = commissions?.find(c => c.commission_type === 'admin_fee')?.rate || 0;
-  const collectionFee = commissions?.find(c => c.commission_type === 'collection_fee')?.rate || 0;
-
-  const handleProjectSubmit = async (data: any) => {
+  const onSubmit = async (data: ProjectFormValues) => {
     try {
-      // Create the project first
-      const { data: projectResponse, error: projectError } = await supabase
+      const { error } = await supabase
         .from('projects')
-        .insert({
+        .upsert({
+          id: project?.id,
           ...data,
           owner_id: (await supabase.auth.getUser()).data.user?.id,
-          status: 'draft'
-        })
-        .select()
-        .single();
+          status: project ? project.status : 'draft'
+        });
 
-      if (projectError) throw projectError;
-
-      setProjectData(projectResponse);
-      setStep("payment");
+      if (error) throw error;
+      
+      onSuccess?.();
     } catch (error) {
-      console.error('Error creating project:', error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إنشاء المشروع",
-        variant: "destructive",
-      });
+      console.error('Error saving project:', error);
     }
   };
 
-  const fees = {
-    admin: projectData ? (projectData.funding_goal * adminFee) / 100 : 0,
-    collection: projectData ? (projectData.funding_goal * collectionFee) / 100 : 0,
-    total: projectData ? ((projectData.funding_goal * (adminFee + collectionFee)) / 100) : 0
-  };
-
-  if (step === "payment" && projectData) {
-    return (
-      <ProjectPaymentStep
-        projectData={projectData}
-        fees={fees}
-        onBankTransfer={onSuccess}
-        onPaymentSuccess={onSuccess}
-        onBack={() => setStep("details")}
-      />
-    );
-  }
-
   return (
-    <ProjectDetails 
-      project={project} 
-      onSubmit={handleProjectSubmit} 
-    />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium">عنوان المشروع</label>
+          <input
+            id="title"
+            {...form.register("title")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          />
+          {form.formState.errors.title && <p className="mt-1 text-red-600">{form.formState.errors.title.message}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium">وصف المشروع</label>
+          <textarea
+            id="description"
+            {...form.register("description")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          />
+          {form.formState.errors.description && <p className="mt-1 text-red-600">{form.formState.errors.description.message}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="funding_goal" className="block text-sm font-medium">المبلغ المستهدف (ريال)</label>
+          <input
+            id="funding_goal"
+            type="number"
+            {...form.register("funding_goal", { valueAsNumber: true })}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          />
+          {form.formState.errors.funding_goal && <p className="mt-1 text-red-600">{form.formState.errors.funding_goal.message}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="classification" className="block text-sm font-medium">تصنيف المشروع</label>
+          <input
+            id="classification"
+            {...form.register("classification")}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          />
+          {form.formState.errors.classification && <p className="mt-1 text-red-600">{form.formState.errors.classification.message}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="min_investment" className="block text-sm font-medium">الحد الأدنى للاستثمار (ريال)</label>
+          <input
+            id="min_investment"
+            type="number"
+            {...form.register("min_investment", { valueAsNumber: true })}
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          />
+          {form.formState.errors.min_investment && <p className="mt-1 text-red-600">{form.formState.errors.min_investment.message}</p>}
+        </div>
+        
+        <div className="flex justify-end">
+          <Button 
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "جاري الحفظ..." : project ? "تحديث المشروع" : "إنشاء المشروع"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 };
