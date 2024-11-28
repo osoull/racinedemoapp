@@ -73,7 +73,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           "flex-1 lg:mr-64",
           className
         )}>
-          <div className="container max-w-screen-2xl p-6">
+          <div className="container max-w-screen-2xl p-6 space-y-6">
             {children}
           </div>
         </main>
