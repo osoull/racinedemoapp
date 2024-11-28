@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FinancialReports } from "./FinancialReports"
 import { BorrowerPayments } from "./BorrowerPayments"
 import { FeesManagement } from "./FeesManagement"
-import { TotalFeesCard } from "./TotalFeesCard"
+import { TotalFeesCard } from "@/components/admin/revenue/TotalFeesCard"
 
 export function FinanceOverview() {
   return (
