@@ -29,57 +29,53 @@ function App() {
 
             {/* Routes Admin */}
             <Route
-              path="/admin/*"
+              path="/admin"
               element={
                 <PrivateRoute allowedTypes={["admin"]}>
-                  <DashboardLayout sidebar={<AdminSidebar />}>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/admin/dashboard" />} />
-                      <Route path="dashboard" element={<AdminDashboard />} />
-                      <Route path="finance" element={<TransactionManagement />} />
-                      <Route path="payment-defaults" element={<PaymentDefaultsManagement />} />
-                      <Route path="investors" element={<InvestorManagement />} />
-                      <Route path="investment-opportunities" element={<InvestmentOpportunities />} />
-                      <Route path="borrowers" element={<BorrowerManagement />} />
-                      <Route path="funding-requests" element={<FundingRequestList />} />
-                      <Route path="compliance" element={<KYCManagement />} />
-                    </Routes>
-                  </DashboardLayout>
+                  <DashboardLayout sidebar={<AdminSidebar />} />
                 </PrivateRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="/admin/dashboard" />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="finance" element={<TransactionManagement />} />
+              <Route path="payment-defaults" element={<PaymentDefaultsManagement />} />
+              <Route path="investors" element={<InvestorManagement />} />
+              <Route path="investment-opportunities" element={<InvestmentOpportunities />} />
+              <Route path="borrowers" element={<BorrowerManagement />} />
+              <Route path="funding-requests" element={<FundingRequestList />} />
+              <Route path="compliance" element={<KYCManagement />} />
+            </Route>
 
             {/* Routes Emprunteur */}
             <Route
-              path="/borrower/*"
+              path="/borrower"
               element={
                 <PrivateRoute allowedTypes={["borrower"]}>
-                  <DashboardLayout sidebar={<BorrowerSidebar />}>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/borrower/dashboard" />} />
-                      <Route path="dashboard" element={<BorrowerDashboard />} />
-                      <Route path="funding-requests" element={<FundingRequestList />} />
-                      <Route path="payments" element={<div>Payments (à implémenter)</div>} />
-                      <Route path="profile" element={<div>Profile (à implémenter)</div>} />
-                      <Route path="kyc" element={<div>KYC (à implémenter)</div>} />
-                    </Routes>
-                  </DashboardLayout>
+                  <DashboardLayout sidebar={<BorrowerSidebar />} />
                 </PrivateRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="/borrower/dashboard" />} />
+              <Route path="dashboard" element={<BorrowerDashboard />} />
+              <Route path="funding-requests" element={<FundingRequestList />} />
+              <Route path="payments" element={<div>Payments (à implémenter)</div>} />
+              <Route path="profile" element={<div>Profile (à implémenter)</div>} />
+              <Route path="kyc" element={<div>KYC (à implémenter)</div>} />
+            </Route>
 
             {/* Routes Investisseur */}
             <Route
-              path="/investor/*"
+              path="/investor"
               element={
                 <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/investor/dashboard" />} />
-                    <Route path="dashboard" element={<InvestorDashboard />} />
-                  </Routes>
+                  <DashboardLayout sidebar={<div>Investor Sidebar</div>} />
                 </PrivateRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="/investor/dashboard" />} />
+              <Route path="dashboard" element={<InvestorDashboard />} />
+            </Route>
           </Routes>
           <Toaster />
         </AuthProvider>
