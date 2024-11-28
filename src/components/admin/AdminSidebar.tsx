@@ -24,7 +24,19 @@ const menuItems = [
     title: "الإدارة المالية",
     icon: Wallet,
     path: "/admin/finance",
-    description: "إدارة المعاملات والتقارير المالية"
+    description: "إدارة المعاملات والتقارير المالية",
+    subItems: [
+      {
+        title: "المعاملات",
+        path: "/admin/finance/transactions",
+        description: "إدارة المعاملات"
+      },
+      {
+        title: "الإيرادات",
+        path: "/admin/finance/revenue",
+        description: "تتبع الإيرادات"
+      }
+    ]
   },
   {
     title: "المستثمرين",

@@ -11,8 +11,8 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
-import PlatformSettings from "@/components/admin/PlatformSettings";
-import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement";
+import { PlatformSettings } from "@/components/admin/PlatformSettings";
+import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement";
 import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
 
 function App() {
@@ -123,7 +123,7 @@ function App() {
             }
           />
 
-          {/* Fallback route - Redirects to authentication */}
+          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
