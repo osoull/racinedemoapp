@@ -7,9 +7,7 @@ import {
   LayoutDashboard, 
   Settings,
   Shield,
-  Wallet,
   Users,
-  DollarSign,
   FileText
 } from "lucide-react"
 
@@ -27,28 +25,10 @@ const menuItems = [
     description: "إدارة المستثمرين"
   },
   {
-    title: "المقترضين",
-    icon: Users,
-    path: "/admin/borrowers",
-    description: "إدارة المقترضين"
-  },
-  {
     title: "طلبات التمويل",
     icon: FileText,
     path: "/admin/funding-requests",
     description: "إدارة طلبات التمويل"
-  },
-  {
-    title: "المعاملات",
-    icon: Wallet,
-    path: "/admin/transactions",
-    description: "إدارة المعاملات المالية"
-  },
-  {
-    title: "الإيرادات",
-    icon: DollarSign,
-    path: "/admin/revenue",
-    description: "تتبع وتحليل الإيرادات"
   },
   {
     title: "التحقق والامتثال",

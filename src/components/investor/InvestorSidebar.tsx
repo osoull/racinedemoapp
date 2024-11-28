@@ -4,13 +4,8 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { 
   LayoutDashboard, 
-  FileText,
   Settings,
   Wallet,
-  MessageSquare,
-  PieChart,
-  ClipboardCheck,
-  Search
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
 
@@ -22,34 +17,10 @@ const menuItems = [
     description: "لوحة المعلومات والإحصائيات"
   },
   {
-    title: "استكشاف المشاريع",
-    icon: Search,
-    path: "/investor/projects",
-    description: "اكتشاف فرص الاستثمار"
-  },
-  {
     title: "محفظتي",
     icon: Wallet,
     path: "/investor/portfolio",
     description: "إدارة استثماراتي"
-  },
-  {
-    title: "التقارير",
-    icon: PieChart,
-    path: "/investor/reports",
-    description: "تقارير وتحليلات الاستثمار"
-  },
-  {
-    title: "التحقق والوثائق",
-    icon: ClipboardCheck,
-    path: "/investor/verification",
-    description: "إدارة وثائق KYC والتحقق"
-  },
-  {
-    title: "الدعم الفني",
-    icon: MessageSquare,
-    path: "/investor/support",
-    description: "طلب المساعدة والدعم"
   },
   {
     title: "الإعدادات",

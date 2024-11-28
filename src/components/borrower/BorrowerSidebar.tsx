@@ -4,11 +4,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { 
   LayoutDashboard, 
-  FileText,
   Settings,
-  Wallet,
-  MessageSquare,
-  ClipboardCheck
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
 
@@ -18,30 +14,6 @@ const menuItems = [
     icon: LayoutDashboard,
     path: "/borrower",
     description: "لوحة المعلومات والإحصائيات"
-  },
-  {
-    title: "طلبات التمويل",
-    icon: FileText,
-    path: "/borrower/loans",
-    description: "إدارة طلبات التمويل"
-  },
-  {
-    title: "المدفوعات",
-    icon: Wallet,
-    path: "/borrower/payments",
-    description: "إدارة المدفوعات والأقساط"
-  },
-  {
-    title: "التحقق والوثائق",
-    icon: ClipboardCheck,
-    path: "/borrower/verification",
-    description: "إدارة وثائق KYC والتحقق"
-  },
-  {
-    title: "الدعم الفني",
-    icon: MessageSquare,
-    path: "/borrower/support",
-    description: "طلب المساعدة والدعم"
   },
   {
     title: "الإعدادات",
