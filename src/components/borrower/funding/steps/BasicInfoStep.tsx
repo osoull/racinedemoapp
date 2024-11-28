@@ -33,7 +33,9 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>عنوان المشروع *</FormLabel>
-            <Input {...field} />
+            <FormControl>
+              <Input {...field} className="text-right" dir="rtl" />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -46,12 +48,19 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
           <FormItem>
             <FormLabel>التصنيف *</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger>
-                <SelectValue placeholder="اختر تصنيف" />
-              </SelectTrigger>
-              <SelectContent>
+              <FormControl>
+                <SelectTrigger className="text-right" dir="rtl">
+                  <SelectValue placeholder="اختر تصنيف" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent align="end">
                 {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
+                  <SelectItem 
+                    key={category.id} 
+                    value={category.id}
+                    className="text-right"
+                    dir="rtl"
+                  >
                     {category.label}
                   </SelectItem>
                 ))}
@@ -68,11 +77,15 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>المبلغ المطلوب (ريال) *</FormLabel>
-            <Input 
-              type="number" 
-              {...field} 
-              onChange={(e) => field.onChange(Number(e.target.value))}
-            />
+            <FormControl>
+              <Input 
+                type="number" 
+                {...field} 
+                onChange={(e) => field.onChange(Number(e.target.value))}
+                className="text-right"
+                dir="rtl"
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -84,11 +97,15 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>مدة الحملة (بالأيام) *</FormLabel>
-            <Input 
-              type="number" 
-              {...field} 
-              onChange={(e) => field.onChange(Number(e.target.value))}
-            />
+            <FormControl>
+              <Input 
+                type="number" 
+                {...field} 
+                onChange={(e) => field.onChange(Number(e.target.value))}
+                className="text-right"
+                dir="rtl"
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -101,7 +118,9 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>وصف المشروع *</FormLabel>
-              <Textarea {...field} rows={5} />
+              <FormControl>
+                <Textarea {...field} rows={5} className="text-right" dir="rtl" />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -115,7 +134,9 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>خطة استخدام التمويل *</FormLabel>
-              <Textarea {...field} rows={5} />
+              <FormControl>
+                <Textarea {...field} rows={5} className="text-right" dir="rtl" />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
