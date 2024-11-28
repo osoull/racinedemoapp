@@ -8,9 +8,11 @@ import { AdminRoutes } from "@/routes/AdminRoutes";
 import { BorrowerRoutes } from "@/routes/BorrowerRoutes";
 import { InvestorRoutes } from "@/routes/InvestorRoutes";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 function App() {
   const { user, loading } = useAuth();
+  const { toast } = useToast();
 
   if (loading) {
     return (
@@ -21,17 +23,30 @@ function App() {
   }
 
   const getUserRedirectPath = () => {
-    const userType = user?.user_metadata?.user_type;
-    switch (userType) {
-      case 'admin':
-        return '/admin/dashboard';
-      case 'borrower':
-        return '/borrower/dashboard';
-      case 'basic_investor':
-      case 'qualified_investor':
-        return '/investor/dashboard';
-      default:
-        return '/';
+    try {
+      const userType = user?.user_metadata?.user_type;
+      console.log("User type:", userType); // Debug log
+      
+      switch (userType) {
+        case 'admin':
+          return '/admin/dashboard';
+        case 'borrower':
+          return '/borrower/dashboard';
+        case 'basic_investor':
+        case 'qualified_investor':
+          return '/investor/dashboard';
+        default:
+          console.log("No valid user type found, redirecting to /"); // Debug log
+          return '/';
+      }
+    } catch (error) {
+      console.error("Error in getUserRedirectPath:", error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء توجيهك للوحة التحكم",
+        variant: "destructive",
+      });
+      return '/';
     }
   };
 
@@ -44,9 +59,32 @@ function App() {
             element={user ? <Navigate to={getUserRedirectPath()} replace /> : <Auth />} 
           />
 
-          <Route path="/admin/*" element={<AdminRoutes />} />
-          <Route path="/borrower/*" element={<BorrowerRoutes />} />
-          <Route path="/investor/*" element={<InvestorRoutes />} />
+          <Route 
+            path="/admin/*" 
+            element={
+              user?.user_metadata?.user_type === 'admin' ? 
+                <AdminRoutes /> : 
+                <Navigate to="/" replace />
+            } 
+          />
+          
+          <Route 
+            path="/borrower/*" 
+            element={
+              user?.user_metadata?.user_type === 'borrower' ? 
+                <BorrowerRoutes /> : 
+                <Navigate to="/" replace />
+            } 
+          />
+          
+          <Route 
+            path="/investor/*" 
+            element={
+              ['basic_investor', 'qualified_investor'].includes(user?.user_metadata?.user_type || '') ? 
+                <InvestorRoutes /> : 
+                <Navigate to="/" replace />
+            } 
+          />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

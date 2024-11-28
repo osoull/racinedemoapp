@@ -35,13 +35,21 @@ export function Auth() {
         .eq('id', userId)
         .single()
 
-      if (error) throw error
-      if (!profile) throw new Error("No profile found")
+      if (error) {
+        console.error("Error fetching profile:", error);
+        throw error;
+      }
+      
+      if (!profile) {
+        console.error("No profile found");
+        throw new Error("No profile found");
+      }
 
+      console.log("Profile found:", profile); // Debug log
       const userType = profile.user_type as UserType
       redirectBasedOnUserType(userType)
     } catch (error) {
-      console.error("Error fetching user type:", error)
+      console.error("Error in checkUserTypeAndRedirect:", error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء توجيهك للوحة التحكم",
@@ -52,6 +60,7 @@ export function Auth() {
   }
 
   const redirectBasedOnUserType = (userType: UserType) => {
+    console.log("Redirecting based on user type:", userType); // Debug log
     switch (userType) {
       case "borrower":
         navigate("/borrower/dashboard")
@@ -62,9 +71,6 @@ export function Auth() {
         break
       case "admin":
         navigate("/admin/dashboard")
-        break
-      case "investment_manager":
-        navigate("/investment-manager/dashboard")
         break
       default:
         navigate("/")
