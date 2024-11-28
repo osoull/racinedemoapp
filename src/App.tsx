@@ -39,22 +39,20 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Public authentication route */}
           <Route 
             path="/" 
             element={user ? <Navigate to={getUserRedirectPath()} replace /> : <Auth />} 
           />
 
-          {/* Protected role-based routes */}
-          <AdminRoutes />
-          <BorrowerRoutes />
-          <InvestorRoutes />
+          {/* Include the routes directly instead of components */}
+          <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/borrower/*" element={<BorrowerRoutes />} />
+          <Route path="/investor/*" element={<InvestorRoutes />} />
 
-          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Toaster />
       </Router>
-      <Toaster />
     </QueryClientProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
@@ -8,13 +9,12 @@ import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
 import { BorrowerSettings } from "@/components/borrower/BorrowerSettings";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
-import { Route } from "react-router-dom";
 
 export function BorrowerRoutes() {
   return (
-    <>
+    <Routes>
       <Route
-        path="/borrower/dashboard"
+        path="dashboard"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -25,7 +25,7 @@ export function BorrowerRoutes() {
       />
 
       <Route
-        path="/borrower/funding-requests"
+        path="funding-requests"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -36,7 +36,7 @@ export function BorrowerRoutes() {
       />
 
       <Route
-        path="/borrower/funding-requests/new"
+        path="funding-requests/new"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -47,7 +47,7 @@ export function BorrowerRoutes() {
       />
 
       <Route
-        path="/borrower/payments"
+        path="payments"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -58,7 +58,7 @@ export function BorrowerRoutes() {
       />
 
       <Route
-        path="/borrower/profile"
+        path="profile"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -69,7 +69,7 @@ export function BorrowerRoutes() {
       />
 
       <Route
-        path="/borrower/kyc"
+        path="kyc"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -80,7 +80,7 @@ export function BorrowerRoutes() {
       />
 
       <Route
-        path="/borrower/settings"
+        path="settings"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -89,6 +89,6 @@ export function BorrowerRoutes() {
           </PrivateRoute>
         }
       />
-    </>
+    </Routes>
   );
 }

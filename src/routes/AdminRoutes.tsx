@@ -1,3 +1,4 @@
+import { Route, Routes } from "react-router-dom";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
@@ -10,13 +11,12 @@ import { PaymentDefaultsManagement } from "@/components/admin/defaults/PaymentDe
 import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
 import { PlatformSettings } from "@/components/admin/PlatformSettings";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
-import { Route } from "react-router-dom";
 
 export function AdminRoutes() {
   return (
-    <>
+    <Routes>
       <Route
-        path="/admin/dashboard"
+        path="dashboard"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -27,7 +27,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/borrowers"
+        path="borrowers"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -38,7 +38,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/investors"
+        path="investors"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -49,7 +49,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/funding-requests"
+        path="funding-requests"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -60,7 +60,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/investment-opportunities"
+        path="investment-opportunities"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -71,7 +71,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/finance"
+        path="finance"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -82,7 +82,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/payment-defaults"
+        path="payment-defaults"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -93,7 +93,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/compliance"
+        path="compliance"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -104,7 +104,7 @@ export function AdminRoutes() {
       />
 
       <Route
-        path="/admin/settings"
+        path="settings"
         element={
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
@@ -113,6 +113,6 @@ export function AdminRoutes() {
           </PrivateRoute>
         }
       />
-    </>
+    </Routes>
   );
 }
