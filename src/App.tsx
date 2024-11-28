@@ -2,60 +2,27 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
 import { Toaster } from "@/components/ui/toaster";
+import { PrivateRoute } from "@/components/auth/PrivateRoute";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { AdminRoutes } from "@/routes/AdminRoutes";
-import { BorrowerRoutes } from "@/routes/BorrowerRoutes";
-import { InvestorRoutes } from "@/routes/InvestorRoutes";
-import { Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
+import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
+import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
+import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
+import { FundingRequestForm } from "@/components/borrower/funding/FundingRequestForm";
+import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
 
 function App() {
-  const { user, loading: authLoading } = useAuth();
-  const { toast } = useToast();
+  const { loading } = useAuth();
 
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ["profile", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching profile:", error);
-        toast({
-          title: "خطأ",
-          description: "حدث خطأ أثناء تحميل الملف الشخصي",
-          variant: "destructive",
-        });
-        return null;
-      }
-      return data;
-    },
-    enabled: !!user,
-    retry: 1,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-
-  // Show loading spinner while authentication is being checked
-  if (authLoading) {
+  if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Show loading spinner while profile is being fetched (only if user is authenticated)
-  if (user && profileLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
@@ -64,56 +31,105 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          <Route 
-            path="/" 
+          <Route path="/" element={<Auth />} />
+          
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
             element={
-              !user ? (
-                <Auth />
-              ) : (
-                <Navigate 
-                  to={
-                    profile?.user_type === 'admin' ? '/admin/dashboard' :
-                    profile?.user_type === 'borrower' ? '/borrower/dashboard' :
-                    profile?.user_type === 'basic_investor' || profile?.user_type === 'qualified_investor' ? '/investor/dashboard' :
-                    '/'
-                  } 
-                  replace 
-                />
-              )
-            } 
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <DashboardOverview />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          
+          {/* Borrower Routes */}
+          <Route
+            path="/borrower/dashboard"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerDashboardOverview />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
           />
 
-          <Route 
-            path="/admin/*" 
+          <Route
+            path="/borrower/funding-requests"
             element={
-              !user ? <Navigate to="/" replace /> :
-              profile?.user_type === 'admin' ? <AdminRoutes /> :
-              <Navigate to="/" replace />
-            } 
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <FundingRequestsList />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
           />
-          
-          <Route 
-            path="/borrower/*" 
+
+          <Route
+            path="/borrower/funding-requests/new"
             element={
-              !user ? <Navigate to="/" replace /> :
-              profile?.user_type === 'borrower' ? <BorrowerRoutes /> :
-              <Navigate to="/" replace />
-            } 
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <FundingRequestForm />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
           />
-          
-          <Route 
-            path="/investor/*" 
+
+          <Route
+            path="/borrower/payments"
             element={
-              !user ? <Navigate to="/" replace /> :
-              ['basic_investor', 'qualified_investor'].includes(profile?.user_type || '') ? <InvestorRoutes /> :
-              <Navigate to="/" replace />
-            } 
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerPayments />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/profile"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerProfile />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/kyc"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <BorrowerKYCForm />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/borrower/settings"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <div className="space-y-6">
+                    <h2 className="text-3xl font-bold tracking-tight">إعدادات الحساب</h2>
+                    {/* Settings content will be added later */}
+                  </div>
+                </DashboardLayout>
+              </PrivateRoute>
+            }
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        <Toaster />
       </Router>
+      <Toaster />
     </QueryClientProvider>
   );
 }

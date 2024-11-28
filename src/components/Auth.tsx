@@ -8,14 +8,12 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { SignInForm } from "./auth/SignInForm"
 import { UserType } from "@/types/user"
-import { Loader2 } from "lucide-react"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [isLoading, setIsLoading] = useState(false)
-  const [isRedirecting, setIsRedirecting] = useState(false)
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -24,43 +22,32 @@ export function Auth() {
     if (user) {
       checkUserTypeAndRedirect(user.id)
     }
-  }, [user])
+  }, [user, navigate])
 
   const checkUserTypeAndRedirect = async (userId: string) => {
     try {
-      setIsRedirecting(true)
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('user_type')
         .eq('id', userId)
         .single()
 
-      if (error) {
-        console.error("Error fetching profile:", error);
-        throw error;
-      }
-      
-      if (!profile) {
-        console.error("No profile found");
-        throw new Error("No profile found");
-      }
+      if (error) throw error
+      if (!profile) throw new Error("No profile found")
 
-      console.log("Profile found:", profile); // Debug log
       const userType = profile.user_type as UserType
       redirectBasedOnUserType(userType)
     } catch (error) {
-      console.error("Error in checkUserTypeAndRedirect:", error)
+      console.error("Error fetching user type:", error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء توجيهك للوحة التحكم",
         variant: "destructive",
       })
-      setIsRedirecting(false)
     }
   }
 
   const redirectBasedOnUserType = (userType: UserType) => {
-    console.log("Redirecting based on user type:", userType); // Debug log
     switch (userType) {
       case "borrower":
         navigate("/borrower/dashboard")
@@ -71,6 +58,9 @@ export function Auth() {
         break
       case "admin":
         navigate("/admin/dashboard")
+        break
+      case "investment_manager":
+        navigate("/investment-manager/dashboard")
         break
       default:
         navigate("/")
@@ -94,6 +84,7 @@ export function Auth() {
         description: "حدث خطأ أثناء تسجيل الدخول",
         variant: "destructive",
       })
+    } finally {
       setIsLoading(false)
     }
   }
@@ -108,12 +99,33 @@ export function Auth() {
     }
   }
 
-  if (isRedirecting) {
-    return (
-      <div className="flex min-h-[80vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+  const renderAuthContent = () => {
+    switch (step) {
+      case "selection":
+        return <UserTypeSelection onSelect={handleUserTypeSelect} />
+      case "signup":
+        return (
+          <SignUpForm 
+            onBack={() => setStep("signin")}
+            onSuccess={() => setStep("signin")}
+          />
+        )
+      case "borrower_signup":
+        return (
+          <BorrowerSignUpForm 
+            onBack={() => setStep("signin")}
+            onSuccess={() => setStep("signin")}
+          />
+        )
+      default:
+        return (
+          <SignInForm 
+            onSignIn={handleSignIn}
+            onRegisterClick={() => setStep("selection")}
+            isLoading={isLoading}
+          />
+        )
+    }
   }
 
   return (
@@ -128,26 +140,7 @@ export function Auth() {
         alt="Racine Investment" 
         className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
       />
-      {step === "selection" && <UserTypeSelection onSelect={handleUserTypeSelect} />}
-      {step === "signup" && (
-        <SignUpForm 
-          onBack={() => setStep("signin")}
-          onSuccess={() => setStep("signin")}
-        />
-      )}
-      {step === "borrower_signup" && (
-        <BorrowerSignUpForm 
-          onBack={() => setStep("signin")}
-          onSuccess={() => setStep("signin")}
-        />
-      )}
-      {step === "signin" && (
-        <SignInForm 
-          onSignIn={handleSignIn}
-          onRegisterClick={() => setStep("selection")}
-          isLoading={isLoading}
-        />
-      )}
+      {renderAuthContent()}
     </div>
   )
 }

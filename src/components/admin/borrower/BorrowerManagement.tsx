@@ -9,56 +9,31 @@ import { Badge } from "@/components/ui/badge"
 
 export function BorrowerManagement() {
   const [selectedBorrowerId, setSelectedBorrowerId] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState("all")
 
   const { data: borrowers, isLoading } = useQuery({
-    queryKey: ["borrowers", activeTab],
+    queryKey: ["borrowers"],
     queryFn: async () => {
-      const status = activeTab === "all" ? null : activeTab
-      const { data, error } = await supabase.rpc('get_borrowers_by_status', {
-        status_filter: status
-      })
+      const { data: borrowers, error } = await supabase
+        .from("profiles")
+        .select(`
+          *,
+          borrower_kyc (
+            company_registration_number,
+            tax_identification_number,
+            annual_revenue,
+            number_of_employees,
+            industry_sector,
+            company_website,
+            verification_status
+          )
+        `)
+        .eq("user_type", "borrower")
+        .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data
+      return borrowers
     }
   })
-
-  const renderBorrowerList = (filteredBorrowers: typeof borrowers) => {
-    if (!filteredBorrowers?.length) {
-      return (
-        <div className="text-center py-8 text-muted-foreground">
-          لا يوجد مقترضون في هذه الفئة
-        </div>
-      )
-    }
-
-    return (
-      <div className="space-y-4">
-        {filteredBorrowers.map((borrower) => (
-          <div 
-            key={borrower.id} 
-            className="p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
-            onClick={() => setSelectedBorrowerId(borrower.id)}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium">{borrower.company_name || `${borrower.first_name} ${borrower.last_name}`}</h3>
-                <p className="text-sm text-muted-foreground">{borrower.email}</p>
-              </div>
-              <Badge variant={
-                borrower.kyc_status === 'approved' ? 'default' :
-                borrower.kyc_status === 'pending' ? 'secondary' : 'destructive'
-              }>
-                {borrower.kyc_status === 'approved' ? 'معتمد' :
-                 borrower.kyc_status === 'pending' ? 'قيد المراجعة' : 'مرفوض'}
-              </Badge>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
 
   return (
     <div className="space-y-6">
@@ -69,10 +44,10 @@ export function BorrowerManagement() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs defaultValue="all" className="space-y-4">
         <TabsList>
           <TabsTrigger value="all">جميع المقترضين</TabsTrigger>
-          <TabsTrigger value="approved">النشطون</TabsTrigger>
+          <TabsTrigger value="active">النشطون</TabsTrigger>
           <TabsTrigger value="pending">قيد المراجعة</TabsTrigger>
           <TabsTrigger value="rejected">مرفوضون</TabsTrigger>
         </TabsList>
@@ -88,25 +63,57 @@ export function BorrowerManagement() {
                   <Loader2 className="h-8 w-8 animate-spin" />
                 </div>
               ) : (
-                renderBorrowerList(borrowers)
+                <div className="space-y-4">
+                  {borrowers?.map((borrower) => (
+                    <div 
+                      key={borrower.id} 
+                      className="p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
+                      onClick={() => setSelectedBorrowerId(borrower.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-medium">{borrower.company_name || `${borrower.first_name} ${borrower.last_name}`}</h3>
+                          <p className="text-sm text-muted-foreground">{borrower.email}</p>
+                        </div>
+                        <Badge variant={
+                          borrower.kyc_status === 'approved' ? 'default' :
+                          borrower.kyc_status === 'pending' ? 'secondary' : 'destructive'
+                        }>
+                          {borrower.kyc_status === 'approved' ? 'معتمد' :
+                           borrower.kyc_status === 'pending' ? 'قيد المراجعة' : 'مرفوض'}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="approved">
+        <TabsContent value="active">
           <Card>
             <CardHeader>
               <CardTitle>المقترضون النشطون</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-24">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                </div>
-              ) : (
-                renderBorrowerList(borrowers)
-              )}
+              <div className="space-y-4">
+                {borrowers?.filter(b => b.kyc_status === 'approved').map((borrower) => (
+                  <div 
+                    key={borrower.id} 
+                    className="p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
+                    onClick={() => setSelectedBorrowerId(borrower.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">{borrower.company_name || `${borrower.first_name} ${borrower.last_name}`}</h3>
+                        <p className="text-sm text-muted-foreground">{borrower.email}</p>
+                      </div>
+                      <Badge>معتمد</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -117,13 +124,23 @@ export function BorrowerManagement() {
               <CardTitle>المقترضون قيد المراجعة</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-24">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                </div>
-              ) : (
-                renderBorrowerList(borrowers)
-              )}
+              <div className="space-y-4">
+                {borrowers?.filter(b => b.kyc_status === 'pending').map((borrower) => (
+                  <div 
+                    key={borrower.id} 
+                    className="p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
+                    onClick={() => setSelectedBorrowerId(borrower.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">{borrower.company_name || `${borrower.first_name} ${borrower.last_name}`}</h3>
+                        <p className="text-sm text-muted-foreground">{borrower.email}</p>
+                      </div>
+                      <Badge variant="secondary">قيد المراجعة</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -134,13 +151,23 @@ export function BorrowerManagement() {
               <CardTitle>المقترضون المرفوضون</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-24">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                </div>
-              ) : (
-                renderBorrowerList(borrowers)
-              )}
+              <div className="space-y-4">
+                {borrowers?.filter(b => b.kyc_status === 'rejected').map((borrower) => (
+                  <div 
+                    key={borrower.id} 
+                    className="p-4 border rounded-lg cursor-pointer hover:bg-accent transition-colors"
+                    onClick={() => setSelectedBorrowerId(borrower.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">{borrower.company_name || `${borrower.first_name} ${borrower.last_name}`}</h3>
+                        <p className="text-sm text-muted-foreground">{borrower.email}</p>
+                      </div>
+                      <Badge variant="destructive">مرفوض</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
