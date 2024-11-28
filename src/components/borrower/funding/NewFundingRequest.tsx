@@ -1,16 +1,16 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { useNavigate } from "react-router-dom"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/integrations/supabase/client"
+import { CategorySelect } from "./CategorySelect"
 
 const fundingRequestSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
@@ -18,23 +18,12 @@ const fundingRequestSchema = z.object({
   category: z.string().min(1, "تصنيف المشروع مطلوب"),
   funding_goal: z.number().min(1000, "المبلغ المطلوب يجب أن يكون أكبر من 1000 ريال"),
   campaign_duration: z.number().min(30, "مدة الحملة يجب أن تكون 30 يوماً على الأقل").max(90, "مدة الحملة يجب أن لا تتجاوز 90 يوماً"),
-});
-
-const categories = [
-  { id: "technology", label: "تقنية" },
-  { id: "real_estate", label: "عقارات" },
-  { id: "healthcare", label: "رعاية صحية" },
-  { id: "education", label: "تعليم" },
-  { id: "retail", label: "تجارة تجزئة" },
-  { id: "manufacturing", label: "تصنيع" },
-  { id: "services", label: "خدمات" },
-  { id: "other", label: "أخرى" },
-];
+})
 
 export function NewFundingRequest() {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const { user } = useAuth();
+  const { toast } = useToast()
+  const navigate = useNavigate()
+  const { user } = useAuth()
 
   const form = useForm<z.infer<typeof fundingRequestSchema>>({
     resolver: zodResolver(fundingRequestSchema),
@@ -45,7 +34,7 @@ export function NewFundingRequest() {
       funding_goal: 1000,
       campaign_duration: 30,
     },
-  });
+  })
 
   const onSubmit = async (values: z.infer<typeof fundingRequestSchema>) => {
     try {
@@ -58,24 +47,24 @@ export function NewFundingRequest() {
         campaign_duration: values.campaign_duration,
         fund_usage_plan: [],
         status: "draft"
-      });
+      })
 
-      if (error) throw error;
+      if (error) throw error
 
       toast({
         title: "تم حفظ الطلب",
         description: "تم حفظ طلب التمويل بنجاح",
-      });
+      })
 
-      navigate("/borrower/funding-requests");
+      navigate("/borrower/funding-requests")
     } catch (error) {
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء حفظ طلب التمويل",
         variant: "destructive",
-      });
+      })
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -100,37 +89,14 @@ export function NewFundingRequest() {
                   <FormItem>
                     <FormLabel>عنوان المشروع *</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} className="text-right" dir="rtl" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>تصنيف المشروع *</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="اختر تصنيف" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <CategorySelect control={form.control} />
 
               <FormField
                 control={form.control}
@@ -143,6 +109,8 @@ export function NewFundingRequest() {
                         type="number" 
                         {...field} 
                         onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-right"
+                        dir="rtl"
                       />
                     </FormControl>
                     <FormMessage />
@@ -161,6 +129,8 @@ export function NewFundingRequest() {
                         type="number" 
                         {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="text-right"
+                        dir="rtl"
                       />
                     </FormControl>
                     <FormMessage />
@@ -175,7 +145,7 @@ export function NewFundingRequest() {
                   <FormItem>
                     <FormLabel>وصف المشروع *</FormLabel>
                     <FormControl>
-                      <Textarea {...field} rows={5} />
+                      <Textarea {...field} rows={5} className="text-right" dir="rtl" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -197,5 +167,5 @@ export function NewFundingRequest() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
