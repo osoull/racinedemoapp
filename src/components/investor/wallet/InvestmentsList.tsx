@@ -1,87 +1,99 @@
-import { useAuth } from "@/contexts/AuthContext"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { formatCurrency } from "@/utils/feeCalculations";
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
 
 export function InvestmentsList() {
-  const { user } = useAuth()
-
   const { data: investments, isLoading } = useQuery({
-    queryKey: ["investments", user?.id],
+    queryKey: ["transactions"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("investments")
+        .from("transactions")
         .select(`
           *,
-          project:projects(
+          funding_request:funding_requests(
             title,
-            description,
             funding_goal,
             current_funding,
             status
           )
         `)
-        .eq("investor_id", user?.id)
-        .order("created_at", { ascending: false })
-      
-      if (error) throw error
-      return data
-    },
-    enabled: !!user?.id
-  })
+        .eq("type", "investment")
+        .order("created_at", { ascending: false });
 
-  if (isLoading) return <div>جاري التحميل...</div>
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!investments?.length) {
+    return (
+      <Card className="p-6">
+        <p className="text-center text-muted-foreground">
+          لا توجد استثمارات حالياً
+        </p>
+      </Card>
+    );
+  }
 
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">استثماراتي</h3>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>المشروع</TableHead>
-            <TableHead>مبلغ الاستثمار</TableHead>
-            <TableHead>نسبة التمويل</TableHead>
-            <TableHead>الحالة</TableHead>
-            <TableHead>التاريخ</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {investments?.map((investment) => (
-            <TableRow key={investment.investment_id}>
-              <TableCell className="font-medium">
-                {investment.project?.title}
-              </TableCell>
-              <TableCell>{investment.amount.toLocaleString()} ريال</TableCell>
-              <TableCell>
-                {investment.project ? (
-                  `${((investment.project.current_funding / investment.project.funding_goal) * 100).toFixed(1)}%`
-                ) : "غير متوفر"}
-              </TableCell>
-              <TableCell>
-                <Badge variant={
-                  investment.status === 'confirmed' ? 'default' :
-                  investment.status === 'pending' ? 'secondary' : 'destructive'
-                }>
-                  {investment.status === 'confirmed' ? 'مؤكد' :
-                   investment.status === 'pending' ? 'قيد المعالجة' : 'ملغي'}
+    <div className="space-y-4">
+      {investments.map((investment) => (
+        <Card key={investment.id} className="p-4">
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-semibold">
+                  {investment.funding_request?.title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {formatCurrency(investment.amount)}
+                </p>
+              </div>
+              <div className="space-y-1 text-right">
+                <Progress
+                  value={
+                    ((investment.funding_request?.current_funding || 0) /
+                      (investment.funding_request?.funding_goal || 1)) *
+                    100
+                  }
+                  className="h-2"
+                />
+                <Badge
+                  variant={
+                    investment.status === "completed"
+                      ? "success"
+                      : investment.status === "pending"
+                      ? "warning"
+                      : "destructive"
+                  }
+                >
+                  {investment.status === "completed"
+                    ? "مكتمل"
+                    : investment.status === "pending"
+                    ? "قيد المعالجة"
+                    : "مرفوض"}
                 </Badge>
-              </TableCell>
-              <TableCell>
-                {new Date(investment.created_at).toLocaleDateString('ar-SA')}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  )
+              </div>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {format(new Date(investment.created_at), "dd/MM/yyyy")}
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
 }

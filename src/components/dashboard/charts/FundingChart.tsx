@@ -1,191 +1,138 @@
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  Bar,
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import {
   BarChart,
-  ComposedChart
-} from 'recharts'
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useState } from "react"
-
-const COLORS = ['#6E59A5', '#9b87f5', '#D6BCFA', '#7E69AB'];
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { formatCurrency } from "@/utils/feeCalculations";
 
 export function FundingChart() {
-  const [timeRange, setTimeRange] = useState('month');
-
-  const { data: monthlyData } = useQuery({
-    queryKey: ["funding-chart", timeRange],
+  const { data: transactions, isLoading: isLoadingTransactions } = useQuery({
+    queryKey: ["transactions"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("investments")
-        .select(`
-          amount,
-          created_at,
-          project:projects(
-            title,
-            funding_goal,
-            current_funding
-          )
-        `)
-        .order('created_at')
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("type", "investment")
+        .order("created_at", { ascending: true });
 
-      // Group by month and sum amounts
-      const grouped = (data || []).reduce((acc: any[], inv) => {
-        const month = new Date(inv.created_at).toLocaleString('ar-SA', { month: 'long' })
-        const existing = acc.find(d => d.month === month)
-        if (existing) {
-          existing.amount += inv.amount
-          existing.count += 1
+      if (error) throw error;
+
+      // Group transactions by month
+      const monthlyData = data.reduce((acc: any[], transaction) => {
+        const month = new Date(transaction.created_at).toLocaleString("default", {
+          month: "short",
+        });
+        const existingMonth = acc.find((item) => item.month === month);
+
+        if (existingMonth) {
+          existingMonth.amount += transaction.amount;
+          existingMonth.count += 1;
         } else {
-          acc.push({ month, amount: inv.amount, count: 1 })
+          acc.push({
+            month,
+            amount: transaction.amount,
+            count: 1,
+          });
         }
-        return acc
-      }, [])
 
-      return grouped
-    }
-  })
+        return acc;
+      }, []);
 
-  const { data: projectStats } = useQuery({
-    queryKey: ["project-funding-stats"],
+      return monthlyData;
+    },
+  });
+
+  const { data: projects, isLoading: isLoadingProjects } = useQuery({
+    queryKey: ["funding_requests"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("projects")
-        .select('title, funding_goal, current_funding')
-        .not('current_funding', 'is', null)
-        .order('current_funding', { ascending: false })
-        .limit(5)
+      const { data, error } = await supabase
+        .from("funding_requests")
+        .select("*")
+        .eq("status", "active");
 
-      return data?.map(project => ({
-        name: project.title,
-        value: project.current_funding,
+      if (error) throw error;
+
+      return data.map((project) => ({
+        title: project.title,
+        current: project.current_funding || 0,
         goal: project.funding_goal,
-        percentage: ((project.current_funding || 0) / project.funding_goal) * 100
-      }))
-    }
-  })
+        progress: ((project.current_funding || 0) / project.funding_goal) * 100,
+      }));
+    },
+  });
+
+  if (isLoadingTransactions || isLoadingProjects) {
+    return (
+      <div className="flex items-center justify-center h-[300px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">تحليل التمويل</h3>
-        <select 
-          className="text-sm border rounded-md px-2 py-1"
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-        >
-          <option value="week">آخر 7 أيام</option>
-          <option value="month">آخر 30 يوم</option>
-          <option value="year">هذه السنة</option>
-        </select>
-      </div>
-
-      <Tabs defaultValue="timeline" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="timeline">التطور الزمني</TabsTrigger>
-          <TabsTrigger value="projects">المشاريع الأعلى تمويلاً</TabsTrigger>
-          <TabsTrigger value="combined">نظرة شاملة</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="timeline" className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={monthlyData || []}>
-              <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
-              <XAxis 
-                dataKey="month" 
-                axisLine={false}
-                tickLine={false}
-                className="text-xs"
-              />
-              <YAxis 
-                axisLine={false}
-                tickLine={false}
-                className="text-xs"
-                tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
-              />
-              <Tooltip 
-                formatter={(value: number) => [`${(value / 1000000).toFixed(1)}M ريال`, "التمويل"]}
-                labelFormatter={(label) => `شهر ${label}`}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="amount" 
-                stroke="#6E59A5" 
-                strokeWidth={2}
-                dot={{ fill: "#6E59A5", strokeWidth: 2 }}
-                activeDot={{ r: 6, fill: "#6E59A5" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </TabsContent>
-
-        <TabsContent value="projects" className="h-[400px]">
-          <div className="grid grid-cols-2 gap-4 h-full">
+    <div className="grid gap-4 md:grid-cols-2">
+      <Card>
+        <CardHeader>
+          <CardTitle>حجم التمويل الشهري</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={projectStats}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                >
-                  {projectStats?.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${(Number(value) / 1000000).toFixed(1)}M ريال`} />
-                <Legend />
-              </PieChart>
+              <BarChart data={transactions}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis
+                  tickFormatter={(value) =>
+                    new Intl.NumberFormat("ar-SA", {
+                      notation: "compact",
+                      compactDisplay: "short",
+                    }).format(value)
+                  }
+                />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(value)}
+                  labelFormatter={(label) => `شهر ${label}`}
+                />
+                <Bar dataKey="amount" fill="#0ea5e9" />
+              </BarChart>
             </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>تقدم المشاريع النشطة</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={projectStats}
+                data={projects}
                 layout="vertical"
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`} />
-                <YAxis type="category" dataKey="name" width={100} />
-                <Tooltip formatter={(value) => `${(Number(value) / 1000000).toFixed(1)}M ريال`} />
-                <Bar dataKey="value" fill="#6E59A5" />
+                <XAxis type="number" tickFormatter={(value) => `${value}%`} />
+                <YAxis type="category" dataKey="title" width={100} />
+                <Tooltip
+                  formatter={(value: number) => `${value.toFixed(1)}%`}
+                  labelFormatter={(label) => `المشروع: ${label}`}
+                />
+                <Bar dataKey="progress" fill="#0ea5e9" />
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </TabsContent>
-
-        <TabsContent value="combined" className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={monthlyData || []}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis yAxisId="left" tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`} />
-              <YAxis yAxisId="right" orientation="right" dataKey="count" />
-              <Tooltip formatter={(value, name) => {
-                if (name === "amount") return `${(Number(value) / 1000000).toFixed(1)}M ريال`
-                return value
-              }} />
-              <Legend />
-              <Bar yAxisId="left" dataKey="amount" fill="#6E59A5" name="قيمة التمويل" />
-              <Line yAxisId="right" type="monotone" dataKey="count" stroke="#9b87f5" name="عدد الاستثمارات" />
-            </ComposedChart>
-          </ResponsiveContainer>
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }
