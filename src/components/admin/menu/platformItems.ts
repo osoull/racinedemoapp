@@ -1,57 +1,29 @@
-import {
-  Settings2,
-  Wallet,
-  FileText,
-  Shield,
-  PieChart,
-  Building2,
-  Percent,
-  ScrollText,
-  ShieldCheck,
-  BarChart
-} from "lucide-react";
+import { LayoutDashboard, Settings, Users, Receipt, FileText } from "lucide-react"
 
-export const platformSettingsItems = [
+export const platformItems = [
   {
-    title: "عام",
-    icon: Settings2,
-    path: "/admin/settings/general",
-    description: "الإعدادات العامة للمنصة"
+    title: "لوحة التحكم",
+    href: "/admin/dashboard",
+    icon: LayoutDashboard,
   },
   {
-    title: "العمولات",
-    icon: Percent,
-    path: "/admin/settings/commissions",
-    description: "إدارة العمولات والرسوم"
+    title: "طلبات التمويل",
+    href: "/admin/funding-requests",
+    icon: FileText,
   },
   {
-    title: "الحساب البنكي",
-    icon: Building2,
-    path: "/admin/settings/bank",
-    description: "إدارة الحسابات البنكية"
+    title: "المستخدمون",
+    href: "/admin/users",
+    icon: Users,
   },
   {
-    title: "التحقق من الهوية",
-    icon: ShieldCheck,
-    path: "/admin/settings/kyc",
-    description: "إدارة عمليات KYC"
+    title: "المعاملات",
+    href: "/admin/transactions",
+    icon: Receipt,
   },
   {
-    title: "متطلبات هيئة السوق المالية",
-    icon: ScrollText,
-    path: "/admin/settings/cma",
-    description: "متابعة متطلبات CMA"
+    title: "الإعدادات",
+    href: "/admin/settings",
+    icon: Settings,
   },
-  {
-    title: "تقارير الأداء",
-    icon: BarChart,
-    path: "/admin/settings/performance",
-    description: "تقارير أداء المنصة"
-  },
-  {
-    title: "تقارير مالية",
-    icon: PieChart,
-    path: "/admin/settings/financial",
-    description: "التقارير المالية"
-  }
-];
+]
