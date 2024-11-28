@@ -20,7 +20,7 @@ export default function InvestorsPage() {
         .in("user_type", ["basic_investor", "qualified_investor"])
 
       if (error) throw error
-      return data as Investor[]
+      return (data || []) as Investor[]
     }
   })
 

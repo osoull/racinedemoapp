@@ -8,7 +8,8 @@ export const usePlatformStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('calculate_platform_stats')
       if (error) throw error
-      return data as PlatformStats
+      const platformStats = data as PlatformStats
+      return platformStats
     },
   })
 

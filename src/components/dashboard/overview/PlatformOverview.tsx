@@ -8,9 +8,9 @@ export function PlatformOverview() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc<PlatformStats, any>("calculate_platform_stats")
+      const { data, error } = await supabase.rpc('calculate_platform_stats')
       if (error) throw error
-      return data
+      return data as PlatformStats
     }
   })
 
