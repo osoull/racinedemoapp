@@ -260,6 +260,200 @@ export type Database = {
           },
         ]
       }
+      funding_request_comments: {
+        Row: {
+          author_id: string
+          comment: string
+          created_at: string | null
+          id: string
+          request_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          comment: string
+          created_at?: string | null
+          id?: string
+          request_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          comment?: string
+          created_at?: string | null
+          id?: string
+          request_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funding_request_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "funding_request_comments_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funding_request_documents: {
+        Row: {
+          created_at: string | null
+          document_type: string
+          document_url: string
+          id: string
+          request_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          document_type: string
+          document_url: string
+          id?: string
+          request_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          document_type?: string
+          document_url?: string
+          id?: string
+          request_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funding_request_documents_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funding_request_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          new_status: string
+          notes: string | null
+          old_status: string | null
+          request_id: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_status: string
+          notes?: string | null
+          old_status?: string | null
+          request_id: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_status?: string
+          notes?: string | null
+          old_status?: string | null
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funding_request_status_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "funding_request_status_history_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funding_requests: {
+        Row: {
+          approved_at: string | null
+          campaign_duration: number
+          category: string
+          created_at: string | null
+          description: string
+          fees_paid: boolean
+          fees_transaction_id: string | null
+          fund_usage_plan: Json
+          funding_goal: number
+          id: string
+          metadata: Json | null
+          owner_id: string
+          status: string
+          submitted_at: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          campaign_duration: number
+          category: string
+          created_at?: string | null
+          description: string
+          fees_paid?: boolean
+          fees_transaction_id?: string | null
+          fund_usage_plan: Json
+          funding_goal: number
+          id?: string
+          metadata?: Json | null
+          owner_id: string
+          status?: string
+          submitted_at?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          campaign_duration?: number
+          category?: string
+          created_at?: string | null
+          description?: string
+          fees_paid?: boolean
+          fees_transaction_id?: string | null
+          fund_usage_plan?: Json
+          funding_goal?: number
+          id?: string
+          metadata?: Json | null
+          owner_id?: string
+          status?: string
+          submitted_at?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funding_requests_fees_transaction_id_fkey"
+            columns: ["fees_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "funding_requests_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       investor_kyc: {
         Row: {
           annual_income: number | null
@@ -746,6 +940,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_funding_request_stats: {
+        Args: {
+          start_date?: string
+          end_date?: string
+        }
+        Returns: {
+          total_requests: number
+          approved_requests: number
+          rejected_requests: number
+          pending_requests: number
+          total_amount_requested: number
+          total_amount_approved: number
+          total_fees_collected: number
+          requests_by_category: Json
+          requests_by_status: Json
+        }[]
+      }
       calculate_platform_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
