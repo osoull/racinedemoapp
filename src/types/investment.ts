@@ -10,7 +10,7 @@ export interface Investment {
   status: string
   type: string
   user_id: string
-  user?: {
+  user: {
     id: string
     first_name: string
     last_name: string

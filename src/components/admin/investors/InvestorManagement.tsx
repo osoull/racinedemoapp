@@ -9,7 +9,7 @@ import { InvestorList } from "./InvestorList"
 import { InvestmentsTable } from "../finance/InvestmentsTable"
 import { InvestmentDetailsDialog } from "../finance/InvestmentDetailsDialog"
 import { RefundDialog } from "../finance/RefundDialog"
-import { Download } from "lucide-react"
+import { Download, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import * as XLSX from 'xlsx'
 import { format } from "date-fns"
@@ -19,7 +19,6 @@ import { supabase } from "@/integrations/supabase/client"
 import { useInvestments } from "@/hooks/useInvestments"
 import { filterInvestments } from "@/utils/investmentFilters"
 import { Investment } from "@/types/investment"
-import { Loader2 } from "lucide-react"
 
 export function InvestorManagement() {
   // États pour la gestion des investissements
@@ -67,7 +66,7 @@ export function InvestorManagement() {
 
     const data = filteredInvestments.map(inv => ({
       "المستثمر": `${inv.user.first_name} ${inv.user.last_name}`,
-      "الفرصة": inv.investment.funding_request.title,
+      "الفرصة": inv.funding_request.title,
       "المبلغ": inv.amount,
       "الحالة": inv.status,
       "التاريخ": format(new Date(inv.created_at), "yyyy-MM-dd"),

@@ -7,7 +7,7 @@ export function filterInvestments(investments: Investment[] | undefined, filters
     if (filters.search) {
       const searchLower = filters.search.toLowerCase()
       const investorName = `${investment.user.first_name} ${investment.user.last_name}`.toLowerCase()
-      const opportunityTitle = investment.investment.funding_request.title.toLowerCase()
+      const opportunityTitle = investment.funding_request.title.toLowerCase()
       
       if (!investorName.includes(searchLower) && 
           !opportunityTitle.includes(searchLower) && 
@@ -24,7 +24,7 @@ export function filterInvestments(investments: Investment[] | undefined, filters
       return false
     }
 
-    if (filters.opportunity && investment.investment.id !== filters.opportunity) {
+    if (filters.opportunity && investment.funding_request.id !== filters.opportunity) {
       return false
     }
 
