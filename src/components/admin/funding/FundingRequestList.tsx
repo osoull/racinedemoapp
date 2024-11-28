@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { DataTable } from "@/components/ui/data-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Eye, CheckCircle, XCircle } from "lucide-react"
+import { Eye, CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 type FundingRequest = {
   id: string
@@ -151,13 +152,29 @@ export function FundingRequestList() {
     },
   ]
 
-  if (isLoading) {
-    return <div>جاري التحميل...</div>
-  }
-
   return (
-    <div>
-      <DataTable columns={columns} data={requests || []} />
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">طلبات التمويل</h2>
+        <p className="text-muted-foreground">
+          إدارة ومراجعة طلبات التمويل المقدمة
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>قائمة الطلبات</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-96">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <DataTable columns={columns} data={requests || []} />
+          )}
+        </CardContent>
+      </Card>
 
       <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
         <DialogContent className="max-w-3xl">
