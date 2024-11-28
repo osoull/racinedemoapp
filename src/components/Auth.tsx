@@ -14,59 +14,59 @@ type AuthStep = "selection" | "signup" | "signin" | "borrower_signup"
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [isLoading, setIsLoading] = useState(false)
-  const [isRedirecting, setIsRedirecting] = useState(false)
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
 
   useEffect(() => {
-    if (user && !isRedirecting) {
-      setIsRedirecting(true)
-      checkUserTypeAndRedirect()
+    let isMounted = true
+
+    const checkUserAndRedirect = async () => {
+      if (!user) return
+
+      try {
+        const { data: profile, error } = await supabase
+          .from("profiles")
+          .select("user_type")
+          .eq("id", user.id)
+          .single()
+
+        if (error) throw error
+        if (!profile) throw new Error("No profile found")
+        if (!isMounted) return
+
+        const path = getRedirectPath(profile.user_type as UserType)
+        navigate(path, { replace: true })
+      } catch (error: any) {
+        console.error("Error fetching user type:", error)
+        toast({
+          title: "خطأ",
+          description: "حدث خطأ أثناء توجيهك للوحة التحكم",
+          variant: "destructive",
+        })
+      }
     }
-  }, [user])
 
-  const checkUserTypeAndRedirect = async () => {
-    try {
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("user_type")
-        .eq("id", user?.id)
-        .single()
-
-      if (error) throw error
-      if (!profile) throw new Error("No profile found")
-
-      redirectBasedOnUserType(profile.user_type as UserType)
-    } catch (error: any) {
-      console.error("Error fetching user type:", error)
-      setIsRedirecting(false)
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء توجيهك للوحة التحكم",
-        variant: "destructive",
-      })
+    checkUserAndRedirect()
+    return () => {
+      isMounted = false
     }
-  }
+  }, [user, navigate, toast])
 
-  const redirectBasedOnUserType = (userType: UserType) => {
-    let path = "/"
+  const getRedirectPath = (userType: UserType): string => {
     switch (userType) {
       case "admin":
-        path = "/admin/dashboard"
-        break
+        return "/admin/dashboard"
       case "investment_manager":
-        path = "/investment-manager/dashboard"
-        break
+        return "/investment-manager/dashboard"
       case "borrower":
-        path = "/borrower/dashboard"
-        break
+        return "/borrower/dashboard"
       case "basic_investor":
       case "qualified_investor":
-        path = "/investor/dashboard"
-        break
+        return "/investor/dashboard"
+      default:
+        return "/"
     }
-    navigate(path, { replace: true })
   }
 
   const handleSignIn = async (email: string, password: string) => {
