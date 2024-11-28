@@ -12,7 +12,7 @@ import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
 import PlatformSettings from "@/components/admin/PlatformSettings";
-import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement";
+import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement";
 import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
 
 function App() {

@@ -82,7 +82,13 @@ export function InvestmentTracking() {
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data as Investment[]
+      
+      // Transform the data to match the Investment interface
+      return data.map((investment: any) => ({
+        ...investment,
+        funding_request: investment.funding_request[0],
+        user: investment.user[0]
+      })) as Investment[]
     },
   })
 

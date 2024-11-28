@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client"
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { formatCurrency } from "@/utils/feeCalculations"
 
@@ -87,7 +86,11 @@ export function BorrowerPayments() {
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data as BorrowerPayment[]
+      return data.map((payment: any) => ({
+        ...payment,
+        borrower: payment.borrower[0],
+        funding_request: payment.funding_request[0]
+      })) as BorrowerPayment[]
     },
   })
 
