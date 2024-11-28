@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react"
 export function DashboardOverview() {
   const { user } = useAuth()
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, error } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -21,16 +21,29 @@ export function DashboardOverview() {
       return data
     },
     enabled: !!user,
+    retry: 1,
+    staleTime: 30000, // Cache data for 30 seconds
   })
 
+  // Show loading state while fetching data
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-destructive">
+        حدث خطأ أثناء تحميل البيانات
+      </div>
+    )
+  }
+
+  // Show nothing if no profile is found
   if (!profile) {
     return null
   }
