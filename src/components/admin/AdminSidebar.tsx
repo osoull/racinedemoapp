@@ -64,20 +64,16 @@ export const AdminSidebar = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <div className="space-y-1">
-            {menuItems.map((item) => (
-              <SidebarItem
-                key={item.path}
-                {...item}
-                isActive={location.pathname === item.path}
-              />
-            ))}
-          </div>
-        </div>
+      <div className="flex-1 space-y-1 p-4">
+        {menuItems.map((item) => (
+          <SidebarItem
+            key={item.path}
+            {...item}
+            isActive={location.pathname === item.path}
+          />
+        ))}
       </div>
-      <div className="mt-auto p-4">
+      <div className="border-t p-4">
         <Button 
           variant="ghost" 
           className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"

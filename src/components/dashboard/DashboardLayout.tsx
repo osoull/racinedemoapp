@@ -22,8 +22,8 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Header - Fixed at top */}
+      <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Mobile menu button */}
@@ -40,15 +40,15 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
             
             {/* Logo - Light mode */}
             <img 
-              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
+              src="/logo.svg"
               alt="شركة رسين للاستثمار"
-              className="h-16 w-auto py-2 object-contain dark:hidden" 
+              className="h-8 w-auto object-contain dark:hidden" 
             />
             {/* Logo - Dark mode */}
             <img 
-              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
+              src="/logoblnc.svg"
               alt="شركة رسين للاستثمار"
-              className="h-16 w-auto py-2 object-contain hidden dark:block" 
+              className="h-8 w-auto object-contain hidden dark:block" 
             />
           </div>
           
@@ -61,18 +61,19 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
         </div>
       </header>
 
-      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[280px_minmax(0,1fr)] gap-6">
-        {/* Desktop Sidebar */}
-        <aside className="fixed top-16 z-30 hidden h-[calc(100vh-4rem)] w-full shrink-0 overflow-y-auto border-l md:sticky md:block">
+      {/* Main content area - Adjusted for fixed header */}
+      <div className="flex pt-16 min-h-screen">
+        {/* Desktop Sidebar - Fixed */}
+        <aside className="fixed right-0 top-16 hidden lg:block h-[calc(100vh-4rem)] w-72 border-l bg-background overflow-y-auto">
           {sidebar}
         </aside>
 
-        {/* Main Content */}
+        {/* Main Content - Adjusted margin for sidebar */}
         <main className={cn(
-          "flex-1 overflow-hidden px-4 py-6 md:px-6 lg:px-8",
+          "flex-1 lg:mr-72",
           className
         )}>
-          <div className="mx-auto max-w-5xl">
+          <div className="container py-6 max-w-6xl">
             {children}
           </div>
         </main>
