@@ -260,51 +260,6 @@ export type Database = {
           },
         ]
       }
-      investments: {
-        Row: {
-          amount: number
-          created_at: string
-          investment_id: string
-          investor_id: string | null
-          project_id: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          investment_id?: string
-          investor_id?: string | null
-          project_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          investment_id?: string
-          investor_id?: string | null
-          project_id?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "investments_investor_id_fkey"
-            columns: ["investor_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "investments_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       investor_kyc: {
         Row: {
           annual_income: number | null
@@ -663,107 +618,6 @@ export type Database = {
         }
         Relationships: []
       }
-      project_documents: {
-        Row: {
-          created_at: string
-          document_type: string
-          document_url: string
-          id: string
-          project_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          document_type: string
-          document_url: string
-          id?: string
-          project_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          document_type?: string
-          document_url?: string
-          id?: string
-          project_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "project_documents_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      projects: {
-        Row: {
-          classification: string
-          created_at: string
-          current_funding: number | null
-          description: string | null
-          fees_paid: boolean | null
-          fees_transaction_id: string | null
-          funding_goal: number
-          id: string
-          min_investment: number
-          owner_id: string | null
-          risk_description: string | null
-          risk_rating: string | null
-          status: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          classification: string
-          created_at?: string
-          current_funding?: number | null
-          description?: string | null
-          fees_paid?: boolean | null
-          fees_transaction_id?: string | null
-          funding_goal: number
-          id?: string
-          min_investment?: number
-          owner_id?: string | null
-          risk_description?: string | null
-          risk_rating?: string | null
-          status?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          classification?: string
-          created_at?: string
-          current_funding?: number | null
-          description?: string | null
-          fees_paid?: boolean | null
-          fees_transaction_id?: string | null
-          funding_goal?: number
-          id?: string
-          min_investment?: number
-          owner_id?: string | null
-          risk_description?: string | null
-          risk_rating?: string | null
-          status?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "projects_fees_transaction_id_fkey"
-            columns: ["fees_transaction_id"]
-            isOneToOne: false
-            referencedRelation: "transactions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "projects_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       regulatory_reports: {
         Row: {
           created_at: string
@@ -836,44 +690,6 @@ export type Database = {
           },
         ]
       }
-      support_tickets: {
-        Row: {
-          category: string
-          created_at: string
-          message: string
-          status: string
-          ticket_id: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          message: string
-          status?: string
-          ticket_id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          message?: string
-          status?: string
-          ticket_id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "support_tickets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       transactions: {
         Row: {
           amount: number
@@ -882,7 +698,6 @@ export type Database = {
           fee_amount: number | null
           fee_type: string | null
           id: string
-          investment_id: string | null
           status: string | null
           type: string
           user_id: string | null
@@ -894,7 +709,6 @@ export type Database = {
           fee_amount?: number | null
           fee_type?: string | null
           id?: string
-          investment_id?: string | null
           status?: string | null
           type: string
           user_id?: string | null
@@ -906,7 +720,6 @@ export type Database = {
           fee_amount?: number | null
           fee_type?: string | null
           id?: string
-          investment_id?: string | null
           status?: string | null
           type?: string
           user_id?: string | null
@@ -918,13 +731,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "commissions"
             referencedColumns: ["commission_id"]
-          },
-          {
-            foreignKeyName: "transactions_investment_id_fkey"
-            columns: ["investment_id"]
-            isOneToOne: false
-            referencedRelation: "investments"
-            referencedColumns: ["investment_id"]
           },
           {
             foreignKeyName: "transactions_user_id_fkey"
@@ -949,8 +755,6 @@ export type Database = {
           investor_growth: number
           total_revenue: number
           revenue_growth: number
-          active_projects: number
-          project_growth: number
         }[]
       }
       calculate_revenue_by_period: {
@@ -973,12 +777,6 @@ export type Database = {
           user_type: string
         }
         Returns: Json
-      }
-      finalize_project_submission: {
-        Args: {
-          p_project_id: string
-        }
-        Returns: undefined
       }
       get_investors: {
         Args: Record<PropertyKey, never>
@@ -1004,27 +802,11 @@ export type Database = {
         }
         Returns: undefined
       }
-      update_risk_rating: {
-        Args: {
-          p_project_id: string
-          p_rating: string
-          p_description: string
-          p_evaluator_id: string
-        }
-        Returns: undefined
-      }
       validate_payment: {
         Args: {
           p_transaction_id: string
           p_status: string
           p_notes?: string
-        }
-        Returns: undefined
-      }
-      validate_project_submission: {
-        Args: {
-          p_project_id: string
-          p_transaction_id: string
         }
         Returns: undefined
       }

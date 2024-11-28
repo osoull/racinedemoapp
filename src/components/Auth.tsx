@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,9 +19,49 @@ export function Auth() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const { signIn } = useAuth()
+  const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
+
+  useEffect(() => {
+    if (user) {
+      // Redirect based on user type
+      const checkUserType = async () => {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('id', user.id)
+          .single()
+
+        if (error) {
+          console.error("Error fetching user type:", error)
+          return
+        }
+
+        const userType = profile?.user_type as UserType
+
+        switch (userType) {
+          case "borrower":
+            navigate("/borrower")
+            break
+          case "basic_investor":
+          case "qualified_investor":
+            navigate("/investor")
+            break
+          case "admin":
+            navigate("/admin")
+            break
+          case "investment_manager":
+            navigate("/investment-manager")
+            break
+          default:
+            navigate("/")
+        }
+      }
+
+      checkUserType()
+    }
+  }, [user, navigate])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
