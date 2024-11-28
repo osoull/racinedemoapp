@@ -5,9 +5,9 @@ import { supabase } from "@/integrations/supabase/client"
 import { ProjectCard } from "@/components/dashboard/projects/ProjectCard"
 import { Loader2 } from "lucide-react"
 
-export default function ProjectsPage() {
-  const { data: projects, isLoading } = useQuery({
-    queryKey: ["funding-requests"],
+export default function InvestmentOpportunitiesPage() {
+  const { data: opportunities, isLoading } = useQuery({
+    queryKey: ["funding-opportunities"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("funding_requests")
@@ -37,24 +37,23 @@ export default function ProjectsPage() {
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">المشاريع المتاحة</h2>
+          <h2 className="text-3xl font-bold tracking-tight">فرص الاستثمار المتاحة</h2>
           <p className="text-muted-foreground">
-            اكتشف الفرص الاستثمارية المتاحة
+            اكتشف فرص الاستثمار المتاحة
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects?.map((project) => (
+          {opportunities?.map((opportunity) => (
             <ProjectCard
-              key={project.id}
-              id={project.id}
-              title={project.title}
-              description={project.description}
-              progress={(project.current_funding / project.funding_goal) * 100}
-              status={project.status}
-              fundingGoal={project.funding_goal}
-              currentFunding={project.current_funding}
-              projectId={project.id}
+              key={opportunity.id}
+              title={opportunity.title}
+              description={opportunity.description}
+              progress={(opportunity.current_funding / opportunity.funding_goal) * 100}
+              status={opportunity.status}
+              fundingGoal={opportunity.funding_goal}
+              currentFunding={opportunity.current_funding}
+              projectId={opportunity.id}
             />
           ))}
         </div>

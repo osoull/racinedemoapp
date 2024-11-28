@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 
 export function InvestmentsList() {
   const { data: investments, isLoading } = useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["investments"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("transactions")

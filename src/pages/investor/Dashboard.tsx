@@ -25,16 +25,22 @@ const InvestorDashboard = () => {
     enabled: !!user?.id
   })
 
-  const { data: projects } = useQuery({
-    queryKey: ["projects", user?.id],
+  const { data: investments } = useQuery({
+    queryKey: ["investments", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("projects")
+        .from("transactions")
         .select(`
           *,
-          investments(*)
+          funding_request:funding_requests(
+            title,
+            funding_goal,
+            current_funding,
+            status
+          )
         `)
-        .eq("owner_id", user?.id)
+        .eq("type", "investment")
+        .eq("user_id", user?.id)
       
       if (error) throw error
       return data
@@ -42,9 +48,8 @@ const InvestorDashboard = () => {
     enabled: !!user?.id
   })
 
-  const totalFunding = projects?.reduce((sum, proj) => sum + (proj.current_funding || 0), 0) || 0
-  const activeProjects = projects?.filter(proj => proj.status === 'active').length || 0
-  const totalInvestors = projects?.reduce((sum, proj) => sum + (proj.investments?.length || 0), 0) || 0
+  const totalInvestments = investments?.reduce((sum, inv) => sum + inv.amount, 0) || 0
+  const activeInvestments = investments?.filter(inv => inv.funding_request?.status === 'active').length || 0
 
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
@@ -72,20 +77,20 @@ const InvestorDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             icon={TrendingUp}
-            title="إجمالي التمويل"
-            value={`${totalFunding.toLocaleString()} ريال`}
+            title="إجمالي الاستثمارات"
+            value={`${totalInvestments.toLocaleString()} ريال`}
             trend={{ value: 8.2, isPositive: true }}
           />
           <StatCard
             icon={Activity}
-            title="عدد المستثمرين"
-            value={totalInvestors}
+            title="الاستثمارات النشطة"
+            value={activeInvestments}
             trend={{ value: 12.5, isPositive: true }}
           />
           <StatCard
             icon={FileText}
-            title="المشاريع النشطة"
-            value={activeProjects}
+            title="العائد المتوقع"
+            value="15%"
             trend={{ value: 15.2, isPositive: true }}
           />
           <StatCard
