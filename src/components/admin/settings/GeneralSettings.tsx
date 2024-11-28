@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
+import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 
 export const GeneralSettings = () => {
   const { toast } = useToast()
@@ -17,6 +18,23 @@ export const GeneralSettings = () => {
     support_email: '',
     require_2fa: false
   })
+
+  // Souscription aux changements en temps réel
+  useRealtimeSubscription(
+    'platform_settings',
+    {
+      onUpdate: () => {
+        queryClient.invalidateQueries({ 
+          queryKey: ['platform-settings'],
+          exact: true
+        })
+        toast({
+          title: "تم تحديث الإعدادات",
+          description: "تم تحديث إعدادات المنصة من قبل مسؤول آخر",
+        })
+      }
+    }
+  )
 
   const { data: settings } = useQuery({
     queryKey: ['platform-settings', 'general'],
