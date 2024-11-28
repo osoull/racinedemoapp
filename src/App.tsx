@@ -28,133 +28,58 @@ function App() {
             <Route path="/" element={<Navigate to="/admin/dashboard" />} />
 
             {/* Routes Admin */}
-            <Route path="/admin" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <Navigate to="/admin/dashboard" />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/dashboard" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <AdminDashboard />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/finance" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <TransactionManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/payment-defaults" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <PaymentDefaultsManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/investors" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <InvestorManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/investment-opportunities" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <InvestmentOpportunities />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/borrowers" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <BorrowerManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/funding-requests" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <FundingRequestList />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/admin/compliance" element={
-              <PrivateRoute allowedTypes={["admin"]}>
-                <DashboardLayout sidebar={<AdminSidebar />}>
-                  <KYCManagement />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
+            <Route
+              path="/admin/*"
+              element={
+                <PrivateRoute allowedTypes={["admin"]}>
+                  <DashboardLayout sidebar={<AdminSidebar />}>
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/admin/dashboard" />} />
+                      <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="finance" element={<TransactionManagement />} />
+                      <Route path="payment-defaults" element={<PaymentDefaultsManagement />} />
+                      <Route path="investors" element={<InvestorManagement />} />
+                      <Route path="investment-opportunities" element={<InvestmentOpportunities />} />
+                      <Route path="borrowers" element={<BorrowerManagement />} />
+                      <Route path="funding-requests" element={<FundingRequestList />} />
+                      <Route path="compliance" element={<KYCManagement />} />
+                    </Routes>
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
             {/* Routes Emprunteur */}
-            <Route path="/borrower" element={
-              <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <Navigate to="/borrower/dashboard" />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/borrower/dashboard" element={
-              <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <BorrowerDashboard />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/borrower/funding-requests" element={
-              <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <FundingRequestList />
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/borrower/payments" element={
-              <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <div>Payments (à implémenter)</div>
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/borrower/profile" element={
-              <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <div>Profile (à implémenter)</div>
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
-
-            <Route path="/borrower/kyc" element={
-              <PrivateRoute allowedTypes={["borrower"]}>
-                <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <div>KYC (à implémenter)</div>
-                </DashboardLayout>
-              </PrivateRoute>
-            } />
+            <Route
+              path="/borrower/*"
+              element={
+                <PrivateRoute allowedTypes={["borrower"]}>
+                  <DashboardLayout sidebar={<BorrowerSidebar />}>
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/borrower/dashboard" />} />
+                      <Route path="dashboard" element={<BorrowerDashboard />} />
+                      <Route path="funding-requests" element={<FundingRequestList />} />
+                      <Route path="payments" element={<div>Payments (à implémenter)</div>} />
+                      <Route path="profile" element={<div>Profile (à implémenter)</div>} />
+                      <Route path="kyc" element={<div>KYC (à implémenter)</div>} />
+                    </Routes>
+                  </DashboardLayout>
+                </PrivateRoute>
+              }
+            />
 
             {/* Routes Investisseur */}
-            <Route path="/investor/dashboard" element={
-              <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-                <InvestorDashboard />
-              </PrivateRoute>
-            } />
+            <Route
+              path="/investor/*"
+              element={
+                <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/investor/dashboard" />} />
+                    <Route path="dashboard" element={<InvestorDashboard />} />
+                  </Routes>
+                </PrivateRoute>
+              }
+            />
           </Routes>
           <Toaster />
         </AuthProvider>
