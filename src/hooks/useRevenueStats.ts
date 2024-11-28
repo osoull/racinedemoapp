@@ -9,11 +9,11 @@ export const useRevenueStats = () => {
       const startDate = new Date()
       startDate.setMonth(startDate.getMonth() - 12)
       
-      const { data, error } = await supabase.rpc<RevenueByPeriod[]>(
+      const { data, error } = await supabase.rpc<RevenueByPeriod[], any>(
         "calculate_revenue_by_period",
         {
           start_date: startDate.toISOString(),
-          end_date: new Date().toISOString(),
+          end_date: new Date().toISOString()
         }
       )
 
@@ -32,8 +32,5 @@ export const useRevenueStats = () => {
     },
   })
 
-  return {
-    data,
-    isLoading,
-  }
+  return { data, isLoading }
 }

@@ -1,83 +1,114 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TransactionList } from "../transaction/TransactionList"
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Transaction } from "@/types/supabase"
 
 export function TransactionManagement() {
+  const [currentTab, setCurrentTab] = useState("all")
+
   const { data: transactions, isLoading } = useQuery({
-    queryKey: ['transactions'],
+    queryKey: ["transactions", currentTab],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const query = supabase
         .from('transactions')
         .select(`
           *,
           user:profiles(first_name, last_name),
-          investment:investments(
+          investment:funding_requests(
             amount,
-            project:projects(title)
+            project:funding_requests(title)
           )
         `)
         .order('created_at', { ascending: false })
 
+      if (currentTab !== "all") {
+        query.eq('status', currentTab)
+      }
+
+      const { data, error } = await query
+
       if (error) throw error
-      return data as Transaction[]
+      return data as unknown as Transaction[]
     }
   })
 
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <div>
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">إدارة المعاملات</h2>
-        <p className="text-muted-foreground">
-          مراقبة وإدارة المعاملات المالية
-        </p>
-      </div>
+    <Tabs defaultValue="all" className="w-full" onValueChange={setCurrentTab}>
+      <TabsList>
+        <TabsTrigger value="all">جميع المعاملات</TabsTrigger>
+        <TabsTrigger value="pending">قيد الانتظار</TabsTrigger>
+        <TabsTrigger value="completed">مكتملة</TabsTrigger>
+        <TabsTrigger value="failed">فاشلة</TabsTrigger>
+      </TabsList>
 
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>المعاملات</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="all" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="all">جميع المعاملات</TabsTrigger>
-              <TabsTrigger value="pending">قيد المعالجة</TabsTrigger>
-              <TabsTrigger value="completed">مكتملة</TabsTrigger>
-              <TabsTrigger value="cancelled">ملغاة</TabsTrigger>
-            </TabsList>
+      <TabsContent value="all">
+        <div>
+          <h2 className="text-xl font-bold">جميع المعاملات</h2>
+          <ul>
+            {transactions?.map(transaction => (
+              <li key={transaction.id} className="border-b py-4">
+                <p>المستخدم: {transaction.user?.first_name} {transaction.user?.last_name}</p>
+                <p>المبلغ: {transaction.amount}</p>
+                <p>الحالة: {transaction.status}</p>
+                <p>التاريخ: {new Date(transaction.created_at).toLocaleDateString()}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </TabsContent>
 
-            <TabsContent value="all">
-              <TransactionList 
-                transactions={transactions} 
-                isLoading={isLoading} 
-              />
-            </TabsContent>
+      <TabsContent value="pending">
+        <div>
+          <h2 className="text-xl font-bold">المعاملات قيد الانتظار</h2>
+          <ul>
+            {transactions?.filter(tx => tx.status === "pending").map(transaction => (
+              <li key={transaction.id} className="border-b py-4">
+                <p>المستخدم: {transaction.user?.first_name} {transaction.user?.last_name}</p>
+                <p>المبلغ: {transaction.amount}</p>
+                <p>الحالة: {transaction.status}</p>
+                <p>التاريخ: {new Date(transaction.created_at).toLocaleDateString()}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </TabsContent>
 
-            <TabsContent value="pending">
-              <TransactionList 
-                transactions={transactions?.filter(t => t.status === 'pending')} 
-                isLoading={isLoading} 
-              />
-            </TabsContent>
+      <TabsContent value="completed">
+        <div>
+          <h2 className="text-xl font-bold">المعاملات المكتملة</h2>
+          <ul>
+            {transactions?.filter(tx => tx.status === "completed").map(transaction => (
+              <li key={transaction.id} className="border-b py-4">
+                <p>المستخدم: {transaction.user?.first_name} {transaction.user?.last_name}</p>
+                <p>المبلغ: {transaction.amount}</p>
+                <p>الحالة: {transaction.status}</p>
+                <p>التاريخ: {new Date(transaction.created_at).toLocaleDateString()}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </TabsContent>
 
-            <TabsContent value="completed">
-              <TransactionList 
-                transactions={transactions?.filter(t => t.status === 'completed')} 
-                isLoading={isLoading} 
-              />
-            </TabsContent>
-
-            <TabsContent value="cancelled">
-              <TransactionList 
-                transactions={transactions?.filter(t => t.status === 'cancelled')} 
-                isLoading={isLoading} 
-              />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-    </div>
+      <TabsContent value="failed">
+        <div>
+          <h2 className="text-xl font-bold">المعاملات الفاشلة</h2>
+          <ul>
+            {transactions?.filter(tx => tx.status === "failed").map(transaction => (
+              <li key={transaction.id} className="border-b py-4">
+                <p>المستخدم: {transaction.user?.first_name} {transaction.user?.last_name}</p>
+                <p>المبلغ: {transaction.amount}</p>
+                <p>الحالة: {transaction.status}</p>
+                <p>التاريخ: {new Date(transaction.created_at).toLocaleDateString()}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </TabsContent>
+    </Tabs>
   )
 }

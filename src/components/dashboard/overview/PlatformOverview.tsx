@@ -2,15 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2, Users, TrendingUp, Wallet, Target } from "lucide-react"
+import { PlatformStats } from "@/types/supabase"
 
 export function PlatformOverview() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .rpc('calculate_platform_stats')
-        .single()
-
+      const { data, error } = await supabase.rpc<PlatformStats, any>("calculate_platform_stats")
       if (error) throw error
       return data
     }
@@ -51,9 +49,9 @@ export function PlatformOverview() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.active_investors}</div>
+            <div className="text-2xl font-bold">{stats?.active_investors || 0}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.investor_growth > 0 ? "+" : ""}{stats.investor_growth}% منذ الشهر الماضي
+              {stats?.investor_growth > 0 ? "+" : ""}{stats?.investor_growth || 0}% منذ الشهر الماضي
             </p>
           </CardContent>
         </Card>
@@ -66,9 +64,9 @@ export function PlatformOverview() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.total_investments)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(stats?.total_investments || 0)}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.investment_growth > 0 ? "+" : ""}{stats.investment_growth}% منذ الشهر الماضي
+              {stats?.investment_growth > 0 ? "+" : ""}{stats?.investment_growth || 0}% منذ الشهر الماضي
             </p>
           </CardContent>
         </Card>
@@ -81,9 +79,9 @@ export function PlatformOverview() {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.total_revenue)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(stats?.total_revenue || 0)}</div>
             <p className="text-xs text-muted-foreground">
-              {stats.revenue_growth > 0 ? "+" : ""}{stats.revenue_growth}% منذ الشهر الماضي
+              {stats?.revenue_growth > 0 ? "+" : ""}{stats?.revenue_growth || 0}% منذ الشهر الماضي
             </p>
           </CardContent>
         </Card>
@@ -96,9 +94,9 @@ export function PlatformOverview() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.active_opportunities}</div>
+            <div className="text-2xl font-bold">{stats?.active_opportunities || 0}</div>
             <p className="text-xs text-muted-foreground">
-              متوسط الاستثمار: {formatCurrency(stats.average_investment_size)}
+              متوسط الاستثمار: {formatCurrency(stats?.average_investment_size || 0)}
             </p>
           </CardContent>
         </Card>
