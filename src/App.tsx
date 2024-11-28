@@ -15,10 +15,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Route par défaut - redirige vers l'authentification */}
+          {/* Public route - Authentication */}
           <Route path="/" element={<Auth />} />
 
-          {/* Routes Admin */}
+          {/* Admin routes */}
           <Route
             path="/admin"
             element={
@@ -60,7 +60,7 @@ function App() {
             }
           />
 
-          {/* Route de fallback - redirige vers l'authentification */}
+          {/* Fallback route - Redirects to authentication */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
