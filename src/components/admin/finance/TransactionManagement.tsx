@@ -3,6 +3,7 @@ import { TransactionList } from "../transaction/TransactionList"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Transaction } from "@/types/supabase"
 
 export function TransactionManagement() {
   const { data: transactions, isLoading } = useQuery({
@@ -21,7 +22,7 @@ export function TransactionManagement() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      return data
+      return data as Transaction[]
     }
   })
 

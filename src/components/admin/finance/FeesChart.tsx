@@ -3,12 +3,13 @@ import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Loader2 } from "lucide-react"
+import { RevenueByPeriod } from "@/types/supabase"
 
 export function FeesChart() {
   const { data: feesData, isLoading } = useQuery({
     queryKey: ["fees-chart"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc(
+      const { data, error } = await supabase.rpc<RevenueByPeriod[]>(
         'calculate_revenue_by_period',
         {
           start_date: new Date(new Date().setMonth(new Date().getMonth() - 6)).toISOString(),
