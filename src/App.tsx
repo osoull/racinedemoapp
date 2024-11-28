@@ -17,11 +17,7 @@ import { TransactionManagement } from "@/components/admin/transaction/Transactio
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking"
-
-import { useAuth } from "@/contexts/AuthContext"
-import { supabase } from "@/integrations/supabase/client"
-import { useEffect, useState } from "react"
-import { Loader2 } from "lucide-react"
+import FundingRequestsPage from "@/pages/admin/funding-requests"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,50 +27,6 @@ const queryClient = new QueryClient({
     },
   },
 })
-
-function PrivateRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) {
-  const { user, loading } = useAuth()
-  const [userType, setUserType] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    async function getUserType() {
-      if (!user) {
-        setIsLoading(false)
-        return
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single()
-
-      setUserType(profile?.user_type)
-      setIsLoading(false)
-    }
-
-    if (user) {
-      getUserType()
-    } else {
-      setIsLoading(false)
-    }
-  }, [user])
-
-  if (loading || isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
-  }
-
-  if (!user || !userType || !allowedRoles.includes(userType)) {
-    return <Navigate to="/" replace />
-  }
-
-  return <>{children}</>
-}
 
 function App() {
   return (
@@ -122,6 +74,7 @@ function App() {
                           <Route path="compliance" element={<KYCManagement />} />
                           <Route path="settings/*" element={<PlatformSettings />} />
                           <Route path="revenue" element={<RevenueTracking />} />
+                          <Route path="funding-requests" element={<FundingRequestsPage />} />
                         </Routes>
                       </PrivateRoute>
                     }

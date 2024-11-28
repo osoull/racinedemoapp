@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, Users, Receipt, FileText } from "lucide-react"
+import { LayoutDashboard, Settings, Users, Receipt, FileText, Wallet } from "lucide-react"
 
 export const platformItems = [
   {
@@ -25,5 +25,23 @@ export const platformItems = [
     title: "الإعدادات",
     href: "/admin/settings",
     icon: Settings,
+  },
+]
+
+export const platformSettingsItems = [
+  {
+    title: "الإعدادات العامة",
+    href: "/admin/settings/general",
+    icon: Settings,
+  },
+  {
+    title: "إدارة المستخدمين",
+    href: "/admin/settings/users",
+    icon: Users,
+  },
+  {
+    title: "العمولات والرسوم",
+    href: "/admin/settings/fees",
+    icon: Wallet,
   },
 ]
