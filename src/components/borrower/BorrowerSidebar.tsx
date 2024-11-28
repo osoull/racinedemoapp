@@ -2,7 +2,6 @@ import { useLocation } from "react-router-dom"
 import { 
   LayoutDashboard, 
   Settings,
-  Shield,
   CheckCircle
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
@@ -39,8 +38,11 @@ export const BorrowerSidebar = () => {
       <div className="border-t p-4 space-y-4">
         <div className="text-center space-y-2">
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
-            <Shield className="h-4 w-4" />
-            <img src="/sama-logo.svg" alt="SAMA" className="h-4 w-4 ml-1" />
+            <img 
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/sama-logo.png" 
+              alt="SAMA" 
+              className="h-5 w-5"
+            />
             مرخصة من البنك المركزي السعودي
           </p>
           <p className="text-xs text-muted-foreground flex items-center justify-center gap-2">
