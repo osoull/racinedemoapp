@@ -26,7 +26,7 @@ export function TransactionManagement() {
   })
 
   return (
-    <div className="space-y-6">
+    <div>
       <div>
         <h2 className="text-3xl font-bold tracking-tight">إدارة المعاملات</h2>
         <p className="text-muted-foreground">
@@ -34,7 +34,7 @@ export function TransactionManagement() {
         </p>
       </div>
 
-      <Card>
+      <Card className="mt-6">
         <CardHeader>
           <CardTitle>المعاملات</CardTitle>
         </CardHeader>

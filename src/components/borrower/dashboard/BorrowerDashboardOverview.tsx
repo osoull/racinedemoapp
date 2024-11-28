@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { useBorrowerStats } from "@/hooks/useBorrowerStats"
 import { Loader2 } from "lucide-react"
-import { formatCurrency } from "@/utils/feeCalculations"
 
 export function BorrowerDashboardOverview() {
   const { user } = useAuth()
@@ -51,8 +50,7 @@ export function BorrowerDashboardOverview() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
+    <div>
       <div>
         <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
         <p className="text-muted-foreground">
@@ -60,8 +58,7 @@ export function BorrowerDashboardOverview() {
         </p>
       </div>
 
-      {/* Quick Actions */}
-      <div>
+      <div className="mt-6">
         <h3 className="text-lg font-medium mb-4">إجراءات سريعة</h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {quickActions.map((action, index) => (
@@ -80,8 +77,7 @@ export function BorrowerDashboardOverview() {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mt-6">
         <StatCard
           title="إجمالي التمويل المطلوب"
           value={stats?.total_requested || 0}
@@ -112,8 +108,9 @@ export function BorrowerDashboardOverview() {
         />
       </div>
 
-      {/* Funding History */}
-      <BorrowerFundingHistory borrowerId={user?.id || ''} />
+      <div className="mt-6">
+        <BorrowerFundingHistory borrowerId={user?.id || ''} />
+      </div>
     </div>
   )
 }

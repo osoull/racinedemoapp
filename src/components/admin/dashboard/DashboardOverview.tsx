@@ -32,20 +32,18 @@ export default function DashboardOverview() {
 
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
-          <p className="text-muted-foreground">
-            نظرة عامة على أداء المنصة والإحصائيات
-          </p>
-        </div>
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
+        <p className="text-muted-foreground">
+          نظرة عامة على أداء المنصة والإحصائيات
+        </p>
+      </div>
 
-        <DashboardStats />
+      <DashboardStats />
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <ProjectsDistributionChart />
-          <PendingActionsAlert />
-        </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ProjectsDistributionChart />
+        <PendingActionsAlert />
       </div>
     </DashboardLayout>
   )
