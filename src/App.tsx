@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
@@ -18,6 +18,7 @@ import { FundingRequestList } from "@/components/admin/funding/FundingRequestLis
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
+import { InvestorSidebar } from "@/components/investor/InvestorSidebar";
 
 function App() {
   return (
@@ -25,64 +26,62 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Route par défaut vers la page de connexion */}
+            {/* Page d'accueil - Authentification */}
             <Route path="/" element={<Auth />} />
 
             {/* Routes Admin */}
-            <Route
-              path="/admin"
-              element={
-                <PrivateRoute allowedTypes={["admin"]}>
-                  <DashboardLayout sidebar={<AdminSidebar />}>
-                    <Outlet />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            >
-              <Route index element={<Navigate to="/admin/dashboard" />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="finance" element={<TransactionManagement />} />
-              <Route path="payment-defaults" element={<PaymentDefaultsManagement />} />
-              <Route path="investors" element={<InvestorManagement />} />
-              <Route path="investment-opportunities" element={<InvestmentOpportunities />} />
-              <Route path="borrowers" element={<BorrowerManagement />} />
-              <Route path="funding-requests" element={<FundingRequestList />} />
-              <Route path="compliance" element={<KYCManagement />} />
-            </Route>
+            <Route path="/admin" element={
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <Routes>
+                    <Route index element={<Navigate to="dashboard" />} />
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="kyc" element={<KYCManagement />} />
+                    <Route path="transactions" element={<TransactionManagement />} />
+                    <Route path="defaults" element={<PaymentDefaultsManagement />} />
+                    <Route path="investors" element={<InvestorManagement />} />
+                    <Route path="opportunities" element={<InvestmentOpportunities />} />
+                    <Route path="borrowers" element={<BorrowerManagement />} />
+                    <Route path="funding-requests" element={<FundingRequestList />} />
+                  </Routes>
+                </DashboardLayout>
+              </PrivateRoute>
+            } />
 
             {/* Routes Emprunteur */}
-            <Route
-              path="/borrower"
-              element={
-                <PrivateRoute allowedTypes={["borrower"]}>
-                  <DashboardLayout sidebar={<BorrowerSidebar />}>
-                    <Outlet />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            >
-              <Route index element={<Navigate to="/borrower/dashboard" />} />
-              <Route path="dashboard" element={<BorrowerDashboard />} />
-              <Route path="funding-requests" element={<FundingRequestList />} />
-              <Route path="payments" element={<div>Payments (à implémenter)</div>} />
-              <Route path="profile" element={<div>Profile (à implémenter)</div>} />
-              <Route path="kyc" element={<div>KYC (à implémenter)</div>} />
-            </Route>
+            <Route path="/borrower" element={
+              <PrivateRoute allowedTypes={["borrower"]}>
+                <DashboardLayout sidebar={<BorrowerSidebar />}>
+                  <Routes>
+                    <Route index element={<Navigate to="dashboard" />} />
+                    <Route path="dashboard" element={<BorrowerDashboard />} />
+                    <Route path="funding-requests" element={<FundingRequestList />} />
+                    <Route path="payments" element={<div>Paiements (à implémenter)</div>} />
+                    <Route path="profile" element={<div>Profil (à implémenter)</div>} />
+                    <Route path="kyc" element={<div>KYC (à implémenter)</div>} />
+                  </Routes>
+                </DashboardLayout>
+              </PrivateRoute>
+            } />
 
             {/* Routes Investisseur */}
-            <Route
-              path="/investor"
-              element={
-                <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-                  <DashboardLayout sidebar={<div>Investor Sidebar</div>}>
-                    <Outlet />
-                  </DashboardLayout>
-                </PrivateRoute>
-              }
-            >
-              <Route index element={<Navigate to="/investor/dashboard" />} />
-              <Route path="dashboard" element={<InvestorDashboard />} />
-            </Route>
+            <Route path="/investor" element={
+              <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
+                <DashboardLayout sidebar={<InvestorSidebar />}>
+                  <Routes>
+                    <Route index element={<Navigate to="dashboard" />} />
+                    <Route path="dashboard" element={<InvestorDashboard />} />
+                    <Route path="opportunities" element={<InvestmentOpportunities />} />
+                    <Route path="investments" element={<div>Mes investissements (à implémenter)</div>} />
+                    <Route path="profile" element={<div>Profil (à implémenter)</div>} />
+                    <Route path="kyc" element={<div>KYC (à implémenter)</div>} />
+                  </Routes>
+                </DashboardLayout>
+              </PrivateRoute>
+            } />
+
+            {/* Route 404 */}
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Toaster />
         </AuthProvider>
