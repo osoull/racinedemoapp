@@ -5,6 +5,8 @@ import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/utils/feeCalculations"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { Loader2 } from "lucide-react"
 
 interface Investment {
   id: string
@@ -83,7 +85,6 @@ export function InvestmentTracking() {
 
       if (error) throw error
       
-      // Transform the data to match the Investment interface
       return data.map((investment: any) => ({
         ...investment,
         funding_request: investment.funding_request[0],
@@ -92,18 +93,53 @@ export function InvestmentTracking() {
     },
   })
 
+  // Group investments by month for the chart
+  const chartData = investments?.reduce((acc: any[], investment) => {
+    const month = new Date(investment.created_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short' })
+    const existingMonth = acc.find(item => item.name === month)
+    
+    if (existingMonth) {
+      existingMonth.amount += investment.amount
+    } else {
+      acc.push({ name: month, amount: investment.amount })
+    }
+    
+    return acc
+  }, []).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime()) || []
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>متابعة الاستثمارات</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          columns={columns}
-          data={investments || []}
-          isLoading={isLoading}
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>تتبع الاستثمارات الشهرية</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="amount" fill="#0ea5e9" name="مبلغ الاستثمار" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>متابعة الاستثمارات</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={columns}
+            data={investments || []}
+            isLoading={isLoading}
+          />
+        </CardContent>
+      </Card>
+    </div>
   )
 }

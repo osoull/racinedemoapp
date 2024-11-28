@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
 import { formatCurrency } from "@/utils/feeCalculations"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface BorrowerPayment {
   id: string
@@ -94,38 +95,56 @@ export function BorrowerPayments() {
     },
   })
 
-  const handleTransferApproval = async (paymentId: string) => {
-    const { error } = await supabase
-      .from("transactions")
-      .update({ status: "completed" })
-      .eq("id", paymentId)
-
-    if (error) {
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء تحديث حالة التحويل",
-        variant: "destructive",
-      })
+  // Group payments by month for the chart
+  const chartData = payments?.reduce((acc: any[], payment) => {
+    const month = new Date(payment.created_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short' })
+    const existingMonth = acc.find(item => item.name === month)
+    
+    if (existingMonth) {
+      existingMonth.amount += payment.amount
+      existingMonth.count += 1
     } else {
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث حالة التحويل بنجاح",
-      })
+      acc.push({ name: month, amount: payment.amount, count: 1 })
     }
-  }
+    
+    return acc
+  }, []).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime()) || []
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>تحويلات المقترضين</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          columns={columns}
-          data={payments || []}
-          isLoading={isLoading}
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>تتبع المدفوعات الشهرية</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
+                <Tooltip />
+                <Line yAxisId="left" type="monotone" dataKey="amount" stroke="#0ea5e9" name="مبلغ المدفوعات" />
+                <Line yAxisId="right" type="monotone" dataKey="count" stroke="#22c55e" name="عدد المدفوعات" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>تحويلات المقترضين</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            columns={columns}
+            data={payments || []}
+            isLoading={isLoading}
+          />
+        </CardContent>
+      </Card>
+    </div>
   )
 }
