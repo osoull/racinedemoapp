@@ -16,6 +16,7 @@ import { ComplianceAudit } from "@/components/admin/ComplianceAudit"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking"
 import FundingRequestsPage from "@/pages/admin/funding-requests"
+import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,6 +72,7 @@ function App() {
                         <Routes>
                           <Route path="/" element={<AdminDashboard />} />
                           <Route path="/investors" element={<InvestorManagement />} />
+                          <Route path="/borrowers" element={<BorrowerManagement />} />
                           <Route path="/funding-requests" element={<FundingRequestsPage />} />
                           <Route path="/compliance" element={<ComplianceAudit />} />
                           <Route path="/settings" element={<PlatformSettings />} />

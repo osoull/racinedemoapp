@@ -8,7 +8,8 @@ import {
   Settings,
   Shield,
   Users,
-  FileText
+  FileText,
+  Building2
 } from "lucide-react"
 
 const menuItems = [
@@ -23,6 +24,12 @@ const menuItems = [
     icon: Users,
     path: "/admin/investors",
     description: "إدارة المستثمرين"
+  },
+  {
+    title: "المقترضين",
+    icon: Building2,
+    path: "/admin/borrowers",
+    description: "إدارة المقترضين"
   },
   {
     title: "طلبات التمويل",
