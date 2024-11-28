@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { NotificationsProvider } from "@/contexts/NotificationsContext"
 import { ThemeProvider } from "@/components/ui/theme"
-import { Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import InvestorDashboard from "@/pages/investor/Dashboard"
@@ -28,62 +28,64 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <AuthProvider>
-          <NotificationsProvider>
-            <div className="min-h-screen bg-background font-messiri" dir="rtl">
-              <Routes>
-                <Route path="/" element={<Auth />} />
-                
-                <Route
-                  path="/investor/*"
-                  element={
-                    <PrivateRoute allowedTypes={["investor"]}>
-                      <Routes>
-                        <Route path="/" element={<InvestorDashboard />} />
-                        <Route path="/portfolio" element={<Portfolio />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/settings" element={<Settings />} />
-                      </Routes>
-                    </PrivateRoute>
-                  }
-                />
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+          <AuthProvider>
+            <NotificationsProvider>
+              <div className="min-h-screen bg-background font-messiri" dir="rtl">
+                <Routes>
+                  <Route path="/" element={<Auth />} />
+                  
+                  <Route
+                    path="/investor/*"
+                    element={
+                      <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
+                        <Routes>
+                          <Route path="/" element={<InvestorDashboard />} />
+                          <Route path="/portfolio" element={<Portfolio />} />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/settings" element={<Settings />} />
+                        </Routes>
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/borrower/*"
-                  element={
-                    <PrivateRoute allowedTypes={["borrower"]}>
-                      <Routes>
-                        <Route path="/" element={<BorrowerDashboard />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/settings" element={<Settings />} />
-                      </Routes>
-                    </PrivateRoute>
-                  }
-                />
+                  <Route
+                    path="/borrower/*"
+                    element={
+                      <PrivateRoute allowedTypes={["borrower"]}>
+                        <Routes>
+                          <Route path="/" element={<BorrowerDashboard />} />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/settings" element={<Settings />} />
+                        </Routes>
+                      </PrivateRoute>
+                    }
+                  />
 
-                <Route
-                  path="/admin/*"
-                  element={
-                    <PrivateRoute allowedTypes={["admin"]}>
-                      <Routes>
-                        <Route path="/" element={<AdminDashboard />} />
-                        <Route path="/investors" element={<InvestorManagement />} />
-                        <Route path="/funding-requests" element={<FundingRequestsPage />} />
-                        <Route path="/compliance" element={<ComplianceAudit />} />
-                        <Route path="/settings" element={<PlatformSettings />} />
-                        <Route path="/revenue" element={<RevenueTracking />} />
-                      </Routes>
-                    </PrivateRoute>
-                  }
-                />
-              </Routes>
-            </div>
-          </NotificationsProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <PrivateRoute allowedTypes={["admin"]}>
+                        <Routes>
+                          <Route path="/" element={<AdminDashboard />} />
+                          <Route path="/investors" element={<InvestorManagement />} />
+                          <Route path="/funding-requests" element={<FundingRequestsPage />} />
+                          <Route path="/compliance" element={<ComplianceAudit />} />
+                          <Route path="/settings" element={<PlatformSettings />} />
+                          <Route path="/revenue" element={<RevenueTracking />} />
+                        </Routes>
+                      </PrivateRoute>
+                    }
+                  />
+                </Routes>
+              </div>
+            </NotificationsProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   )
 }
 
