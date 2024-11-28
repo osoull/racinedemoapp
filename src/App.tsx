@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/utils/queryClient";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
+import { Auth } from "@/components/Auth";
 import BorrowerDashboard from "@/pages/borrower/Dashboard";
 import InvestorDashboard from "@/pages/investor/Dashboard";
 import AdminDashboard from "@/pages/admin/Dashboard";
@@ -24,8 +25,8 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Route par défaut */}
-            <Route path="/" element={<Navigate to="/admin/dashboard" />} />
+            {/* Route par défaut vers la page de connexion */}
+            <Route path="/" element={<Auth />} />
 
             {/* Routes Admin */}
             <Route
