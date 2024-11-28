@@ -32,7 +32,7 @@ const InvestorDashboard = () => {
         .from("transactions")
         .select(`
           *,
-          funding_request:funding_requests!inner(
+          funding_request:funding_requests(
             title,
             funding_goal,
             current_funding,
@@ -43,7 +43,10 @@ const InvestorDashboard = () => {
         .eq("user_id", user?.id)
       
       if (error) throw error
-      return data
+      return data?.map(inv => ({
+        ...inv,
+        funding_request: inv.funding_request?.[0]
+      }))
     },
     enabled: !!user?.id
   })
