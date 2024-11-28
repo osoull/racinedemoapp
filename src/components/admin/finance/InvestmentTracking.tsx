@@ -1,25 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { DataTable } from "@/components/ui/data-table"
-import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/components/ui/badge"
-import { formatCurrency } from "@/utils/feeCalculations"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-
-interface Investment {
-  id: string
-  amount: number
-  status: string
-  created_at: string
-  funding_request: {
-    title: string
-  }
-  user: {
-    first_name: string
-    last_name: string
-  }
-}
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { DataTable } from "@/components/ui/data-table";
+import { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/utils/feeCalculations";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Investment } from "@/types/investment";
 
 const columns: ColumnDef<Investment>[] = [
   {
@@ -27,7 +14,7 @@ const columns: ColumnDef<Investment>[] = [
     header: "المستثمر",
     cell: ({ row }) => (
       <span>
-        {row.original.user.first_name} {row.original.user.last_name}
+        {row.original.user?.first_name} {row.original.user?.last_name}
       </span>
     ),
   },
@@ -37,7 +24,7 @@ const columns: ColumnDef<Investment>[] = [
   },
   {
     accessorKey: "amount",
-    header: "مبلغ الاستثمار",
+    header: "المبلغ",
     cell: ({ row }) => formatCurrency(row.original.amount),
   },
   {
@@ -63,16 +50,17 @@ const columns: ColumnDef<Investment>[] = [
   },
   {
     accessorKey: "created_at",
-    header: "تاريخ الاستثمار",
+    header: "التاريخ",
     cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString("ar-SA"),
   },
-]
+];
 
 interface InvestmentTrackingProps {
-  showOnlyChart?: boolean
+  showOnlyChart?: boolean;
+  onExportData?: (data: Investment[]) => void;
 }
 
-export function InvestmentTracking({ showOnlyChart = false }: InvestmentTrackingProps) {
+export function InvestmentTracking({ showOnlyChart = false, onExportData }: InvestmentTrackingProps) {
   const { data: investments, isLoading } = useQuery({
     queryKey: ["investments"],
     queryFn: async () => {
@@ -80,66 +68,80 @@ export function InvestmentTracking({ showOnlyChart = false }: InvestmentTracking
         .from("transactions")
         .select(`
           *,
-          funding_request:funding_requests(title),
-          user:profiles(first_name, last_name)
+          user:profiles(first_name, last_name),
+          investment:investments(
+            amount,
+            project:projects(title)
+          )
         `)
         .eq("type", "investment")
-        .order("created_at", { ascending: false })
+        .order("created_at", { ascending: false });
 
-      if (error) throw error
-      
-      return data.map((investment: any) => ({
+      if (error) throw error;
+
+      const transformedData = data.map((investment: any) => ({
         ...investment,
-        funding_request: investment.funding_request[0],
-        user: investment.user[0]
-      })) as Investment[]
+        user: investment.user[0],
+        investment: investment.investment[0]
+      })) as Investment[];
+
+      if (onExportData) {
+        onExportData(transformedData);
+      }
+
+      return transformedData;
     },
-  })
+  });
 
   // Group investments by month for the chart
   const chartData = investments?.reduce((acc: any[], investment) => {
-    const month = new Date(investment.created_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short' })
-    const existingMonth = acc.find(item => item.name === month)
+    const month = new Date(investment.created_at).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short' });
+    const existingMonth = acc.find(item => item.name === month);
     
     if (existingMonth) {
-      existingMonth.amount += investment.amount
+      existingMonth.amount += investment.amount;
+      existingMonth.count += 1;
     } else {
-      acc.push({ name: month, amount: investment.amount })
+      acc.push({ name: month, amount: investment.amount, count: 1 });
     }
     
-    return acc
-  }, []).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime()) || []
+    return acc;
+  }, []).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime()) || [];
 
   if (showOnlyChart) {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={chartData}>
+        <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
-          <YAxis />
+          <YAxis yAxisId="left" />
+          <YAxis yAxisId="right" orientation="right" />
           <Tooltip />
-          <Bar dataKey="amount" fill="#0ea5e9" name="مبلغ الاستثمار" />
-        </BarChart>
+          <Line yAxisId="left" type="monotone" dataKey="amount" stroke="#0ea5e9" name="مبلغ الاستثمارات" />
+          <Line yAxisId="right" type="monotone" dataKey="count" stroke="#22c55e" name="عدد الاستثمارات" />
+        </LineChart>
       </ResponsiveContainer>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>تتبع الاستثمارات الشهرية</CardTitle>
+          <CardTitle>متابعة الاستثمارات الشهرية</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
+              <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
                 <Tooltip />
-                <Bar dataKey="amount" fill="#0ea5e9" name="مبلغ الاستثمار" />
-              </BarChart>
+                <Line yAxisId="left" type="monotone" dataKey="amount" stroke="#0ea5e9" name="مبلغ الاستثمارات" />
+                <Line yAxisId="right" type="monotone" dataKey="count" stroke="#22c55e" name="عدد الاستثمارات" />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
@@ -147,7 +149,7 @@ export function InvestmentTracking({ showOnlyChart = false }: InvestmentTracking
 
       <Card>
         <CardHeader>
-          <CardTitle>متابعة الاستثمارات</CardTitle>
+          <CardTitle>قائمة الاستثمارات</CardTitle>
         </CardHeader>
         <CardContent>
           <DataTable
@@ -158,5 +160,5 @@ export function InvestmentTracking({ showOnlyChart = false }: InvestmentTracking
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

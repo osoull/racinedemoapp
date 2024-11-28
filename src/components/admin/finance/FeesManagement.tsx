@@ -88,8 +88,11 @@ const columns: ColumnDef<AdminFee>[] = [
   },
 ];
 
-// Changed from export function to export const
-export const FeesManagement = () => {
+interface FeesManagementProps {
+  onExportData?: (data: AdminFee[]) => void;
+}
+
+export const FeesManagement = ({ onExportData }: FeesManagementProps) => {
   const { data: fees, isLoading } = useQuery({
     queryKey: ["fees"],
     queryFn: async () => {
@@ -104,12 +107,18 @@ export const FeesManagement = () => {
 
       if (error) throw error;
       
-      return (data as any[]).map(fee => ({
+      const transformedData = (data as any[]).map(fee => ({
         ...fee,
         status: fee.status || 'pending',
         funding_request: fee.funding_request?.[0] || { title: 'N/A' },
         user: fee.user?.[0] || { first_name: 'N/A', last_name: '' }
       })) as AdminFee[];
+
+      if (onExportData) {
+        onExportData(transformedData);
+      }
+
+      return transformedData;
     },
   });
 

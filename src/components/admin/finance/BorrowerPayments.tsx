@@ -71,9 +71,10 @@ const columns: ColumnDef<BorrowerPayment>[] = [
 
 interface BorrowerPaymentsProps {
   showOnlyChart?: boolean
+  onExportData?: (data: BorrowerPayment[]) => void;
 }
 
-export function BorrowerPayments({ showOnlyChart = false }: BorrowerPaymentsProps) {
+export function BorrowerPayments({ showOnlyChart = false, onExportData }: BorrowerPaymentsProps) {
   const { data: payments, isLoading } = useQuery({
     queryKey: ["borrower-payments"],
     queryFn: async () => {
@@ -88,11 +89,17 @@ export function BorrowerPayments({ showOnlyChart = false }: BorrowerPaymentsProp
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data.map((payment: any) => ({
+      const transformedData = data.map((payment: any) => ({
         ...payment,
         borrower: payment.borrower[0],
         funding_request: payment.funding_request[0]
       })) as BorrowerPayment[]
+
+      if (onExportData) {
+        onExportData(transformedData);
+      }
+
+      return transformedData;
     },
   })
 

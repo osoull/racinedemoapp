@@ -43,7 +43,11 @@ const columns: ColumnDef<FinancialReport>[] = [
   },
 ];
 
-export function FinancialReports() {
+interface FinancialReportsProps {
+  onExportData?: (data: FinancialReport[]) => void;
+}
+
+export function FinancialReports({ onExportData }: FinancialReportsProps) {
   const { data: reports, isLoading } = useQuery({
     queryKey: ["financial-reports"],
     queryFn: async () => {
@@ -54,12 +58,17 @@ export function FinancialReports() {
 
       if (error) throw error;
 
-      // Transform the data to match the FinancialReport interface
-      return (data as any[]).map(report => ({
+      const transformedData = (data as any[]).map(report => ({
         ...report,
         total_fees: report.admin_fees + report.collection_fees + 
                    report.basic_investor_fees + report.qualified_investor_fees
       })) as FinancialReport[];
+
+      if (onExportData) {
+        onExportData(transformedData);
+      }
+
+      return transformedData;
     },
   });
 
