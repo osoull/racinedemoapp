@@ -29,7 +29,10 @@ export function useInvestments() {
 
       if (error) throw error
 
-      return data as Investment[]
+      return data.map((item: any) => ({
+        ...item,
+        funding_request: item.funding_request?.[0] || null
+      })) as Investment[]
     }
   })
 }
