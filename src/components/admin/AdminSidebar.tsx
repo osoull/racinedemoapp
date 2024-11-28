@@ -9,7 +9,8 @@ import {
   Shield,
   Wallet,
   Users,
-  DollarSign
+  DollarSign,
+  FileText
 } from "lucide-react"
 
 const menuItems = [
@@ -30,6 +31,12 @@ const menuItems = [
     icon: Users,
     path: "/admin/borrowers",
     description: "إدارة المقترضين"
+  },
+  {
+    title: "طلبات التمويل",
+    icon: FileText,
+    path: "/admin/funding-requests",
+    description: "إدارة طلبات التمويل"
   },
   {
     title: "المعاملات",
