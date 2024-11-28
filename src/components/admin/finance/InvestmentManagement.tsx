@@ -13,14 +13,42 @@ import { format } from "date-fns"
 import { Download } from "lucide-react"
 import { toast } from "sonner"
 import * as XLSX from 'xlsx'
+import { DateRange } from "react-day-picker"
+
+interface Investment {
+  id: string
+  amount: number
+  status: string
+  created_at: string
+  user: {
+    id: string
+    first_name: string
+    last_name: string
+  }
+  investment: {
+    id: string
+    funding_request: {
+      title: string
+      description: string
+    }
+  }
+  stripe_payments?: {
+    stripe_session_id: string
+    status: string
+  }[]
+  bank_transactions?: {
+    bank_status: string
+    reference_number: string
+  }[]
+}
 
 export function InvestmentManagement() {
   const [search, setSearch] = useState("")
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
   const [selectedInvestor, setSelectedInvestor] = useState<string | null>(null)
   const [selectedOpportunity, setSelectedOpportunity] = useState<string | null>(null)
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(null)
-  const [selectedInvestment, setSelectedInvestment] = useState<any>(null)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>()
+  const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null)
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
   const [showRefundDialog, setShowRefundDialog] = useState(false)
 
@@ -56,7 +84,7 @@ export function InvestmentManagement() {
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data
+      return data as Investment[]
     }
   })
 
@@ -77,7 +105,7 @@ export function InvestmentManagement() {
       return false
     }
 
-    if (selectedInvestor && investment.user_id !== selectedInvestor) {
+    if (selectedInvestor && investment.user.id !== selectedInvestor) {
       return false
     }
 
@@ -85,9 +113,9 @@ export function InvestmentManagement() {
       return false
     }
 
-    if (dateRange) {
+    if (dateRange?.from) {
       const investmentDate = new Date(investment.created_at)
-      if (investmentDate < dateRange.from || investmentDate > dateRange.to) {
+      if (investmentDate < dateRange.from || (dateRange.to && investmentDate > dateRange.to)) {
         return false
       }
     }
