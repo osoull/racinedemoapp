@@ -23,8 +23,8 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 max-w-screen-2xl items-center">
           {/* Mobile menu button */}
           <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
             <SheetTrigger asChild>
@@ -62,9 +62,9 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       </header>
 
       {/* Main layout */}
-      <div className="flex min-h-screen pt-14">
+      <div className="flex min-h-[calc(100vh-3.5rem)]">
         {/* Sidebar - Desktop */}
-        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background">
+        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background overflow-y-auto">
           {sidebar}
         </aside>
 
@@ -73,7 +73,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           "flex-1 lg:mr-64",
           className
         )}>
-          <div className="container py-6">
+          <div className="container max-w-screen-2xl py-6">
             {children}
           </div>
         </main>
