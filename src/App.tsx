@@ -26,7 +26,15 @@ function App() {
         .eq("id", user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching profile:", error);
+        toast({
+          title: "خطأ",
+          description: "حدث خطأ أثناء تحميل الملف الشخصي",
+          variant: "destructive",
+        });
+        return null;
+      }
       return data;
     },
     enabled: !!user,
@@ -40,85 +48,59 @@ function App() {
     );
   }
 
-  const getUserRedirectPath = () => {
-    if (!user || !profile) return '/';
-    
-    try {
-      const userType = profile.user_type;
-      console.log("Profile:", profile); // Debug log
-      console.log("User type:", userType); // Debug log
-      
-      switch (userType) {
-        case 'admin':
-          return '/admin/dashboard';
-        case 'borrower':
-          return '/borrower/dashboard';
-        case 'basic_investor':
-        case 'qualified_investor':
-          return '/investor/dashboard';
-        default:
-          console.log("No valid user type found, redirecting to /"); // Debug log
-          return '/';
-      }
-    } catch (error) {
-      console.error("Error in getUserRedirectPath:", error);
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء توجيهك للوحة التحكم",
-        variant: "destructive",
-      });
-      return '/';
-    }
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
+          {/* Route publique pour l'authentification */}
           <Route 
             path="/" 
             element={
               !user ? (
                 <Auth />
               ) : (
-                <Navigate to={getUserRedirectPath()} replace />
+                <Navigate 
+                  to={
+                    profile?.user_type === 'admin' ? '/admin/dashboard' :
+                    profile?.user_type === 'borrower' ? '/borrower/dashboard' :
+                    profile?.user_type === 'basic_investor' || profile?.user_type === 'qualified_investor' ? '/investor/dashboard' :
+                    '/'
+                  } 
+                  replace 
+                />
               )
             } 
           />
 
+          {/* Routes protégées */}
           <Route 
             path="/admin/*" 
             element={
-              profile?.user_type === 'admin' ? (
-                <AdminRoutes />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              !user ? <Navigate to="/" replace /> :
+              profile?.user_type === 'admin' ? <AdminRoutes /> :
+              <Navigate to="/" replace />
             } 
           />
           
           <Route 
             path="/borrower/*" 
             element={
-              profile?.user_type === 'borrower' ? (
-                <BorrowerRoutes />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              !user ? <Navigate to="/" replace /> :
+              profile?.user_type === 'borrower' ? <BorrowerRoutes /> :
+              <Navigate to="/" replace />
             } 
           />
           
           <Route 
             path="/investor/*" 
             element={
-              ['basic_investor', 'qualified_investor'].includes(profile?.user_type || '') ? (
-                <InvestorRoutes />
-              ) : (
-                <Navigate to="/" replace />
-              )
+              !user ? <Navigate to="/" replace /> :
+              ['basic_investor', 'qualified_investor'].includes(profile?.user_type || '') ? <InvestorRoutes /> :
+              <Navigate to="/" replace />
             } 
           />
 
+          {/* Redirection par défaut */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
