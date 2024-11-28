@@ -32,20 +32,26 @@ export function SignInForm({ onSignIn, onRegisterClick, isLoading }: SignInFormP
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Input
+              id="email"
+              name="email"
               type="email"
               placeholder="البريد الإلكتروني"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
               dir="rtl"
+              autoComplete="email"
             />
             <Input
+              id="password"
+              name="password"
               type="password"
               placeholder="كلمة المرور"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
               dir="rtl"
+              autoComplete="current-password"
             />
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
