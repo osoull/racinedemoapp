@@ -20,6 +20,7 @@ import { FundingRequestsList } from "@/components/borrower/funding/FundingReques
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
 import { NewFundingRequest } from "@/components/borrower/funding/NewFundingRequest";
+import { EditFundingRequest } from "@/components/borrower/funding/EditFundingRequest";
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
                       <Route path="kyc" element={<BorrowerKYCForm />} />
                       <Route path="funding-requests" element={<FundingRequestsList />} />
                       <Route path="funding-requests/new" element={<NewFundingRequest />} />
+                      <Route path="funding-requests/:id/edit" element={<EditFundingRequest />} />
                       <Route path="payments" element={<BorrowerPayments />} />
                     </Routes>
                   </DashboardLayout>
