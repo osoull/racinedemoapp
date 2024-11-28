@@ -15,6 +15,7 @@ import { PlatformSettings } from "@/components/admin/PlatformSettings";
 import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement";
 import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
 import { FundingRequestList } from "@/components/admin/funding/FundingRequestList";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 
 function App() {
   const { loading } = useAuth();
@@ -40,7 +41,7 @@ function App() {
             element={
               <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
-                  <FinanceOverview />
+                  <DashboardOverview />
                 </DashboardLayout>
               </PrivateRoute>
             }
