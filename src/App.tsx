@@ -15,14 +15,7 @@ import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
 import { FundingRequestForm } from "@/components/borrower/funding/FundingRequestForm";
 import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
-import { InvestorManagement } from "@/components/admin/investors/InvestorManagement";
-import { FundingRequestList } from "@/components/admin/funding/FundingRequestList";
-import { InvestmentOpportunities } from "@/components/admin/investors/InvestmentOpportunities";
-import { TransactionManagement } from "@/components/admin/finance/TransactionManagement";
-import { PaymentDefaultsManagement } from "@/components/admin/defaults/PaymentDefaultsManagement";
-import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
-import { PlatformSettings } from "@/components/admin/PlatformSettings";
-import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement";
+import { BorrowerSettings } from "@/components/borrower/BorrowerSettings";
 
 function App() {
   const { loading } = useAuth();
@@ -213,10 +206,7 @@ function App() {
             element={
               <PrivateRoute allowedTypes={["borrower"]}>
                 <DashboardLayout sidebar={<BorrowerSidebar />}>
-                  <div className="space-y-6">
-                    <h2 className="text-3xl font-bold tracking-tight">إعدادات الحساب</h2>
-                    {/* Settings content will be added later */}
-                  </div>
+                  <BorrowerSettings />
                 </DashboardLayout>
               </PrivateRoute>
             }
