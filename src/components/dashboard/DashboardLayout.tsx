@@ -24,7 +24,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+        <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
             {/* Mobile menu button */}
             <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
@@ -61,19 +61,20 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
         </div>
       </header>
 
-      <div className="flex">
+      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[280px_minmax(0,1fr)] gap-6">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-72 shrink-0 border-l fixed right-0 top-16 bottom-0 overflow-y-auto">
+        <aside className="fixed top-16 z-30 hidden h-[calc(100vh-4rem)] w-full shrink-0 overflow-y-auto border-l md:sticky md:block">
           {sidebar}
         </aside>
 
         {/* Main Content */}
         <main className={cn(
-          "flex-1 px-4 py-6 sm:px-6 lg:px-8",
-          "lg:mr-72", // Add margin for desktop sidebar
+          "flex-1 overflow-hidden px-4 py-6 md:px-6 lg:px-8",
           className
         )}>
-          {children}
+          <div className="mx-auto max-w-5xl">
+            {children}
+          </div>
         </main>
       </div>
     </div>

@@ -11,8 +11,6 @@ import {
   FileText,
   Building2,
   Wallet,
-  Receipt,
-  PieChart
 } from "lucide-react"
 
 const menuItems = [
@@ -26,27 +24,7 @@ const menuItems = [
     title: "الإدارة المالية",
     icon: Wallet,
     path: "/admin/finance",
-    description: "إدارة المعاملات والتقارير المالية",
-    subItems: [
-      {
-        title: "نظرة عامة",
-        path: "/admin/finance",
-        icon: PieChart,
-        description: "نظرة عامة على الأداء المالي"
-      },
-      {
-        title: "المعاملات",
-        path: "/admin/finance/transactions",
-        icon: Receipt,
-        description: "إدارة المعاملات المالية"
-      },
-      {
-        title: "الإيرادات",
-        path: "/admin/finance/revenue",
-        icon: Receipt,
-        description: "تتبع الإيرادات"
-      }
-    ]
+    description: "إدارة المعاملات والتقارير المالية"
   },
   {
     title: "المستثمرين",
@@ -85,17 +63,21 @@ export const AdminSidebar = () => {
   const { signOut } = useAuth()
 
   return (
-    <div className="flex h-full flex-col bg-background border-l">
-      <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
-        {menuItems.map((item) => (
-          <SidebarItem
-            key={item.path}
-            {...item}
-            isActive={location.pathname === item.path}
-          />
-        ))}
-      </nav>
-      <div className="border-t p-4">
+    <div className="flex h-full flex-col">
+      <div className="space-y-4 py-4">
+        <div className="px-3 py-2">
+          <div className="space-y-1">
+            {menuItems.map((item) => (
+              <SidebarItem
+                key={item.path}
+                {...item}
+                isActive={location.pathname === item.path}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="mt-auto p-4">
         <Button 
           variant="ghost" 
           className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
