@@ -5,9 +5,7 @@ import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { useAuth } from "@/contexts/AuthContext";
-
-// Dashboard Components
-import AdminDashboard from "@/pages/admin/Dashboard";
+import DashboardOverview from "@/components/admin/dashboard/DashboardOverview";
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
 import InvestorDashboard from "@/pages/investor/Dashboard";
 
@@ -24,7 +22,7 @@ export const RoleRoutes = () => {
       <Route path="/admin" element={
         <PrivateRoute allowedTypes={["admin"]}>
           <DashboardLayout sidebar={<AdminSidebar />}>
-            <AdminDashboard />
+            <DashboardOverview />
           </DashboardLayout>
         </PrivateRoute>
       } />
