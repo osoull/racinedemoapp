@@ -62,9 +62,9 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       </header>
 
       {/* Main layout */}
-      <div className="flex flex-1 min-h-[calc(100vh-3.5rem-4rem)]"> {/* Adjusted to account for footer */}
+      <div className="flex-1 flex min-h-[calc(100vh-3.5rem-4rem)]">
         {/* Sidebar - Desktop */}
-        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background overflow-y-auto">
+        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem-4rem)] border-l bg-background overflow-y-auto">
           {sidebar}
         </aside>
 
@@ -80,8 +80,8 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       </div>
 
       {/* Footer */}
-      <footer className="h-16 border-t bg-background mt-auto">
-        <div className="container max-w-screen-2xl h-full flex items-center justify-between px-6">
+      <footer className="h-16 border-t bg-background">
+        <div className="container max-w-screen-2xl h-full flex items-center justify-between px-6 lg:mr-64">
           {/* Social Media Links */}
           <div className="flex items-center gap-4">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
