@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, NavigateOptions, To } from "react-router-dom";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { useEffect, useRef } from "react";
+import { PrivateRoute } from "@/components/auth/PrivateRoute";
 
 // Navigation throttling component
 const NavigationThrottler = ({ children }: { children: React.ReactNode }) => {
@@ -51,7 +52,50 @@ function App() {
       <Router>
         <NavigationThrottler>
           <Routes>
+            {/* Public route */}
             <Route path="/" element={<Auth />} />
+
+            {/* Borrower routes */}
+            <Route
+              path="/borrower/dashboard"
+              element={
+                <PrivateRoute allowedTypes={["borrower"]}>
+                  <div>Borrower Dashboard (à implémenter)</div>
+                </PrivateRoute>
+              }
+            />
+
+            {/* Investor routes */}
+            <Route
+              path="/investor/dashboard"
+              element={
+                <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
+                  <div>Investor Dashboard (à implémenter)</div>
+                </PrivateRoute>
+              }
+            />
+
+            {/* Admin routes */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <PrivateRoute allowedTypes={["admin"]}>
+                  <div>Admin Dashboard (à implémenter)</div>
+                </PrivateRoute>
+              }
+            />
+
+            {/* Investment Manager routes */}
+            <Route
+              path="/investment-manager/dashboard"
+              element={
+                <PrivateRoute allowedTypes={["investment_manager"]}>
+                  <div>Investment Manager Dashboard (à implémenter)</div>
+                </PrivateRoute>
+              }
+            />
+
+            {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </NavigationThrottler>
