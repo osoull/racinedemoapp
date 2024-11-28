@@ -88,9 +88,10 @@ const columns: ColumnDef<AdminFee>[] = [
   },
 ];
 
-export function AdminFeesManagement() {
-  const { data: adminFees, isLoading } = useQuery({
-    queryKey: ["admin-fees"],
+// Changed from export function to export const
+export const FeesManagement = () => {
+  const { data: fees, isLoading } = useQuery({
+    queryKey: ["fees"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("fee_tracking")
@@ -103,7 +104,6 @@ export function AdminFeesManagement() {
 
       if (error) throw error;
       
-      // Transform the data to match the AdminFee interface
       return (data as any[]).map(fee => ({
         ...fee,
         status: fee.status || 'pending',
@@ -121,10 +121,10 @@ export function AdminFeesManagement() {
       <CardContent>
         <DataTable
           columns={columns}
-          data={adminFees || []}
+          data={fees || []}
           isLoading={isLoading}
         />
       </CardContent>
     </Card>
   );
-}
+};
