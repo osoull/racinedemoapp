@@ -4,6 +4,7 @@ import { FeesManagement } from "./FeesManagement"
 import { FinancialReports } from "./FinancialReports"
 import { InvestmentTracking } from "./InvestmentTracking"
 import { BorrowerPayments } from "./BorrowerPayments"
+import { FeesChart } from "./FeesChart"
 
 export function FinanceOverview() {
   return (
@@ -14,6 +15,8 @@ export function FinanceOverview() {
           إدارة ومراقبة العمليات المالية للمنصة
         </p>
       </div>
+
+      <FeesChart />
 
       <Card>
         <CardHeader>
