@@ -4,77 +4,58 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar";
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
+import { useAuth } from "@/contexts/AuthContext";
 
-// Routes - Admin
+// Dashboard Components
 import AdminDashboard from "@/pages/admin/Dashboard";
-
-// Routes - Borrower
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview";
-import { BorrowerProfile } from "@/components/borrower/BorrowerProfile";
-import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm";
-import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList";
-import { NewFundingRequest } from "@/components/borrower/funding/NewFundingRequest";
-import { EditFundingRequest } from "@/components/borrower/funding/EditFundingRequest";
-import { BorrowerPayments } from "@/components/borrower/BorrowerPayments";
-
-// Routes - Investor
 import InvestorDashboard from "@/pages/investor/Dashboard";
 
 export const RoleRoutes = () => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return (
     <Routes>
-      {/* Routes Admin */}
+      {/* Admin Dashboard */}
       <Route path="/admin" element={
         <PrivateRoute allowedTypes={["admin"]}>
           <DashboardLayout sidebar={<AdminSidebar />}>
-            <Routes>
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="finance" element={<div>Finance</div>} />
-              <Route path="payment-defaults" element={<div>Payment Defaults</div>} />
-              <Route path="investors" element={<div>Investors</div>} />
-              <Route path="investment-opportunities" element={<div>Investment Opportunities</div>} />
-              <Route path="borrowers" element={<div>Borrowers</div>} />
-              <Route path="funding-requests" element={<div>Funding Requests</div>} />
-              <Route path="compliance" element={<div>Compliance</div>} />
-              <Route path="settings" element={<div>Settings</div>} />
-            </Routes>
+            <AdminDashboard />
           </DashboardLayout>
         </PrivateRoute>
       } />
 
-      {/* Routes Emprunteur */}
+      {/* Borrower Dashboard */}
       <Route path="/borrower" element={
         <PrivateRoute allowedTypes={["borrower"]}>
           <DashboardLayout sidebar={<BorrowerSidebar />}>
-            <Routes>
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<BorrowerDashboardOverview />} />
-              <Route path="profile" element={<BorrowerProfile />} />
-              <Route path="kyc" element={<BorrowerKYCForm />} />
-              <Route path="funding-requests" element={<FundingRequestsList />} />
-              <Route path="funding-requests/new" element={<NewFundingRequest />} />
-              <Route path="funding-requests/:id/edit" element={<EditFundingRequest />} />
-              <Route path="payments" element={<BorrowerPayments />} />
-            </Routes>
+            <BorrowerDashboardOverview />
           </DashboardLayout>
         </PrivateRoute>
       } />
 
-      {/* Routes Investisseur */}
+      {/* Investor Dashboard */}
       <Route path="/investor" element={
         <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
           <DashboardLayout sidebar={<InvestorSidebar />}>
-            <Routes>
-              <Route index element={<Navigate to="dashboard" />} />
-              <Route path="dashboard" element={<InvestorDashboard />} />
-            </Routes>
+            <InvestorDashboard />
           </DashboardLayout>
         </PrivateRoute>
       } />
 
-      {/* Route 404 */}
-      <Route path="*" element={<Navigate to="/" />} />
+      {/* Default redirect based on user type */}
+      <Route path="/" element={
+        user?.user_metadata?.user_type === "admin" ? <Navigate to="/admin" replace /> :
+        user?.user_metadata?.user_type === "borrower" ? <Navigate to="/borrower" replace /> :
+        <Navigate to="/investor" replace />
+      } />
+
+      {/* Catch all route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

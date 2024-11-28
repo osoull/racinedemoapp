@@ -12,10 +12,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Page d'accueil - Authentification */}
-            <Route path="/" element={<Auth />} />
-            
-            {/* Routes basées sur les rôles */}
+            <Route path="/auth" element={<Auth />} />
             <Route path="/*" element={<RoleRoutes />} />
           </Routes>
           <Toaster />

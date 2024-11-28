@@ -19,25 +19,24 @@ export function Auth() {
   const { toast } = useToast()
 
   useEffect(() => {
-    let isMounted = true
+    if (!user) return
 
-    const checkUserAndRedirect = async () => {
-      if (!user) return
-
+    const redirectBasedOnUserType = async () => {
       try {
-        const { data: profile, error } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
           .select("user_type")
           .eq("id", user.id)
           .single()
 
-        if (error) throw error
-        if (!profile) throw new Error("No profile found")
-        if (!isMounted) return
+        if (!profile) return
 
-        const path = getRedirectPath(profile.user_type as UserType)
+        const path = profile.user_type === "admin" ? "/admin" :
+                    profile.user_type === "borrower" ? "/borrower" :
+                    "/investor"
+                    
         navigate(path, { replace: true })
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error fetching user type:", error)
         toast({
           title: "خطأ",
@@ -47,27 +46,8 @@ export function Auth() {
       }
     }
 
-    checkUserAndRedirect()
-    return () => {
-      isMounted = false
-    }
+    redirectBasedOnUserType()
   }, [user, navigate, toast])
-
-  const getRedirectPath = (userType: UserType): string => {
-    switch (userType) {
-      case "admin":
-        return "/admin/dashboard"
-      case "investment_manager":
-        return "/investment-manager/dashboard"
-      case "borrower":
-        return "/borrower/dashboard"
-      case "basic_investor":
-      case "qualified_investor":
-        return "/investor/dashboard"
-      default:
-        return "/"
-    }
-  }
 
   const handleSignIn = async (email: string, password: string) => {
     if (isLoading) return
@@ -105,35 +85,6 @@ export function Auth() {
     }
   }
 
-  const renderAuthContent = () => {
-    switch (step) {
-      case "selection":
-        return <UserTypeSelection onSelect={handleUserTypeSelect} />
-      case "signup":
-        return (
-          <SignUpForm 
-            onBack={() => setStep("signin")}
-            onSuccess={() => setStep("signin")}
-          />
-        )
-      case "borrower_signup":
-        return (
-          <BorrowerSignUpForm 
-            onBack={() => setStep("signin")}
-            onSuccess={() => setStep("signin")}
-          />
-        )
-      default:
-        return (
-          <SignInForm 
-            onSignIn={handleSignIn}
-            onRegisterClick={() => setStep("selection")}
-            isLoading={isLoading}
-          />
-        )
-    }
-  }
-
   return (
     <div className="flex min-h-[80vh] items-center justify-center flex-col">
       <img 
@@ -146,7 +97,25 @@ export function Auth() {
         alt="Racine Investment" 
         className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
       />
-      {renderAuthContent()}
+      {step === "selection" ? (
+        <UserTypeSelection onSelect={handleUserTypeSelect} />
+      ) : step === "signup" ? (
+        <SignUpForm 
+          onBack={() => setStep("signin")}
+          onSuccess={() => setStep("signin")}
+        />
+      ) : step === "borrower_signup" ? (
+        <BorrowerSignUpForm 
+          onBack={() => setStep("signin")}
+          onSuccess={() => setStep("signin")}
+        />
+      ) : (
+        <SignInForm 
+          onSignIn={handleSignIn}
+          onRegisterClick={() => setStep("selection")}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   )
 }
