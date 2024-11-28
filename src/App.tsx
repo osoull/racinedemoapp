@@ -9,8 +9,19 @@ import { PrivateRoute } from "@/components/auth/PrivateRoute";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { Auth } from "@/components/Auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 function App() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
+    );
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
