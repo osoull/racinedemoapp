@@ -6,9 +6,12 @@ import {
   CreditCard,
   CheckCircle,
   Building2,
-  FileCheck
+  FileCheck,
+  Plus
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
+import { Button } from "../ui/button"
+import { useNavigate } from "react-router-dom"
 
 const menuItems = [
   {
@@ -51,9 +54,19 @@ const menuItems = [
 
 export function BorrowerSidebar() {
   const location = useLocation()
+  const navigate = useNavigate()
 
   return (
     <div className="flex h-full flex-col bg-background border-l">
+      <div className="p-4">
+        <Button 
+          className="w-full gap-2" 
+          onClick={() => navigate("/borrower/funding-requests/new")}
+        >
+          <Plus className="h-4 w-4" />
+          طلب تمويل جديد
+        </Button>
+      </div>
       <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
         {menuItems.map((item) => (
           <SidebarItem

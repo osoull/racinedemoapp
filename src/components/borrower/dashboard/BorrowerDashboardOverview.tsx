@@ -2,13 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/contexts/AuthContext"
-import { Loader2, AlertCircle } from "lucide-react"
+import { Loader2, AlertCircle, FileText, CreditCard, Building2, FileCheck } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { StatCard } from "@/components/dashboard/StatCard"
 import { BorrowerFundingHistory } from "@/components/admin/borrower/details/BorrowerFundingHistory"
+import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 export function BorrowerDashboardOverview() {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["borrower-stats", user?.id],
@@ -29,12 +32,14 @@ export function BorrowerDashboardOverview() {
       const totalFunded = data.reduce((sum, req) => sum + (req.current_funding || 0), 0)
       const activeRequests = data.filter(req => req.status === 'active').length
       const totalRequests = data.length
+      const pendingPayments = data.filter(req => req.status === 'approved' && req.current_funding > 0).length
 
       return {
         totalRequested,
         totalFunded,
         activeRequests,
-        totalRequests
+        totalRequests,
+        pendingPayments
       }
     },
     enabled: !!user,
@@ -63,6 +68,33 @@ export function BorrowerDashboardOverview() {
     )
   }
 
+  const quickActions = [
+    {
+      title: "طلب تمويل جديد",
+      icon: FileText,
+      action: () => navigate("/borrower/funding-requests/new"),
+      description: "تقديم طلب تمويل جديد لمشروعك"
+    },
+    {
+      title: "إدارة المدفوعات",
+      icon: CreditCard,
+      action: () => navigate("/borrower/payments"),
+      description: "عرض وإدارة المدفوعات والأقساط"
+    },
+    {
+      title: "الملف التعريفي",
+      icon: Building2,
+      action: () => navigate("/borrower/profile"),
+      description: "تحديث معلومات الشركة والوثائق"
+    },
+    {
+      title: "التحقق من الهوية",
+      icon: FileCheck,
+      action: () => navigate("/borrower/kyc"),
+      description: "إكمال عملية التحقق من الهوية"
+    }
+  ]
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -84,8 +116,28 @@ export function BorrowerDashboardOverview() {
         </Alert>
       )}
 
+      {/* Quick Actions */}
+      <div>
+        <h3 className="text-lg font-medium mb-4">إجراءات سريعة</h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {quickActions.map((action, index) => (
+            <Card key={index} className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={action.action}>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <action.icon className="h-5 w-5" />
+                  <CardTitle className="text-base">{action.title}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{action.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <StatCard
           title="إجمالي التمويل المطلوب"
           value={stats?.totalRequested || 0}
@@ -101,6 +153,11 @@ export function BorrowerDashboardOverview() {
         <StatCard
           title="الطلبات النشطة"
           value={stats?.activeRequests || 0}
+          icon={AlertCircle}
+        />
+        <StatCard
+          title="المدفوعات المستحقة"
+          value={stats?.pendingPayments || 0}
           icon={AlertCircle}
         />
         <StatCard
