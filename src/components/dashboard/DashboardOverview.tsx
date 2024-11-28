@@ -7,45 +7,83 @@ import { useAuth } from "@/hooks/useAuth"
 import { Loader2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useToast } from "@/components/ui/use-toast"
 
 export function DashboardOverview() {
   const { user } = useAuth()
+  const { toast } = useToast()
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single()
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user?.id)
+          .single()
 
-      if (error) throw error
-      return data
+        if (error) {
+          toast({
+            variant: "destructive",
+            title: "خطأ في تحميل البيانات",
+            description: error.message
+          })
+          throw error
+        }
+
+        if (!data) {
+          toast({
+            variant: "destructive",
+            title: "خطأ في تحميل البيانات",
+            description: "لم يتم العثور على الملف الشخصي"
+          })
+          throw new Error("Profile not found")
+        }
+
+        return data
+      } catch (err) {
+        console.error("Error fetching profile:", err)
+        throw err
+      }
     },
     enabled: !!user,
-    retry: 1,
+    retry: 2,
     staleTime: 30000,
   })
 
+  // Afficher un état de chargement plus visible
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">جاري تحميل البيانات...</p>
       </div>
     )
   }
 
+  // Afficher un message d'erreur plus détaillé
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[400px] text-destructive">
-        حدث خطأ أثناء تحميل البيانات
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <p className="text-destructive font-medium">حدث خطأ أثناء تحميل البيانات</p>
+        <p className="text-sm text-muted-foreground">
+          يرجى تحديث الصفحة أو المحاولة مرة أخرى لاحقاً
+        </p>
       </div>
     )
   }
 
+  // Vérifier que le profil existe
   if (!profile) {
-    return null
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <p className="text-destructive font-medium">لم يتم العثور على الملف الشخصي</p>
+        <p className="text-sm text-muted-foreground">
+          يرجى تسجيل الخروج وإعادة تسجيل الدخول
+        </p>
+      </div>
+    )
   }
 
   return (
