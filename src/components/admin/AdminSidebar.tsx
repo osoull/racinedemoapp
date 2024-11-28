@@ -10,8 +10,7 @@ import {
   Users,
   FileText,
   Building2,
-  Wallet,
-  AlertCircle
+  Wallet
 } from "lucide-react"
 
 const menuItems = [
@@ -25,25 +24,7 @@ const menuItems = [
     title: "الإدارة المالية",
     icon: Wallet,
     path: "/admin/finance",
-    description: "إدارة المعاملات والتقارير المالية",
-    subItems: [
-      {
-        title: "المعاملات",
-        path: "/admin/finance/transactions",
-        description: "إدارة المعاملات"
-      },
-      {
-        title: "الإيرادات",
-        path: "/admin/finance/revenue",
-        description: "تتبع الإيرادات"
-      },
-      {
-        title: "التعثرات المالية",
-        path: "/admin/finance/defaults",
-        description: "إدارة التعثرات المالية",
-        icon: AlertCircle
-      }
-    ]
+    description: "إدارة المعاملات والتقارير المالية"
   },
   {
     title: "المستثمرين",
