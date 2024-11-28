@@ -23,9 +23,9 @@ export interface Transaction {
   status: string;
   created_at: string;
   user_id: string;
-  commission_id?: string;
-  fee_amount?: number;
-  fee_type?: string;
+  commission_id: string;
+  fee_amount: number;
+  fee_type: string;
   user?: {
     first_name: string;
     last_name: string;
