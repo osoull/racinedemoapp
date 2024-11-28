@@ -34,10 +34,10 @@ const menuItems = [
     description: "إدارة حالات التعثر عن السداد"
   },
   {
-    title: "المستثمرين",
+    title: "إدارة المستثمرين",
     icon: Users,
     path: "/admin/investors",
-    description: "إدارة المستثمرين"
+    description: "إدارة وتتبع المستثمرين"
   },
   {
     title: "المقترضين",
