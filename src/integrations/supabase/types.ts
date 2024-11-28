@@ -509,8 +509,13 @@ export type Database = {
         Row: {
           created_at: string | null
           end_date: string | null
+          expected_return_rate: number | null
           funding_request_id: string
           id: string
+          investment_term_months: number | null
+          maximum_investment: number | null
+          minimum_investment: number | null
+          risk_level: string | null
           start_date: string | null
           status: string
           total_invested: number | null
@@ -519,8 +524,13 @@ export type Database = {
         Insert: {
           created_at?: string | null
           end_date?: string | null
+          expected_return_rate?: number | null
           funding_request_id: string
           id?: string
+          investment_term_months?: number | null
+          maximum_investment?: number | null
+          minimum_investment?: number | null
+          risk_level?: string | null
           start_date?: string | null
           status?: string
           total_invested?: number | null
@@ -529,8 +539,13 @@ export type Database = {
         Update: {
           created_at?: string | null
           end_date?: string | null
+          expected_return_rate?: number | null
           funding_request_id?: string
           id?: string
+          investment_term_months?: number | null
+          maximum_investment?: number | null
+          minimum_investment?: number | null
+          risk_level?: string | null
           start_date?: string | null
           status?: string
           total_invested?: number | null
@@ -549,6 +564,50 @@ export type Database = {
             columns: ["funding_request_id"]
             isOneToOne: false
             referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_targets: {
+        Row: {
+          created_at: string | null
+          current_amount: number | null
+          end_date: string | null
+          id: string
+          opportunity_id: string | null
+          start_date: string | null
+          status: string | null
+          target_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_amount?: number | null
+          end_date?: string | null
+          id?: string
+          opportunity_id?: string | null
+          start_date?: string | null
+          status?: string | null
+          target_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_amount?: number | null
+          end_date?: string | null
+          id?: string
+          opportunity_id?: string | null
+          start_date?: string | null
+          status?: string | null
+          target_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_targets_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "investment_opportunities"
             referencedColumns: ["id"]
           },
         ]
@@ -1216,6 +1275,18 @@ export type Database = {
           requests_by_status: Json
         }[]
       }
+      calculate_investment_opportunity_stats: {
+        Args: {
+          opportunity_id: string
+        }
+        Returns: {
+          total_investors: number
+          total_invested: number
+          achievement_rate: number
+          average_investment: number
+          remaining_amount: number
+        }[]
+      }
       calculate_platform_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1225,6 +1296,9 @@ export type Database = {
           investor_growth: number
           total_revenue: number
           revenue_growth: number
+          total_opportunities: number
+          active_opportunities: number
+          average_investment_size: number
         }[]
       }
       calculate_revenue_by_period: {
