@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Users,
-  Briefcase,
   Wallet,
   GraduationCap,
   FileText,
@@ -11,7 +10,6 @@ import {
   FileSearch,
   Building,
   UserCog,
-  Building2,
 } from "lucide-react";
 
 const investorManagementItems = [
@@ -48,29 +46,6 @@ export const businessMenuItems = [
     path: "/admin/investors",
     description: "إدارة حسابات المستثمرين",
     subItems: investorManagementItems
-  },
-  {
-    title: "إدارة المشاريع",
-    icon: Briefcase,
-    path: "/admin/projects",
-    description: "مراجعة وإدارة المشاريع المقدمة",
-    subItems: [
-      {
-        title: "المشاريع الجديدة",
-        path: "/admin/projects/new",
-        icon: FileText
-      },
-      {
-        title: "المشاريع النشطة",
-        path: "/admin/projects/active",
-        icon: FileSpreadsheet
-      },
-      {
-        title: "المشاريع المكتملة",
-        path: "/admin/projects/completed",
-        icon: FileCheck
-      }
-    ]
   },
   {
     title: "المعاملات المالية",

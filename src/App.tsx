@@ -10,11 +10,9 @@ import InvestorDashboard from "@/pages/investor/Dashboard"
 import AdminDashboard from "@/pages/admin/Dashboard"
 import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import InvestorsPage from "@/pages/admin/investors"
-import ProjectsListPage from "@/pages/investor/projects"
 import Portfolio from "@/pages/investor/Portfolio"
 import Profile from "@/pages/Profile"
 import Settings from "@/pages/Settings"
-import ProjectsPage from "@/pages/admin/projects"
 import BorrowerManagement from "@/components/admin/borrower/BorrowerManagement"
 import { TransactionManagement } from "@/components/admin/transaction/TransactionManagement"
 import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
@@ -95,7 +93,6 @@ function App() {
                       <PrivateRoute allowedRoles={["investor"]}>
                         <Routes>
                           <Route index element={<InvestorDashboard />} />
-                          <Route path="projects" element={<ProjectsListPage />} />
                           <Route path="portfolio" element={<Portfolio />} />
                           <Route path="reports" element={<div>Reports Page</div>} />
                           <Route path="verification" element={<div>Verification Page</div>} />
@@ -121,7 +118,6 @@ function App() {
                         <Routes>
                           <Route index element={<AdminDashboard />} />
                           <Route path="investors" element={<InvestorsPage />} />
-                          <Route path="projects" element={<ProjectsPage />} />
                           <Route path="borrowers" element={<BorrowerManagement />} />
                           <Route path="transactions" element={<TransactionManagement />} />
                           <Route path="compliance" element={<KYCManagement />} />
