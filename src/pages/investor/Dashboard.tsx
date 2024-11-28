@@ -56,24 +56,13 @@ const InvestorDashboard = () => {
 
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
-      <div className="space-y-4 lg:space-y-6">
+      <div className="space-y-6">
         {profile?.first_name && (
-          <div className="p-6 bg-card rounded-lg shadow-sm border">
-            <div className="flex items-center gap-4 mb-4">
-              <img 
-                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-                alt="شركة رسين للاستثمار"
-                className="h-8 object-contain dark:hidden" 
-              />
-              <img 
-                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-                alt="شركة رسين للاستثمار"
-                className="h-8 object-contain hidden dark:block" 
-              />
-              <h2 className="text-2xl font-bold text-foreground">
-                مرحباً بك {profile.first_name}
-              </h2>
-            </div>
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight">مرحباً بك {profile.first_name}</h2>
+            <p className="text-muted-foreground">
+              هذه نظرة عامة على استثماراتك ونشاطك
+            </p>
           </div>
         )}
 
@@ -105,12 +94,12 @@ const InvestorDashboard = () => {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="p-6 bg-card">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">تحليل الاستثمارات</h3>
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">تحليل الاستثمارات</h3>
             <FundingChart />
           </Card>
-          <Card className="p-6 bg-card">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">النشاط الأخير</h3>
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">النشاط الأخير</h3>
             <ActivityFeed />
           </Card>
         </div>

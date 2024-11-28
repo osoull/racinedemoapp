@@ -32,26 +32,15 @@ export default function BorrowerDashboard() {
 
   return (
     <DashboardLayout sidebar={<BorrowerSidebar />}>
-      <div className="space-y-8">
-        {profile?.first_name && (
-          <div className="p-6 bg-card rounded-lg shadow-sm border">
-            <div className="flex items-center gap-4 mb-4">
-              <img 
-                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-                alt="شركة رسين للاستثمار"
-                className="h-8 object-contain dark:hidden" 
-              />
-              <img 
-                src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-                alt="شركة رسين للاستثمار"
-                className="h-8 object-contain hidden dark:block" 
-              />
-              <h2 className="text-2xl font-bold text-foreground">
-                مرحباً بك {profile.first_name}
-              </h2>
-            </div>
-          </div>
-        )}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">
+            {profile?.first_name ? `مرحباً بك ${profile.first_name}` : 'مرحباً بك'}
+          </h2>
+          <p className="text-muted-foreground">
+            أكمل ملفك الشخصي للبدء في استخدام المنصة
+          </p>
+        </div>
 
         <div className="bg-card rounded-lg shadow-sm">
           <BorrowerKYCForm />

@@ -8,8 +8,11 @@ const Portfolio = () => {
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">المحفظة والاستثمارات</h1>
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">المحفظة والاستثمارات</h2>
+          <p className="text-muted-foreground">
+            إدارة محفظتك واستثماراتك
+          </p>
         </div>
 
         <Tabs defaultValue="wallet" className="space-y-4">
