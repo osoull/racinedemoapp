@@ -44,7 +44,7 @@ export const RoleRoutes = () => {
 
       {/* Default redirect based on user type */}
       <Route path="/" element={
-        user?.user_metadata?.user_type === "admin" ? <Navigate to="/admin" replace /> :
+        user?.user_metadata?.user_type === "admin" ? <Navigate to="/admin/dashboard" replace /> :
         user?.user_metadata?.user_type === "borrower" ? <Navigate to="/borrower" replace /> :
         <Navigate to="/investor" replace />
       } />
