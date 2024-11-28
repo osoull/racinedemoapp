@@ -15,13 +15,14 @@ const columns: ColumnDef<Investment>[] = [
     header: "المستثمر",
     cell: ({ row }) => (
       <span>
-        {row.original.user?.first_name} {row.original.user?.last_name}
+        {row.original.user ? `${row.original.user.first_name} ${row.original.user.last_name}` : 'N/A'}
       </span>
     ),
   },
   {
     accessorKey: "funding_request.title",
     header: "المشروع",
+    cell: ({ row }) => row.original.funding_request?.title || 'N/A',
   },
   {
     accessorKey: "amount",
@@ -72,9 +73,11 @@ export function InvestmentTracking({ showOnlyChart = false, onExportData }: Inve
         .select(`
           *,
           user:profiles(first_name, last_name),
-          investment:investments(
-            amount,
-            project:projects(title)
+          funding_request:funding_requests(
+            title,
+            funding_goal,
+            current_funding,
+            status
           )
         `)
         .eq("type", "investment")
@@ -85,7 +88,7 @@ export function InvestmentTracking({ showOnlyChart = false, onExportData }: Inve
       const transformedData = data.map((investment: any) => ({
         ...investment,
         user: investment.user[0],
-        investment: investment.investment[0]
+        funding_request: investment.funding_request[0]
       })) as Investment[];
 
       if (onExportData) {
@@ -101,8 +104,10 @@ export function InvestmentTracking({ showOnlyChart = false, onExportData }: Inve
 
     const grouped = investments.reduce((acc: { [key: string]: Investment[] }, investment) => {
       const key = groupBy === "project" 
-        ? investment.funding_request.title 
-        : `${investment.user?.first_name} ${investment.user?.last_name}`;
+        ? investment.funding_request?.title || 'Unknown'
+        : investment.user 
+          ? `${investment.user.first_name} ${investment.user.last_name}`
+          : 'Unknown';
       
       if (!acc[key]) {
         acc[key] = [];

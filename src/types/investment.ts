@@ -10,17 +10,17 @@ export interface Investment {
   status: string
   type: string
   user_id: string
-  user: {
+  user?: {
     id: string
     first_name: string
     last_name: string
   }
-  investment: {
-    id: string
-    funding_request: {
-      title: string
-      description: string
-    }
+  funding_request: {
+    title: string
+    description?: string
+    funding_goal?: number
+    current_funding?: number
+    status?: string
   }
   stripe_payments?: {
     stripe_session_id: string
@@ -46,6 +46,10 @@ export interface Transaction {
   type: string
   status: string
   created_at: string
+  user?: {
+    first_name: string
+    last_name: string
+  }
   funding_request?: {
     title: string
     funding_goal: number

@@ -15,27 +15,24 @@ export function useInvestments() {
             first_name,
             last_name
           ),
-          investment:investment_opportunities(
-            id,
-            funding_request:funding_requests(
-              title,
-              description
-            )
-          ),
-          stripe_payments(
-            stripe_session_id,
+          funding_request:funding_requests(
+            title,
+            description,
+            funding_goal,
+            current_funding,
             status
-          ),
-          bank_transactions(
-            bank_status,
-            reference_number
           )
         `)
         .eq("type", "investment")
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data as Investment[]
+
+      return data.map((item: any) => ({
+        ...item,
+        user: item.user[0],
+        funding_request: item.funding_request[0]
+      })) as Investment[]
     }
   })
 }

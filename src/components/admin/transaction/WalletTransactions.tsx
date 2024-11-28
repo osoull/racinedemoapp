@@ -43,7 +43,9 @@ export function WalletTransactions({ transactions, isLoading }: WalletTransactio
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.type}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.status}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(transaction.created_at).toLocaleDateString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{transaction.user?.first_name} {transaction.user?.last_name}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {transaction.user ? `${transaction.user.first_name} ${transaction.user.last_name}` : 'N/A'}
+              </td>
             </tr>
           ))}
         </tbody>
