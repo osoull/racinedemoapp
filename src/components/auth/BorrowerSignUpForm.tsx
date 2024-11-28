@@ -1,61 +1,66 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { ArrowRight } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-type BorrowerSignUpFormProps = {
-  onBack: () => void;
-  onSuccess: () => void;
+interface BorrowerSignUpFormProps {
+  onBack: () => void
+  onSuccess: () => void
 }
 
 export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProps) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [companyName, setCompanyName] = useState("")
-  const [commercialRegister, setCommercialRegister] = useState("")
-  const [nationalId, setNationalId] = useState("")
-  const [nationalIdError, setNationalIdError] = useState("")
-  const [acceptTerms, setAcceptTerms] = useState(false)
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    companyName: "",
+    commercialRegister: "",
+    nationalId: "",
+    acceptTerms: false
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
-  const validateNationalId = (id: string) => {
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+    
+    if (!formData.email) newErrors.email = "البريد الإلكتروني مطلوب"
+    if (!formData.companyName) newErrors.companyName = "اسم الشركة مطلوب"
+    if (!formData.commercialRegister) newErrors.commercialRegister = "السجل التجاري مطلوب"
+    if (!formData.nationalId) newErrors.nationalId = "رقم الهوية مطلوب"
+    if (!formData.password) newErrors.password = "كلمة المرور مطلوبة"
+    if (!formData.acceptTerms) newErrors.acceptTerms = "يجب الموافقة على الشروط والأحكام"
+    
     const saudiIdRegex = /^[12]\d{9}$/
-    if (!saudiIdRegex.test(id)) {
-      setNationalIdError("يجب أن يكون رقم الهوية 10 أرقام ويبدأ بـ 1 أو 2")
-      return false
+    if (formData.nationalId && !saudiIdRegex.test(formData.nationalId)) {
+      newErrors.nationalId = "يجب أن يكون رقم الهوية 10 أرقام ويبدأ بـ 1 أو 2"
     }
-    setNationalIdError("")
-    return true
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!acceptTerms) {
-      toast({
-        title: "خطأ",
-        description: "يجب الموافقة على الشروط والأحكام",
-        variant: "destructive",
-      })
-      return
-    }
-    if (!validateNationalId(nationalId)) {
-      return
-    }
+    
+    if (!validateForm()) return
+    
+    setIsLoading(true)
     try {
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         options: {
           data: {
             user_type: "borrower",
-            company_name: companyName,
-            commercial_register: commercialRegister,
-            national_id: nationalId
+            company_name: formData.companyName,
+            commercial_register: formData.commercialRegister,
+            national_id: formData.nationalId
           }
         }
       })
@@ -68,139 +73,94 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
       })
       onSuccess()
     } catch (error) {
+      console.error("SignUp error:", error)
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء إنشاء الحساب",
         variant: "destructive",
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <>
-      <img 
-        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo-horizontal-full.svg" 
-        alt="Raseen Logo" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
-      />
-      <Card className="w-[350px]">
-        <CardHeader>
-          <Button 
-            variant="ghost" 
-            className="w-fit mb-4" 
-            onClick={onBack}
-          >
-            <ArrowRight className="h-4 w-4 ml-2" />
-            رجوع
+    <Card className="w-[350px]">
+      <CardHeader>
+        <Button 
+          variant="ghost" 
+          className="w-fit mb-4" 
+          onClick={onBack}
+        >
+          <ArrowRight className="h-4 w-4 ml-2" />
+          رجوع
+        </Button>
+        <CardTitle>التسجيل كمقترض</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Input
+              placeholder="البريد الإلكتروني"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              error={errors.email}
+              dir="rtl"
+            />
+            <Input
+              placeholder="اسم الشركة"
+              value={formData.companyName}
+              onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+              error={errors.companyName}
+              dir="rtl"
+            />
+            <Input
+              placeholder="رقم السجل التجاري"
+              value={formData.commercialRegister}
+              onChange={(e) => setFormData(prev => ({ ...prev, commercialRegister: e.target.value }))}
+              error={errors.commercialRegister}
+              dir="rtl"
+            />
+            <Input
+              placeholder="رقم هوية المدير"
+              value={formData.nationalId}
+              onChange={(e) => setFormData(prev => ({ ...prev, nationalId: e.target.value }))}
+              error={errors.nationalId}
+              maxLength={10}
+              dir="rtl"
+            />
+            <Input
+              type="password"
+              placeholder="كلمة المرور"
+              value={formData.password}
+              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+              error={errors.password}
+              dir="rtl"
+            />
+          </div>
+          
+          <div className="flex items-center space-x-2 space-x-reverse">
+            <Checkbox 
+              id="terms" 
+              checked={formData.acceptTerms}
+              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, acceptTerms: checked as boolean }))}
+            />
+            <Label 
+              htmlFor="terms" 
+              className="text-sm text-muted-foreground cursor-pointer"
+            >
+              أوافق على الشروط والأحكام
+            </Label>
+          </div>
+          {errors.acceptTerms && (
+            <p className="text-sm text-red-500">{errors.acceptTerms}</p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            تسجيل
           </Button>
-          <CardTitle>التسجيل كمقترض</CardTitle>
-          <CardDescription>
-            قم بإدخال بيانات شركتك لإنشاء حساب
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  البريد الإلكتروني <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="email"
-                  placeholder="البريد الإلكتروني"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  dir="rtl"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  اسم الشركة <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  placeholder="اسم الشركة"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  required
-                  dir="rtl"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  رقم السجل التجاري <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  placeholder="رقم السجل التجاري"
-                  value={commercialRegister}
-                  onChange={(e) => setCommercialRegister(e.target.value)}
-                  required
-                  dir="rtl"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  رقم هوية المدير <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder="رقم الهوية الوطنية (10 أرقام)"
-                  value={nationalId}
-                  onChange={(e) => setNationalId(e.target.value)}
-                  required
-                  dir="rtl"
-                  maxLength={10}
-                />
-                {nationalIdError && (
-                  <p className="text-sm text-red-500">{nationalIdError}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  كلمة المرور <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  type="password"
-                  placeholder="كلمة المرور"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  dir="rtl"
-                />
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2 space-x-reverse">
-              <Checkbox 
-                id="terms" 
-                checked={acceptTerms}
-                onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-              />
-              <Label 
-                htmlFor="terms" 
-                className="text-sm text-muted-foreground cursor-pointer"
-              >
-                أوافق على الشروط والأحكام <span className="text-red-500">*</span>
-              </Label>
-            </div>
-
-            <Button type="submit" className="w-full">
-              تسجيل
-            </Button>
-
-            <div className="text-sm text-muted-foreground text-center">
-              <button 
-                onClick={onBack}
-                className="text-primary hover:underline"
-                type="button"
-              >
-                لديك حساب؟ سجل دخول
-              </button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
