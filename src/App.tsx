@@ -6,9 +6,10 @@ import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { AdminRoutes } from "@/routes/AdminRoutes";
 import { BorrowerRoutes } from "@/routes/BorrowerRoutes";
+import { InvestorRoutes } from "@/routes/InvestorRoutes";
 
 function App() {
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -22,9 +23,33 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          <Route path="/" element={<Auth />} />
+          {/* Route publique pour l'authentification */}
+          <Route 
+            path="/" 
+            element={
+              user ? (
+                <Navigate 
+                  to={
+                    user.user_metadata?.user_type === 'admin'
+                      ? '/admin/dashboard'
+                      : user.user_metadata?.user_type === 'borrower'
+                      ? '/borrower/dashboard'
+                      : '/investor/dashboard'
+                  } 
+                  replace 
+                />
+              ) : (
+                <Auth />
+              )
+            } 
+          />
+
+          {/* Routes protégées par rôle */}
           <AdminRoutes />
           <BorrowerRoutes />
+          <InvestorRoutes />
+
+          {/* Redirection par défaut */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
