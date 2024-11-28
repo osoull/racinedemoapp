@@ -44,6 +44,7 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const isAdmin = user?.user_metadata?.user_type === 'admin' || user?.user_metadata?.user_type === 'investment_manager';
 
@@ -126,23 +127,26 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
     },
   });
 
+  const handleFormSuccess = () => {
+    setDialogOpen(false);
+    setEditingProject(null);
+    queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>إدارة المشاريع</CardTitle>
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => setEditingProject(null)}>
               إضافة مشروع جديد
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <ProjectForm
               project={editingProject}
-              onSuccess={() => {
-                setEditingProject(null);
-                queryClient.invalidateQueries({ queryKey: ["admin-projects"] });
-              }}
+              onSuccess={handleFormSuccess}
             />
           </DialogContent>
         </Dialog>
@@ -160,7 +164,10 @@ const ProjectManagement = ({ filter }: ProjectManagementProps) => {
               <ProjectCard
                 key={project.id}
                 project={project}
-                onEdit={() => setEditingProject(project)}
+                onEdit={() => {
+                  setEditingProject(project);
+                  setDialogOpen(true);
+                }}
                 onDelete={() => deleteProjectMutation.mutate(project.id)}
                 canEdit={user?.id === project.owner_id}
                 isAdmin={isAdmin}
