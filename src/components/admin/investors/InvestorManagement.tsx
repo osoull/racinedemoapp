@@ -21,7 +21,6 @@ import { filterInvestments } from "@/utils/investmentFilters"
 import { Investment } from "@/types/investment"
 
 export function InvestorManagement() {
-  // États pour la gestion des investissements
   const [search, setSearch] = useState("")
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
   const [selectedInvestor, setSelectedInvestor] = useState<string | null>(null)
@@ -31,7 +30,6 @@ export function InvestorManagement() {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false)
   const [showRefundDialog, setShowRefundDialog] = useState(false)
 
-  // Requêtes de données
   const { data: investors, isLoading: isLoadingInvestors } = useQuery({
     queryKey: ["investors"],
     queryFn: async () => {
@@ -150,7 +148,7 @@ export function InvestorManagement() {
                 </div>
 
                 <InvestmentsTable 
-                  investments={filteredInvestments}
+                  investments={filteredInvestments || []}
                   isLoading={isLoadingInvestments}
                   onViewDetails={(investment) => {
                     setSelectedInvestment(investment)
