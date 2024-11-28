@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react"
 import { FundingStats } from "./FundingStats"
 import { FundingChart } from "./FundingChart"
 import { CategoryDistribution } from "./CategoryDistribution"
+import { FundingStats as FundingStatsType } from "@/types/funding"
 
 export function FundingOverview() {
   const { data: stats, isLoading } = useQuery({
@@ -12,7 +13,17 @@ export function FundingOverview() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('calculate_funding_request_stats')
       if (error) throw error
-      return data[0]
+      
+      // Convert the JSONB response to the correct type
+      const formattedData = {
+        ...data[0],
+        requests_by_category: data[0].requests_by_category ? 
+          JSON.parse(JSON.stringify(data[0].requests_by_category)) : {},
+        requests_by_status: data[0].requests_by_status ?
+          JSON.parse(JSON.stringify(data[0].requests_by_status)) : {}
+      } as FundingStatsType
+      
+      return formattedData
     }
   })
 
