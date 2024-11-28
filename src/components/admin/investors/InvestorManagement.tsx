@@ -1,3 +1,5 @@
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { InvestorList } from "./InvestorList"
 import { useQuery } from "@tanstack/react-query"
@@ -14,29 +16,38 @@ export function InvestorManagement() {
           *,
           investor_kyc (*)
         `)
-        .eq("user_type", "investor")
+        .in("user_type", ["basic_investor", "qualified_investor"])
 
       if (error) throw error
       return data
     }
   })
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    )
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>إدارة المستثمرين</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <InvestorList investors={investors} />
-      </CardContent>
-    </Card>
+    <DashboardLayout sidebar={<AdminSidebar />}>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">إدارة المستثمرين</h2>
+          <p className="text-muted-foreground">
+            إدارة وتتبع جميع المستثمرين في المنصة
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>المستثمرون</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="flex items-center justify-center h-96">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              <InvestorList investors={investors || []} />
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   )
 }
