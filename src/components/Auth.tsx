@@ -39,23 +39,28 @@ export function Auth() {
       redirectBasedOnUserType(userType)
     } catch (error) {
       console.error("Error fetching user type:", error)
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء توجيهك للوحة التحكم",
+        variant: "destructive",
+      })
     }
   }
 
   const redirectBasedOnUserType = (userType: UserType) => {
     switch (userType) {
       case "borrower":
-        navigate("/borrower")
+        navigate("/borrower/dashboard")
         break
       case "basic_investor":
       case "qualified_investor":
-        navigate("/investor")
+        navigate("/investor/dashboard")
         break
       case "admin":
         navigate("/admin/dashboard")
         break
       case "investment_manager":
-        navigate("/investment-manager")
+        navigate("/investment-manager/dashboard")
         break
       default:
         navigate("/")

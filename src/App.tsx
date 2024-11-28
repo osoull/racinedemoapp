@@ -35,11 +35,24 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Auth />} />
-
+          
+          {/* Admin Routes */}
           <Route
             path="/admin/dashboard"
             element={
               <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <DashboardOverview />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          
+          {/* Borrower Routes */}
+          <Route
+            path="/borrower/dashboard"
+            element={
+              <PrivateRoute allowedTypes={["borrower"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
                   <DashboardOverview />
                 </DashboardLayout>
@@ -135,7 +148,7 @@ function App() {
             }
           />
 
-          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
       <Toaster />
