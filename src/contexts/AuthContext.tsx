@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null
   user: User | null
   signIn: (email: string, password: string) => Promise<{ error?: Error }>
-  signUp: (email: string, password: string, userType: string) => Promise<void>
+  signUp: (email: string, password: string, metadata: any) => Promise<void>
   signOut: () => Promise<void>
   loading: boolean
 }
@@ -63,29 +63,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signUp = async (email: string, password: string, userType: string) => {
+  const signUp = async (email: string, password: string, metadata: any) => {
     try {
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            ...metadata,
+            user_type: "borrower",
+          }
+        }
       })
+
       if (signUpError) throw signUpError
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ user_type: userType })
-        .eq('id', (await supabase.auth.getUser()).data.user?.id)
-
-      if (updateError) throw updateError
 
       toast({
         title: "نجاح",
-        description: "يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك",
+        description: "تم إنشاء الحساب بنجاح. يرجى تأكيد بريدك الإلكتروني",
       })
     } catch (error) {
       toast({
         title: "خطأ",
-        description: error instanceof Error ? error.message : "حدث خطأ",
+        description: error instanceof Error ? error.message : "حدث خطأ أثناء إنشاء الحساب",
         variant: "destructive",
       })
       throw error

@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { supabase } from "@/integrations/supabase/client"
 import { ArrowRight } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface BorrowerSignUpFormProps {
   onBack: () => void
@@ -24,6 +24,7 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const { signUp } = useAuth()
   const { toast } = useToast()
 
   const validateForm = () => {
@@ -52,33 +53,17 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
     
     setIsLoading(true)
     try {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            user_type: "borrower",
-            company_name: formData.companyName,
-            commercial_register: formData.commercialRegister,
-            national_id: formData.nationalId
-          }
-        }
+      await signUp(formData.email, formData.password, {
+        company_name: formData.companyName,
+        commercial_register: formData.commercialRegister,
+        national_id: formData.nationalId,
+        first_name: "",  // Required fields for profiles table
+        last_name: "",   // Required fields for profiles table
       })
 
-      if (error) throw error
-
-      toast({
-        title: "تم إنشاء الحساب بنجاح",
-        description: "يمكنك الآن تسجيل الدخول باستخدام بريدك الإلكتروني وكلمة المرور",
-      })
       onSuccess()
     } catch (error) {
       console.error("SignUp error:", error)
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء إنشاء الحساب",
-        variant: "destructive",
-      })
     } finally {
       setIsLoading(false)
     }
