@@ -32,13 +32,21 @@ function App() {
 
             {/* Routes Admin */}
             <Route
-              path="/admin/*"
+              path="/admin"
               element={
                 <PrivateRoute allowedTypes={["admin"]}>
                   <DashboardLayout sidebar={<AdminSidebar />}>
                     <Routes>
                       <Route index element={<Navigate to="dashboard" />} />
                       <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="finance" element={<div>Finance</div>} />
+                      <Route path="payment-defaults" element={<div>Payment Defaults</div>} />
+                      <Route path="investors" element={<div>Investors</div>} />
+                      <Route path="investment-opportunities" element={<div>Investment Opportunities</div>} />
+                      <Route path="borrowers" element={<div>Borrowers</div>} />
+                      <Route path="funding-requests" element={<div>Funding Requests</div>} />
+                      <Route path="compliance" element={<div>Compliance</div>} />
+                      <Route path="settings" element={<div>Settings</div>} />
                     </Routes>
                   </DashboardLayout>
                 </PrivateRoute>
@@ -47,7 +55,7 @@ function App() {
 
             {/* Routes Emprunteur */}
             <Route
-              path="/borrower/*"
+              path="/borrower"
               element={
                 <PrivateRoute allowedTypes={["borrower"]}>
                   <DashboardLayout sidebar={<BorrowerSidebar />}>
@@ -67,7 +75,7 @@ function App() {
 
             {/* Routes Investisseur */}
             <Route
-              path="/investor/*"
+              path="/investor"
               element={
                 <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
                   <DashboardLayout sidebar={<InvestorSidebar />}>
