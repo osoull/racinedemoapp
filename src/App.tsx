@@ -10,6 +10,8 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { ComplianceAudit } from "@/components/admin/ComplianceAudit";
+import PlatformSettings from "@/components/admin/PlatformSettings";
 
 function App() {
   const { loading } = useAuth();
@@ -40,6 +42,8 @@ function App() {
               </PrivateRoute>
             }
           />
+
+          {/* Finance Management */}
           <Route
             path="/admin/finance"
             element={
@@ -66,6 +70,30 @@ function App() {
               <PrivateRoute allowedTypes={["admin"]}>
                 <DashboardLayout sidebar={<AdminSidebar />}>
                   <RevenueTracking />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          {/* Compliance */}
+          <Route
+            path="/admin/compliance"
+            element={
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <ComplianceAudit />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          {/* Settings */}
+          <Route
+            path="/admin/settings"
+            element={
+              <PrivateRoute allowedTypes={["admin"]}>
+                <DashboardLayout sidebar={<AdminSidebar />}>
+                  <PlatformSettings />
                 </DashboardLayout>
               </PrivateRoute>
             }

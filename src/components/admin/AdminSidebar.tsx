@@ -9,7 +9,10 @@ import {
   Shield,
   Users,
   FileText,
-  Building2
+  Building2,
+  Wallet,
+  Receipt,
+  PieChart
 } from "lucide-react"
 
 const menuItems = [
@@ -18,6 +21,32 @@ const menuItems = [
     icon: LayoutDashboard,
     path: "/admin",
     description: "لوحة المعلومات والإحصائيات"
+  },
+  {
+    title: "الإدارة المالية",
+    icon: Wallet,
+    path: "/admin/finance",
+    description: "إدارة المعاملات والتقارير المالية",
+    subItems: [
+      {
+        title: "نظرة عامة",
+        path: "/admin/finance",
+        icon: PieChart,
+        description: "نظرة عامة على الأداء المالي"
+      },
+      {
+        title: "المعاملات",
+        path: "/admin/finance/transactions",
+        icon: Receipt,
+        description: "إدارة المعاملات المالية"
+      },
+      {
+        title: "الإيرادات",
+        path: "/admin/finance/revenue",
+        icon: Receipt,
+        description: "تتبع الإيرادات"
+      }
+    ]
   },
   {
     title: "المستثمرين",
