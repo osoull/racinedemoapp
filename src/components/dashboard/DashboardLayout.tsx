@@ -40,12 +40,12 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           {/* Logo */}
           <div className="flex items-center gap-2 mr-4">
             <img 
-              src="/logo.svg"
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
               className="h-8 w-auto object-contain dark:hidden" 
             />
             <img 
-              src="/logoblnc.svg"
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
               alt="رسين"
               className="h-8 w-auto object-contain hidden dark:block" 
             />
