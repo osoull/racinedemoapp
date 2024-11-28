@@ -1302,37 +1302,6 @@ export type Database = {
           remaining_amount: number
         }[]
       }
-      calculate_platform_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          total_investments: number
-          investment_growth: number
-          active_investors: number
-          investor_growth: number
-          total_revenue: number
-          revenue_growth: number
-          total_opportunities: number
-          active_opportunities: number
-          average_investment_size: number
-        }[]
-      }
-      calculate_revenue_by_period: {
-        Args: {
-          start_date: string
-          end_date: string
-        }
-        Returns: {
-          period: string
-          admin_fees: number
-          collection_fees: number
-          basic_investor_fees: number
-          qualified_investor_fees: number
-          total_fees: number
-          total_investments: number
-          total_borrower_payments: number
-          active_opportunities: number
-        }[]
-      }
       calculate_transaction_fees: {
         Args: {
           amount: number
@@ -1352,38 +1321,6 @@ export type Database = {
           payment_type: string
           funding_request_id: string
           funding_request_title: string
-        }[]
-      }
-      get_borrowers_by_status: {
-        Args: {
-          status_filter?: string
-        }
-        Returns: {
-          id: string
-          email: string
-          first_name: string
-          last_name: string
-          company_name: string
-          kyc_status: string
-          created_at: string
-          borrower_details: Json
-        }[]
-      }
-      get_investors: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          email: string
-          first_name: string
-          middle_name: string
-          last_name: string
-          created_at: string
-          kyc_status: string
-          investor_type: string
-          avatar_url: string
-          annual_income: number
-          risk_tolerance: string
-          investment_experience: string
         }[]
       }
       handle_payment_failure: {
