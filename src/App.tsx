@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/contexts/AuthContext"
 import { NotificationsProvider } from "@/contexts/NotificationsContext"
 import { ThemeProvider } from "@/components/ui/theme"
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import { Auth } from "@/components/Auth"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import InvestorDashboard from "@/pages/investor/Dashboard"
@@ -19,6 +19,7 @@ import { KYCManagement } from "@/components/admin/compliance/KYCManagement"
 import PlatformSettings from "@/components/admin/PlatformSettings"
 import { RevenueTracking } from "@/components/admin/revenue/RevenueTracking"
 import FundingRequestsPage from "@/pages/admin/funding-requests"
+import Index from "@/pages/Index"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,7 +39,8 @@ function App() {
             <NotificationsProvider>
               <div className="min-h-screen bg-background font-messiri" dir="rtl">
                 <Routes>
-                  <Route path="/" element={<Auth />} />
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
                   
                   <Route
                     path="/investor/*"
