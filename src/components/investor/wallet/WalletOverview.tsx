@@ -12,6 +12,28 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { DepositDialog } from "./DepositDialog"
 
+export interface Transaction {
+  id: string
+  amount: number
+  type: string
+  status: string
+  created_at: string
+  user: {
+    first_name: string
+    last_name: string
+  }
+  investment?: {
+    amount: number
+    project: {
+      title: string
+    }
+  }
+  fee_details?: {
+    type: string
+    amount: number
+  }[]
+}
+
 export function WalletOverview() {
   const { user } = useAuth()
   const { toast } = useToast()
@@ -124,7 +146,7 @@ export function WalletOverview() {
 
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">سجل المعاملات</h3>
-        <WalletTransactions transactions={transactions} isLoading={isLoading} />
+        <WalletTransactions transactions={transactions as Transaction[]} isLoading={isLoading} />
       </Card>
     </div>
   )

@@ -1,14 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { formatCurrency } from "@/utils/feeCalculations";
-import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { formatCurrency } from "@/utils/feeCalculations"
+import { format } from "date-fns"
+import { Loader2 } from "lucide-react"
+
+interface Investment {
+  id: string
+  funding_request: {
+    title: string
+    funding_goal: number
+    current_funding: number
+    status: string
+  }
+}
 
 export function InvestmentsList() {
-  const { data: investments, isLoading } = useQuery({
+  const { data: investments, isLoading } = useQuery<Investment[]>({
     queryKey: ["investments"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,12 +33,12 @@ export function InvestmentsList() {
           )
         `)
         .eq("type", "investment")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
 
-      if (error) throw error;
-      return data;
+      if (error) throw error
+      return data
     },
-  });
+  })
 
   if (isLoading) {
     return (
