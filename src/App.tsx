@@ -3,7 +3,7 @@ import { queryClient } from "@/utils/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation, NavigateOptions, To } from "react-router-dom";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { useEffect, useRef } from "react";
 
@@ -18,11 +18,11 @@ const NavigationThrottler = ({ children }: { children: React.ReactNode }) => {
     const throttleTime = 1000; // 1 second throttle
 
     (navigate as any).original = originalNavigate;
-    (navigate as any).throttled = (...args: any[]) => {
+    (navigate as any).throttled = (to: To, options?: NavigateOptions) => {
       const now = Date.now();
       if (now - lastNavigationTime.current >= throttleTime) {
         lastNavigationTime.current = now;
-        return originalNavigate(...args);
+        return originalNavigate(to, options);
       }
     };
   }, [navigate]);
