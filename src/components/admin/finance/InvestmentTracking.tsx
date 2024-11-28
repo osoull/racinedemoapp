@@ -123,11 +123,11 @@ export function InvestmentTracking({ showOnlyChart = false, onExportData }: Inve
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>قائمة الاستثمارات</CardTitle>
-          <Select value={groupBy} onValueChange={(value: "none" | "project" | "investor") => setGroupBy(value)}>
-            <SelectTrigger className="w-[200px]">
+          <Select dir="rtl" value={groupBy} onValueChange={(value: "none" | "project" | "investor") => setGroupBy(value)}>
+            <SelectTrigger className="w-[200px] text-right">
               <SelectValue placeholder="تجميع حسب..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="text-right">
               <SelectItem value="none">بدون تجميع</SelectItem>
               <SelectItem value="project">تجميع حسب المشروع</SelectItem>
               <SelectItem value="investor">تجميع حسب المستثمر</SelectItem>
