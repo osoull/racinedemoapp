@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import CommissionManagement from "./CommissionManagement"
 import { UserManagement } from "./settings/UserManagement"
 
-export default function PlatformSettings() {
+export function PlatformSettings() {
   return (
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-6">
