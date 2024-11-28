@@ -10,12 +10,13 @@ export function useInvestments() {
         .from("transactions")
         .select(`
           *,
-          user:profiles(
+          user:profiles!transactions_user_id_fkey(
             id,
             first_name,
             last_name
           ),
           funding_request:funding_requests(
+            id,
             title,
             description,
             funding_goal,
@@ -28,11 +29,7 @@ export function useInvestments() {
 
       if (error) throw error
 
-      return data.map((item: any) => ({
-        ...item,
-        user: item.user[0],
-        funding_request: item.funding_request[0]
-      })) as Investment[]
+      return data as Investment[]
     }
   })
 }

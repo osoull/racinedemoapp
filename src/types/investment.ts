@@ -40,21 +40,3 @@ export interface InvestmentFilters {
   opportunity: string | null
   dateRange: DayPickerDateRange | undefined
 }
-
-export interface Transaction {
-  id: string
-  amount: number
-  type: string
-  status: string
-  created_at: string
-  user?: {
-    first_name: string
-    last_name: string
-  }
-  funding_request?: {
-    title: string
-    funding_goal: number
-    current_funding: number
-    status: string
-  }
-}
