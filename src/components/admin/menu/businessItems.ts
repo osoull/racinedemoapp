@@ -10,6 +10,9 @@ import {
   FileSearch,
   Building,
   UserCog,
+  Receipt,
+  PieChart,
+  ArrowLeftRight,
 } from "lucide-react";
 
 const investorManagementItems = [
@@ -33,6 +36,33 @@ const investorManagementItems = [
   }
 ];
 
+const financeManagementItems = [
+  {
+    title: "نظرة عامة",
+    path: "/admin/finance/overview",
+    icon: PieChart,
+    description: "نظرة عامة على الأداء المالي"
+  },
+  {
+    title: "المعاملات",
+    path: "/admin/finance/transactions",
+    icon: ArrowLeftRight,
+    description: "إدارة جميع المعاملات المالية"
+  },
+  {
+    title: "الرسوم الإدارية",
+    path: "/admin/finance/fees",
+    icon: Receipt,
+    description: "إدارة الرسوم الإدارية"
+  },
+  {
+    title: "التقارير المالية",
+    path: "/admin/finance/reports",
+    icon: FileSpreadsheet,
+    description: "عرض وتصدير التقارير المالية"
+  }
+];
+
 export const businessMenuItems = [
   {
     title: "نظرة عامة",
@@ -48,22 +78,11 @@ export const businessMenuItems = [
     subItems: investorManagementItems
   },
   {
-    title: "المعاملات المالية",
+    title: "الإدارة المالية",
     icon: Wallet,
-    path: "/admin/transactions",
-    description: "متابعة وإدارة المعاملات المالية",
-    subItems: [
-      {
-        title: "الإيداعات",
-        path: "/admin/transactions/deposits",
-        icon: Banknote
-      },
-      {
-        title: "السحوبات",
-        path: "/admin/transactions/withdrawals",
-        icon: Wallet
-      }
-    ]
+    path: "/admin/finance",
+    description: "إدارة المعاملات والتقارير المالية",
+    subItems: financeManagementItems
   },
   {
     title: "التحقق والامتثال",
