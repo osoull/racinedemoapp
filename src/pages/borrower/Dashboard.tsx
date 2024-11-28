@@ -4,8 +4,8 @@ import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/Borro
 
 export default function BorrowerDashboard() {
   return (
-    <DashboardLayout sidebar={<BorrowerSidebar />}>
+    <div className="space-y-6">
       <BorrowerDashboardOverview />
-    </DashboardLayout>
+    </div>
   )
 }
