@@ -3,10 +3,11 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
+import { UserType } from "@/types/user"
 
 interface PrivateRouteProps {
   children: React.ReactNode
-  allowedTypes?: string[]
+  allowedTypes?: UserType[]
 }
 
 export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
@@ -39,17 +40,17 @@ export const PrivateRoute = ({ children, allowedTypes }: PrivateRouteProps) => {
     )
   }
 
-  // Les administrateurs ont accès à tout
+  // Admins have access to everything
   if (profile?.user_type === "admin") {
     return <>{children}</>
   }
 
-  // Les managers d'investissement ont accès aux routes spécifiées
+  // Investment managers have access to specified routes
   if (profile?.user_type === "investment_manager" && allowedTypes?.includes("investment_manager")) {
     return <>{children}</>
   }
 
-  // Vérification des autres types d'utilisateurs
+  // Check other user types against allowed types
   if (allowedTypes && profile?.user_type && !allowedTypes.includes(profile.user_type)) {
     return <Navigate to="/" />
   }

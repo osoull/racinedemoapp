@@ -9,7 +9,7 @@ import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { SignInForm } from "./auth/SignInForm"
 import { UserType } from "@/types/user"
 
-type AuthStep = "selection" | "signup" | "signin" | "borrower_signup";
+type AuthStep = "selection" | "signup" | "signin" | "borrower_signup"
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
@@ -27,16 +27,15 @@ export function Auth() {
   const checkUserTypeAndRedirect = async () => {
     try {
       const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user?.id)
+        .from("profiles")
+        .select("user_type")
+        .eq("id", user?.id)
         .single()
 
       if (error) throw error
       if (!profile) throw new Error("No profile found")
 
-      const userType = profile.user_type as UserType
-      redirectBasedOnUserType(userType)
+      redirectBasedOnUserType(profile.user_type as UserType)
     } catch (error: any) {
       console.error("Error fetching user type:", error)
       toast({
