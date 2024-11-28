@@ -4,7 +4,9 @@ import {
   Settings,
   FileText,
   CreditCard,
-  CheckCircle
+  CheckCircle,
+  Building2,
+  FileCheck
 } from "lucide-react"
 import { SidebarItem } from "../admin/SidebarItem"
 
@@ -28,6 +30,18 @@ const menuItems = [
     description: "إدارة المدفوعات والأقساط"
   },
   {
+    title: "الملف التعريفي",
+    icon: Building2,
+    path: "/borrower/profile",
+    description: "معلومات الشركة والوثائق"
+  },
+  {
+    title: "التحقق من الهوية",
+    icon: FileCheck,
+    path: "/borrower/kyc",
+    description: "إدارة وثائق التحقق"
+  },
+  {
     title: "الإعدادات",
     icon: Settings,
     path: "/borrower/settings",
@@ -35,7 +49,7 @@ const menuItems = [
   }
 ]
 
-export const BorrowerSidebar = () => {
+export function BorrowerSidebar() {
   const location = useLocation()
 
   return (
