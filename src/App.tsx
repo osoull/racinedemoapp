@@ -7,49 +7,50 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AdminRoutes } from "@/routes/AdminRoutes";
 import { BorrowerRoutes } from "@/routes/BorrowerRoutes";
 import { InvestorRoutes } from "@/routes/InvestorRoutes";
+import { Loader2 } from "lucide-react";
 
 function App() {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
+
+  const getUserRedirectPath = () => {
+    const userType = user?.user_metadata?.user_type;
+    switch (userType) {
+      case 'admin':
+        return '/admin/dashboard';
+      case 'borrower':
+        return '/borrower/dashboard';
+      case 'basic_investor':
+      case 'qualified_investor':
+        return '/investor/dashboard';
+      default:
+        return '/';
+    }
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Route publique pour l'authentification */}
+          {/* Public authentication route */}
           <Route 
             path="/" 
-            element={
-              user ? (
-                <Navigate 
-                  to={
-                    user.user_metadata?.user_type === 'admin'
-                      ? '/admin/dashboard'
-                      : user.user_metadata?.user_type === 'borrower'
-                      ? '/borrower/dashboard'
-                      : '/investor/dashboard'
-                  } 
-                  replace 
-                />
-              ) : (
-                <Auth />
-              )
-            } 
+            element={user ? <Navigate to={getUserRedirectPath()} replace /> : <Auth />} 
           />
 
-          {/* Routes protégées par rôle */}
+          {/* Protected role-based routes */}
           <AdminRoutes />
           <BorrowerRoutes />
           <InvestorRoutes />
 
-          {/* Redirection par défaut */}
+          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
