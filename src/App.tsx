@@ -23,8 +23,11 @@ function App() {
   }
 
   const getUserRedirectPath = () => {
+    if (!user) return '/';
+    
     try {
-      const userType = user?.user_metadata?.user_type;
+      const userType = user.user_metadata?.user_type;
+      console.log("User metadata:", user.user_metadata); // Debug log
       console.log("User type:", userType); // Debug log
       
       switch (userType) {
@@ -56,33 +59,45 @@ function App() {
         <Routes>
           <Route 
             path="/" 
-            element={user ? <Navigate to={getUserRedirectPath()} replace /> : <Auth />} 
+            element={
+              !user ? (
+                <Auth />
+              ) : (
+                <Navigate to={getUserRedirectPath()} replace />
+              )
+            } 
           />
 
           <Route 
             path="/admin/*" 
             element={
-              user?.user_metadata?.user_type === 'admin' ? 
-                <AdminRoutes /> : 
+              user?.user_metadata?.user_type === 'admin' ? (
+                <AdminRoutes />
+              ) : (
                 <Navigate to="/" replace />
+              )
             } 
           />
           
           <Route 
             path="/borrower/*" 
             element={
-              user?.user_metadata?.user_type === 'borrower' ? 
-                <BorrowerRoutes /> : 
+              user?.user_metadata?.user_type === 'borrower' ? (
+                <BorrowerRoutes />
+              ) : (
                 <Navigate to="/" replace />
+              )
             } 
           />
           
           <Route 
             path="/investor/*" 
             element={
-              ['basic_investor', 'qualified_investor'].includes(user?.user_metadata?.user_type || '') ? 
-                <InvestorRoutes /> : 
+              ['basic_investor', 'qualified_investor'].includes(user?.user_metadata?.user_type || '') ? (
+                <InvestorRoutes />
+              ) : (
                 <Navigate to="/" replace />
+              )
             } 
           />
 
