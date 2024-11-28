@@ -34,50 +34,49 @@ export function TransactionManagement() {
         </p>
       </div>
 
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">جميع المعاملات</TabsTrigger>
-          <TabsTrigger value="pending">قيد المعالجة</TabsTrigger>
-          <TabsTrigger value="completed">مكتملة</TabsTrigger>
-          <TabsTrigger value="cancelled">ملغاة</TabsTrigger>
-        </TabsList>
+      <Card>
+        <CardHeader>
+          <CardTitle>المعاملات</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="all" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="all">جميع المعاملات</TabsTrigger>
+              <TabsTrigger value="pending">قيد المعالجة</TabsTrigger>
+              <TabsTrigger value="completed">مكتملة</TabsTrigger>
+              <TabsTrigger value="cancelled">ملغاة</TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="all">
-          <Card className="p-4">
-            <TransactionList 
-              transactions={transactions} 
-              isLoading={isLoading} 
-            />
-          </Card>
-        </TabsContent>
+            <TabsContent value="all">
+              <TransactionList 
+                transactions={transactions} 
+                isLoading={isLoading} 
+              />
+            </TabsContent>
 
-        <TabsContent value="pending">
-          <Card className="p-4">
-            <TransactionList 
-              transactions={transactions?.filter(t => t.status === 'pending')} 
-              isLoading={isLoading} 
-            />
-          </Card>
-        </TabsContent>
+            <TabsContent value="pending">
+              <TransactionList 
+                transactions={transactions?.filter(t => t.status === 'pending')} 
+                isLoading={isLoading} 
+              />
+            </TabsContent>
 
-        <TabsContent value="completed">
-          <Card className="p-4">
-            <TransactionList 
-              transactions={transactions?.filter(t => t.status === 'completed')} 
-              isLoading={isLoading} 
-            />
-          </Card>
-        </TabsContent>
+            <TabsContent value="completed">
+              <TransactionList 
+                transactions={transactions?.filter(t => t.status === 'completed')} 
+                isLoading={isLoading} 
+              />
+            </TabsContent>
 
-        <TabsContent value="cancelled">
-          <Card className="p-4">
-            <TransactionList 
-              transactions={transactions?.filter(t => t.status === 'cancelled')} 
-              isLoading={isLoading} 
-            />
-          </Card>
-        </TabsContent>
-      </Tabs>
+            <TabsContent value="cancelled">
+              <TransactionList 
+                transactions={transactions?.filter(t => t.status === 'cancelled')} 
+                isLoading={isLoading} 
+              />
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   )
 }

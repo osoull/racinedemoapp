@@ -8,9 +8,16 @@ import { BorrowerPayments } from "./BorrowerPayments"
 export function FinanceOverview() {
   return (
     <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">الإدارة المالية</h2>
+        <p className="text-muted-foreground">
+          إدارة ومراقبة العمليات المالية للمنصة
+        </p>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>الإدارة المالية</CardTitle>
+          <CardTitle>إدارة العمليات المالية</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="fees" className="space-y-4">

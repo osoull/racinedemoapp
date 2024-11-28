@@ -24,30 +24,28 @@ export function InvestorManagement() {
   })
 
   return (
-    <DashboardLayout sidebar={<AdminSidebar />}>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">إدارة المستثمرين</h2>
-          <p className="text-muted-foreground">
-            إدارة وتتبع جميع المستثمرين في المنصة
-          </p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>المستثمرون</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex items-center justify-center h-96">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
-            ) : (
-              <InvestorList investors={investors || []} />
-            )}
-          </CardContent>
-        </Card>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">إدارة المستثمرين</h2>
+        <p className="text-muted-foreground">
+          إدارة وتتبع جميع المستثمرين في المنصة
+        </p>
       </div>
-    </DashboardLayout>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>المستثمرون</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-96">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <InvestorList investors={investors || []} />
+          )}
+        </CardContent>
+      </Card>
+    </div>
   )
 }
