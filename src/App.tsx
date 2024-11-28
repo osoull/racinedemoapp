@@ -3,8 +3,32 @@ import { queryClient } from "@/utils/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { Auth } from "@/components/Auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { useEffect, useRef } from "react";
+
+// Navigation throttling component
+const NavigationThrottler = ({ children }: { children: React.ReactNode }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const lastNavigationTime = useRef(Date.now());
+
+  useEffect(() => {
+    const originalNavigate = navigate;
+    const throttleTime = 1000; // 1 second throttle
+
+    (navigate as any).original = originalNavigate;
+    (navigate as any).throttled = (...args: any[]) => {
+      const now = Date.now();
+      if (now - lastNavigationTime.current >= throttleTime) {
+        lastNavigationTime.current = now;
+        return originalNavigate(...args);
+      }
+    };
+  }, [navigate]);
+
+  return <>{children}</>;
+};
 
 function App() {
   const { loading, error } = useAuth();
@@ -25,10 +49,12 @@ function App() {
         </div>
       )}
       <Router>
-        <Routes>
-          <Route path="/" element={<Auth />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <NavigationThrottler>
+          <Routes>
+            <Route path="/" element={<Auth />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </NavigationThrottler>
       </Router>
       <Toaster />
     </QueryClientProvider>
