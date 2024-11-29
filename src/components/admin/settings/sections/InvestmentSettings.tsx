@@ -11,25 +11,29 @@ export function InvestmentSettings() {
           تكوين حدود وقواعد الاستثمار
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="grid gap-6 mr-auto max-w-sm">
-          <div className="space-y-2">
-            <Label htmlFor="min-investment" className="text-right block">الحد الأدنى للاستثمار</Label>
+      <CardContent>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="min-investment" className="text-right">
+              الحد الأدنى للاستثمار
+            </Label>
             <Input
               id="min-investment"
               type="number"
               defaultValue="1000"
-              className="text-right"
+              className="text-right max-w-sm mr-auto"
               dir="ltr"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="max-investment" className="text-right block">الحد الأقصى للاستثمار</Label>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="max-investment" className="text-right">
+              الحد الأقصى للاستثمار
+            </Label>
             <Input
               id="max-investment"
               type="number"
               defaultValue="50000"
-              className="text-right"
+              className="text-right max-w-sm mr-auto"
               dir="ltr"
             />
           </div>
