@@ -77,21 +77,23 @@ export function BankAccountSettings() {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="dashboard-content-card">
         <CardHeader>
-          <CardTitle>الحسابات البنكية</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl">الحسابات البنكية</CardTitle>
+          <CardDescription className="text-muted-foreground">
             إدارة الحسابات البنكية للمنصة التي يمكن للمستخدمين الدفع إليها
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {bankAccounts?.map((account) => (
-            <BankAccountItem 
-              key={account.id} 
-              account={account}
-              onToggleStatus={toggleAccountStatus}
-            />
-          ))}
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            {bankAccounts?.map((account) => (
+              <BankAccountItem 
+                key={account.id} 
+                account={account}
+                onToggleStatus={toggleAccountStatus}
+              />
+            ))}
+          </div>
 
           {isEditing ? (
             <BankAccountForm
@@ -99,7 +101,11 @@ export function BankAccountSettings() {
               onCancel={() => setIsEditing(false)}
             />
           ) : (
-            <Button onClick={() => setIsEditing(true)} className="mt-4">
+            <Button 
+              onClick={() => setIsEditing(true)} 
+              className="w-full"
+              variant="outline"
+            >
               إضافة حساب بنكي جديد
             </Button>
           )}

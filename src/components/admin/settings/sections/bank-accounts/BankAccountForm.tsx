@@ -31,7 +31,7 @@ export function BankAccountForm({ onSubmit, onCancel }: BankAccountFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mt-6" dir="rtl">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-card border rounded-lg p-4" dir="rtl">
       <div className="grid gap-4">
         <div className="grid gap-2">
           <Label htmlFor="bank_name">اسم البنك</Label>
@@ -59,7 +59,7 @@ export function BankAccountForm({ onSubmit, onCancel }: BankAccountFormProps) {
             id="account_number"
             value={formData.account_number}
             onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
-            className="text-right"
+            className="text-right font-mono"
           />
         </div>
         <div className="grid gap-2">
@@ -85,7 +85,7 @@ export function BankAccountForm({ onSubmit, onCancel }: BankAccountFormProps) {
         </div>
       </div>
       <div className="flex gap-2 justify-start">
-        <Button type="submit">حفظ</Button>
+        <Button type="submit" variant="default">حفظ</Button>
         <Button type="button" variant="outline" onClick={onCancel}>
           إلغاء
         </Button>
