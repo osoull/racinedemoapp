@@ -6,6 +6,7 @@ import { useBorrowerPayments } from "@/hooks/useBorrowerPayments"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/utils/feeCalculations"
 import { ColumnDef } from "@tanstack/react-table"
+import { BorrowerDashboardLayout } from "./BorrowerDashboardLayout"
 
 const columns: ColumnDef<any>[] = [
   {
@@ -56,29 +57,33 @@ export function BorrowerPayments() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-10rem)]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
+      <BorrowerDashboardLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </BorrowerDashboardLayout>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">المدفوعات</h2>
-        <p className="text-muted-foreground">
-          إدارة ومتابعة جميع المدفوعات
-        </p>
+    <BorrowerDashboardLayout>
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">المدفوعات</h2>
+          <p className="text-muted-foreground">
+            إدارة ومتابعة جميع المدفوعات
+          </p>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>سجل المدفوعات</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={columns} data={payments || []} />
+          </CardContent>
+        </Card>
       </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>سجل المدفوعات</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={payments || []} />
-        </CardContent>
-      </Card>
-    </div>
+    </BorrowerDashboardLayout>
   )
 }

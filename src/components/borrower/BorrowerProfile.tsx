@@ -1,53 +1,27 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ProfileForm } from "@/components/profile/ProfileForm"
-import { ProfileHeader } from "@/components/profile/ProfileHeader"
-import { ProfileStatus } from "@/components/profile/ProfileStatus"
-import { CompanyOverview } from "./profile/CompanyOverview"
-import { DocumentsManagement } from "./profile/DocumentsManagement"
+import { Card } from "@/components/ui/card"
 import { AvatarUpload } from "@/components/AvatarUpload"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ProfileForm } from "@/components/profile/ProfileForm"
+import { BorrowerDashboardLayout } from "./BorrowerDashboardLayout"
 
 export function BorrowerProfile() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">الملف التعريفي</h2>
-        <p className="text-muted-foreground">
-          إدارة وتحديث معلومات الملف الشخصي
-        </p>
-      </div>
-
-      <div className="flex justify-end">
-        <AvatarUpload />
-      </div>
-
+    <BorrowerDashboardLayout>
       <div className="space-y-6">
-        <ProfileHeader />
-        <ProfileStatus />
-        
-        <Tabs defaultValue="overview" dir="rtl">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-            <TabsTrigger value="documents">المستندات</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="space-y-6">
-            <CompanyOverview />
-            <Card>
-              <CardHeader>
-                <CardTitle>معلومات الممثل القانوني</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ProfileForm personalOnly={true} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="documents">
-            <DocumentsManagement />
-          </TabsContent>
-        </Tabs>
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">الملف التعريفي</h2>
+          <p className="text-muted-foreground">
+            إدارة وتحديث معلومات الملف الشخصي
+          </p>
+        </div>
+
+        <div className="flex justify-end">
+          <AvatarUpload />
+        </div>
+
+        <Card className="p-6">
+          <ProfileForm />
+        </Card>
       </div>
-    </div>
+    </BorrowerDashboardLayout>
   )
 }
