@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
+import { Settings, Lock, TrendingUp } from "lucide-react"
 
 export function PlatformSettings() {
   const { toast } = useToast()
@@ -59,10 +60,28 @@ export function PlatformSettings() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="justify-end">
-          <TabsTrigger value="security">الأمان</TabsTrigger>
-          <TabsTrigger value="investments">الاستثمارات</TabsTrigger>
-          <TabsTrigger value="general">عام</TabsTrigger>
+        <TabsList className="w-full justify-end p-0 bg-transparent space-x-2">
+          <TabsTrigger 
+            value="security" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3 rounded-lg"
+          >
+            <Lock className="h-4 w-4" />
+            الأمان
+          </TabsTrigger>
+          <TabsTrigger 
+            value="investments" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3 rounded-lg"
+          >
+            <TrendingUp className="h-4 w-4" />
+            الاستثمارات
+          </TabsTrigger>
+          <TabsTrigger 
+            value="general" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3 rounded-lg"
+          >
+            <Settings className="h-4 w-4" />
+            عام
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="general">
