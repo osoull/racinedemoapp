@@ -47,8 +47,14 @@ export function FundingRequestsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div>
         <h2 className="text-3xl font-bold tracking-tight">طلبات التمويل</h2>
+        <p className="text-muted-foreground">
+          إدارة ومتابعة طلبات التمويل الخاصة بك
+        </p>
+      </div>
+      
+      <div className="flex justify-end">
         <Button onClick={() => navigate("/borrower/funding-requests/new")}>
           <Plus className="h-4 w-4 ml-2" />
           طلب تمويل جديد

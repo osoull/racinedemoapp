@@ -64,7 +64,12 @@ export function BorrowerPayments() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold tracking-tight">المدفوعات</h2>
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">المدفوعات</h2>
+        <p className="text-muted-foreground">
+          إدارة ومتابعة جميع المدفوعات
+        </p>
+      </div>
       
       <Card>
         <CardHeader>
