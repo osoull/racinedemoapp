@@ -43,7 +43,12 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
             <img 
               src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg"
               alt="رسين"
-              className="h-14 w-auto object-contain py-2" 
+              className="h-14 w-auto object-contain py-2 dark:hidden" 
+            />
+            <img 
+              src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg"
+              alt="رسين"
+              className="h-14 w-auto object-contain py-2 hidden dark:block" 
             />
           </div>
 

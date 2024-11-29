@@ -24,8 +24,7 @@ import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
-import { NewFundingRequest } from "@/components/borrower/funding/NewFundingRequest"
-import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar"
+import NewFundingRequestPage from "@/pages/borrower/funding-requests/new"
 
 export function Routes() {
   const { user } = useAuth()
@@ -84,18 +83,16 @@ export function Routes() {
         path="/borrower/*"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
-            <DashboardLayout sidebar={<BorrowerSidebar />}>
-              <RouterRoutes>
-                <Route index element={<BorrowerDashboard />} />
-                <Route path="dashboard" element={<BorrowerDashboard />} />
-                <Route path="funding-requests" element={<FundingRequestsList />} />
-                <Route path="funding-requests/new" element={<NewFundingRequest />} />
-                <Route path="profile" element={<BorrowerProfile />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="kyc" element={<BorrowerKYCForm />} />
-                <Route path="payments" element={<BorrowerPayments />} />
-              </RouterRoutes>
-            </DashboardLayout>
+            <RouterRoutes>
+              <Route index element={<BorrowerDashboard />} />
+              <Route path="dashboard" element={<BorrowerDashboard />} />
+              <Route path="funding-requests" element={<FundingRequestsList />} />
+              <Route path="funding-requests/new" element={<NewFundingRequestPage />} />
+              <Route path="profile" element={<BorrowerProfile />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="kyc" element={<BorrowerKYCForm />} />
+              <Route path="payments" element={<BorrowerPayments />} />
+            </RouterRoutes>
           </PrivateRoute>
         }
       />
