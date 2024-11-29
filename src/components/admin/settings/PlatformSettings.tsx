@@ -85,97 +85,103 @@ export function PlatformSettings() {
         </TabsList>
 
         <TabsContent value="general">
-          <Card className="max-w-2xl mr-auto">
-            <CardHeader className="text-right">
-              <CardTitle>الإعدادات العامة</CardTitle>
-              <CardDescription>
-                إدارة الإعدادات العامة للمنصة
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="platform-name">اسم المنصة</Label>
-                <Input
-                  id="platform-name"
-                  defaultValue="رسين"
-                  className="w-[180px] text-right"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>وضع الصيانة</Label>
-                  <div className="text-[0.8rem] text-muted-foreground">
-                    تفعيل وضع الصيانة للمنصة
-                  </div>
+          <div className="flex justify-end">
+            <Card className="max-w-2xl w-full">
+              <CardHeader className="text-right">
+                <CardTitle>الإعدادات العامة</CardTitle>
+                <CardDescription>
+                  إدارة الإعدادات العامة للمنصة
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="platform-name">اسم المنصة</Label>
+                  <Input
+                    id="platform-name"
+                    defaultValue="رسين"
+                    className="w-[180px] text-right"
+                  />
                 </div>
-                <Switch />
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>وضع الصيانة</Label>
+                    <div className="text-[0.8rem] text-muted-foreground">
+                      تفعيل وضع الصيانة للمنصة
+                    </div>
+                  </div>
+                  <Switch />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="investments">
-          <Card className="max-w-2xl mr-auto">
-            <CardHeader className="text-right">
-              <CardTitle>إعدادات الاستثمار</CardTitle>
-              <CardDescription>
-                تكوين حدود وقواعد الاستثمار
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="min-investment">الحد الأدنى للاستثمار</Label>
-                <Input
-                  id="min-investment"
-                  type="number"
-                  defaultValue="1000"
-                  className="w-[180px] text-right"
-                  dir="ltr"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="max-investment">الحد الأقصى للاستثمار</Label>
-                <Input
-                  id="max-investment"
-                  type="number"
-                  defaultValue="50000"
-                  className="w-[180px] text-right"
-                  dir="ltr"
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex justify-end">
+            <Card className="max-w-2xl w-full">
+              <CardHeader className="text-right">
+                <CardTitle>إعدادات الاستثمار</CardTitle>
+                <CardDescription>
+                  تكوين حدود وقواعد الاستثمار
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="min-investment">الحد الأدنى للاستثمار</Label>
+                  <Input
+                    id="min-investment"
+                    type="number"
+                    defaultValue="1000"
+                    className="w-[180px] text-right"
+                    dir="ltr"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="max-investment">الحد الأقصى للاستثمار</Label>
+                  <Input
+                    id="max-investment"
+                    type="number"
+                    defaultValue="50000"
+                    className="w-[180px] text-right"
+                    dir="ltr"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="security">
-          <Card className="max-w-2xl mr-auto">
-            <CardHeader className="text-right">
-              <CardTitle>إعدادات الأمان</CardTitle>
-              <CardDescription>
-                إدارة إعدادات الأمان والخصوصية
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>التحقق بخطوتين</Label>
-                  <div className="text-[0.8rem] text-muted-foreground">
-                    تفعيل التحقق بخطوتين للمستخدمين
+          <div className="flex justify-end">
+            <Card className="max-w-2xl w-full">
+              <CardHeader className="text-right">
+                <CardTitle>إعدادات الأمان</CardTitle>
+                <CardDescription>
+                  إدارة إعدادات الأمان والخصوصية
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>التحقق بخطوتين</Label>
+                    <div className="text-[0.8rem] text-muted-foreground">
+                      تفعيل التحقق بخطوتين للمستخدمين
+                    </div>
                   </div>
+                  <Switch />
                 </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>تأكيد البريد الإلكتروني</Label>
-                  <div className="text-[0.8rem] text-muted-foreground">
-                    طلب تأكيد البريد الإلكتروني عند التسجيل
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>تأكيد البريد الإلكتروني</Label>
+                    <div className="text-[0.8rem] text-muted-foreground">
+                      طلب تأكيد البريد الإلكتروني عند التسجيل
+                    </div>
                   </div>
+                  <Switch />
                 </div>
-                <Switch />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 
