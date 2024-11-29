@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/contexts/AuthContext"
+import { supabase } from "@/integrations/supabase/client"
 
 interface BorrowerSignUpFormProps {
   onBack: () => void
@@ -53,17 +54,37 @@ export function BorrowerSignUpForm({ onBack, onSuccess }: BorrowerSignUpFormProp
     
     setIsLoading(true)
     try {
-      await signUp(formData.email, formData.password, {
-        company_name: formData.companyName,
-        commercial_register: formData.commercialRegister,
-        national_id: formData.nationalId,
-        first_name: "",  // Required fields for profiles table
-        last_name: "",   // Required fields for profiles table
+      const { data: { user }, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            user_type: "borrower",
+            company_name: formData.companyName,
+            commercial_register: formData.commercialRegister,
+            national_id: formData.nationalId,
+            first_name: "",
+            last_name: "",
+          }
+        }
       })
 
-      onSuccess()
-    } catch (error) {
+      if (signUpError) throw signUpError
+
+      if (user) {
+        toast({
+          title: "تم إنشاء الحساب بنجاح",
+          description: "يمكنك الآن تسجيل الدخول",
+        })
+        onSuccess()
+      }
+    } catch (error: any) {
       console.error("SignUp error:", error)
+      toast({
+        title: "خطأ في التسجيل",
+        description: error.message,
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
