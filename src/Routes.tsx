@@ -59,7 +59,7 @@ export function Routes() {
                   </div>
                 } />
                 <Route path="kyc" element={<KYCManagement />} />
-                <Route path="settings" element={<Settings />} />
+                <Route path="platform-settings" element={<PlatformSettings />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="notifications" element={<Notifications />} />
               </RouterRoutes>
