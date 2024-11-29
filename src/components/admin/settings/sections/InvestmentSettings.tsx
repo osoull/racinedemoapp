@@ -13,29 +13,33 @@ export function InvestmentSettings() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="min-investment" className="text-right">
-              الحد الأدنى للاستثمار
-            </Label>
-            <Input
-              id="min-investment"
-              type="number"
-              defaultValue="1000"
-              className="text-right w-full lg:w-[400px] h-12 mr-auto text-lg"
-              dir="ltr"
-            />
+          <div className="flex items-center justify-end">
+            <div className="flex-1 max-w-sm">
+              <Label htmlFor="min-investment" className="text-right block mb-2">
+                الحد الأدنى للاستثمار
+              </Label>
+              <Input
+                id="min-investment"
+                type="number"
+                defaultValue="1000"
+                className="text-right"
+                dir="ltr"
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="max-investment" className="text-right">
-              الحد الأقصى للاستثمار
-            </Label>
-            <Input
-              id="max-investment"
-              type="number"
-              defaultValue="50000"
-              className="text-right w-full lg:w-[400px] h-12 mr-auto text-lg"
-              dir="ltr"
-            />
+          <div className="flex items-center justify-end">
+            <div className="flex-1 max-w-sm">
+              <Label htmlFor="max-investment" className="text-right block mb-2">
+                الحد الأقصى للاستثمار
+              </Label>
+              <Input
+                id="max-investment"
+                type="number"
+                defaultValue="50000"
+                className="text-right"
+                dir="ltr"
+              />
+            </div>
           </div>
         </div>
       </CardContent>
