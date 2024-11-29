@@ -18,6 +18,7 @@ import Profile from "@/pages/admin/Profile"
 import Settings from "@/pages/Settings"
 import Notifications from "@/pages/admin/Notifications"
 import Index from "@/pages/Index"
+import { RoleRoutes } from "@/components/auth/RoleRoutes"
 
 export function Routes() {
   const { user } = useAuth()
@@ -68,12 +69,40 @@ export function Routes() {
         }
       />
 
+      {/* Borrower and Investor Routes */}
+      <RoleRoutes />
+
       {/* Auth redirect */}
-      <Route path="/auth" element={<Navigate to="/admin/dashboard" replace />} />
-      <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/auth" element={<Navigate to="/" replace />} />
+      
+      {/* Default redirect based on user type */}
+      <Route
+        path="/"
+        element={
+          <Navigate
+            to={
+              (() => {
+                const userType = user?.user_metadata?.user_type
+                switch (userType) {
+                  case "admin":
+                    return "/admin/dashboard"
+                  case "borrower":
+                    return "/borrower/dashboard"
+                  case "basic_investor":
+                  case "qualified_investor":
+                    return "/investor/dashboard"
+                  default:
+                    return "/auth"
+                }
+              })()
+            }
+            replace
+          />
+        }
+      />
       
       {/* Catch all route */}
-      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </RouterRoutes>
   )
 }
