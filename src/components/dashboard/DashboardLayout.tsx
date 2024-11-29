@@ -65,7 +65,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       {/* Main layout */}
       <div className="flex flex-1">
         {/* Sidebar - Desktop */}
-        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background overflow-y-auto">
+        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem-2.5rem)] border-l bg-background overflow-y-auto">
           {sidebar}
         </aside>
 
@@ -81,7 +81,9 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       </div>
 
       {/* Footer */}
-      <Footer />
+      <div className="lg:mr-64">
+        <Footer />
+      </div>
     </div>
   )
 }
