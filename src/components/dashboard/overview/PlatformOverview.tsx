@@ -3,9 +3,12 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2, Users, TrendingUp, Wallet, FileCheck, ArrowUp, ArrowDown } from "lucide-react"
 import { PlatformStats } from "@/types/supabase"
+import { useEffect } from "react"
+import { useToast } from "@/components/ui/use-toast"
 
 export function PlatformOverview() {
-  const { data: stats, isLoading } = useQuery({
+  const { toast } = useToast()
+  const { data: stats, isLoading, refetch } = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('calculate_platform_stats')
@@ -13,6 +16,46 @@ export function PlatformOverview() {
       return (data as unknown[])[0] as PlatformStats
     }
   })
+
+  useEffect(() => {
+    // Subscribe to changes in platform_statistics and transactions
+    const platformStatsChannel = supabase
+      .channel('platform-stats-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'platform_statistics'
+        },
+        () => {
+          refetch()
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'transactions'
+        },
+        () => {
+          refetch()
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          toast({
+            title: "تم تفعيل التحديثات المباشرة",
+            description: "سيتم تحديث البيانات تلقائياً عند حدوث أي تغيير"
+          })
+        }
+      })
+
+    return () => {
+      platformStatsChannel.unsubscribe()
+    }
+  }, [refetch, toast])
 
   if (isLoading) {
     return (
