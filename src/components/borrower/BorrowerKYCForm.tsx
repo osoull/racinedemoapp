@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
 import { CompanyInfoSection } from "./kyc/CompanyInfoSection"
 import { BankDetailsSection } from "./kyc/BankDetailsSection"
+import { DocumentUploadSection } from "./kyc/DocumentUploadSection"
 import { KYCFormData } from "@/types/kyc"
 
 export function BorrowerKYCForm() {
@@ -116,20 +117,23 @@ export function BorrowerKYCForm() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>معلومات التحقق من الهوية (KYC)</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
-          <BankDetailsSection kycData={kycData} setKycData={setKycData} />
-          <Button type="submit" disabled={saving}>
-            {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-            حفظ المعلومات
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>معلومات التحقق من الهوية (KYC)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
+            <BankDetailsSection kycData={kycData} setKycData={setKycData} />
+            <DocumentUploadSection />
+            <Button type="submit" disabled={saving}>
+              {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              حفظ المعلومات
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
