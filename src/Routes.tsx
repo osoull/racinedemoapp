@@ -49,7 +49,7 @@ export function Routes() {
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
               <RouterRoutes>
-                <Route path="dashboard" element={<Index />} />
+                <Route path="dashboard" element={<DashboardOverview />} />
                 <Route path="investors" element={<InvestorManagement />} />
                 <Route path="borrowers" element={<BorrowerManagement />} />
                 <Route path="funding-requests" element={<FundingManagement />} />
@@ -85,6 +85,7 @@ export function Routes() {
           <PrivateRoute allowedTypes={["borrower"]}>
             <BorrowerDashboardLayout>
               <RouterRoutes>
+                <Route index element={<BorrowerDashboardOverview />} />
                 <Route path="dashboard" element={<BorrowerDashboardOverview />} />
                 <Route path="profile" element={<BorrowerProfile />} />
                 <Route path="settings" element={<Settings />} />
