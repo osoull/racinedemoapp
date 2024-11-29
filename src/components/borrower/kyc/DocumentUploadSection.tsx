@@ -31,6 +31,12 @@ const REQUIRED_DOCUMENTS = [
     type: "audited_financials",
     label: "القوائم المالية المدققة",
     description: "القوائم المالية المدققة لآخر سنة (إلزامي)"
+  },
+  {
+    type: "platform_authorization",
+    label: "تفويض استخدام المنصة",
+    description: "تفويض استخدام المنصة (مطلوب فقط إذا كنت لست الممثل القانوني للشركة)",
+    optional: true
   }
 ]
 
@@ -91,7 +97,7 @@ export function DocumentUploadSection() {
       <div>
         <h3 className="text-lg font-medium">المستندات المطلوبة</h3>
         <p className="text-sm text-muted-foreground">
-          يرجى رفع جميع المستندات التالية للتحقق من هوية الشركة
+          يرجى رفع المستندات التالية للتحقق من هوية الشركة
         </p>
       </div>
 
