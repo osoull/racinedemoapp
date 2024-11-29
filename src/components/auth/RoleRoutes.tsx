@@ -5,6 +5,9 @@ import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import { useAuth } from "@/contexts/AuthContext"
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
+import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
+import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
+import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 
 export const RoleRoutes = () => {
@@ -16,16 +19,35 @@ export const RoleRoutes = () => {
 
   return (
     <Routes>
-      {/* Borrower Dashboard */}
-      <Route path="/borrower" element={
+      {/* Borrower Routes */}
+      <Route path="/borrower/*" element={
         <PrivateRoute allowedTypes={["borrower"]}>
-          <DashboardLayout sidebar={<BorrowerSidebar />}>
-            <BorrowerDashboardOverview />
-          </DashboardLayout>
+          <Routes>
+            <Route path="dashboard" element={
+              <DashboardLayout sidebar={<BorrowerSidebar />}>
+                <BorrowerDashboardOverview />
+              </DashboardLayout>
+            } />
+            <Route path="profile" element={
+              <DashboardLayout sidebar={<BorrowerSidebar />}>
+                <BorrowerProfile />
+              </DashboardLayout>
+            } />
+            <Route path="kyc" element={
+              <DashboardLayout sidebar={<BorrowerSidebar />}>
+                <BorrowerKYCForm />
+              </DashboardLayout>
+            } />
+            <Route path="payments" element={
+              <DashboardLayout sidebar={<BorrowerSidebar />}>
+                <BorrowerPayments />
+              </DashboardLayout>
+            } />
+          </Routes>
         </PrivateRoute>
       } />
 
-      {/* Investor Dashboard */}
+      {/* Investor Routes */}
       <Route path="/investor" element={
         <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
           <DashboardLayout sidebar={<InvestorSidebar />}>
@@ -36,8 +58,9 @@ export const RoleRoutes = () => {
 
       {/* Default redirect based on user type */}
       <Route path="/" element={
-        user?.user_metadata?.user_type === "borrower" ? <Navigate to="/borrower" replace /> :
-        <Navigate to="/investor" replace />
+        user?.user_metadata?.user_type === "borrower" ? 
+          <Navigate to="/borrower/dashboard" replace /> :
+          <Navigate to="/investor" replace />
       } />
 
       {/* Catch all route */}

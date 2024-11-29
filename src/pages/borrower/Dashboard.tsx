@@ -1,10 +1,9 @@
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar"
+import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
 
 export default function BorrowerDashboard() {
   return (
-    <DashboardLayout sidebar={<BorrowerSidebar />}>
+    <BorrowerDashboardLayout>
       <div className="space-y-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">لوحة المعلومات والإحصائيات</h2>
@@ -14,6 +13,6 @@ export default function BorrowerDashboard() {
         </div>
         <BorrowerDashboardOverview />
       </div>
-    </DashboardLayout>
+    </BorrowerDashboardLayout>
   )
 }

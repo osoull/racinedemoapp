@@ -32,7 +32,7 @@ export function Auth() {
         if (!profile) return
 
         const path = profile.user_type === "admin" ? "/admin" :
-                    profile.user_type === "borrower" ? "/borrower" :
+                    profile.user_type === "borrower" ? "/borrower/dashboard" :
                     "/investor"
                     
         navigate(path, { replace: true })
