@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/contexts/AuthContext"
-import { LogOut, Settings, User } from "lucide-react"
+import { LogOut, Settings, User, Bell } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
@@ -36,7 +36,7 @@ export function UserNav() {
 
   const handleSignOut = async () => {
     await signOut()
-    navigate("/")
+    navigate("/auth")
   }
 
   return (
@@ -60,13 +60,17 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
+          <DropdownMenuItem onClick={() => navigate("/admin/profile")} className="cursor-pointer">
             <User className="ml-2 h-4 w-4 dark:text-white" />
             <span>الملف الشخصي</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer">
+          <DropdownMenuItem onClick={() => navigate("/admin/settings")} className="cursor-pointer">
             <Settings className="ml-2 h-4 w-4 dark:text-white" />
             <span>الإعدادات</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate("/admin/notifications")} className="cursor-pointer">
+            <Bell className="ml-2 h-4 w-4 dark:text-white" />
+            <span>الإشعارات</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
