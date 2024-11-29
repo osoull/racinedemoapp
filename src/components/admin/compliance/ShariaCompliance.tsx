@@ -12,7 +12,7 @@ type Project = {
   status: string;
   reviewer?: string;
   review_date?: string;
-  notes?: string;
+  sharia_notes?: string;
 };
 
 type ShariaComplianceProps = {
@@ -36,7 +36,16 @@ export const ShariaCompliance = ({ projects: initialProjects }: ShariaCompliance
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data || [];
+
+      // Transform the data to match our Project type
+      return (data || []).map((item) => ({
+        id: item.id,
+        title: item.title,
+        status: item.status,
+        reviewer: item.reviewer as string,
+        review_date: item.review_date as string,
+        sharia_notes: item.sharia_notes as string
+      }));
     },
   });
 
@@ -112,9 +121,9 @@ export const ShariaCompliance = ({ projects: initialProjects }: ShariaCompliance
                         تاريخ المراجعة: {new Date(project.review_date).toLocaleDateString('ar-SA')}
                       </p>
                     )}
-                    {project.notes && (
+                    {project.sharia_notes && (
                       <p className="text-sm text-muted-foreground mt-2 bg-muted p-2 rounded-md">
-                        {project.notes}
+                        {project.sharia_notes}
                       </p>
                     )}
                   </div>
