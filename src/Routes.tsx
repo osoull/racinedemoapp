@@ -14,6 +14,9 @@ import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
 import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
 import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
 import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
+import Profile from "@/pages/admin/Profile"
+import Settings from "@/pages/Settings"
+import Notifications from "@/pages/admin/Notifications"
 import Index from "@/pages/Index"
 
 export function Routes() {
@@ -56,7 +59,9 @@ export function Routes() {
                   </div>
                 } />
                 <Route path="kyc" element={<KYCManagement />} />
-                <Route path="settings" element={<PlatformSettings />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="notifications" element={<Notifications />} />
               </RouterRoutes>
             </DashboardLayout>
           </PrivateRoute>
