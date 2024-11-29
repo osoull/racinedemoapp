@@ -8,18 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const categories = [
-  { id: "technology", label: "تقنية" },
-  { id: "real_estate", label: "عقارات" },
-  { id: "healthcare", label: "رعاية صحية" },
-  { id: "education", label: "تعليم" },
-  { id: "retail", label: "تجارة تجزئة" },
-  { id: "manufacturing", label: "تصنيع" },
-  { id: "services", label: "خدمات" },
-  { id: "other", label: "أخرى" },
-];
+import { CategorySelect } from "../CategorySelect";
 
 interface BasicInfoStepProps {
   control: Control<any>;
@@ -42,34 +31,7 @@ export function BasicInfoStep({ control }: BasicInfoStepProps) {
         )}
       />
 
-      <FormField
-        control={control}
-        name="category"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>التصنيف *</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger className="text-right" dir="rtl">
-                  <SelectValue placeholder="اختر تصنيف" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent align="end" className="text-right" dir="rtl">
-                {categories.map((category) => (
-                  <SelectItem 
-                    key={category.id} 
-                    value={category.id}
-                    className="text-right"
-                  >
-                    {category.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <CategorySelect control={control} />
 
       <FormField
         control={control}
