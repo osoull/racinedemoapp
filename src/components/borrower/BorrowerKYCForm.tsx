@@ -131,6 +131,37 @@ export function BorrowerKYCForm() {
     }
   }
 
+  const requestKYCVerification = async () => {
+    setSaving(true)
+    try {
+      const { error } = await supabase
+        .from("borrower_kyc")
+        .update({
+          verification_status: 'submitted',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user?.id)
+
+      if (error) throw error
+
+      toast({
+        title: "تم إرسال الطلب",
+        description: "تم إرسال طلب التحقق من الهوية بنجاح. سيتم مراجعته من قبل الفريق المختص.",
+      })
+      
+      loadProfile()
+    } catch (error) {
+      console.error("Error requesting KYC verification:", error)
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء إرسال طلب التحقق",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
@@ -245,6 +276,28 @@ export function BorrowerKYCForm() {
           <DocumentUploadSection />
         </CardContent>
       </Card>
+
+      {/* Request KYC Verification Button */}
+      {profile?.kyc_status !== 'approved' && (
+        <Card>
+          <CardContent className="pt-6">
+            <Button 
+              className="w-full"
+              size="lg"
+              onClick={requestKYCVerification}
+              disabled={saving || !profile?.profile_completed}
+            >
+              {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              طلب التحقق من الهوية
+            </Button>
+            {!profile?.profile_completed && (
+              <p className="text-sm text-muted-foreground mt-2 text-center">
+                يجب استكمال جميع المعلومات المطلوبة قبل طلب التحقق
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

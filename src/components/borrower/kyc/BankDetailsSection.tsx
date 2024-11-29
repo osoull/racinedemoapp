@@ -1,5 +1,10 @@
 import { Input } from "@/components/ui/input"
 import { KYCFormData } from "@/types/kyc"
+import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
+import { useState } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/components/ui/use-toast"
 
 interface BankDetailsSectionProps {
   kycData: KYCFormData;
@@ -7,6 +12,38 @@ interface BankDetailsSectionProps {
 }
 
 export function BankDetailsSection({ kycData, setKycData }: BankDetailsSectionProps) {
+  const [saving, setSaving] = useState(false)
+  const { toast } = useToast()
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const { error } = await supabase
+        .from("borrower_kyc")
+        .upsert({
+          ...kycData,
+          bank_account_details: kycData.bank_account_details,
+          updated_at: new Date().toISOString(),
+        })
+
+      if (error) throw error
+
+      toast({
+        title: "تم التحديث",
+        description: "تم حفظ معلومات الحساب البنكي بنجاح",
+      })
+    } catch (error) {
+      console.error("Error saving bank details:", error)
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء حفظ المعلومات",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="space-y-4">
       <h3 className="font-semibold">معلومات الحساب البنكي</h3>
@@ -62,6 +99,10 @@ export function BankDetailsSection({ kycData, setKycData }: BankDetailsSectionPr
           />
         </div>
       </div>
+      <Button onClick={handleSave} disabled={saving}>
+        {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+        حفظ المعلومات
+      </Button>
     </div>
   )
 }
