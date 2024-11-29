@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { useState } from "react"
+import Footer from "@/components/Footer"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -21,7 +22,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
@@ -62,7 +63,7 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
       </header>
 
       {/* Main layout */}
-      <div className="flex min-h-[calc(100vh-3.5rem)]">
+      <div className="flex flex-1">
         {/* Sidebar - Desktop */}
         <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background overflow-y-auto">
           {sidebar}
@@ -78,6 +79,9 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
           </div>
         </main>
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
