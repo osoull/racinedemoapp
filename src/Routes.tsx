@@ -12,6 +12,7 @@ import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses
 import { FundingManagement } from "@/components/admin/funding/FundingManagement"
 import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
 import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
+import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
 
 export function Routes() {
   const { user } = useAuth()
@@ -46,7 +47,7 @@ export function Routes() {
                     <PlatformLicenses />
                   </div>
                 } />
-                <Route path="kyc" element={<div>Gestion des vérifications KYC</div>} />
+                <Route path="kyc" element={<KYCManagement />} />
                 <Route path="settings" element={<div>Paramètres de la plateforme</div>} />
               </RouterRoutes>
             </DashboardLayout>
