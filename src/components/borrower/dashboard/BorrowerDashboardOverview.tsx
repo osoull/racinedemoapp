@@ -56,9 +56,9 @@ export function BorrowerDashboardOverview() {
     <div className="space-y-6">
       {/* Simple KYC Alert */}
       {profile?.kyc_status !== "approved" && (
-        <Alert>
+        <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+          <AlertDescription className="font-bold text-destructive">
             يرجى استكمال عملية التحقق من الهوية للاستفادة من جميع خدمات المنصة
           </AlertDescription>
         </Alert>

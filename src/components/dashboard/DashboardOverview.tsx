@@ -4,10 +4,11 @@ import { StatsGrid } from "./stats/StatsGrid"
 import { FundingChart } from "./charts/FundingChart"
 import { ActivityFeed } from "./activity/ActivityFeed"
 import { useAuth } from "@/hooks/useAuth"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/components/ui/use-toast"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function DashboardOverview() {
   const { user } = useAuth()
@@ -61,6 +62,17 @@ export function DashboardOverview() {
 
   return (
     <div className="space-y-8">
+      {/* KYC Alert for investors */}
+      {(profile.user_type === 'basic_investor' || profile.user_type === 'qualified_investor') && 
+       profile.kyc_status !== "approved" && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="font-bold text-destructive">
+            يرجى استكمال عملية التحقق من الهوية للاستفادة من جميع خدمات المنصة
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
