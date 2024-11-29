@@ -1508,6 +1508,12 @@ export type Database = {
         }
         Returns: undefined
       }
+      validate_bank_details: {
+        Args: {
+          details: Json
+        }
+        Returns: boolean
+      }
       validate_payment: {
         Args: {
           p_transaction_id: string
