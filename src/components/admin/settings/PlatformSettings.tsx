@@ -67,29 +67,29 @@ export function PlatformSettings() {
 
         <TabsContent value="general">
           <Card>
-            <CardHeader>
+            <CardHeader className="text-right">
               <CardTitle>الإعدادات العامة</CardTitle>
               <CardDescription>
                 إدارة الإعدادات العامة للمنصة
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between space-x-reverse space-x-2">
-                <Label htmlFor="platform-name" className="text-right">اسم المنصة</Label>
+            <CardContent className="space-y-6">
+              <div className="flex flex-row-reverse items-center justify-between">
                 <Input
                   id="platform-name"
                   defaultValue="رسين"
                   className="w-[180px] text-right"
                 />
+                <Label htmlFor="platform-name" className="text-right">اسم المنصة</Label>
               </div>
-              <div className="flex items-center justify-between space-x-reverse space-x-2">
+              <div className="flex flex-row-reverse items-center justify-between">
+                <Switch />
                 <div className="space-y-0.5 text-right">
                   <Label>وضع الصيانة</Label>
                   <div className="text-[0.8rem] text-muted-foreground">
                     تفعيل وضع الصيانة للمنصة
                   </div>
                 </div>
-                <Switch />
               </div>
             </CardContent>
           </Card>
@@ -97,15 +97,14 @@ export function PlatformSettings() {
 
         <TabsContent value="investments">
           <Card>
-            <CardHeader>
+            <CardHeader className="text-right">
               <CardTitle>إعدادات الاستثمار</CardTitle>
               <CardDescription>
                 تكوين حدود وقواعد الاستثمار
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between space-x-reverse space-x-2">
-                <Label htmlFor="min-investment" className="text-right">الحد الأدنى للاستثمار</Label>
+            <CardContent className="space-y-6">
+              <div className="flex flex-row-reverse items-center justify-between">
                 <Input
                   id="min-investment"
                   type="number"
@@ -113,9 +112,9 @@ export function PlatformSettings() {
                   className="w-[180px] text-right"
                   dir="ltr"
                 />
+                <Label htmlFor="min-investment" className="text-right">الحد الأدنى للاستثمار</Label>
               </div>
-              <div className="flex items-center justify-between space-x-reverse space-x-2">
-                <Label htmlFor="max-investment" className="text-right">الحد الأقصى للاستثمار</Label>
+              <div className="flex flex-row-reverse items-center justify-between">
                 <Input
                   id="max-investment"
                   type="number"
@@ -123,6 +122,7 @@ export function PlatformSettings() {
                   className="w-[180px] text-right"
                   dir="ltr"
                 />
+                <Label htmlFor="max-investment" className="text-right">الحد الأقصى للاستثمار</Label>
               </div>
             </CardContent>
           </Card>
@@ -130,30 +130,30 @@ export function PlatformSettings() {
 
         <TabsContent value="security">
           <Card>
-            <CardHeader>
+            <CardHeader className="text-right">
               <CardTitle>إعدادات الأمان</CardTitle>
               <CardDescription>
                 إدارة إعدادات الأمان والخصوصية
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between space-x-reverse space-x-2">
+            <CardContent className="space-y-6">
+              <div className="flex flex-row-reverse items-center justify-between">
+                <Switch />
                 <div className="space-y-0.5 text-right">
                   <Label>التحقق بخطوتين</Label>
                   <div className="text-[0.8rem] text-muted-foreground">
                     تفعيل التحقق بخطوتين للمستخدمين
                   </div>
                 </div>
-                <Switch />
               </div>
-              <div className="flex items-center justify-between space-x-reverse space-x-2">
+              <div className="flex flex-row-reverse items-center justify-between">
+                <Switch />
                 <div className="space-y-0.5 text-right">
                   <Label>تأكيد البريد الإلكتروني</Label>
                   <div className="text-[0.8rem] text-muted-foreground">
                     طلب تأكيد البريد الإلكتروني عند التسجيل
                   </div>
                 </div>
-                <Switch />
               </div>
             </CardContent>
           </Card>
