@@ -139,11 +139,14 @@ export type Database = {
           created_at: string | null
           id: string
           industry_sector: string | null
+          last_verification_attempt: string | null
           legal_representative_id: string | null
           legal_representative_name: string | null
           number_of_employees: number | null
+          rejection_reason: string | null
           tax_identification_number: string | null
           updated_at: string | null
+          verification_expiry_date: string | null
           verification_status: string | null
         }
         Insert: {
@@ -155,11 +158,14 @@ export type Database = {
           created_at?: string | null
           id: string
           industry_sector?: string | null
+          last_verification_attempt?: string | null
           legal_representative_id?: string | null
           legal_representative_name?: string | null
           number_of_employees?: number | null
+          rejection_reason?: string | null
           tax_identification_number?: string | null
           updated_at?: string | null
+          verification_expiry_date?: string | null
           verification_status?: string | null
         }
         Update: {
@@ -171,11 +177,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           industry_sector?: string | null
+          last_verification_attempt?: string | null
           legal_representative_id?: string | null
           legal_representative_name?: string | null
           number_of_employees?: number | null
+          rejection_reason?: string | null
           tax_identification_number?: string | null
           updated_at?: string | null
+          verification_expiry_date?: string | null
           verification_status?: string | null
         }
         Relationships: [
@@ -432,11 +441,13 @@ export type Database = {
           created_at: string | null
           current_funding: number | null
           description: string
+          expected_completion_date: string | null
           fees_paid: boolean
           fees_transaction_id: string | null
           fund_usage_plan: Json
           funding_goal: number
           id: string
+          last_status_change: string | null
           metadata: Json | null
           owner_id: string
           risk_description: string | null
@@ -457,11 +468,13 @@ export type Database = {
           created_at?: string | null
           current_funding?: number | null
           description: string
+          expected_completion_date?: string | null
           fees_paid?: boolean
           fees_transaction_id?: string | null
           fund_usage_plan: Json
           funding_goal: number
           id?: string
+          last_status_change?: string | null
           metadata?: Json | null
           owner_id: string
           risk_description?: string | null
@@ -482,11 +495,13 @@ export type Database = {
           created_at?: string | null
           current_funding?: number | null
           description?: string
+          expected_completion_date?: string | null
           fees_paid?: boolean
           fees_transaction_id?: string | null
           fund_usage_plan?: Json
           funding_goal?: number
           id?: string
+          last_status_change?: string | null
           metadata?: Json | null
           owner_id?: string
           risk_description?: string | null
@@ -640,11 +655,14 @@ export type Database = {
           employer: string | null
           id: string
           investment_experience: string | null
+          last_verification_attempt: string | null
           national_id_number: string | null
           occupation: string | null
+          rejection_reason: string | null
           risk_tolerance: string | null
           source_of_funds: string | null
           updated_at: string | null
+          verification_expiry_date: string | null
           verification_status: string | null
         }
         Insert: {
@@ -655,11 +673,14 @@ export type Database = {
           employer?: string | null
           id: string
           investment_experience?: string | null
+          last_verification_attempt?: string | null
           national_id_number?: string | null
           occupation?: string | null
+          rejection_reason?: string | null
           risk_tolerance?: string | null
           source_of_funds?: string | null
           updated_at?: string | null
+          verification_expiry_date?: string | null
           verification_status?: string | null
         }
         Update: {
@@ -670,11 +691,14 @@ export type Database = {
           employer?: string | null
           id?: string
           investment_experience?: string | null
+          last_verification_attempt?: string | null
           national_id_number?: string | null
           occupation?: string | null
+          rejection_reason?: string | null
           risk_tolerance?: string | null
           source_of_funds?: string | null
           updated_at?: string | null
+          verification_expiry_date?: string | null
           verification_status?: string | null
         }
         Relationships: [
@@ -1060,6 +1084,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_status: string | null
           avatar_url: string | null
           business_address: string | null
           business_description: string | null
@@ -1073,11 +1098,13 @@ export type Database = {
           first_name: string
           id: string
           kyc_status: string | null
+          last_login_at: string | null
           last_name: string
           middle_name: string | null
           national_id: string | null
           phone: string | null
           postal_code: string | null
+          preferred_language: string | null
           profile_completed: boolean | null
           street_name: string | null
           street_number: string | null
@@ -1085,6 +1112,7 @@ export type Database = {
           user_type: string
         }
         Insert: {
+          account_status?: string | null
           avatar_url?: string | null
           business_address?: string | null
           business_description?: string | null
@@ -1098,11 +1126,13 @@ export type Database = {
           first_name: string
           id: string
           kyc_status?: string | null
+          last_login_at?: string | null
           last_name: string
           middle_name?: string | null
           national_id?: string | null
           phone?: string | null
           postal_code?: string | null
+          preferred_language?: string | null
           profile_completed?: boolean | null
           street_name?: string | null
           street_number?: string | null
@@ -1110,6 +1140,7 @@ export type Database = {
           user_type?: string
         }
         Update: {
+          account_status?: string | null
           avatar_url?: string | null
           business_address?: string | null
           business_description?: string | null
@@ -1123,11 +1154,13 @@ export type Database = {
           first_name?: string
           id?: string
           kyc_status?: string | null
+          last_login_at?: string | null
           last_name?: string
           middle_name?: string | null
           national_id?: string | null
           phone?: string | null
           postal_code?: string | null
+          preferred_language?: string | null
           profile_completed?: boolean | null
           street_name?: string | null
           street_number?: string | null
@@ -1429,12 +1462,24 @@ export type Database = {
           total_fees: number
         }[]
       }
+      calculate_risk_score: {
+        Args: {
+          p_annual_revenue: number
+          p_years_in_business: number
+          p_previous_defaults: number
+        }
+        Returns: number
+      }
       calculate_transaction_fees: {
         Args: {
           amount: number
           user_type: string
         }
         Returns: Json
+      }
+      cleanup_old_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       get_borrower_payment_history: {
         Args: {
