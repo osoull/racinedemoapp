@@ -43,9 +43,15 @@ export function Routes() {
                 <Route path="finance" element={<FinanceOverview />} />
                 <Route path="compliance" element={
                   <div className="space-y-6">
-                    <RegulatoryReports />
+                    <div>
+                      <h2 className="text-3xl font-bold tracking-tight text-primary-800">الامتثال</h2>
+                      <p className="text-muted-foreground">
+                        إدارة ومراقبة الامتثال التنظيمي والشرعي للمنصة
+                      </p>
+                    </div>
                     <ShariaCompliance projects={[]} />
                     <PlatformLicenses />
+                    <RegulatoryReports />
                   </div>
                 } />
                 <Route path="kyc" element={<KYCManagement />} />
