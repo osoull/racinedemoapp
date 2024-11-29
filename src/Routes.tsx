@@ -11,6 +11,7 @@ import { ShariaCompliance } from "@/components/admin/compliance/ShariaCompliance
 import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses"
 import { FundingManagement } from "@/components/admin/funding/FundingManagement"
 import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
+import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
 
 export function Routes() {
   const { user } = useAuth()
@@ -34,7 +35,7 @@ export function Routes() {
             <DashboardLayout sidebar={<AdminSidebar />}>
               <RouterRoutes>
                 <Route path="dashboard" element={<DashboardOverview />} />
-                <Route path="investors" element={<div>Gestion des investisseurs</div>} />
+                <Route path="investors" element={<InvestorManagement />} />
                 <Route path="borrowers" element={<BorrowerManagement />} />
                 <Route path="funding-requests" element={<FundingManagement />} />
                 <Route path="finance" element={<FinanceOverview />} />
