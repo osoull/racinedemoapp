@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input"
-import { KYCFormData } from "@/types/kyc"
+import { KYCFormData, bankDetailsToJson } from "@/types/kyc"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
@@ -22,7 +22,7 @@ export function BankDetailsSection({ kycData, setKycData }: BankDetailsSectionPr
         .from("borrower_kyc")
         .upsert({
           ...kycData,
-          bank_account_details: kycData.bank_account_details,
+          bank_account_details: bankDetailsToJson(kycData.bank_account_details),
           updated_at: new Date().toISOString(),
         })
 

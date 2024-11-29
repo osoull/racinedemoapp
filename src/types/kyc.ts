@@ -1,3 +1,5 @@
+import { Json } from "@/integrations/supabase/types/json"
+
 export interface BankAccountDetails {
   bank_name: string;
   account_holder_name: string;
@@ -18,4 +20,9 @@ export interface KYCFormData {
   bank_account_details: BankAccountDetails;
   verification_status?: string;
   updated_at?: string;
+}
+
+// Helper function to convert BankAccountDetails to Json type
+export const bankDetailsToJson = (details: BankAccountDetails): Json => {
+  return details as unknown as Json;
 }
