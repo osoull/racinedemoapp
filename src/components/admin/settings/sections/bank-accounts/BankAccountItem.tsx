@@ -18,9 +18,9 @@ interface BankAccountItemProps {
 
 export function BankAccountItem({ account, onToggleStatus }: BankAccountItemProps) {
   return (
-    <div className="p-4 border rounded-lg mb-4">
+    <div className="p-4 border rounded-lg mb-4" dir="rtl">
       <div className="flex justify-between items-start mb-4">
-        <div className="text-right">
+        <div>
           <h3 className="font-semibold">{account.bank_name}</h3>
           <p className="text-sm text-muted-foreground">{account.account_name}</p>
         </div>
@@ -34,18 +34,20 @@ export function BankAccountItem({ account, onToggleStatus }: BankAccountItemProp
         </div>
       </div>
       <div className="grid gap-2 text-sm">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">رقم الحساب:</span>
-          <span>{account.account_number}</span>
-        </div>
+        {account.account_number && (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">رقم الحساب:</span>
+            <span className="font-mono">{account.account_number}</span>
+          </div>
+        )}
         <div className="flex justify-between">
           <span className="text-muted-foreground">IBAN:</span>
-          <span dir="ltr">{account.iban}</span>
+          <span dir="ltr" className="font-mono tracking-wider">{account.iban}</span>
         </div>
         {account.swift && (
           <div className="flex justify-between">
             <span className="text-muted-foreground">SWIFT:</span>
-            <span>{account.swift}</span>
+            <span dir="ltr" className="font-mono tracking-wider">{account.swift}</span>
           </div>
         )}
       </div>
