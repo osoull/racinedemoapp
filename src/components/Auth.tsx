@@ -15,6 +15,7 @@ export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [isLoading, setIsLoading] = useState(false)
   const [isRedirecting, setIsRedirecting] = useState(false)
+  const [year] = useState(new Date().getFullYear())
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -131,7 +132,7 @@ export function Auth() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center flex-col">
+    <div className="flex min-h-screen items-center justify-center flex-col relative">
       <img 
         src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
         alt="Racine Investment" 
@@ -161,6 +162,9 @@ export function Auth() {
           isLoading={isLoading}
         />
       )}
+      <p className="text-primary/80 font-medium text-base text-center absolute bottom-4">
+        جميع الحقوق محفوظة لشركة رسين للأستثمار© {year}
+      </p>
     </div>
   )
 }
