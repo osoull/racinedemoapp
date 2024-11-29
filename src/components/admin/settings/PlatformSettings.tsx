@@ -85,7 +85,7 @@ export function PlatformSettings() {
         </TabsList>
 
         <TabsContent value="general">
-          <Card>
+          <Card className="max-w-2xl mr-auto">
             <CardHeader className="text-right">
               <CardTitle>الإعدادات العامة</CardTitle>
               <CardDescription>
@@ -115,7 +115,7 @@ export function PlatformSettings() {
         </TabsContent>
 
         <TabsContent value="investments">
-          <Card>
+          <Card className="max-w-2xl mr-auto">
             <CardHeader className="text-right">
               <CardTitle>إعدادات الاستثمار</CardTitle>
               <CardDescription>
@@ -148,7 +148,7 @@ export function PlatformSettings() {
         </TabsContent>
 
         <TabsContent value="security">
-          <Card>
+          <Card className="max-w-2xl mr-auto">
             <CardHeader className="text-right">
               <CardTitle>إعدادات الأمان</CardTitle>
               <CardDescription>
