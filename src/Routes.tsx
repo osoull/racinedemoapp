@@ -1,6 +1,10 @@
 import { Routes as RouterRoutes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Auth } from "@/components/Auth"
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
+import { AdminSidebar } from "@/components/admin/AdminSidebar"
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
+import { PrivateRoute } from "@/components/auth/PrivateRoute"
 
 export function Routes() {
   const { user } = useAuth()
@@ -16,9 +20,26 @@ export function Routes() {
 
   return (
     <RouterRoutes>
-      <Route path="/auth" element={<Navigate to="/investor/dashboard" replace />} />
-      <Route path="/" element={<Navigate to="/investor/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/investor/dashboard" replace />} />
+      {/* Admin Routes */}
+      <Route
+        path="/admin/*"
+        element={
+          <PrivateRoute allowedTypes={["admin"]}>
+            <DashboardLayout sidebar={<AdminSidebar />}>
+              <RouterRoutes>
+                <Route path="dashboard" element={<DashboardOverview />} />
+              </RouterRoutes>
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Auth redirect */}
+      <Route path="/auth" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+      
+      {/* Catch all route */}
+      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </RouterRoutes>
   )
 }
