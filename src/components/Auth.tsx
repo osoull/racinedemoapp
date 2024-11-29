@@ -29,11 +29,18 @@ export function Auth() {
           .eq("id", user.id)
           .single()
 
-        if (!profile) return
+        if (!profile) {
+          toast({
+            title: "خطأ",
+            description: "لم يتم العثور على الملف الشخصي",
+            variant: "destructive",
+          })
+          return
+        }
 
         const path = profile.user_type === "admin" ? "/admin" :
                     profile.user_type === "borrower" ? "/borrower/dashboard" :
-                    "/investor"
+                    "/investor/dashboard"
                     
         navigate(path, { replace: true })
       } catch (error) {

@@ -1,5 +1,4 @@
 import { Navigate, Routes, Route } from "react-router-dom"
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { BorrowerSidebar } from "@/components/borrower/BorrowerSidebar"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
@@ -8,6 +7,7 @@ import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/Borro
 import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
+import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 
 export const RoleRoutes = () => {
@@ -24,31 +24,31 @@ export const RoleRoutes = () => {
         <PrivateRoute allowedTypes={["borrower"]}>
           <Routes>
             <Route path="dashboard" element={
-              <DashboardLayout sidebar={<BorrowerSidebar />}>
+              <BorrowerDashboardLayout>
                 <BorrowerDashboardOverview />
-              </DashboardLayout>
+              </BorrowerDashboardLayout>
             } />
             <Route path="profile" element={
-              <DashboardLayout sidebar={<BorrowerSidebar />}>
+              <BorrowerDashboardLayout>
                 <BorrowerProfile />
-              </DashboardLayout>
+              </BorrowerDashboardLayout>
             } />
             <Route path="kyc" element={
-              <DashboardLayout sidebar={<BorrowerSidebar />}>
+              <BorrowerDashboardLayout>
                 <BorrowerKYCForm />
-              </DashboardLayout>
+              </BorrowerDashboardLayout>
             } />
             <Route path="payments" element={
-              <DashboardLayout sidebar={<BorrowerSidebar />}>
+              <BorrowerDashboardLayout>
                 <BorrowerPayments />
-              </DashboardLayout>
+              </BorrowerDashboardLayout>
             } />
           </Routes>
         </PrivateRoute>
       } />
 
       {/* Investor Routes */}
-      <Route path="/investor" element={
+      <Route path="/investor/*" element={
         <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
           <DashboardLayout sidebar={<InvestorSidebar />}>
             <InvestorDashboard />
@@ -60,7 +60,7 @@ export const RoleRoutes = () => {
       <Route path="/" element={
         user?.user_metadata?.user_type === "borrower" ? 
           <Navigate to="/borrower/dashboard" replace /> :
-          <Navigate to="/investor" replace />
+          <Navigate to="/investor/dashboard" replace />
       } />
 
       {/* Catch all route */}
