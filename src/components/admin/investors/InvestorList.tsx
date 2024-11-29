@@ -57,9 +57,11 @@ const columns: ColumnDef<Investor>[] = [
 
 export function InvestorList({ investors }: { investors: Investor[] }) {
   return (
-    <DataTable
-      columns={columns}
-      data={investors}
-    />
+    <div className="text-right" dir="rtl">
+      <DataTable
+        columns={columns}
+        data={investors}
+      />
+    </div>
   )
 }

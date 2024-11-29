@@ -63,10 +63,12 @@ interface WalletTransactionsProps {
 
 export function WalletTransactions({ transactions, isLoading }: WalletTransactionsProps) {
   return (
-    <DataTable
-      columns={columns}
-      data={transactions || []}
-      isLoading={isLoading}
-    />
+    <div className="text-right" dir="rtl">
+      <DataTable
+        columns={columns}
+        data={transactions || []}
+        isLoading={isLoading}
+      />
+    </div>
   )
 }

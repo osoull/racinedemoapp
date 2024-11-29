@@ -32,62 +32,64 @@ export function InvestmentsTable({ investments, isLoading, onViewDetails, onRefu
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-right">المستثمر</TableHead>
-          <TableHead className="text-right">الفرصة</TableHead>
-          <TableHead className="text-right">المبلغ</TableHead>
-          <TableHead className="text-right">طريقة الدفع</TableHead>
-          <TableHead className="text-right">الحالة</TableHead>
-          <TableHead className="text-right">التاريخ</TableHead>
-          <TableHead className="text-right">الإجراءات</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {investments.map((investment) => (
-          <TableRow key={investment.id}>
-            <TableCell>
-              {investment.user.first_name} {investment.user.last_name}
-            </TableCell>
-            <TableCell>{investment.investment.funding_request.title}</TableCell>
-            <TableCell>{investment.amount} ريال</TableCell>
-            <TableCell>
-              {investment.stripe_payments ? "بطاقة بنكية" : "تحويل بنكي"}
-            </TableCell>
-            <TableCell>
-              <Badge variant={
-                investment.status === "completed" ? "success" :
-                investment.status === "pending" ? "warning" : "destructive"
-              }>
-                {investment.status === "completed" ? "مكتمل" :
-                 investment.status === "pending" ? "قيد المعالجة" : "فشل"}
-              </Badge>
-            </TableCell>
-            <TableCell>{format(new Date(investment.created_at), "yyyy-MM-dd")}</TableCell>
-            <TableCell>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onViewDetails(investment)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                {investment.status === "completed" && (
+    <div className="text-right" dir="rtl">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>المستثمر</TableHead>
+            <TableHead>الفرصة</TableHead>
+            <TableHead>المبلغ</TableHead>
+            <TableHead>طريقة الدفع</TableHead>
+            <TableHead>الحالة</TableHead>
+            <TableHead>التاريخ</TableHead>
+            <TableHead>الإجراءات</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {investments.map((investment) => (
+            <TableRow key={investment.id}>
+              <TableCell>
+                {investment.user.first_name} {investment.user.last_name}
+              </TableCell>
+              <TableCell>{investment.investment.funding_request.title}</TableCell>
+              <TableCell>{investment.amount} ريال</TableCell>
+              <TableCell>
+                {investment.stripe_payments ? "بطاقة بنكية" : "تحويل بنكي"}
+              </TableCell>
+              <TableCell>
+                <Badge variant={
+                  investment.status === "completed" ? "success" :
+                  investment.status === "pending" ? "warning" : "destructive"
+                }>
+                  {investment.status === "completed" ? "مكتمل" :
+                   investment.status === "pending" ? "قيد المعالجة" : "فشل"}
+                </Badge>
+              </TableCell>
+              <TableCell>{format(new Date(investment.created_at), "yyyy-MM-dd")}</TableCell>
+              <TableCell>
+                <div className="flex gap-2 justify-end">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onRefund(investment)}
+                    onClick={() => onViewDetails(investment)}
                   >
-                    <RefreshCw className="h-4 w-4" />
+                    <Eye className="h-4 w-4" />
                   </Button>
-                )}
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                  {investment.status === "completed" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onRefund(investment)}
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }

@@ -36,12 +36,12 @@ export function FeesChart() {
   })) || []
 
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-4 text-right">
       <CardHeader>
         <CardTitle>تحليل العمولات</CardTitle>
       </CardHeader>
       <CardContent className="pl-2">
-        <div className="h-[350px]">
+        <div className="h-[350px]" dir="ltr">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
