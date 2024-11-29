@@ -1,10 +1,11 @@
 import { Input } from "@/components/ui/input"
-import { KYCFormData, bankDetailsToJson } from "@/types/kyc"
+import { KYCFormData } from "@/types/kyc"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { bankDetailsToJson } from "@/types/kyc"
 
 interface BankDetailsSectionProps {
   kycData: KYCFormData;
@@ -15,21 +16,35 @@ export function BankDetailsSection({ kycData, setKycData }: BankDetailsSectionPr
   const [saving, setSaving] = useState(false)
   const { toast } = useToast()
 
-  const handleSave = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setSaving(true)
+
+    // Validation uniquement des champs bancaires
+    if (!kycData.bank_account_details.bank_name || 
+        !kycData.bank_account_details.account_holder_name || 
+        !kycData.bank_account_details.iban) {
+      toast({
+        title: "خطأ",
+        description: "يرجى إدخال جميع معلومات الحساب البنكي",
+        variant: "destructive",
+      })
+      setSaving(false)
+      return
+    }
+
     try {
       const { error } = await supabase
         .from("borrower_kyc")
         .upsert({
-          ...kycData,
+          id: kycData.id,
           bank_account_details: bankDetailsToJson(kycData.bank_account_details),
-          updated_at: new Date().toISOString(),
         })
 
       if (error) throw error
 
       toast({
-        title: "تم التحديث",
+        title: "تم الحفظ",
         description: "تم حفظ معلومات الحساب البنكي بنجاح",
       })
     } catch (error) {
@@ -99,7 +114,7 @@ export function BankDetailsSection({ kycData, setKycData }: BankDetailsSectionPr
           />
         </div>
       </div>
-      <Button onClick={handleSave} disabled={saving}>
+      <Button onClick={handleSubmit} disabled={saving}>
         {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
         حفظ المعلومات
       </Button>
