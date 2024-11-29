@@ -21,13 +21,11 @@ export default function InvestorsPage() {
 
       if (error) throw error
       
-      // Transform the data to match the expected Investor type
-      const transformedData = (data || []).map(investor => ({
+      // Transform the data to match the Investor type
+      return (data || []).map(investor => ({
         ...investor,
-        investor_kyc: investor.investor_kyc ? [investor.investor_kyc] : []
-      }))
-      
-      return transformedData as Investor[]
+        investor_kyc: investor.investor_kyc?.[0] || null
+      })) as Investor[]
     }
   })
 
