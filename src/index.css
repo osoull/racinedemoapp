@@ -49,7 +49,9 @@
     --input: 250 33% 25%;
     --ring: 250 33% 50%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
@@ -58,32 +60,57 @@
     @apply bg-background text-foreground font-sans antialiased min-h-screen;
   }
 
-  [dir="rtl"] {
-    text-align: right;
-  }
-
+  /* RTL Support */
   html {
     direction: rtl;
   }
 
-  /* Logo styles for dark mode */
+  /* Input RTL Support */
+  input,
+  textarea,
+  select {
+    @apply text-right;
+  }
+
+  /* Input placeholder RTL */
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-right;
+  }
+
+  /* Form labels RTL */
+  label {
+    @apply block text-right;
+  }
+
+  /* Specific RTL adjustments */
+  .rtl-input {
+    @apply text-right placeholder:text-right;
+  }
+
+  .rtl-select {
+    @apply text-right;
+  }
+
+  .rtl-form {
+    @apply text-right;
+  }
+
+  /* Dark mode adjustments */
   .dark svg {
     @apply text-white;
   }
 
-  /* Ensure icons in buttons and interactive elements are visible in dark mode */
   .dark button svg,
   .dark a svg,
   .dark .interactive-icon svg {
     @apply text-white hover:text-primary-200;
   }
 
-  /* Ensure muted icons are slightly dimmed but still visible */
   .dark .text-muted-foreground svg {
     @apply text-white/70 hover:text-white;
   }
 
-  /* Filter styles for dark mode */
   .dark select,
   .dark input[type="text"],
   .dark input[type="search"] {
