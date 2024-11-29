@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye, CheckCircle, XCircle } from "lucide-react"
-import { KYCStatusLabel } from "@/components/admin/KycStatusLabel"
+import { KycStatusLabel } from "@/components/admin/KycStatusLabel"
 import { KYCVerificationDialog } from "./KYCVerificationDialog"
 import { useState } from "react"
 
@@ -52,7 +52,7 @@ export function KYCVerificationList({ requests }: { requests: KYCRequest[] }) {
     {
       accessorKey: "kyc_status",
       header: "الحالة",
-      cell: ({ row }) => <KYCStatusLabel status={row.original.kyc_status} />,
+      cell: ({ row }) => <KycStatusLabel status={row.original.kyc_status} />,
     },
     {
       accessorKey: "created_at",
