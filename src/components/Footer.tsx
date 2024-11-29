@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <footer className="border-t bg-white">
       <div className="container mx-auto px-4">
-        <div className="py-4 flex items-center justify-between">
+        <div className="py-4 flex items-center">
           {/* Social Icons */}
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" asChild>
@@ -38,7 +38,7 @@ const Footer = () => {
           </div>
 
           {/* Copyright Text */}
-          <p className="text-primary/80 font-medium text-base">
+          <p className="text-primary/80 font-medium text-base flex-1 text-center">
             جميع الحقوق محفوظة لشركة رسين للأستثمار© {year}
           </p>
         </div>
