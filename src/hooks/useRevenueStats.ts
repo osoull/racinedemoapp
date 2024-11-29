@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { RevenueByPeriod } from "@/types/supabase"
+import { RevenueByPeriod } from "@/types/revenue"
 
 export const useRevenueStats = () => {
   const { data, isLoading } = useQuery({

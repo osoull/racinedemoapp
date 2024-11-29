@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { Investor } from "@/types/supabase"
+import { Investor } from "@/types/investor"
 
 const columns: ColumnDef<Investor>[] = [
   {

@@ -3,7 +3,7 @@ import { InvestorList } from "@/components/admin/investors/InvestorList"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
-import { Investor } from "@/types/supabase"
+import { Investor } from "@/types/investor"
 
 export function InvestorManagement() {
   const { data: investors, isLoading } = useQuery({

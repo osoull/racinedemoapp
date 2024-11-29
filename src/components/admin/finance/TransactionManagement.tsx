@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Transaction } from "@/types/supabase"
+import { Transaction } from "@/types/transaction"
 
 export function TransactionManagement() {
   const [currentTab, setCurrentTab] = useState("all")

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
-import { RevenueByPeriod } from "@/types/supabase"
+import { RevenueByPeriod } from "@/types/revenue"
 
 export function FeesChart() {
   const { data: feesData, isLoading } = useQuery({
