@@ -7,7 +7,6 @@ import { Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { KYCFormData } from "@/types/kyc"
-import { bankDetailsToJson } from "@/types/kyc"
 
 interface LegalRepresentativeSectionProps {
   kycData: KYCFormData;
@@ -21,11 +20,11 @@ export function LegalRepresentativeSection({ kycData, setKycData }: LegalReprese
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validation
+    // Validation uniquement des champs du représentant légal
     if (!kycData.legal_representative_name || !kycData.legal_representative_id) {
       toast({
         title: "خطأ",
-        description: "جميع الحقول مطلوبة",
+        description: "يرجى إدخال اسم ورقم هوية الممثل القانوني",
         variant: "destructive",
       })
       return
@@ -38,17 +37,8 @@ export function LegalRepresentativeSection({ kycData, setKycData }: LegalReprese
         .from("borrower_kyc")
         .upsert({
           id: kycData.id,
-          company_registration_date: kycData.company_registration_date,
-          company_registration_number: kycData.company_registration_number,
-          tax_identification_number: kycData.tax_identification_number,
           legal_representative_name: kycData.legal_representative_name,
           legal_representative_id: kycData.legal_representative_id,
-          annual_revenue: kycData.annual_revenue,
-          number_of_employees: kycData.number_of_employees,
-          industry_sector: kycData.industry_sector,
-          company_website: kycData.company_website,
-          bank_account_details: bankDetailsToJson(kycData.bank_account_details),
-          verification_status: kycData.verification_status,
         })
 
       if (error) throw error

@@ -97,7 +97,6 @@ export function BorrowerKYCForm() {
   }
 
   const requestKYCVerification = async () => {
-    // Validation des champs obligatoires
     if (!kycData.legal_representative_name || !kycData.legal_representative_id) {
       toast({
         title: "خطأ",
