@@ -25,24 +25,34 @@ export function Auth() {
     const redirectBasedOnUserType = async () => {
       setIsRedirecting(true)
       try {
-        const { data: profile, error } = await supabase
+        const { data: profiles, error } = await supabase
           .from("profiles")
           .select("user_type")
           .eq("id", user.id)
-          .single()
 
         if (error) throw error
 
-        if (!profile) {
-          toast({
-            title: "خطأ",
-            description: "لم يتم العثور على الملف الشخصي",
-            variant: "destructive",
-          })
-          setIsRedirecting(false)
+        // If no profile exists, create one with default type
+        if (!profiles || profiles.length === 0) {
+          const { error: insertError } = await supabase
+            .from("profiles")
+            .insert([
+              {
+                id: user.id,
+                email: user.email,
+                user_type: "basic_investor",
+                first_name: "",
+                last_name: "",
+              },
+            ])
+
+          if (insertError) throw insertError
+
+          await navigate("/investor/dashboard")
           return
         }
 
+        const profile = profiles[0]
         switch (profile.user_type) {
           case "borrower":
             await navigate("/borrower/dashboard")
