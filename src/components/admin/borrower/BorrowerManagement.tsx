@@ -38,7 +38,7 @@ export function BorrowerManagement() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">إدارة المقترضين</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-primary-800">إدارة المقترضين</h2>
         <p className="text-muted-foreground">
           إدارة ومراقبة المقترضين وطلباتهم
         </p>

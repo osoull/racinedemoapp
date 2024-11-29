@@ -34,7 +34,7 @@ export function KYCManagement() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">التحقق من الهوية</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-primary-800">التحقق من الهوية</h2>
         <p className="text-muted-foreground">
           إدارة ومراجعة طلبات التحقق من الهوية
         </p>
