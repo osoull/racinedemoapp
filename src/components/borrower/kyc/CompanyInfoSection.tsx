@@ -6,6 +6,34 @@ import { useState } from "react"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+// Liste des secteurs d'activité selon la classification ISIC utilisée en Arabie Saoudite
+const SAUDI_SECTORS = [
+  { id: "agriculture", label: "الزراعة والغابات وصيد الأسماك" },
+  { id: "mining", label: "التعدين واستغلال المحاجر" },
+  { id: "manufacturing", label: "الصناعات التحويلية" },
+  { id: "electricity", label: "إمدادات الكهرباء والغاز والمياه" },
+  { id: "construction", label: "التشييد والبناء" },
+  { id: "wholesale", label: "تجارة الجملة والتجزئة" },
+  { id: "transportation", label: "النقل والتخزين" },
+  { id: "hospitality", label: "خدمات الإقامة والطعام" },
+  { id: "information", label: "المعلومات والاتصالات" },
+  { id: "finance", label: "الأنشطة المالية والتأمين" },
+  { id: "realestate", label: "الأنشطة العقارية" },
+  { id: "professional", label: "الأنشطة المهنية والعلمية والتقنية" },
+  { id: "administrative", label: "الخدمات الإدارية وخدمات الدعم" },
+  { id: "education", label: "التعليم" },
+  { id: "health", label: "الصحة والعمل الاجتماعي" },
+  { id: "arts", label: "الفنون والترفيه والتسلية" },
+  { id: "other", label: "أنشطة الخدمات الأخرى" }
+]
 
 interface CompanyInfoSectionProps {
   kycData: KYCFormData;
@@ -20,7 +48,6 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
     e.preventDefault()
     setSaving(true)
 
-    // Validation des champs de la société uniquement
     if (!kycData.company_registration_date || 
         !kycData.company_registration_number || 
         !kycData.tax_identification_number || 
@@ -136,11 +163,21 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
             <label className="text-sm font-medium">
               القطاع <span className="text-red-500">*</span>
             </label>
-            <Input
+            <Select
               value={kycData.industry_sector}
-              onChange={(e) => setKycData({ ...kycData, industry_sector: e.target.value })}
-              required
-            />
+              onValueChange={(value) => setKycData({ ...kycData, industry_sector: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="اختر القطاع" />
+              </SelectTrigger>
+              <SelectContent>
+                {SAUDI_SECTORS.map((sector) => (
+                  <SelectItem key={sector.id} value={sector.id}>
+                    {sector.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
