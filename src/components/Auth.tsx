@@ -8,12 +8,14 @@ import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { SignInForm } from "./auth/SignInForm"
 import { UserType } from "@/types/user"
+import { Loader2 } from "lucide-react"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup"
 
 export function Auth() {
   const [step, setStep] = useState<AuthStep>("signin")
   const [isLoading, setIsLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -22,12 +24,15 @@ export function Auth() {
     if (!user) return
 
     const redirectBasedOnUserType = async () => {
+      setIsRedirecting(true)
       try {
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from("profiles")
           .select("user_type")
           .eq("id", user.id)
           .single()
+
+        if (error) throw error
 
         if (!profile) {
           toast({
@@ -43,13 +48,15 @@ export function Auth() {
                     "/investor/dashboard"
                     
         navigate(path, { replace: true })
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching user type:", error)
         toast({
           title: "خطأ",
           description: "حدث خطأ أثناء توجيهك للوحة التحكم",
           variant: "destructive",
         })
+      } finally {
+        setIsRedirecting(false)
       }
     }
 
@@ -90,6 +97,14 @@ export function Auth() {
     } else {
       setStep("signup")
     }
+  }
+
+  if (isRedirecting) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (

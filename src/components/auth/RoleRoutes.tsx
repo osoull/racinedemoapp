@@ -8,13 +8,14 @@ import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 
 export const RoleRoutes = () => {
   const { user } = useAuth()
 
   if (!user) {
-    return <Navigate to="/auth" replace />
+    return <Navigate to="/" replace />
   }
 
   return (
@@ -58,9 +59,13 @@ export const RoleRoutes = () => {
 
       {/* Default redirect based on user type */}
       <Route path="/" element={
-        user?.user_metadata?.user_type === "borrower" ? 
-          <Navigate to="/borrower/dashboard" replace /> :
-          <Navigate to="/investor/dashboard" replace />
+        user ? (
+          user.user_metadata?.user_type === "borrower" ? 
+            <Navigate to="/borrower/dashboard" replace /> :
+            <Navigate to="/investor/dashboard" replace />
+        ) : (
+          <Navigate to="/auth" replace />
+        )
       } />
 
       {/* Catch all route */}
