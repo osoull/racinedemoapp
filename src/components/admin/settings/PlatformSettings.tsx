@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { Settings, Lock, TrendingUp } from "lucide-react"
+import { Settings, Lock, TrendingUp, ArrowLeft } from "lucide-react"
 
 export function PlatformSettings() {
   const { toast } = useToast()
@@ -53,59 +53,71 @@ export function PlatformSettings() {
   }
 
   return (
-    <div className="container mx-auto py-6" dir="rtl">
-      <div className="mb-6 text-right">
-        <h1 className="text-2xl font-bold">إعدادات المنصة</h1>
-        <p className="text-muted-foreground">إدارة إعدادات وتكوين المنصة</p>
+    <div className="container mx-auto p-6" dir="rtl">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-primary-800">إعدادات المنصة</h1>
+            <p className="text-muted-foreground mt-2">إدارة إعدادات وتكوين المنصة</p>
+          </div>
+          <Button variant="outline" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            رجوع
+          </Button>
+        </div>
       </div>
 
-      <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="w-full justify-end p-0 bg-transparent space-x-2">
+      {/* Main Content */}
+      <Tabs defaultValue="general" className="space-y-6">
+        <TabsList className="bg-card p-1 rounded-lg border shadow-sm w-full flex justify-end space-x-2">
           <TabsTrigger 
             value="security" 
-            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3 rounded-lg"
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3"
           >
             <Lock className="h-4 w-4" />
             الأمان
           </TabsTrigger>
           <TabsTrigger 
             value="investments" 
-            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3 rounded-lg"
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3"
           >
             <TrendingUp className="h-4 w-4" />
             الاستثمارات
           </TabsTrigger>
           <TabsTrigger 
             value="general" 
-            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3 rounded-lg"
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3"
           >
             <Settings className="h-4 w-4" />
             عام
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general">
-          <div className="flex justify-end">
-            <Card className="max-w-2xl w-full">
-              <CardHeader className="text-right">
-                <CardTitle>الإعدادات العامة</CardTitle>
+        <div className="grid gap-6">
+          <TabsContent value="general" className="mt-0">
+            <Card className="border-2 border-muted">
+              <CardHeader>
+                <CardTitle className="text-2xl">الإعدادات العامة</CardTitle>
                 <CardDescription>
                   إدارة الإعدادات العامة للمنصة
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="platform-name">اسم المنصة</Label>
-                  <Input
-                    id="platform-name"
-                    defaultValue="رسين"
-                    className="w-[180px] text-right"
-                  />
+                  <div className="flex-1 max-w-sm">
+                    <Label htmlFor="platform-name" className="text-right block mb-2">اسم المنصة</Label>
+                    <Input
+                      id="platform-name"
+                      defaultValue="رسين"
+                      className="text-right"
+                    />
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="space-y-1">
                     <Label>وضع الصيانة</Label>
-                    <div className="text-[0.8rem] text-muted-foreground">
+                    <div className="text-sm text-muted-foreground">
                       تفعيل وضع الصيانة للمنصة
                     </div>
                   </div>
@@ -113,67 +125,65 @@ export function PlatformSettings() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="investments">
-          <div className="flex justify-end">
-            <Card className="max-w-2xl w-full">
-              <CardHeader className="text-right">
-                <CardTitle>إعدادات الاستثمار</CardTitle>
+          <TabsContent value="investments" className="mt-0">
+            <Card className="border-2 border-muted">
+              <CardHeader>
+                <CardTitle className="text-2xl">إعدادات الاستثمار</CardTitle>
                 <CardDescription>
                   تكوين حدود وقواعد الاستثمار
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="min-investment">الحد الأدنى للاستثمار</Label>
-                  <Input
-                    id="min-investment"
-                    type="number"
-                    defaultValue="1000"
-                    className="w-[180px] text-right"
-                    dir="ltr"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="max-investment">الحد الأقصى للاستثمار</Label>
-                  <Input
-                    id="max-investment"
-                    type="number"
-                    defaultValue="50000"
-                    className="w-[180px] text-right"
-                    dir="ltr"
-                  />
+              <CardContent className="space-y-6">
+                <div className="grid gap-6 max-w-sm">
+                  <div className="space-y-2">
+                    <Label htmlFor="min-investment">الحد الأدنى للاستثمار</Label>
+                    <Input
+                      id="min-investment"
+                      type="number"
+                      defaultValue="1000"
+                      className="text-right"
+                      dir="ltr"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="max-investment">الحد الأقصى للاستثمار</Label>
+                    <Input
+                      id="max-investment"
+                      type="number"
+                      defaultValue="50000"
+                      className="text-right"
+                      dir="ltr"
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="security">
-          <div className="flex justify-end">
-            <Card className="max-w-2xl w-full">
-              <CardHeader className="text-right">
-                <CardTitle>إعدادات الأمان</CardTitle>
+          <TabsContent value="security" className="mt-0">
+            <Card className="border-2 border-muted">
+              <CardHeader>
+                <CardTitle className="text-2xl">إعدادات الأمان</CardTitle>
                 <CardDescription>
                   إدارة إعدادات الأمان والخصوصية
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="space-y-1">
                     <Label>التحقق بخطوتين</Label>
-                    <div className="text-[0.8rem] text-muted-foreground">
+                    <div className="text-sm text-muted-foreground">
                       تفعيل التحقق بخطوتين للمستخدمين
                     </div>
                   </div>
                   <Switch />
                 </div>
                 <div className="flex items-center justify-between">
-                  <div>
+                  <div className="space-y-1">
                     <Label>تأكيد البريد الإلكتروني</Label>
-                    <div className="text-[0.8rem] text-muted-foreground">
+                    <div className="text-sm text-muted-foreground">
                       طلب تأكيد البريد الإلكتروني عند التسجيل
                     </div>
                   </div>
@@ -181,12 +191,15 @@ export function PlatformSettings() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </TabsContent>
+          </TabsContent>
+        </div>
       </Tabs>
 
-      <div className="mt-6 flex justify-end">
-        <Button disabled={isLoading}>
+      <div className="mt-8 flex justify-end">
+        <Button 
+          disabled={isLoading}
+          className="px-8"
+        >
           حفظ التغييرات
         </Button>
       </div>
