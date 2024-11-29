@@ -7,7 +7,7 @@ export default function FundingRequestsPage() {
     <DashboardLayout sidebar={<AdminSidebar />}>
       <div className="space-y-6">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">طلبات التمويل</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-primary-800">طلبات التمويل</h2>
           <p className="text-muted-foreground">
             إدارة ومراجعة طلبات التمويل المقدمة
           </p>
