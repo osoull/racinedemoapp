@@ -18,11 +18,18 @@ import Profile from "@/pages/admin/Profile"
 import Settings from "@/pages/Settings"
 import Notifications from "@/pages/admin/Notifications"
 import Index from "@/pages/Index"
-import { RoleRoutes } from "@/components/auth/RoleRoutes"
+import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
+import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
+import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
+import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
+import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
+import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
+import InvestorDashboard from "@/pages/investor/Dashboard"
 
 export function Routes() {
   const { user } = useAuth()
 
+  // Si l'utilisateur n'est pas connecté, afficher uniquement la page d'authentification
   if (!user) {
     return (
       <RouterRoutes>
@@ -32,9 +39,12 @@ export function Routes() {
     )
   }
 
+  // Obtenir le type d'utilisateur depuis les métadonnées
+  const userType = user?.user_metadata?.user_type
+
   return (
     <RouterRoutes>
-      {/* Admin Routes */}
+      {/* Routes Admin */}
       <Route
         path="/admin/*"
         element={
@@ -69,39 +79,60 @@ export function Routes() {
         }
       />
 
-      {/* Borrower and Investor Routes */}
-      <RoleRoutes />
+      {/* Routes Emprunteur */}
+      <Route
+        path="/borrower/*"
+        element={
+          <PrivateRoute allowedTypes={["borrower"]}>
+            <BorrowerDashboardLayout>
+              <RouterRoutes>
+                <Route path="dashboard" element={<BorrowerDashboardOverview />} />
+                <Route path="profile" element={<BorrowerProfile />} />
+                <Route path="kyc" element={<BorrowerKYCForm />} />
+                <Route path="payments" element={<BorrowerPayments />} />
+              </RouterRoutes>
+            </BorrowerDashboardLayout>
+          </PrivateRoute>
+        }
+      />
 
-      {/* Auth redirect */}
+      {/* Routes Investisseur */}
+      <Route
+        path="/investor/*"
+        element={
+          <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
+            <DashboardLayout sidebar={<InvestorSidebar />}>
+              <RouterRoutes>
+                <Route path="dashboard" element={<InvestorDashboard />} />
+              </RouterRoutes>
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
+
+      {/* Redirection après authentification */}
       <Route path="/auth" element={<Navigate to="/" replace />} />
       
-      {/* Default redirect based on user type */}
+      {/* Redirection par défaut basée sur le type d'utilisateur */}
       <Route
         path="/"
         element={
           <Navigate
             to={
-              (() => {
-                const userType = user?.user_metadata?.user_type
-                switch (userType) {
-                  case "admin":
-                    return "/admin/dashboard"
-                  case "borrower":
-                    return "/borrower/dashboard"
-                  case "basic_investor":
-                  case "qualified_investor":
-                    return "/investor/dashboard"
-                  default:
-                    return "/auth"
-                }
-              })()
+              userType === "admin"
+                ? "/admin/dashboard"
+                : userType === "borrower"
+                ? "/borrower/dashboard"
+                : userType === "basic_investor" || userType === "qualified_investor"
+                ? "/investor/dashboard"
+                : "/auth"
             }
             replace
           />
         }
       />
       
-      {/* Catch all route */}
+      {/* Route catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </RouterRoutes>
   )
