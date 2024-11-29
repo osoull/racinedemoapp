@@ -22,8 +22,8 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
+    <div className="min-h-screen flex flex-col">
+      {/* Header - Fixed */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center">
           {/* Mobile menu button */}
@@ -62,16 +62,16 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
         </div>
       </header>
 
-      {/* Main layout */}
+      {/* Main layout with fixed sidebar */}
       <div className="flex flex-1">
-        {/* Sidebar - Desktop */}
-        <aside className="fixed right-0 top-14 hidden lg:block w-64 h-[calc(100vh-3.5rem-2.5rem)] border-l bg-background overflow-y-auto">
+        {/* Sidebar - Fixed for desktop */}
+        <aside className="fixed top-14 right-0 hidden lg:block w-64 h-[calc(100vh-3.5rem)] border-l bg-background overflow-y-auto">
           {sidebar}
         </aside>
 
-        {/* Main content */}
+        {/* Main content - With proper margin for sidebar */}
         <main className={cn(
-          "flex-1 lg:mr-64",
+          "flex-1 lg:mr-64 min-h-[calc(100vh-3.5rem-2.5rem)]",
           className
         )}>
           <div className="container max-w-screen-2xl p-6 space-y-6">
@@ -80,8 +80,8 @@ export function DashboardLayout({ children, className, sidebar }: DashboardLayou
         </main>
       </div>
 
-      {/* Footer */}
-      <div className="lg:mr-64">
+      {/* Footer - With proper margin for sidebar */}
+      <div className="lg:mr-64 mt-auto">
         <Footer />
       </div>
     </div>
