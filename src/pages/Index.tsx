@@ -10,21 +10,18 @@ export default function Index() {
       {/* Vue d'ensemble de la plateforme */}
       <PlatformOverview />
 
-      {/* Graphiques */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Graphique des commissions */}
-        <FeesChart />
-        
-        {/* Graphique du financement */}
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>تحليل التمويل</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FundingChart />
-          </CardContent>
-        </Card>
-      </div>
+      {/* Graphique des commissions */}
+      <FeesChart />
+      
+      {/* Graphique du financement */}
+      <Card>
+        <CardHeader>
+          <CardTitle>تحليل التمويل</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FundingChart />
+        </CardContent>
+      </Card>
 
       {/* Activité récente */}
       <Card>
