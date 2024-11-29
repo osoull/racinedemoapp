@@ -52,7 +52,9 @@ export const RoleRoutes = () => {
       <Route path="/investor/*" element={
         <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
           <DashboardLayout sidebar={<InvestorSidebar />}>
-            <InvestorDashboard />
+            <Routes>
+              <Route path="dashboard" element={<InvestorDashboard />} />
+            </Routes>
           </DashboardLayout>
         </PrivateRoute>
       } />

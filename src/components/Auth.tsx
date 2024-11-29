@@ -7,7 +7,6 @@ import { UserTypeSelection } from "./auth/UserTypeSelection"
 import { SignUpForm } from "./auth/SignUpForm"
 import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
 import { SignInForm } from "./auth/SignInForm"
-import { UserType } from "@/types/user"
 import { Loader2 } from "lucide-react"
 
 type AuthStep = "selection" | "signup" | "signin" | "borrower_signup"
@@ -32,7 +31,10 @@ export function Auth() {
           .eq("id", user.id)
           .single()
 
-        if (error) throw error
+        if (error) {
+          console.error("Error fetching profile:", error)
+          throw error
+        }
 
         if (!profile) {
           toast({
@@ -43,13 +45,16 @@ export function Auth() {
           return
         }
 
-        const path = profile.user_type === "admin" ? "/admin" :
-                    profile.user_type === "borrower" ? "/borrower/dashboard" :
-                    "/investor/dashboard"
-                    
-        navigate(path, { replace: true })
+        // Redirection basée sur le type d'utilisateur
+        if (profile.user_type === "borrower") {
+          navigate("/borrower/dashboard", { replace: true })
+        } else if (profile.user_type === "admin") {
+          navigate("/admin", { replace: true })
+        } else {
+          navigate("/investor/dashboard", { replace: true })
+        }
       } catch (error: any) {
-        console.error("Error fetching user type:", error)
+        console.error("Error during redirect:", error)
         toast({
           title: "خطأ",
           description: "حدث خطأ أثناء توجيهك للوحة التحكم",
