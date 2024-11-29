@@ -5,6 +5,10 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
+import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement"
+import { RegulatoryReports } from "@/components/admin/compliance/RegulatoryReports"
+import { ShariaCompliance } from "@/components/admin/compliance/ShariaCompliance"
+import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses"
 
 export function Routes() {
   const { user } = useAuth()
@@ -28,6 +32,19 @@ export function Routes() {
             <DashboardLayout sidebar={<AdminSidebar />}>
               <RouterRoutes>
                 <Route path="dashboard" element={<DashboardOverview />} />
+                <Route path="investors" element={<div>Gestion des investisseurs</div>} />
+                <Route path="borrowers" element={<BorrowerManagement />} />
+                <Route path="funding-requests" element={<div>Gestion des demandes de financement</div>} />
+                <Route path="finance" element={<div>Gestion financière</div>} />
+                <Route path="compliance" element={
+                  <div className="space-y-6">
+                    <RegulatoryReports />
+                    <ShariaCompliance projects={[]} />
+                    <PlatformLicenses />
+                  </div>
+                } />
+                <Route path="kyc" element={<div>Gestion des vérifications KYC</div>} />
+                <Route path="settings" element={<div>Paramètres de la plateforme</div>} />
               </RouterRoutes>
             </DashboardLayout>
           </PrivateRoute>
