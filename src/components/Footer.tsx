@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <footer className="border-t bg-white">
       <div className="container mx-auto px-4">
-        <div className="py-4 flex items-center">
+        <div className="py-2 flex items-center">
           {/* Social Icons */}
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" asChild>
