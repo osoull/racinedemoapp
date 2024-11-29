@@ -1,6 +1,3 @@
-import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/integrations/supabase/client"
-import { useAuth } from "@/hooks/useAuth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Loader2 } from "lucide-react"
@@ -9,6 +6,9 @@ import { useBorrowerStats } from "@/hooks/useBorrowerStats"
 import { BorrowerDashboardStats } from "./BorrowerDashboardStats"
 import { BorrowerAdditionalStats } from "./BorrowerAdditionalStats"
 import { columns } from "./PaymentsTableColumns"
+import { useQuery } from "@tanstack/react-query"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/hooks/useAuth"
 
 export function BorrowerDashboardOverview() {
   const { user } = useAuth()
