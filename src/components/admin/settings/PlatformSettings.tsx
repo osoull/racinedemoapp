@@ -73,7 +73,7 @@ export function PlatformSettings() {
                 إدارة الإعدادات العامة للمنصة
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="platform-name">اسم المنصة</Label>
                 <Input
@@ -103,7 +103,7 @@ export function PlatformSettings() {
                 تكوين حدود وقواعد الاستثمار
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="min-investment">الحد الأدنى للاستثمار</Label>
                 <Input
@@ -136,7 +136,7 @@ export function PlatformSettings() {
                 إدارة إعدادات الأمان والخصوصية
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-2">
               <div className="flex items-center justify-between">
                 <div>
                   <Label>التحقق بخطوتين</Label>
