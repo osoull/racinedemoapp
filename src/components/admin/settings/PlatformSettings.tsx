@@ -73,7 +73,7 @@ export function PlatformSettings() {
                 إدارة الإعدادات العامة للمنصة
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="platform-name">اسم المنصة</Label>
                 <Input
@@ -83,7 +83,7 @@ export function PlatformSettings() {
                 />
               </div>
               <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
+                <div>
                   <Label>وضع الصيانة</Label>
                   <div className="text-[0.8rem] text-muted-foreground">
                     تفعيل وضع الصيانة للمنصة
@@ -103,7 +103,7 @@ export function PlatformSettings() {
                 تكوين حدود وقواعد الاستثمار
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="min-investment">الحد الأدنى للاستثمار</Label>
                 <Input
@@ -136,9 +136,9 @@ export function PlatformSettings() {
                 إدارة إعدادات الأمان والخصوصية
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
+                <div>
                   <Label>التحقق بخطوتين</Label>
                   <div className="text-[0.8rem] text-muted-foreground">
                     تفعيل التحقق بخطوتين للمستخدمين
@@ -147,7 +147,7 @@ export function PlatformSettings() {
                 <Switch />
               </div>
               <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
+                <div>
                   <Label>تأكيد البريد الإلكتروني</Label>
                   <div className="text-[0.8rem] text-muted-foreground">
                     طلب تأكيد البريد الإلكتروني عند التسجيل
