@@ -5,21 +5,23 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle2, FileCheck2, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type Project = {
   id: string;
   title: string;
   status: string;
-  reviewer?: string;
-  review_date?: string;
+  sharia_review_status: string;
+  sharia_reviewer_id?: string;
+  sharia_review_date?: string;
   sharia_notes?: string;
+  reviewer?: {
+    first_name: string;
+    last_name: string;
+  };
 };
 
-type ShariaComplianceProps = {
-  projects: Project[];
-};
-
-export const ShariaCompliance = ({ projects: initialProjects }: ShariaComplianceProps) => {
+export const ShariaCompliance = () => {
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ["sharia-compliance-projects"],
     queryFn: async () => {
@@ -29,23 +31,23 @@ export const ShariaCompliance = ({ projects: initialProjects }: ShariaCompliance
           id,
           title,
           status,
-          metadata->reviewer,
-          metadata->review_date,
-          metadata->sharia_notes
+          sharia_review_status,
+          sharia_reviewer_id,
+          sharia_review_date,
+          sharia_notes,
+          reviewer:sharia_reviewer_id (
+            first_name,
+            last_name
+          )
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        toast.error("خطأ في تحميل المشاريع");
+        throw error;
+      }
 
-      // Transform the data to match our Project type
-      return (data || []).map((item) => ({
-        id: item.id,
-        title: item.title,
-        status: item.status,
-        reviewer: item.reviewer as string,
-        review_date: item.review_date as string,
-        sharia_notes: item.sharia_notes as string
-      }));
+      return data || [];
     },
   });
 
@@ -75,6 +77,19 @@ export const ShariaCompliance = ({ projects: initialProjects }: ShariaCompliance
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "approved":
+        return "معتمد";
+      case "rejected":
+        return "مرفوض";
+      case "under_review":
+        return "قيد المراجعة";
+      default:
+        return "معلق";
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -90,51 +105,61 @@ export const ShariaCompliance = ({ projects: initialProjects }: ShariaCompliance
         <div className="space-y-4">
           <ScrollArea className="h-[400px] rounded-md border">
             <div className="p-4 space-y-4">
-              {projects.map((project) => (
-                <div
-                  key={project.id}
-                  className="flex items-start justify-between space-x-4 border-b pb-4 last:border-0 last:pb-0 rtl:space-x-reverse"
-                >
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium leading-none">{project.title}</h4>
-                      <Badge
-                        variant="secondary"
-                        className={getStatusColor(project.status)}
-                      >
-                        {project.status === "approved"
-                          ? "معتمد"
-                          : project.status === "rejected"
-                          ? "مرفوض"
-                          : project.status === "under_review"
-                          ? "قيد المراجعة"
-                          : "معلق"}
-                      </Badge>
-                    </div>
-                    {project.reviewer && (
-                      <p className="text-sm text-muted-foreground">
-                        المراجع: {project.reviewer}
-                      </p>
-                    )}
-                    {project.review_date && (
-                      <p className="text-sm text-muted-foreground">
-                        تاريخ المراجعة: {new Date(project.review_date).toLocaleDateString('ar-SA')}
-                      </p>
-                    )}
-                    {project.sharia_notes && (
-                      <p className="text-sm text-muted-foreground mt-2 bg-muted p-2 rounded-md">
-                        {project.sharia_notes}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {getStatusIcon(project.status)}
-                    <Button variant="ghost" size="sm">
-                      عرض التفاصيل
-                    </Button>
-                  </div>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-32">
+                  <span className="loading loading-spinner loading-md"></span>
                 </div>
-              ))}
+              ) : projects.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  لا توجد مشاريع للمراجعة
+                </div>
+              ) : (
+                projects.map((project) => (
+                  <div
+                    key={project.id}
+                    className="flex items-start justify-between space-x-4 border-b pb-4 last:border-0 last:pb-0 rtl:space-x-reverse"
+                  >
+                    <div className="space-y-1 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium leading-none">
+                          {project.title}
+                        </h4>
+                        <Badge
+                          variant="secondary"
+                          className={getStatusColor(project.sharia_review_status)}
+                        >
+                          {getStatusText(project.sharia_review_status)}
+                        </Badge>
+                      </div>
+                      {project.reviewer && (
+                        <p className="text-sm text-muted-foreground">
+                          المراجع: {project.reviewer.first_name}{" "}
+                          {project.reviewer.last_name}
+                        </p>
+                      )}
+                      {project.sharia_review_date && (
+                        <p className="text-sm text-muted-foreground">
+                          تاريخ المراجعة:{" "}
+                          {new Date(project.sharia_review_date).toLocaleDateString(
+                            "ar-SA"
+                          )}
+                        </p>
+                      )}
+                      {project.sharia_notes && (
+                        <p className="text-sm text-muted-foreground mt-2 bg-muted p-2 rounded-md">
+                          {project.sharia_notes}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(project.sharia_review_status)}
+                      <Button variant="ghost" size="sm">
+                        عرض التفاصيل
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </ScrollArea>
         </div>

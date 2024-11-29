@@ -441,6 +441,10 @@ export type Database = {
           owner_id: string
           risk_description: string | null
           risk_rating: string | null
+          sharia_notes: string | null
+          sharia_review_date: string | null
+          sharia_review_status: string | null
+          sharia_reviewer_id: string | null
           status: string
           submitted_at: string | null
           title: string
@@ -462,6 +466,10 @@ export type Database = {
           owner_id: string
           risk_description?: string | null
           risk_rating?: string | null
+          sharia_notes?: string | null
+          sharia_review_date?: string | null
+          sharia_review_status?: string | null
+          sharia_reviewer_id?: string | null
           status?: string
           submitted_at?: string | null
           title: string
@@ -483,6 +491,10 @@ export type Database = {
           owner_id?: string
           risk_description?: string | null
           risk_rating?: string | null
+          sharia_notes?: string | null
+          sharia_review_date?: string | null
+          sharia_review_status?: string | null
+          sharia_reviewer_id?: string | null
           status?: string
           submitted_at?: string | null
           title?: string
@@ -499,6 +511,13 @@ export type Database = {
           {
             foreignKeyName: "funding_requests_owner_id_fkey"
             columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "funding_requests_sharia_reviewer_id_fkey"
+            columns: ["sharia_reviewer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1139,6 +1158,51 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "payment_resolution_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sharia_review_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          new_status: string
+          notes: string | null
+          old_status: string | null
+          request_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          new_status: string
+          notes?: string | null
+          old_status?: string | null
+          request_id: string
+          reviewer_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          new_status?: string
+          notes?: string | null
+          old_status?: string | null
+          request_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sharia_review_history_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "funding_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sharia_review_history_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
