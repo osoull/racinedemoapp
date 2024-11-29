@@ -57,13 +57,6 @@ export type Database = {
             foreignKeyName: "bank_accounts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "bank_accounts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -126,13 +119,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "transactions"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bank_transactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "bank_transactions_user_id_fkey"
@@ -206,13 +192,6 @@ export type Database = {
             foreignKeyName: "borrower_kyc_id_fkey"
             columns: ["id"]
             isOneToOne: true
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "borrower_kyc_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -274,13 +253,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "payment_defaults"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "default_action_history_performed_by_fkey"
-            columns: ["performed_by"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "default_action_history_performed_by_fkey"
@@ -369,13 +341,6 @@ export type Database = {
             foreignKeyName: "funding_request_comments_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "funding_request_comments_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -452,13 +417,6 @@ export type Database = {
           request_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "funding_request_status_history_changed_by_fkey"
-            columns: ["changed_by"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
           {
             foreignKeyName: "funding_request_status_history_changed_by_fkey"
             columns: ["changed_by"]
@@ -578,22 +536,8 @@ export type Database = {
             foreignKeyName: "funding_requests_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "funding_requests_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "funding_requests_sharia_reviewer_id_fkey"
-            columns: ["sharia_reviewer_id"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "funding_requests_sharia_reviewer_id_fkey"
@@ -771,13 +715,6 @@ export type Database = {
             foreignKeyName: "investor_kyc_id_fkey"
             columns: ["id"]
             isOneToOne: true
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "investor_kyc_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -825,22 +762,8 @@ export type Database = {
             foreignKeyName: "kyc_documents_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "kyc_documents_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "kyc_documents_verified_by_fkey"
-            columns: ["verified_by"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "kyc_documents_verified_by_fkey"
@@ -884,22 +807,8 @@ export type Database = {
             foreignKeyName: "kyc_status_history_changed_by_fkey"
             columns: ["changed_by"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "kyc_status_history_changed_by_fkey"
-            columns: ["changed_by"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "kyc_status_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "kyc_status_history_user_id_fkey"
@@ -936,13 +845,6 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "notifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
           {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
@@ -990,13 +892,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "payment_defaults_borrower_id_fkey"
-            columns: ["borrower_id"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
           {
             foreignKeyName: "payment_defaults_borrower_id_fkey"
             columns: ["borrower_id"]
@@ -1060,13 +955,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "payment_defaults"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_resolution_plans_proposed_by_fkey"
-            columns: ["proposed_by"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "payment_resolution_plans_proposed_by_fkey"
@@ -1392,13 +1280,6 @@ export type Database = {
             foreignKeyName: "sharia_review_history_reviewer_id_fkey"
             columns: ["reviewer_id"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "sharia_review_history_reviewer_id_fkey"
-            columns: ["reviewer_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1442,13 +1323,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "transactions"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "stripe_payments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
           },
           {
             foreignKeyName: "stripe_payments_user_id_fkey"
@@ -1505,13 +1379,6 @@ export type Database = {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "borrower_overview"
-            referencedColumns: ["borrower_id"]
-          },
-          {
-            foreignKeyName: "transactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1530,7 +1397,15 @@ export type Database = {
           total_funded_amount: number | null
           total_requests: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "funding_requests_owner_id_fkey"
+            columns: ["borrower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
