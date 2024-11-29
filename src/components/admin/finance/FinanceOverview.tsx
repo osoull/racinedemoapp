@@ -8,6 +8,13 @@ import { TotalFeesCard } from "@/components/admin/revenue/TotalFeesCard"
 export function FinanceOverview() {
   return (
     <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight text-primary-800">المالية</h2>
+        <p className="text-muted-foreground">
+          إدارة ومراقبة العمليات المالية للمنصة
+        </p>
+      </div>
+      
       <TotalFeesCard />
       
       <Tabs defaultValue="reports" className="space-y-4">
