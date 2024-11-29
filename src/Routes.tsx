@@ -14,6 +14,7 @@ import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
 import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
 import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
 import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
+import Index from "@/pages/Index"
 
 export function Routes() {
   const { user } = useAuth()
@@ -36,7 +37,7 @@ export function Routes() {
           <PrivateRoute allowedTypes={["admin"]}>
             <DashboardLayout sidebar={<AdminSidebar />}>
               <RouterRoutes>
-                <Route path="dashboard" element={<DashboardOverview />} />
+                <Route path="dashboard" element={<Index />} />
                 <Route path="investors" element={<InvestorManagement />} />
                 <Route path="borrowers" element={<BorrowerManagement />} />
                 <Route path="funding-requests" element={<FundingManagement />} />
