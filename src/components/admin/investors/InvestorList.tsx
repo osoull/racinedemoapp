@@ -1,19 +1,7 @@
 import { DataTable } from "@/components/ui/data-table"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-
-interface Investor {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  kyc_status: string
-  user_type: string
-  created_at: string
-  investor_kyc?: {
-    verification_status: string
-  }[]
-}
+import { Investor } from "@/types/supabase"
 
 const columns: ColumnDef<Investor>[] = [
   {
@@ -67,11 +55,7 @@ const columns: ColumnDef<Investor>[] = [
   },
 ]
 
-interface InvestorListProps {
-  investors: Investor[]
-}
-
-export function InvestorList({ investors }: InvestorListProps) {
+export function InvestorList({ investors }: { investors: Investor[] }) {
   return (
     <DataTable
       columns={columns}

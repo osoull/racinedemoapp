@@ -3,19 +3,7 @@ import { InvestorList } from "@/components/admin/investors/InvestorList"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { Loader2 } from "lucide-react"
-
-interface Investor {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  user_type: string
-  kyc_status: string
-  created_at: string
-  investor_kyc: {
-    verification_status: string
-  } | null
-}
+import { Investor } from "@/types/supabase"
 
 export function InvestorManagement() {
   const { data: investors, isLoading } = useQuery({

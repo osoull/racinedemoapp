@@ -46,5 +46,5 @@ export interface Investor {
   user_type: string
   investor_kyc: {
     verification_status: string
-  }[]
+  } | null
 }
