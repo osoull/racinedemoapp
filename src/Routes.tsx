@@ -17,13 +17,12 @@ import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
 import Profile from "@/pages/admin/Profile"
 import Settings from "@/pages/Settings"
 import Notifications from "@/pages/admin/Notifications"
-import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
-import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
 import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import InvestorDashboard from "@/pages/investor/Dashboard"
+import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
 
 export function Routes() {
@@ -83,17 +82,15 @@ export function Routes() {
         path="/borrower/*"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
-            <BorrowerDashboardLayout>
-              <RouterRoutes>
-                <Route index element={<BorrowerDashboardOverview />} />
-                <Route path="dashboard" element={<BorrowerDashboardOverview />} />
-                <Route path="funding-requests" element={<FundingRequestsList />} />
-                <Route path="profile" element={<BorrowerProfile />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="kyc" element={<BorrowerKYCForm />} />
-                <Route path="payments" element={<BorrowerPayments />} />
-              </RouterRoutes>
-            </BorrowerDashboardLayout>
+            <RouterRoutes>
+              <Route index element={<BorrowerDashboard />} />
+              <Route path="dashboard" element={<BorrowerDashboard />} />
+              <Route path="funding-requests" element={<FundingRequestsList />} />
+              <Route path="profile" element={<BorrowerProfile />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="kyc" element={<BorrowerKYCForm />} />
+              <Route path="payments" element={<BorrowerPayments />} />
+            </RouterRoutes>
           </PrivateRoute>
         }
       />
