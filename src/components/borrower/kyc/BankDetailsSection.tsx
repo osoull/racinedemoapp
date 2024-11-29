@@ -30,15 +30,15 @@ export function BankDetailsSection({ kycData, setKycData }: BankDetailsSectionPr
 
         <div className="space-y-2">
           <label className="text-sm font-medium">
-            رقم الحساب <span className="text-red-500">*</span>
+            اسم صاحب الحساب <span className="text-red-500">*</span>
           </label>
           <Input
-            value={kycData.bank_account_details.account_number}
+            value={kycData.bank_account_details.account_holder_name}
             onChange={(e) => setKycData({
               ...kycData,
               bank_account_details: {
                 ...kycData.bank_account_details,
-                account_number: e.target.value
+                account_holder_name: e.target.value
               }
             })}
             required

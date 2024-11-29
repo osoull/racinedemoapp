@@ -1,6 +1,6 @@
 export interface BankAccountDetails {
   bank_name: string;
-  account_number: string;
+  account_holder_name: string;
   iban: string;
 }
 
