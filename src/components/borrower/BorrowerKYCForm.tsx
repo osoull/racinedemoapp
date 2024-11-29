@@ -28,7 +28,7 @@ export function BorrowerKYCForm() {
     company_website: "",
     bank_account_details: {
       bank_name: "",
-      account_number: "",
+      account_holder_name: "",
       iban: ""
     }
   })
@@ -58,7 +58,7 @@ export function BorrowerKYCForm() {
           number_of_employees: Number(data.number_of_employees) || 0,
           bank_account_details: data.bank_account_details as any || {
             bank_name: "",
-            account_number: "",
+            account_holder_name: "",
             iban: ""
           }
         })
