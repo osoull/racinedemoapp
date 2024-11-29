@@ -42,16 +42,20 @@ export function Auth() {
             description: "لم يتم العثور على الملف الشخصي",
             variant: "destructive",
           })
+          setIsRedirecting(false)
           return
         }
 
         // Redirection basée sur le type d'utilisateur
-        if (profile.user_type === "borrower") {
-          navigate("/borrower/dashboard", { replace: true })
-        } else if (profile.user_type === "admin") {
-          navigate("/admin", { replace: true })
-        } else {
-          navigate("/investor/dashboard", { replace: true })
+        switch (profile.user_type) {
+          case "borrower":
+            await navigate("/borrower/dashboard")
+            break
+          case "admin":
+            await navigate("/admin")
+            break
+          default:
+            await navigate("/investor/dashboard")
         }
       } catch (error: any) {
         console.error("Error during redirect:", error)

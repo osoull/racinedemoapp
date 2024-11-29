@@ -21,54 +21,73 @@ export const RoleRoutes = () => {
   return (
     <Routes>
       {/* Borrower Routes */}
-      <Route path="/borrower/*" element={
-        <PrivateRoute allowedTypes={["borrower"]}>
-          <Routes>
-            <Route path="dashboard" element={
-              <BorrowerDashboardLayout>
-                <BorrowerDashboardOverview />
-              </BorrowerDashboardLayout>
-            } />
-            <Route path="profile" element={
-              <BorrowerDashboardLayout>
-                <BorrowerProfile />
-              </BorrowerDashboardLayout>
-            } />
-            <Route path="kyc" element={
-              <BorrowerDashboardLayout>
-                <BorrowerKYCForm />
-              </BorrowerDashboardLayout>
-            } />
-            <Route path="payments" element={
-              <BorrowerDashboardLayout>
-                <BorrowerPayments />
-              </BorrowerDashboardLayout>
-            } />
-          </Routes>
-        </PrivateRoute>
-      } />
+      <Route
+        path="/borrower/*"
+        element={
+          <PrivateRoute allowedTypes={["borrower"]}>
+            <Routes>
+              <Route
+                path="dashboard"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerDashboardOverview />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerProfile />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="kyc"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerKYCForm />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="payments"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerPayments />
+                  </BorrowerDashboardLayout>
+                }
+              />
+            </Routes>
+          </PrivateRoute>
+        }
+      />
 
       {/* Investor Routes */}
-      <Route path="/investor/*" element={
-        <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-          <DashboardLayout sidebar={<InvestorSidebar />}>
-            <Routes>
-              <Route path="dashboard" element={<InvestorDashboard />} />
-            </Routes>
-          </DashboardLayout>
-        </PrivateRoute>
-      } />
+      <Route
+        path="/investor/*"
+        element={
+          <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
+            <DashboardLayout sidebar={<InvestorSidebar />}>
+              <Routes>
+                <Route path="dashboard" element={<InvestorDashboard />} />
+              </Routes>
+            </DashboardLayout>
+          </PrivateRoute>
+        }
+      />
 
       {/* Default redirect based on user type */}
-      <Route path="/" element={
-        user ? (
-          user.user_metadata?.user_type === "borrower" ? 
-            <Navigate to="/borrower/dashboard" replace /> :
-            <Navigate to="/investor/dashboard" replace />
-        ) : (
-          <Navigate to="/auth" replace />
-        )
-      } />
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate to="/borrower/dashboard" replace />
+          ) : (
+            <Navigate to="/auth" replace />
+          )
+        }
+      />
 
       {/* Catch all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
