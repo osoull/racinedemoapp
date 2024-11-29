@@ -477,9 +477,11 @@ export type Database = {
       }
       funding_requests: {
         Row: {
+          application_fee: number | null
           approved_at: string | null
           campaign_duration: number
           category: string
+          completion_steps: Json | null
           created_at: string | null
           current_funding: number | null
           description: string
@@ -492,6 +494,7 @@ export type Database = {
           last_status_change: string | null
           metadata: Json | null
           owner_id: string
+          payment_method: string | null
           risk_description: string | null
           risk_rating: string | null
           sharia_notes: string | null
@@ -504,9 +507,11 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          application_fee?: number | null
           approved_at?: string | null
           campaign_duration: number
           category: string
+          completion_steps?: Json | null
           created_at?: string | null
           current_funding?: number | null
           description: string
@@ -519,6 +524,7 @@ export type Database = {
           last_status_change?: string | null
           metadata?: Json | null
           owner_id: string
+          payment_method?: string | null
           risk_description?: string | null
           risk_rating?: string | null
           sharia_notes?: string | null
@@ -531,9 +537,11 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          application_fee?: number | null
           approved_at?: string | null
           campaign_duration?: number
           category?: string
+          completion_steps?: Json | null
           created_at?: string | null
           current_funding?: number | null
           description?: string
@@ -546,6 +554,7 @@ export type Database = {
           last_status_change?: string | null
           metadata?: Json | null
           owner_id?: string
+          payment_method?: string | null
           risk_description?: string | null
           risk_rating?: string | null
           sharia_notes?: string | null
@@ -1525,6 +1534,12 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_application_fee: {
+        Args: {
+          funding_amount: number
+        }
+        Returns: number
+      }
       calculate_borrower_detailed_stats: {
         Args: {
           p_borrower_id: string
