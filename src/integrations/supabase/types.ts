@@ -1477,6 +1477,12 @@ export type Database = {
         }
         Returns: Json
       }
+      check_borrower_kyc_readiness: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       cleanup_old_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined
