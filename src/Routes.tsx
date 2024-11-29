@@ -9,6 +9,7 @@ import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManageme
 import { RegulatoryReports } from "@/components/admin/compliance/RegulatoryReports"
 import { ShariaCompliance } from "@/components/admin/compliance/ShariaCompliance"
 import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses"
+import { FundingManagement } from "@/components/admin/funding/FundingManagement"
 
 export function Routes() {
   const { user } = useAuth()
@@ -34,7 +35,7 @@ export function Routes() {
                 <Route path="dashboard" element={<DashboardOverview />} />
                 <Route path="investors" element={<div>Gestion des investisseurs</div>} />
                 <Route path="borrowers" element={<BorrowerManagement />} />
-                <Route path="funding-requests" element={<div>Gestion des demandes de financement</div>} />
+                <Route path="funding-requests" element={<FundingManagement />} />
                 <Route path="finance" element={<div>Gestion financière</div>} />
                 <Route path="compliance" element={
                   <div className="space-y-6">
