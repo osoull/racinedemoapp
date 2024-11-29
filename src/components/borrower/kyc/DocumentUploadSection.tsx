@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2, Upload, FileText } from "lucide-react"
+import { Loader2, Upload } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 
@@ -30,7 +30,7 @@ const REQUIRED_DOCUMENTS = [
   {
     type: "audited_financials",
     label: "القوائم المالية المدققة",
-    description: "القوائم المالية المدققة لآخر سنتين (إلزامي)"
+    description: "القوائم المالية المدققة لآخر سنة (إلزامي)"
   }
 ]
 
