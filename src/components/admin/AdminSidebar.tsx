@@ -57,7 +57,7 @@ const menuItems = [
   {
     title: "الإعدادات",
     icon: Settings,
-    path: "/admin/settings",
+    path: "/admin/platform-settings",
     description: "إعدادات المنصة"
   }
 ]
