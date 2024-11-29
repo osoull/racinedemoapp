@@ -17,7 +17,6 @@ import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
 import Profile from "@/pages/admin/Profile"
 import Settings from "@/pages/Settings"
 import Notifications from "@/pages/admin/Notifications"
-import Index from "@/pages/Index"
 import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
 import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
@@ -25,6 +24,7 @@ import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import InvestorDashboard from "@/pages/investor/Dashboard"
+import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
 
 export function Routes() {
   const { user } = useAuth()
@@ -87,6 +87,7 @@ export function Routes() {
               <RouterRoutes>
                 <Route index element={<BorrowerDashboardOverview />} />
                 <Route path="dashboard" element={<BorrowerDashboardOverview />} />
+                <Route path="funding-requests" element={<FundingRequestsList />} />
                 <Route path="profile" element={<BorrowerProfile />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="kyc" element={<BorrowerKYCForm />} />
