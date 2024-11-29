@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function BorrowerProfile() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-h-[calc(100vh-10rem)]">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">الملف التعريفي</h2>
         <AvatarUpload />
