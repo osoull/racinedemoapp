@@ -13,6 +13,7 @@ import { KYCFormData } from "@/types/kyc"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { BorrowerDashboardLayout } from "./BorrowerDashboardLayout"
+import { useKycValidation } from "@/hooks/useKycValidation"
 
 export function BorrowerKYCForm() {
   const { user } = useAuth()
@@ -37,6 +38,8 @@ export function BorrowerKYCForm() {
       iban: ""
     }
   })
+
+  const { isValid: kycValid, loading: validationLoading } = useKycValidation(kycData, user?.id || '')
 
   useEffect(() => {
     if (user) {
@@ -97,10 +100,10 @@ export function BorrowerKYCForm() {
   }
 
   const requestKYCVerification = async () => {
-    if (!kycData.legal_representative_name || !kycData.legal_representative_id) {
+    if (!kycValid) {
       toast({
         title: "خطأ",
-        description: "يجب إدخال معلومات الممثل القانوني قبل طلب التحقق",
+        description: "يجب إكمال جميع المعلومات والمستندات المطلوبة قبل طلب التحقق",
         variant: "destructive",
       })
       return
@@ -136,7 +139,7 @@ export function BorrowerKYCForm() {
     }
   }
 
-  if (loading) {
+  if (loading || validationLoading) {
     return (
       <BorrowerDashboardLayout>
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
@@ -172,7 +175,7 @@ export function BorrowerKYCForm() {
               </Badge>
             </div>
 
-            {profile?.kyc_status !== 'approved' && (
+            {profile?.kyc_status !== 'approved' && !kycValid && (
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
@@ -212,14 +215,14 @@ export function BorrowerKYCForm() {
                 className="w-full"
                 size="lg"
                 onClick={requestKYCVerification}
-                disabled={saving || !profile?.profile_completed || !kycData.legal_representative_name || !kycData.legal_representative_id}
+                disabled={saving || !kycValid}
               >
                 {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 طلب التحقق من الهوية
               </Button>
-              {(!profile?.profile_completed || !kycData.legal_representative_name || !kycData.legal_representative_id) && (
+              {!kycValid && (
                 <p className="text-sm text-muted-foreground mt-2 text-center">
-                  يجب استكمال جميع المعلومات المطلوبة قبل طلب التحقق
+                  يجب استكمال جميع المعلومات والمستندات المطلوبة قبل طلب التحقق
                 </p>
               )}
             </CardContent>
