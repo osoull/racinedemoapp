@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { Loader2, Users, TrendingUp, Wallet, Target } from "lucide-react"
+import { Loader2, Users, TrendingUp, Wallet, FileCheck } from "lucide-react"
 import { PlatformStats } from "@/types/supabase"
 
 export function PlatformOverview() {
@@ -89,14 +89,14 @@ export function PlatformOverview() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              الفرص النشطة
+              المشاريع الممولة
             </CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <FileCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.active_opportunities || 0}</div>
+            <div className="text-2xl font-bold">{stats?.funded_projects || 0}</div>
             <p className="text-xs text-muted-foreground">
-              متوسط الاستثمار: {formatCurrency(stats?.average_investment_size || 0)}
+              متوسط التمويل: {formatCurrency(stats?.average_investment_size || 0)}
             </p>
           </CardContent>
         </Card>
