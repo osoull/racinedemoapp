@@ -21,7 +21,7 @@ export function InvestmentSettings() {
               id="min-investment"
               type="number"
               defaultValue="1000"
-              className="text-right max-w-sm mr-auto"
+              className="text-right w-full lg:w-[400px] h-12 mr-auto text-lg"
               dir="ltr"
             />
           </div>
@@ -33,7 +33,7 @@ export function InvestmentSettings() {
               id="max-investment"
               type="number"
               defaultValue="50000"
-              className="text-right max-w-sm mr-auto"
+              className="text-right w-full lg:w-[400px] h-12 mr-auto text-lg"
               dir="ltr"
             />
           </div>
