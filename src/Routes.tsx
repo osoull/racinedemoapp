@@ -49,7 +49,7 @@ export function Routes() {
                         إدارة ومراقبة الامتثال التنظيمي والشرعي للمنصة
                       </p>
                     </div>
-                    <ShariaCompliance projects={[]} />
+                    <ShariaCompliance />
                     <PlatformLicenses />
                     <RegulatoryReports />
                   </div>

@@ -18,7 +18,7 @@ type Project = {
   reviewer?: {
     first_name: string;
     last_name: string;
-  };
+  } | null;
 };
 
 export const ShariaCompliance = () => {
@@ -35,7 +35,7 @@ export const ShariaCompliance = () => {
           sharia_reviewer_id,
           sharia_review_date,
           sharia_notes,
-          reviewer:sharia_reviewer_id (
+          reviewer:profiles!funding_requests_sharia_reviewer_id_fkey (
             first_name,
             last_name
           )
@@ -47,7 +47,7 @@ export const ShariaCompliance = () => {
         throw error;
       }
 
-      return data || [];
+      return (data || []) as Project[];
     },
   });
 
