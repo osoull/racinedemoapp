@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { Profile } from "@/types/user"
@@ -10,12 +9,19 @@ import { useToast } from "@/components/ui/use-toast"
 import { PersonalFields } from "./PersonalFields"
 import { AddressFields } from "./AddressFields"
 
-const isProfileComplete = (profile: Partial<Profile>): boolean => {
-  const requiredFields = [
+interface ProfileFormProps {
+  personalOnly?: boolean;
+}
+
+const isProfileComplete = (profile: Partial<Profile>, personalOnly: boolean): boolean => {
+  const requiredPersonalFields = [
     'first_name',
     'last_name',
     'phone',
     'national_id',
+  ] as const;
+
+  const requiredAddressFields = [
     'street_number',
     'street_name',
     'postal_code',
@@ -23,28 +29,22 @@ const isProfileComplete = (profile: Partial<Profile>): boolean => {
     'country'
   ] as const;
 
-  const hasAllRequiredFields = requiredFields.every(field => 
+  const hasAllRequiredPersonalFields = requiredPersonalFields.every(field => 
     profile[field] && profile[field]?.toString().trim() !== ''
   );
 
-  // Pour les emprunteurs, vérifier aussi les champs business
-  if (profile.user_type === 'borrower') {
-    const requiredBusinessFields = [
-      'company_name',
-      'commercial_register',
-      'business_type',
-      'business_description'
-    ] as const;
-
-    return hasAllRequiredFields && requiredBusinessFields.every(field => 
-      profile[field] && profile[field]?.toString().trim() !== ''
-    );
+  if (personalOnly) {
+    return hasAllRequiredPersonalFields;
   }
 
-  return hasAllRequiredFields;
+  const hasAllRequiredAddressFields = requiredAddressFields.every(field => 
+    profile[field] && profile[field]?.toString().trim() !== ''
+  );
+
+  return hasAllRequiredPersonalFields && hasAllRequiredAddressFields;
 };
 
-export function ProfileForm() {
+export function ProfileForm({ personalOnly = false }: ProfileFormProps) {
   const { user } = useAuth()
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<Partial<Profile>>({})
@@ -90,7 +90,7 @@ export function ProfileForm() {
     setSaving(true)
     
     try {
-      const profileComplete = isProfileComplete(profile)
+      const profileComplete = isProfileComplete(profile, personalOnly)
       
       const dataToUpdate = {
         ...profile,
@@ -140,33 +140,28 @@ export function ProfileForm() {
   }
 
   return (
-    <Card className="max-w-4xl mx-auto mt-8 border-none bg-card/50 backdrop-blur-xl shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold">المعلومات الشخصية</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="bg-card/30 p-6 rounded-lg space-y-6">
-            <PersonalFields profile={profile} setProfile={setProfile} />
-          </div>
-          
-          <div className="bg-card/30 p-6 rounded-lg space-y-6">
-            <AddressFields profile={profile} setProfile={setProfile} />
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="bg-card/30 p-6 rounded-lg space-y-6">
+        <PersonalFields profile={profile} setProfile={setProfile} />
+      </div>
+      
+      {!personalOnly && (
+        <div className="bg-card/30 p-6 rounded-lg space-y-6">
+          <AddressFields profile={profile} setProfile={setProfile} />
+        </div>
+      )}
 
-          <div className="flex justify-end">
-            <Button 
-              type="submit" 
-              disabled={saving} 
-              size="lg"
-              className="min-w-[200px] bg-primary/90 hover:bg-primary shadow-lg"
-            >
-              {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              حفظ التغييرات
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      <div className="flex justify-end">
+        <Button 
+          type="submit" 
+          disabled={saving} 
+          size="lg"
+          className="min-w-[200px] bg-primary/90 hover:bg-primary shadow-lg"
+        >
+          {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+          حفظ التغييرات
+        </Button>
+      </div>
+    </form>
   )
 }

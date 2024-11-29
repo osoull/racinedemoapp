@@ -29,10 +29,10 @@ export function BorrowerProfile() {
             <CompanyOverview />
             <Card>
               <CardHeader>
-                <CardTitle>معلومات الشركة والممثل القانوني</CardTitle>
+                <CardTitle>معلومات الممثل القانوني</CardTitle>
               </CardHeader>
               <CardContent>
-                <ProfileForm />
+                <ProfileForm personalOnly={true} />
               </CardContent>
             </Card>
           </TabsContent>
