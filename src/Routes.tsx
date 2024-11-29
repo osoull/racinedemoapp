@@ -13,6 +13,7 @@ import { FundingManagement } from "@/components/admin/funding/FundingManagement"
 import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
 import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
 import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
+import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
 
 export function Routes() {
   const { user } = useAuth()
@@ -48,7 +49,7 @@ export function Routes() {
                   </div>
                 } />
                 <Route path="kyc" element={<KYCManagement />} />
-                <Route path="settings" element={<div>Paramètres de la plateforme</div>} />
+                <Route path="settings" element={<PlatformSettings />} />
               </RouterRoutes>
             </DashboardLayout>
           </PrivateRoute>
