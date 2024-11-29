@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-// Liste des secteurs d'activité selon la classification ISIC utilisée en Arabie Saoudite
 const SAUDI_SECTORS = [
   { id: "agriculture", label: "الزراعة والغابات وصيد الأسماك" },
   { id: "mining", label: "التعدين واستغلال المحاجر" },
@@ -102,7 +101,7 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               تاريخ تسجيل الشركة <span className="text-red-500">*</span>
             </label>
             <Input
@@ -110,33 +109,39 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
               value={kycData.company_registration_date}
               onChange={(e) => setKycData({ ...kycData, company_registration_date: e.target.value })}
               required
+              className="text-right"
+              dir="rtl"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               رقم السجل التجاري <span className="text-red-500">*</span>
             </label>
             <Input
               value={kycData.company_registration_number}
               onChange={(e) => setKycData({ ...kycData, company_registration_number: e.target.value })}
               required
+              className="text-right"
+              dir="rtl"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               الرقم الضريبي <span className="text-red-500">*</span>
             </label>
             <Input
               value={kycData.tax_identification_number}
               onChange={(e) => setKycData({ ...kycData, tax_identification_number: e.target.value })}
               required
+              className="text-right"
+              dir="rtl"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               الإيرادات السنوية <span className="text-red-500">*</span>
             </label>
             <Input
@@ -144,11 +149,13 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
               value={kycData.annual_revenue}
               onChange={(e) => setKycData({ ...kycData, annual_revenue: Number(e.target.value) })}
               required
+              className="text-right"
+              dir="rtl"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               عدد الموظفين <span className="text-red-500">*</span>
             </label>
             <Input
@@ -156,23 +163,25 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
               value={kycData.number_of_employees}
               onChange={(e) => setKycData({ ...kycData, number_of_employees: Number(e.target.value) })}
               required
+              className="text-right"
+              dir="rtl"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               القطاع <span className="text-red-500">*</span>
             </label>
             <Select
               value={kycData.industry_sector}
               onValueChange={(value) => setKycData({ ...kycData, industry_sector: value })}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="اختر القطاع" />
+              <SelectTrigger className="text-right" dir="rtl">
+                <SelectValue placeholder="اختر القطاع" className="text-right" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="text-right" dir="rtl">
                 {SAUDI_SECTORS.map((sector) => (
-                  <SelectItem key={sector.id} value={sector.id}>
+                  <SelectItem key={sector.id} value={sector.id} className="text-right">
                     {sector.label}
                   </SelectItem>
                 ))}
@@ -181,7 +190,7 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-right block">
               الموقع الإلكتروني <span className="text-red-500">*</span>
             </label>
             <Input
@@ -189,10 +198,12 @@ export function CompanyInfoSection({ kycData, setKycData }: CompanyInfoSectionPr
               value={kycData.company_website}
               onChange={(e) => setKycData({ ...kycData, company_website: e.target.value })}
               required
+              className="text-right"
+              dir="rtl"
             />
           </div>
         </div>
-        <Button onClick={handleSubmit} disabled={saving}>
+        <Button onClick={handleSubmit} disabled={saving} className="w-full">
           {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
           حفظ المعلومات
         </Button>
