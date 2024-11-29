@@ -1,166 +1,157 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BorrowerDocuments } from "../borrower/details/BorrowerDocuments"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { Loader2 } from "lucide-react"
-
-interface KYCRequest {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  user_type: string
-  kyc_status: string
-  created_at: string
-  kyc_documents: {
-    id: string
-    document_type: string
-    document_url: string
-    status: string
-    verification_notes: string | null
-  }[]
-}
 
 interface KYCVerificationDialogProps {
-  request: KYCRequest | null
+  request: any
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function KYCVerificationDialog({ request, open, onOpenChange }: KYCVerificationDialogProps) {
   const { toast } = useToast()
-  const queryClient = useQueryClient()
-  const [isLoading, setIsLoading] = useState(false)
 
-  if (!request) return null
-
-  const handleVerification = async (status: 'approved' | 'rejected') => {
+  const handleUpdateKYCStatus = async (status: 'approved' | 'rejected') => {
     try {
-      setIsLoading(true)
+      // Vérifier si tous les documents sont validés avant d'approuver le KYC
+      if (status === 'approved') {
+        const { data: documents } = await supabase
+          .from('kyc_documents')
+          .select('status')
+          .eq('user_id', request.id)
+
+        const allDocumentsApproved = documents?.every(doc => doc.status === 'approved')
+        
+        if (!allDocumentsApproved) {
+          toast({
+            title: "خطأ",
+            description: "يجب اعتماد جميع المستندات قبل اعتماد الهوية",
+            variant: "destructive",
+          })
+          return
+        }
+      }
 
       const { error } = await supabase
         .from('profiles')
-        .update({ kyc_status: status })
+        .update({ 
+          kyc_status: status,
+        })
         .eq('id', request.id)
 
       if (error) throw error
 
+      // Ajouter l'historique du changement de statut
+      await supabase
+        .from('kyc_status_history')
+        .insert({
+          user_id: request.id,
+          old_status: request.kyc_status,
+          new_status: status,
+          changed_by: (await supabase.auth.getUser()).data.user?.id,
+        })
+
       toast({
-        title: status === 'approved' ? "تم اعتماد الطلب" : "تم رفض الطلب",
-        description: status === 'approved' 
-          ? "تم اعتماد طلب التحقق من الهوية بنجاح"
-          : "تم رفض طلب التحقق من الهوية",
+        title: "تم تحديث الحالة",
+        description: status === 'approved' ? "تم اعتماد الهوية بنجاح" : "تم رفض الهوية",
       })
 
-      await queryClient.invalidateQueries({ queryKey: ['kyc-requests'] })
       onOpenChange(false)
     } catch (error) {
-      console.error('Error updating KYC status:', error)
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء تحديث حالة التحقق",
+        description: "حدث خطأ أثناء تحديث الحالة",
         variant: "destructive",
       })
-    } finally {
-      setIsLoading(false)
     }
   }
 
+  if (!request) return null
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>مراجعة طلب التحقق من الهوية</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="h-[600px] pr-4">
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold mb-2">معلومات المستخدم</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">الاسم الكامل</p>
-                  <p>{request.first_name} {request.last_name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">البريد الإلكتروني</p>
-                  <p>{request.email}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">نوع المستخدم</p>
-                  <Badge variant="outline">
-                    {request.user_type === "borrower"
-                      ? "مقترض"
-                      : request.user_type === "basic_investor"
-                      ? "مستثمر أساسي"
-                      : "مستثمر مؤهل"}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">تاريخ الطلب</p>
-                  <p>{new Date(request.created_at).toLocaleDateString("ar-SA")}</p>
-                </div>
-              </div>
-            </div>
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="profile">معلومات المستخدم</TabsTrigger>
+            <TabsTrigger value="documents">المستندات المطلوبة</TabsTrigger>
+          </TabsList>
 
-            <Separator />
-
-            <div>
-              <h3 className="font-semibold mb-2">المستندات المرفقة</h3>
-              <div className="space-y-4">
-                {request.kyc_documents.map((doc) => (
-                  <div key={doc.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">{doc.document_type}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {doc.verification_notes || "لا توجد ملاحظات"}
-                        </p>
-                      </div>
-                      <Badge variant={
-                        doc.status === "approved" ? "default" :
-                        doc.status === "pending" ? "secondary" : "destructive"
-                      }>
-                        {doc.status === "approved" ? "معتمد" :
-                         doc.status === "pending" ? "قيد المراجعة" : "مرفوض"}
-                      </Badge>
-                    </div>
-                    <Button
-                      variant="outline"
-                      className="mt-2"
-                      onClick={() => window.open(doc.document_url, '_blank')}
-                    >
-                      عرض المستند
-                    </Button>
+          <TabsContent value="profile">
+            <Card>
+              <CardHeader>
+                <CardTitle>المعلومات الشخصية</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium">الاسم الكامل</p>
+                    <p className="text-sm text-muted-foreground">
+                      {request.first_name} {request.middle_name} {request.last_name}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div>
+                    <p className="text-sm font-medium">البريد الإلكتروني</p>
+                    <p className="text-sm text-muted-foreground">{request.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">رقم الهوية</p>
+                    <p className="text-sm text-muted-foreground">{request.national_id}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">رقم الهاتف</p>
+                    <p className="text-sm text-muted-foreground">{request.phone}</p>
+                  </div>
+                </div>
 
-            <Separator />
+                {request.user_type === 'borrower' && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium">اسم الشركة</p>
+                      <p className="text-sm text-muted-foreground">{request.company_name}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">السجل التجاري</p>
+                      <p className="text-sm text-muted-foreground">{request.commercial_register}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">نوع النشاط</p>
+                      <p className="text-sm text-muted-foreground">{request.business_type}</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-            <div className="flex justify-end gap-4">
-              <Button
-                variant="destructive"
-                onClick={() => handleVerification('rejected')}
-                disabled={isLoading}
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "رفض"}
-              </Button>
-              <Button
-                onClick={() => handleVerification('approved')}
-                disabled={isLoading}
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "اعتماد"}
-              </Button>
-            </div>
-          </div>
-        </ScrollArea>
+          <TabsContent value="documents">
+            <BorrowerDocuments borrower={request} />
+          </TabsContent>
+        </Tabs>
+
+        <div className="flex justify-end space-x-2 mt-4">
+          <Button
+            variant="destructive"
+            onClick={() => handleUpdateKYCStatus('rejected')}
+          >
+            رفض
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => handleUpdateKYCStatus('approved')}
+          >
+            اعتماد
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   )
