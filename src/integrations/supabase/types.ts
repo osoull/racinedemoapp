@@ -932,6 +932,42 @@ export type Database = {
           },
         ]
       }
+      platform_bank_accounts: {
+        Row: {
+          account_name: string
+          account_number: string | null
+          bank_name: string
+          created_at: string | null
+          iban: string
+          id: string
+          is_active: boolean | null
+          swift: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_name: string
+          account_number?: string | null
+          bank_name: string
+          created_at?: string | null
+          iban: string
+          id?: string
+          is_active?: boolean | null
+          swift?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_name?: string
+          account_number?: string | null
+          bank_name?: string
+          created_at?: string | null
+          iban?: string
+          id?: string
+          is_active?: boolean | null
+          swift?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       platform_licenses: {
         Row: {
           created_at: string

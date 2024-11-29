@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import { Settings, Lock, TrendingUp, ArrowLeft } from "lucide-react"
+import { Settings, Lock, TrendingUp, ArrowLeft, Building2 } from "lucide-react"
 import { GeneralSettings } from "./sections/GeneralSettings"
 import { InvestmentSettings } from "./sections/InvestmentSettings"
 import { SecuritySettings } from "./sections/SecuritySettings"
+import { BankAccountSettings } from "./sections/BankAccountSettings"
 
 export function PlatformSettings() {
   const { toast } = useToast()
@@ -68,6 +69,13 @@ export function PlatformSettings() {
             الأمان
           </TabsTrigger>
           <TabsTrigger 
+            value="bank" 
+            className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3"
+          >
+            <Building2 className="h-4 w-4" />
+            الحسابات البنكية
+          </TabsTrigger>
+          <TabsTrigger 
             value="investments" 
             className="flex items-center gap-2 data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 px-6 py-3"
           >
@@ -94,6 +102,10 @@ export function PlatformSettings() {
 
           <TabsContent value="security" className="mt-0">
             <SecuritySettings />
+          </TabsContent>
+
+          <TabsContent value="bank" className="mt-0">
+            <BankAccountSettings />
           </TabsContent>
         </div>
       </Tabs>
