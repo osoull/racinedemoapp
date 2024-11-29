@@ -31,10 +31,7 @@ export function Auth() {
           .eq("id", user.id)
           .single()
 
-        if (error) {
-          console.error("Error fetching profile:", error)
-          throw error
-        }
+        if (error) throw error
 
         if (!profile) {
           toast({
@@ -46,7 +43,6 @@ export function Auth() {
           return
         }
 
-        // Redirection basée sur le type d'utilisateur
         switch (profile.user_type) {
           case "borrower":
             await navigate("/borrower/dashboard")
@@ -79,11 +75,19 @@ export function Auth() {
     try {
       const { error } = await signIn(email, password)
       if (error) {
-        toast({
-          title: "خطأ",
-          description: error.message,
-          variant: "destructive",
-        })
+        if (error.message === "Invalid login credentials") {
+          toast({
+            title: "خطأ في تسجيل الدخول",
+            description: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+            variant: "destructive",
+          })
+        } else {
+          toast({
+            title: "خطأ",
+            description: error.message,
+            variant: "destructive",
+          })
+        }
         throw error
       }
       
