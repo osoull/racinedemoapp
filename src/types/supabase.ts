@@ -5,7 +5,6 @@ export interface PlatformStats {
   investment_growth: number
   total_revenue: number
   revenue_growth: number
-  active_opportunities: number
-  average_investment_size: number
   funded_projects: number
+  average_investment_size: number
 }
