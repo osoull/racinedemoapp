@@ -8,11 +8,10 @@ import { Loader2, AlertCircle } from "lucide-react"
 import { CompanyInfoSection } from "./kyc/CompanyInfoSection"
 import { BankDetailsSection } from "./kyc/BankDetailsSection"
 import { DocumentUploadSection } from "./kyc/DocumentUploadSection"
+import { LegalRepresentativeSection } from "./kyc/LegalRepresentativeSection"
 import { KYCFormData } from "@/types/kyc"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 
 export function BorrowerKYCForm() {
   const { user } = useAuth()
@@ -96,42 +95,17 @@ export function BorrowerKYCForm() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSaving(true)
-
-    try {
-      const { error } = await supabase
-        .from("borrower_kyc")
-        .upsert({
-          ...kycData,
-          annual_revenue: Number(kycData.annual_revenue),
-          number_of_employees: Number(kycData.number_of_employees),
-          bank_account_details: kycData.bank_account_details as any,
-          updated_at: new Date().toISOString(),
-        })
-
-      if (error) throw error
-
-      toast({
-        title: "تم التحديث",
-        description: "تم تحديث البيانات بنجاح",
-      })
-      
-      loadProfile()
-    } catch (error) {
-      console.error("Error updating KYC data:", error)
+  const requestKYCVerification = async () => {
+    // Validation des champs obligatoires
+    if (!kycData.legal_representative_name || !kycData.legal_representative_id) {
       toast({
         title: "خطأ",
-        description: "حدث خطأ أثناء تحديث البيانات",
+        description: "يجب إدخال معلومات الممثل القانوني قبل طلب التحقق",
         variant: "destructive",
       })
-    } finally {
-      setSaving(false)
+      return
     }
-  }
 
-  const requestKYCVerification = async () => {
     setSaving(true)
     try {
       const { error } = await supabase
@@ -208,74 +182,17 @@ export function BorrowerKYCForm() {
         </CardContent>
       </Card>
 
-      {/* Legal Representative Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>معلومات الممثل القانوني</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label>اسم الممثل القانوني</Label>
-                <Input
-                  value={kycData.legal_representative_name}
-                  onChange={(e) => setKycData({
-                    ...kycData,
-                    legal_representative_name: e.target.value
-                  })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>رقم هوية الممثل القانوني</Label>
-                <Input
-                  value={kycData.legal_representative_id}
-                  onChange={(e) => setKycData({
-                    ...kycData,
-                    legal_representative_id: e.target.value
-                  })}
-                  required
-                />
-              </div>
-            </div>
-            <Button type="submit" disabled={saving}>
-              {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              حفظ المعلومات
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      {/* Legal Representative Section */}
+      <LegalRepresentativeSection kycData={kycData} setKycData={setKycData} />
 
       {/* Company Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>معلومات الشركة</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
-        </CardContent>
-      </Card>
+      <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
 
       {/* Bank Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>معلومات الحساب البنكي</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BankDetailsSection kycData={kycData} setKycData={setKycData} />
-        </CardContent>
-      </Card>
+      <BankDetailsSection kycData={kycData} setKycData={setKycData} />
 
       {/* Documents */}
-      <Card>
-        <CardHeader>
-          <CardTitle>المستندات المطلوبة</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DocumentUploadSection />
-        </CardContent>
-      </Card>
+      <DocumentUploadSection />
 
       {/* Request KYC Verification Button */}
       {profile?.kyc_status !== 'approved' && (
@@ -285,12 +202,12 @@ export function BorrowerKYCForm() {
               className="w-full"
               size="lg"
               onClick={requestKYCVerification}
-              disabled={saving || !profile?.profile_completed}
+              disabled={saving || !profile?.profile_completed || !kycData.legal_representative_name || !kycData.legal_representative_id}
             >
               {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               طلب التحقق من الهوية
             </Button>
-            {!profile?.profile_completed && (
+            {(!profile?.profile_completed || !kycData.legal_representative_name || !kycData.legal_representative_id) && (
               <p className="text-sm text-muted-foreground mt-2 text-center">
                 يجب استكمال جميع المعلومات المطلوبة قبل طلب التحقق
               </p>

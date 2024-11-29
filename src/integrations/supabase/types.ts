@@ -1514,6 +1514,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      validate_bank_details_with_errors: {
+        Args: {
+          details: Json
+        }
+        Returns: {
+          is_valid: boolean
+          errors: string[]
+        }[]
+      }
       validate_payment: {
         Args: {
           p_transaction_id: string
