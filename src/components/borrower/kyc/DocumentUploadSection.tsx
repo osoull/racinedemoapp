@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2, Upload, FileText, CheckCircle, XCircle } from "lucide-react"
+import { Loader2, Upload, FileText } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 
@@ -10,27 +10,27 @@ const REQUIRED_DOCUMENTS = [
   {
     type: "commercial_register",
     label: "السجل التجاري",
-    description: "نسخة حديثة من السجل التجاري"
+    description: "نسخة حديثة من السجل التجاري (إلزامي)"
   },
   {
     type: "tax_certificate",
     label: "شهادة الزكاة والضريبة",
-    description: "شهادة تسجيل ضريبة القيمة المضافة"
+    description: "شهادة تسجيل ضريبة القيمة المضافة (إلزامي)"
   },
   {
     type: "articles_of_association",
     label: "عقد التأسيس",
-    description: "نسخة من عقد تأسيس الشركة"
+    description: "نسخة من عقد تأسيس الشركة (إلزامي)"
   },
   {
     type: "national_address",
     label: "العنوان الوطني",
-    description: "شهادة العنوان الوطني للشركة"
+    description: "شهادة العنوان الوطني للشركة (إلزامي)"
   },
   {
-    type: "bank_statement",
-    label: "كشف حساب بنكي",
-    description: "كشف حساب بنكي لآخر 6 أشهر"
+    type: "audited_financials",
+    label: "القوائم المالية المدققة",
+    description: "القوائم المالية المدققة لآخر سنتين (إلزامي)"
   }
 ]
 
@@ -91,7 +91,7 @@ export function DocumentUploadSection() {
       <div>
         <h3 className="text-lg font-medium">المستندات المطلوبة</h3>
         <p className="text-sm text-muted-foreground">
-          يرجى رفع المستندات التالية للتحقق من هوية الشركة
+          يرجى رفع جميع المستندات التالية للتحقق من هوية الشركة
         </p>
       </div>
 
