@@ -29,7 +29,6 @@ import InvestorDashboard from "@/pages/investor/Dashboard"
 export function Routes() {
   const { user } = useAuth()
 
-  // Si l'utilisateur n'est pas connecté, afficher uniquement la page d'authentification
   if (!user) {
     return (
       <RouterRoutes>
@@ -39,7 +38,6 @@ export function Routes() {
     )
   }
 
-  // Obtenir le type d'utilisateur depuis les métadonnées
   const userType = user?.user_metadata?.user_type
 
   return (
@@ -72,6 +70,7 @@ export function Routes() {
                 <Route path="kyc" element={<KYCManagement />} />
                 <Route path="platform-settings" element={<PlatformSettings />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="notifications" element={<Notifications />} />
               </RouterRoutes>
             </DashboardLayout>
@@ -88,6 +87,7 @@ export function Routes() {
               <RouterRoutes>
                 <Route path="dashboard" element={<BorrowerDashboardOverview />} />
                 <Route path="profile" element={<BorrowerProfile />} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="kyc" element={<BorrowerKYCForm />} />
                 <Route path="payments" element={<BorrowerPayments />} />
               </RouterRoutes>
@@ -104,6 +104,8 @@ export function Routes() {
             <DashboardLayout sidebar={<InvestorSidebar />}>
               <RouterRoutes>
                 <Route path="dashboard" element={<InvestorDashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="settings" element={<Settings />} />
               </RouterRoutes>
             </DashboardLayout>
           </PrivateRoute>

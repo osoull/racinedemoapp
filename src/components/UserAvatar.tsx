@@ -33,6 +33,36 @@ export function UserAvatar() {
   })
   
   const initials = user?.email?.substring(0, 2).toUpperCase() || "U"
+  const userType = user?.user_metadata?.user_type
+
+  // Déterminer les routes en fonction du type d'utilisateur
+  const getProfileRoute = () => {
+    switch (userType) {
+      case 'borrower':
+        return '/borrower/profile'
+      case 'admin':
+        return '/admin/profile'
+      case 'basic_investor':
+      case 'qualified_investor':
+        return '/investor/profile'
+      default:
+        return '/profile'
+    }
+  }
+
+  const getSettingsRoute = () => {
+    switch (userType) {
+      case 'borrower':
+        return '/borrower/settings'
+      case 'admin':
+        return '/admin/settings'
+      case 'basic_investor':
+      case 'qualified_investor':
+        return '/investor/settings'
+      default:
+        return '/settings'
+    }
+  }
 
   return (
     <DropdownMenu>
@@ -45,11 +75,11 @@ export function UserAvatar() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>حسابي</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/profile")}>
+        <DropdownMenuItem onClick={() => navigate(getProfileRoute())}>
           <User className="ml-2 h-4 w-4" />
           الملف الشخصي
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate("/settings")}>
+        <DropdownMenuItem onClick={() => navigate(getSettingsRoute())}>
           <Settings className="ml-2 h-4 w-4" />
           الإعدادات
         </DropdownMenuItem>
