@@ -1409,6 +1409,12 @@ export type Database = {
       }
     }
     Functions: {
+      borrower_overview_policy: {
+        Args: {
+          borrower_id: string
+        }
+        Returns: boolean
+      }
       calculate_application_fee: {
         Args: {
           funding_amount: number
