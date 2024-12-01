@@ -15,17 +15,17 @@ import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses
 import { RegulatoryReports } from "@/components/admin/compliance/RegulatoryReports"
 import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
 import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
-import { Profile } from "@/pages/Profile"
-import { Settings } from "@/pages/Settings"
-import { Notifications } from "@/pages/admin/Notifications"
-import { BorrowerDashboard } from "@/pages/borrower/Dashboard"
+import Profile from "@/pages/Profile"
+import Settings from "@/pages/Settings"
+import Notifications from "@/pages/admin/Notifications"
+import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
-import { NewFundingRequestPage } from "@/pages/borrower/funding-requests/new"
+import NewFundingRequestPage from "@/pages/borrower/funding-requests/new"
 import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
-import { InvestorDashboard } from "@/pages/investor/Dashboard"
+import InvestorDashboard from "@/pages/investor/Dashboard"
 
 export function Routes() {
   const { user } = useAuth()
