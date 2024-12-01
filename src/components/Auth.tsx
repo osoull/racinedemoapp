@@ -136,12 +136,7 @@ export function Auth() {
       <img 
         src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
         alt="Racine Investment" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain dark:hidden" 
-      />
-      <img 
-        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logoblnc.svg" 
-        alt="Racine Investment" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain hidden dark:block" 
+        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
       />
       {step === "selection" ? (
         <UserTypeSelection onSelect={handleUserTypeSelect} />
