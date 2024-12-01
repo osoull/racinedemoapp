@@ -1,30 +1,7 @@
 import { Routes as RouterRoutes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Auth } from "@/components/Auth"
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
-import { PrivateRoute } from "@/components/auth/PrivateRoute"
-import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement"
-import { RegulatoryReports } from "@/components/admin/compliance/RegulatoryReports"
-import { ShariaCompliance } from "@/components/admin/compliance/ShariaCompliance"
-import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses"
-import { FundingManagement } from "@/components/admin/funding/FundingManagement"
-import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
-import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
-import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
-import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
-import Profile from "@/pages/admin/Profile"
-import Settings from "@/pages/Settings"
-import Notifications from "@/pages/admin/Notifications"
-import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
-import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
-import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
-import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
-import InvestorDashboard from "@/pages/investor/Dashboard"
-import BorrowerDashboard from "@/pages/borrower/Dashboard"
-import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
-import NewFundingRequestPage from "@/pages/borrower/funding-requests/new"
+import Index from "@/pages/Index"
 
 export function Routes() {
   const { user } = useAuth()
@@ -32,8 +9,9 @@ export function Routes() {
   if (!user) {
     return (
       <RouterRoutes>
+        <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="*" element={<Navigate to="/auth" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </RouterRoutes>
     )
   }
