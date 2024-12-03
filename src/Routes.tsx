@@ -1,7 +1,6 @@
 import { Routes as RouterRoutes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Auth } from "@/components/Auth"
-import Index from "@/pages/Index"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
@@ -33,9 +32,8 @@ export function Routes() {
   if (!user) {
     return (
       <RouterRoutes>
-        <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/auth" replace />} />
       </RouterRoutes>
     )
   }
@@ -115,9 +113,6 @@ export function Routes() {
         }
       />
 
-      {/* Redirection après authentification */}
-      <Route path="/auth" element={<Navigate to="/" replace />} />
-      
       {/* Redirection par défaut basée sur le type d'utilisateur */}
       <Route
         path="/"
