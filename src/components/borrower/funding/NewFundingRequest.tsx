@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom"
 import { FundingRequestForm } from "./FundingRequestForm"
 
 export function NewFundingRequest() {
+  const navigate = useNavigate()
+
   return (
     <div className="space-y-6">
       <div>
@@ -10,7 +13,10 @@ export function NewFundingRequest() {
         </p>
       </div>
 
-      <FundingRequestForm />
+      <FundingRequestForm 
+        onSuccess={() => navigate("/borrower/funding-requests")}
+        onCancel={() => navigate("/borrower/funding-requests")}
+      />
     </div>
   )
 }

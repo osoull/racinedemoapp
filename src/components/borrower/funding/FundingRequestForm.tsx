@@ -9,7 +9,6 @@ import { DocumentsStep } from "./steps/DocumentsStep"
 import { PaymentStep } from "./steps/PaymentStep"
 import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 
@@ -25,10 +24,14 @@ const formSchema = z.object({
   additional_documents: z.string().optional(),
 })
 
-export function FundingRequestForm() {
+interface FundingRequestFormProps {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export function FundingRequestForm({ onSuccess, onCancel }: FundingRequestFormProps) {
   const [step, setStep] = useState(1)
   const { toast } = useToast()
-  const navigate = useNavigate()
   const { user } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -103,7 +106,7 @@ export function FundingRequestForm() {
         description: "تم حفظ طلب التمويل بنجاح",
       })
 
-      navigate("/borrower/funding-requests")
+      onSuccess?.()
     } catch (error) {
       console.error("Error submitting funding request:", error)
       toast({
@@ -148,14 +151,23 @@ export function FundingRequestForm() {
           {step === 3 && <PaymentStep amount={form.getValues("funding_goal")} control={form.control} />}
 
           <div className="flex justify-between mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={prevStep}
-              disabled={step === 1}
-            >
-              السابق
-            </Button>
+            {step === 1 ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+              >
+                إلغاء
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+              >
+                السابق
+              </Button>
+            )}
             {step < 3 ? (
               <Button type="button" onClick={nextStep}>
                 التالي
