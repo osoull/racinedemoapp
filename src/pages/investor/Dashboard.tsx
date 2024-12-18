@@ -51,20 +51,29 @@ const InvestorDashboard = () => {
     enabled: !!user?.id
   })
 
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return "صباح الخير"
+    if (hour < 17) return "مساء الخير"
+    return "مساء النور"
+  }
+
   const totalInvestments = investments?.reduce((sum, inv) => sum + inv.amount, 0) || 0
   const activeInvestments = investments?.filter(inv => inv.funding_request?.status === 'active').length || 0
 
   return (
     <DashboardLayout sidebar={<InvestorSidebar />}>
       <div className="space-y-6">
-        {profile?.first_name && (
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">مرحباً بك {profile.first_name}</h2>
-            <p className="text-muted-foreground">
-              هذه نظرة عامة على استثماراتك ونشاطك
-            </p>
-          </div>
-        )}
+        {/* Welcome Message */}
+        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 rounded-lg">
+          <p className="text-xl text-primary-800 font-medium">
+            {getGreeting()}, {profile?.first_name}! 👋
+          </p>
+          <p className="text-muted-foreground mt-1">
+            نتمنى لك يوماً موفقاً ومليئاً بالإنجازات
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
