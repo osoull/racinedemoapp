@@ -21,10 +21,10 @@ export function Routes() {
 
   return (
     <RouterRoutes>
-      {/* Include the route components directly */}
-      <AdminRoutes />
-      <BorrowerRoutes />
-      <InvestorRoutes />
+      {/* Include the route components by rendering them */}
+      {userType === "admin" && <AdminRoutes />}
+      {userType === "borrower" && <BorrowerRoutes />}
+      {(userType === "basic_investor" || userType === "qualified_investor") && <InvestorRoutes />}
 
       {/* Default redirection based on user type */}
       <Route
