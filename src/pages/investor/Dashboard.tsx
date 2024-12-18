@@ -2,12 +2,12 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { Card } from "@/components/ui/card"
-import { Wallet, Activity, FileText, TrendingUp } from "lucide-react"
 import { StatCard } from "@/components/dashboard/StatCard"
 import { ActivityFeed } from "@/components/dashboard/activity/ActivityFeed"
 import { FundingChart } from "@/components/dashboard/charts/FundingChart"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
+import { Card } from "@/components/ui/card"
+import { Wallet, Activity, FileText, TrendingUp } from "lucide-react"
 
 const InvestorDashboard = () => {
   const { user } = useAuth()
@@ -72,6 +72,13 @@ const InvestorDashboard = () => {
           </p>
           <p className="text-muted-foreground mt-1">
             نتمنى لك يوماً موفقاً ومليئاً بالإنجازات
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
+          <p className="text-muted-foreground">
+            نظرة عامة على محفظتك الاستثمارية
           </p>
         </div>
 

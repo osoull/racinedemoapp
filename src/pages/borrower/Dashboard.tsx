@@ -27,6 +27,13 @@ export default function BorrowerDashboard() {
           </p>
         </div>
 
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
+          <p className="text-muted-foreground">
+            نظرة عامة على طلبات التمويل والمدفوعات
+          </p>
+        </div>
+
         <BorrowerDashboardOverview />
       </div>
     </BorrowerDashboardLayout>
