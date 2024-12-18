@@ -12,7 +12,6 @@ import { LegalRepresentativeSection } from "./kyc/LegalRepresentativeSection"
 import { KYCFormData } from "@/types/kyc"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { BorrowerDashboardLayout } from "./BorrowerDashboardLayout"
 import { useKycValidation } from "@/hooks/useKycValidation"
 
 export function BorrowerKYCForm() {
@@ -141,94 +140,90 @@ export function BorrowerKYCForm() {
 
   if (loading || validationLoading) {
     return (
-      <BorrowerDashboardLayout>
-        <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      </BorrowerDashboardLayout>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     )
   }
 
   return (
-    <BorrowerDashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-primary-800">التحقق من الهوية</h2>
-          <p className="text-muted-foreground">
-            إدارة وثائق التحقق من الهوية والمعلومات المطلوبة
-          </p>
-        </div>
+    <div className="container mx-auto py-6 space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight text-primary-800">التحقق من الهوية</h2>
+        <p className="text-muted-foreground">
+          إدارة وثائق التحقق من الهوية والمعلومات المطلوبة
+        </p>
+      </div>
 
-        {/* KYC Status Card */}
+      {/* KYC Status Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>حالة التحقق من الهوية</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span>الحالة الحالية</span>
+            <Badge
+              variant={profile?.kyc_status === 'approved' ? 'default' : 'secondary'}
+              className={profile?.kyc_status === 'approved' ? 'bg-green-500' : ''}
+            >
+              {profile?.kyc_status === 'approved' ? 'معتمد' : 'قيد المراجعة'}
+            </Badge>
+          </div>
+
+          {profile?.kyc_status !== 'approved' && !kycValid && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                يجب استكمال جميع المتطلبات التالية للحصول على الاعتماد:
+                <ul className="mt-2 list-disc list-inside">
+                  {!profile?.profile_completed && (
+                    <li>استكمال معلومات الملف الشخصي</li>
+                  )}
+                  {!kycData.legal_representative_name && (
+                    <li>إضافة معلومات الممثل القانوني</li>
+                  )}
+                  <li>تحميل واعتماد جميع المستندات المطلوبة</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Legal Representative Section */}
+      <LegalRepresentativeSection kycData={kycData} setKycData={setKycData} />
+
+      {/* Company Information */}
+      <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
+
+      {/* Bank Details */}
+      <BankDetailsSection kycData={kycData} setKycData={setKycData} />
+
+      {/* Documents */}
+      <DocumentUploadSection />
+
+      {/* Request KYC Verification Button */}
+      {profile?.kyc_status !== 'approved' && (
         <Card>
-          <CardHeader>
-            <CardTitle>حالة التحقق من الهوية</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span>الحالة الحالية</span>
-              <Badge
-                variant={profile?.kyc_status === 'approved' ? 'default' : 'secondary'}
-                className={profile?.kyc_status === 'approved' ? 'bg-green-500' : ''}
-              >
-                {profile?.kyc_status === 'approved' ? 'معتمد' : 'قيد المراجعة'}
-              </Badge>
-            </div>
-
-            {profile?.kyc_status !== 'approved' && !kycValid && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  يجب استكمال جميع المتطلبات التالية للحصول على الاعتماد:
-                  <ul className="mt-2 list-disc list-inside">
-                    {!profile?.profile_completed && (
-                      <li>استكمال معلومات الملف الشخصي</li>
-                    )}
-                    {!kycData.legal_representative_name && (
-                      <li>إضافة معلومات الممثل القانوني</li>
-                    )}
-                    <li>تحميل واعتماد جميع المستندات المطلوبة</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
+          <CardContent className="pt-6">
+            <Button 
+              className="w-full"
+              size="lg"
+              onClick={requestKYCVerification}
+              disabled={saving || !kycValid}
+            >
+              {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              طلب التحقق من الهوية
+            </Button>
+            {!kycValid && (
+              <p className="text-sm text-muted-foreground mt-2 text-center">
+                يجب استكمال جميع المعلومات والمستندات المطلوبة قبل طلب التحقق
+              </p>
             )}
           </CardContent>
         </Card>
-
-        {/* Legal Representative Section */}
-        <LegalRepresentativeSection kycData={kycData} setKycData={setKycData} />
-
-        {/* Company Information */}
-        <CompanyInfoSection kycData={kycData} setKycData={setKycData} />
-
-        {/* Bank Details */}
-        <BankDetailsSection kycData={kycData} setKycData={setKycData} />
-
-        {/* Documents */}
-        <DocumentUploadSection />
-
-        {/* Request KYC Verification Button */}
-        {profile?.kyc_status !== 'approved' && (
-          <Card>
-            <CardContent className="pt-6">
-              <Button 
-                className="w-full"
-                size="lg"
-                onClick={requestKYCVerification}
-                disabled={saving || !kycValid}
-              >
-                {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                طلب التحقق من الهوية
-              </Button>
-              {!kycValid && (
-                <p className="text-sm text-muted-foreground mt-2 text-center">
-                  يجب استكمال جميع المعلومات والمستندات المطلوبة قبل طلب التحقق
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </BorrowerDashboardLayout>
+      )}
+    </div>
   )
 }
