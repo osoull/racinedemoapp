@@ -13,20 +13,21 @@ export function useBankDetails() {
     queryKey: ['platform_bank_accounts'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('bank_accounts')
+        .from('platform_bank_accounts')
         .select('*')
-        .eq('is_primary', true)
-        .single()
+        .eq('is_active', true)
+        .limit(1)
+        .maybeSingle()
 
       if (error) {
-        // If no rows found, return null instead of throwing
-        if (error.code === 'PGRST116') {
-          return null;
-        }
         console.error('Error fetching bank details:', error)
         throw new Error('Failed to load bank details')
       }
       
+      if (!data) {
+        return null
+      }
+
       return {
         bank_name: data.bank_name,
         account_name: data.account_name,
