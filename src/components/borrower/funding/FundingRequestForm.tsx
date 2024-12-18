@@ -24,7 +24,7 @@ const formSchema = z.object({
   additional_documents: z.string().optional(),
 })
 
-interface FundingRequestFormProps {
+export interface FundingRequestFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
 }
