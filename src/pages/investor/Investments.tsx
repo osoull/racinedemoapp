@@ -21,6 +21,18 @@ interface FundingRequest {
 
 interface InvestmentOpportunity {
   id: string
+  funding_request_id: string
+  status: string
+  start_date: string
+  end_date: string | null
+  total_invested: number
+  created_at: string
+  updated_at: string
+  minimum_investment: number
+  maximum_investment: number | null
+  expected_return_rate: number | null
+  risk_level: string | null
+  investment_term_months: number | null
   funding_request: FundingRequest
 }
 
@@ -49,7 +61,16 @@ const Investments = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as InvestmentOpportunity[];
+      
+      // Transform the data to match our types
+      const typedData = data.map((opp: any) => ({
+        ...opp,
+        funding_request: Array.isArray(opp.funding_request) 
+          ? opp.funding_request[0] 
+          : opp.funding_request
+      })) as InvestmentOpportunity[];
+
+      return typedData;
     },
   });
 
