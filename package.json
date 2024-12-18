@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/osoull/racinedemoapp/issues"
   },
-  "homepage": "https://github.com/osoull/racinedemoapp#readme"
+  "homepage": "https://github.com/osoull/racinedemoapp#readme",
+  "dependencies": {
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  }
 }
