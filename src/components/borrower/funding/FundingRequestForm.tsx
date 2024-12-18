@@ -53,14 +53,17 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
 
   const nextStep = () => {
     const currentStepFields = {
-      1: ["title", "category", "funding_goal", "campaign_duration", "description", "fund_usage_plan"],
-      2: ["business_plan", "financial_statements"],
-      3: [],
+      1: ["title", "category", "funding_goal", "campaign_duration", "description", "fund_usage_plan"] as const,
+      2: ["business_plan", "financial_statements"] as const,
+      3: [] as const,
     }[step]
 
     const isValid = currentStepFields.every((field) => {
       const value = form.getValues(field)
-      return value && (!["description", "fund_usage_plan"].includes(field) || value.length >= 50)
+      if (typeof value === "string") {
+        return value && (!["description", "fund_usage_plan"].includes(field) || value.length >= 50)
+      }
+      return value !== undefined && value !== null && value > 0
     })
 
     if (isValid) {
