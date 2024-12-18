@@ -21,6 +21,18 @@ export function Auth() {
   const { toast } = useToast()
 
   useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        setIsRedirecting(true)
+        await redirectBasedOnUserType()
+      }
+    }
+    
+    checkSession()
+  }, [])
+
+  useEffect(() => {
     if (!user) return
 
     const redirectBasedOnUserType = async () => {
@@ -30,11 +42,12 @@ export function Auth() {
           .from("profiles")
           .select("user_type")
           .eq("id", user.id)
+          .single()
 
         if (error) throw error
 
         // If no profile exists, create one with default type
-        if (!profiles || profiles.length === 0) {
+        if (!profiles) {
           const { error: insertError } = await supabase
             .from("profiles")
             .insert([
@@ -53,8 +66,7 @@ export function Auth() {
           return
         }
 
-        const profile = profiles[0]
-        switch (profile.user_type) {
+        switch (profiles.user_type) {
           case "borrower":
             await navigate("/borrower/dashboard")
             break
