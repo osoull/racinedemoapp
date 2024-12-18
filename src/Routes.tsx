@@ -21,11 +21,12 @@ export function Routes() {
 
   return (
     <RouterRoutes>
+      {/* Include the route components directly */}
       <AdminRoutes />
       <BorrowerRoutes />
       <InvestorRoutes />
 
-      {/* Redirection par défaut basée sur le type d'utilisateur */}
+      {/* Default redirection based on user type */}
       <Route
         path="/"
         element={
@@ -44,7 +45,7 @@ export function Routes() {
         }
       />
       
-      {/* Route catch-all */}
+      {/* Catch-all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </RouterRoutes>
   )
