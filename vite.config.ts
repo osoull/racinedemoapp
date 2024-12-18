@@ -1,4 +1,4 @@
-import { defineConfig, UserConfig, ConfigEnv } from "vite"
+import { defineConfig, UserConfig, ConfigEnv, PluginOption } from "vite"
 import react from "@vitejs/plugin-react-swc"
 import path from "path"
 
@@ -23,7 +23,7 @@ export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => 
     plugins: [
       react(),
       mode === 'development' && tagger,
-    ].filter(Boolean),
+    ].filter((plugin): plugin is PluginOption => Boolean(plugin)),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
