@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
+import { FundingRequest } from "@/types/funding"
 
 const formSchema = z.object({
   title: z.string().min(1, "عنوان المشروع مطلوب"),
@@ -25,18 +26,26 @@ const formSchema = z.object({
 })
 
 export interface FundingRequestFormProps {
+  initialData?: FundingRequest;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function FundingRequestForm({ onSuccess, onCancel }: FundingRequestFormProps) {
+export function FundingRequestForm({ initialData, onSuccess, onCancel }: FundingRequestFormProps) {
   const [step, setStep] = useState(1)
   const { toast } = useToast()
   const { user } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData ? {
+      title: initialData.title,
+      category: initialData.category,
+      funding_goal: initialData.funding_goal,
+      campaign_duration: initialData.campaign_duration,
+      description: initialData.description,
+      fund_usage_plan: initialData.fund_usage_plan,
+    } : {
       title: "",
       category: "",
       funding_goal: 0,
@@ -48,62 +57,87 @@ export function FundingRequestForm({ onSuccess, onCancel }: FundingRequestFormPr
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const { data: request, error } = await supabase
-        .from("funding_requests")
-        .insert({
-          owner_id: user?.id,
-          title: values.title,
-          category: values.category,
-          funding_goal: values.funding_goal,
-          campaign_duration: values.campaign_duration,
-          description: values.description,
-          fund_usage_plan: values.fund_usage_plan,
-          status: "draft",
-          completion_steps: {
-            basic_info: true,
-            documents: !!values.business_plan && !!values.financial_statements,
-            payment: false,
-          },
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
-      if (values.business_plan || values.financial_statements || values.additional_documents) {
-        const documents = []
-        if (values.business_plan) {
-          documents.push({
-            request_id: request.id,
-            document_type: "business_plan",
-            document_url: values.business_plan,
+      if (initialData) {
+        // Update existing request
+        const { error } = await supabase
+          .from("funding_requests")
+          .update({
+            title: values.title,
+            category: values.category,
+            funding_goal: values.funding_goal,
+            campaign_duration: values.campaign_duration,
+            description: values.description,
+            fund_usage_plan: values.fund_usage_plan,
+            status: "draft",
+            completion_steps: {
+              basic_info: true,
+              documents: !!values.business_plan && !!values.financial_statements,
+              payment: false,
+            },
           })
-        }
-        if (values.financial_statements) {
-          documents.push({
-            request_id: request.id,
-            document_type: "financial_statements",
-            document_url: values.financial_statements,
-          })
-        }
-        if (values.additional_documents) {
-          documents.push({
-            request_id: request.id,
-            document_type: "additional",
-            document_url: values.additional_documents,
-          })
-        }
+          .eq("id", initialData.id)
+          .eq("owner_id", user?.id)
 
-        const { error: docsError } = await supabase
-          .from("funding_request_documents")
-          .insert(documents)
+        if (error) throw error
+      } else {
+        // Create new request
+        const { data: request, error } = await supabase
+          .from("funding_requests")
+          .insert({
+            owner_id: user?.id,
+            title: values.title,
+            category: values.category,
+            funding_goal: values.funding_goal,
+            campaign_duration: values.campaign_duration,
+            description: values.description,
+            fund_usage_plan: values.fund_usage_plan,
+            status: "draft",
+            completion_steps: {
+              basic_info: true,
+              documents: !!values.business_plan && !!values.financial_statements,
+              payment: false,
+            },
+          })
+          .select()
+          .single()
 
-        if (docsError) throw docsError
+        if (error) throw error
+
+        if (values.business_plan || values.financial_statements || values.additional_documents) {
+          const documents = []
+          if (values.business_plan) {
+            documents.push({
+              request_id: request.id,
+              document_type: "business_plan",
+              document_url: values.business_plan,
+            })
+          }
+          if (values.financial_statements) {
+            documents.push({
+              request_id: request.id,
+              document_type: "financial_statements",
+              document_url: values.financial_statements,
+            })
+          }
+          if (values.additional_documents) {
+            documents.push({
+              request_id: request.id,
+              document_type: "additional",
+              document_url: values.additional_documents,
+            })
+          }
+
+          const { error: docsError } = await supabase
+            .from("funding_request_documents")
+            .insert(documents)
+
+          if (docsError) throw docsError
+        }
       }
 
       toast({
-        title: "تم حفظ الطلب",
-        description: "تم حفظ طلب التمويل بنجاح",
+        title: initialData ? "تم تحديث الطلب" : "تم حفظ الطلب",
+        description: initialData ? "تم تحديث طلب التمويل بنجاح" : "تم حفظ طلب التمويل بنجاح",
       })
 
       onSuccess?.()
@@ -174,7 +208,7 @@ export function FundingRequestForm({ onSuccess, onCancel }: FundingRequestFormPr
               </Button>
             ) : (
               <Button type="submit">
-                إرسال الطلب
+                {initialData ? "حفظ التعديلات" : "إرسال الطلب"}
               </Button>
             )}
           </div>
