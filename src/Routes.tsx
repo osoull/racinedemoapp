@@ -26,6 +26,7 @@ import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import InvestorDashboard from "@/pages/investor/Dashboard"
 import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
+import { Outlet } from "react-router-dom"
 
 export function Routes() {
   const { user } = useAuth()
@@ -84,7 +85,9 @@ export function Routes() {
         path="/borrower"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
-            <BorrowerDashboardLayout />
+            <BorrowerDashboardLayout>
+              <Outlet />
+            </BorrowerDashboardLayout>
           </PrivateRoute>
         }
       >
