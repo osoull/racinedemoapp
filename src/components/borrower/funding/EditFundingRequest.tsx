@@ -14,7 +14,6 @@ export function EditFundingRequest() {
   const { data: request, isLoading } = useQuery({
     queryKey: ["funding-request", id],
     queryFn: async () => {
-      // Fetch the funding request with its documents
       const { data, error } = await supabase
         .from("funding_requests")
         .select(`
@@ -30,7 +29,6 @@ export function EditFundingRequest() {
 
       if (error) throw error
 
-      // Convert fund_usage_plan to string regardless of its type
       const formattedData: FundingRequest = {
         ...data,
         fund_usage_plan: typeof data.fund_usage_plan === 'object' 
