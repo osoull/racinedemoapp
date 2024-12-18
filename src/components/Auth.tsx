@@ -20,6 +20,59 @@ export function Auth() {
   const navigate = useNavigate()
   const { toast } = useToast()
 
+  const redirectBasedOnUserType = async () => {
+    setIsRedirecting(true)
+    try {
+      const { data: profiles, error } = await supabase
+        .from("profiles")
+        .select("user_type")
+        .eq("id", user?.id)
+        .single()
+
+      if (error) throw error
+
+      // If no profile exists, create one with default type
+      if (!profiles) {
+        const { error: insertError } = await supabase
+          .from("profiles")
+          .insert([
+            {
+              id: user?.id,
+              email: user?.email,
+              user_type: "basic_investor",
+              first_name: "",
+              last_name: "",
+            },
+          ])
+
+        if (insertError) throw insertError
+
+        await navigate("/investor/dashboard")
+        return
+      }
+
+      switch (profiles.user_type) {
+        case "borrower":
+          await navigate("/borrower/dashboard")
+          break
+        case "admin":
+          await navigate("/admin")
+          break
+        default:
+          await navigate("/investor/dashboard")
+      }
+    } catch (error: any) {
+      console.error("Error during redirect:", error)
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء توجيهك للوحة التحكم",
+        variant: "destructive",
+      })
+    } finally {
+      setIsRedirecting(false)
+    }
+  }
+
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
@@ -34,62 +87,8 @@ export function Auth() {
 
   useEffect(() => {
     if (!user) return
-
-    const redirectBasedOnUserType = async () => {
-      setIsRedirecting(true)
-      try {
-        const { data: profiles, error } = await supabase
-          .from("profiles")
-          .select("user_type")
-          .eq("id", user.id)
-          .single()
-
-        if (error) throw error
-
-        // If no profile exists, create one with default type
-        if (!profiles) {
-          const { error: insertError } = await supabase
-            .from("profiles")
-            .insert([
-              {
-                id: user.id,
-                email: user.email,
-                user_type: "basic_investor",
-                first_name: "",
-                last_name: "",
-              },
-            ])
-
-          if (insertError) throw insertError
-
-          await navigate("/investor/dashboard")
-          return
-        }
-
-        switch (profiles.user_type) {
-          case "borrower":
-            await navigate("/borrower/dashboard")
-            break
-          case "admin":
-            await navigate("/admin")
-            break
-          default:
-            await navigate("/investor/dashboard")
-        }
-      } catch (error: any) {
-        console.error("Error during redirect:", error)
-        toast({
-          title: "خطأ",
-          description: "حدث خطأ أثناء توجيهك للوحة التحكم",
-          variant: "destructive",
-        })
-      } finally {
-        setIsRedirecting(false)
-      }
-    }
-
     redirectBasedOnUserType()
-  }, [user, navigate, toast])
+  }, [user])
 
   const handleSignIn = async (email: string, password: string) => {
     if (isLoading) return
