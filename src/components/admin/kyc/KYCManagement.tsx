@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { KYCStatsGrid } from "./stats/KYCStatsGrid"
 import { KYCRequestsTable } from "./KYCRequestsTable"
+import { Card } from "@/components/ui/card"
 
 export function KYCManagement() {
   const { data: kycRequests, isLoading } = useQuery({
@@ -39,15 +40,21 @@ export function KYCManagement() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-primary-800">التحقق من الهوية</h2>
-        <p className="text-muted-foreground">
-          إدارة ومراجعة طلبات التحقق من الهوية
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-primary-800">التحقق من الهوية</h2>
+          <p className="text-muted-foreground">
+            إدارة ومراجعة طلبات التحقق من الهوية
+          </p>
+        </div>
       </div>
 
-      <KYCStatsGrid data={kycRequests} isLoading={isLoading} />
-      <KYCRequestsTable data={kycRequests} isLoading={isLoading} />
+      <div className="grid gap-6">
+        <KYCStatsGrid data={kycRequests} isLoading={isLoading} />
+        <Card>
+          <KYCRequestsTable data={kycRequests} isLoading={isLoading} />
+        </Card>
+      </div>
     </div>
   )
 }
