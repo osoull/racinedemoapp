@@ -19,9 +19,12 @@ export function BorrowerManagement() {
   })
 
   return (
-    <div className="container mx-auto p-6 space-y-6 text-right">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-right">إدارة المقترضين وطلباتهم</h1>
+    <div className="container mx-auto p-6 space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight text-primary-800">المقترضين</h2>
+        <p className="text-muted-foreground">
+          إدارة وتتبع جميع المقترضين في المنصة
+        </p>
       </div>
 
       <Tabs defaultValue="all" dir="rtl" className="w-full">
