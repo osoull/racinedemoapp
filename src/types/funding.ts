@@ -19,6 +19,9 @@ export interface FundingRequest {
     first_name: string
     last_name: string
   }
+  business_plan?: string
+  financial_statements?: string
+  additional_documents?: string
 }
 
 export interface FundingStats {
