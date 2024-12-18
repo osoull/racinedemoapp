@@ -1,4 +1,4 @@
-import { defineConfig } from "vite"
+import { defineConfig, UserConfig, ConfigEnv } from "vite"
 import react from "@vitejs/plugin-react-swc"
 import path from "path"
 
@@ -8,7 +8,7 @@ const getComponentTagger = async () => {
   return componentTagger
 }
 
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async ({ mode }: ConfigEnv): Promise<UserConfig> => {
   const tagger = mode === 'development' ? await getComponentTagger() : null
 
   return {
