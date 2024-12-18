@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { SignInForm } from "./auth/SignInForm"
@@ -10,69 +9,16 @@ import { BusinessInfoForm } from "./auth/BusinessInfoForm"
 import { Card, CardContent } from "./ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 import { Loader2 } from "lucide-react"
+import { useAuthRedirect } from "@/hooks/useAuthRedirect"
 
 export function Auth() {
   const [isLoading, setIsLoading] = useState(false)
-  const [isRedirecting, setIsRedirecting] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [view, setView] = useState<"sign_in" | "sign_up">("sign_in")
   const [userType, setUserType] = useState<string | null>(null)
   const [step, setStep] = useState(1)
-  const navigate = useNavigate()
   const { toast } = useToast()
-
-  const redirectBasedOnUserType = async () => {
-    setIsRedirecting(true)
-    try {
-      const { data: profiles, error } = await supabase
-        .from("profiles")
-        .select("user_type")
-        .eq("id", user?.id)
-        .single()
-
-      if (error) throw error
-
-      // If no profile exists, create one with default type
-      if (!profiles) {
-        const { error: insertError } = await supabase
-          .from("profiles")
-          .insert([
-            {
-              id: user?.id,
-              email: user?.email,
-              user_type: "basic_investor",
-              first_name: "",
-              last_name: "",
-            },
-          ])
-
-        if (insertError) throw insertError
-
-        await navigate("/investor/dashboard")
-        return
-      }
-
-      switch (profiles.user_type) {
-        case "borrower":
-          await navigate("/borrower/dashboard")
-          break
-        case "admin":
-          await navigate("/admin")
-          break
-        default:
-          await navigate("/investor/dashboard")
-      }
-    } catch (error: any) {
-      console.error("Error during redirect:", error)
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء توجيهك للوحة التحكم",
-        variant: "destructive",
-      })
-    } finally {
-      setIsRedirecting(false)
-    }
-  }
+  const { isRedirecting, redirectBasedOnUserType } = useAuthRedirect()
 
   useEffect(() => {
     const checkSession = async () => {
@@ -82,12 +28,23 @@ export function Auth() {
       }
     }
     checkSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user)
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
-    if (!user) return
-    redirectBasedOnUserType()
-  }, [user, navigate, toast])
+    if (user?.id) {
+      redirectBasedOnUserType(user.id)
+    }
+  }, [user])
 
   const handleSignIn = async (email: string, password: string) => {
     if (isLoading) return
@@ -204,4 +161,3 @@ export function Auth() {
       </Card>
     </div>
   )
-}
