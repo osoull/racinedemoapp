@@ -88,12 +88,12 @@ export function FundingRequestList() {
         .from("funding_requests")
         .select(`
           *,
-          owner:profiles(first_name, last_name)
+          owner:profiles!funding_requests_owner_id_fkey(first_name, last_name)
         `)
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      return data
+      return data as FundingRequest[]
     },
   })
 

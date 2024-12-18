@@ -9,6 +9,21 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { formatCurrency } from "@/utils/feeCalculations";
 
+interface ProjectOwner {
+  first_name: string;
+  last_name: string;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  funding_goal: number;
+  current_funding: number;
+  owner: ProjectOwner;
+}
+
 export default function ProjectDetailsPage() {
   const { id } = useParams();
 
@@ -19,13 +34,13 @@ export default function ProjectDetailsPage() {
         .from("funding_requests")
         .select(`
           *,
-          owner:profiles(first_name, last_name)
+          owner:profiles!funding_requests_owner_id_fkey(first_name, last_name)
         `)
         .eq("id", id)
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Project;
     },
   });
 

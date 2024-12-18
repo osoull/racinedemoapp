@@ -1,10 +1,28 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { ProjectCard } from "@/components/dashboard/projects/ProjectCard"
 import { Loader2 } from "lucide-react"
+
+interface FundingRequest {
+  id: string
+  title: string
+  description: string
+  funding_goal: number
+  current_funding: number
+  status: string
+  owner: {
+    first_name: string
+    last_name: string
+  }
+}
+
+interface InvestmentOpportunity {
+  id: string
+  funding_request: FundingRequest
+}
 
 const Investments = () => {
   const { data: opportunities, isLoading } = useQuery({
@@ -14,14 +32,14 @@ const Investments = () => {
         .from("investment_opportunities")
         .select(`
           *,
-          funding_request:funding_requests(
+          funding_request:funding_requests!inner(
             id,
             title,
             description,
             funding_goal,
             current_funding,
             status,
-            owner:profiles(
+            owner:profiles!funding_requests_owner_id_fkey(
               first_name,
               last_name
             )
@@ -31,10 +49,7 @@ const Investments = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data.map(opp => ({
-        ...opp,
-        funding_request: opp.funding_request[0]
-      }));
+      return data as InvestmentOpportunity[];
     },
   });
 
