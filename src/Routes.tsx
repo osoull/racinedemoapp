@@ -19,12 +19,13 @@ import Settings from "@/pages/Settings"
 import Notifications from "@/pages/admin/Notifications"
 import BorrowerDashboard from "@/pages/borrower/Dashboard"
 import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
-import NewFundingRequestPage from "@/pages/borrower/funding-requests/new"
+import { NewFundingRequest } from "@/components/borrower/funding/NewFundingRequest"
 import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
 import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
 import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
 import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
 import InvestorDashboard from "@/pages/investor/Dashboard"
+import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
 
 export function Routes() {
   const { user } = useAuth()
@@ -84,14 +85,63 @@ export function Routes() {
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
             <RouterRoutes>
-              <Route index element={<BorrowerDashboard />} />
-              <Route path="dashboard" element={<BorrowerDashboard />} />
-              <Route path="funding-requests" element={<FundingRequestsList />} />
-              <Route path="funding-requests/new" element={<NewFundingRequestPage />} />
-              <Route path="profile" element={<BorrowerProfile />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="kyc" element={<BorrowerKYCForm />} />
-              <Route path="payments" element={<BorrowerPayments />} />
+              <Route
+                path="dashboard"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerDashboard />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="funding-requests"
+                element={
+                  <BorrowerDashboardLayout>
+                    <FundingRequestsList />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="funding-requests/new"
+                element={
+                  <BorrowerDashboardLayout>
+                    <NewFundingRequest />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerProfile />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <BorrowerDashboardLayout>
+                    <Settings />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="kyc"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerKYCForm />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route
+                path="payments"
+                element={
+                  <BorrowerDashboardLayout>
+                    <BorrowerPayments />
+                  </BorrowerDashboardLayout>
+                }
+              />
+              <Route index element={<Navigate to="/borrower/dashboard" replace />} />
             </RouterRoutes>
           </PrivateRoute>
         }
