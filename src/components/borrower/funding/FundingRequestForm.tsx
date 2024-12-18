@@ -47,6 +47,10 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
     },
   })
 
+  const onSubmit = (values: FundingRequestFormData) => {
+    submitFundingRequest(values, user?.id)
+  }
+
   const nextStep = () => {
     type StepFields = readonly (keyof FundingRequestFormData)[]
     
