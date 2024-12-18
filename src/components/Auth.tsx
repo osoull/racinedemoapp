@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth } from "@/contexts/AuthContext"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
@@ -30,12 +30,11 @@ export function Auth() {
           .from("profiles")
           .select("user_type")
           .eq("id", user.id)
-          .single()
 
         if (error) throw error
 
         // If no profile exists, create one with default type
-        if (!profiles) {
+        if (!profiles || profiles.length === 0) {
           const { error: insertError } = await supabase
             .from("profiles")
             .insert([
@@ -54,12 +53,13 @@ export function Auth() {
           return
         }
 
-        switch (profiles.user_type) {
+        const profile = profiles[0]
+        switch (profile.user_type) {
           case "borrower":
             await navigate("/borrower/dashboard")
             break
           case "admin":
-            await navigate("/admin/dashboard")
+            await navigate("/admin")
             break
           default:
             await navigate("/investor/dashboard")
