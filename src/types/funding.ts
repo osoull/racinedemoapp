@@ -22,10 +22,6 @@ export interface FundingRequest {
   business_plan?: string
   financial_statements?: string
   additional_documents?: string
-  documents?: Array<{
-    document_type: string
-    document_url: string
-  }>
 }
 
 export interface FundingStats {
