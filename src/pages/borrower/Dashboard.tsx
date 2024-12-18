@@ -5,7 +5,6 @@ export default function BorrowerDashboard() {
   const { user } = useAuth()
   const firstName = user?.user_metadata?.first_name || ""
 
-  // Get greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return "صباح الخير"
@@ -15,7 +14,6 @@ export default function BorrowerDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Message */}
       <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 rounded-lg">
         <p className="text-xl text-primary-800 font-medium">
           {getGreeting()}, {firstName}! 👋
@@ -26,7 +24,7 @@ export default function BorrowerDashboard() {
       </div>
 
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-primary">لوحة التحكم</h2>
         <p className="text-muted-foreground">
           نظرة عامة على طلبات التمويل والمدفوعات
         </p>

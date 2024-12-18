@@ -22,7 +22,7 @@ export function FundingRequestsList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">طلبات التمويل</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-primary">طلبات التمويل</h2>
           <p className="text-muted-foreground">
             إدارة ومتابعة طلبات التمويل الخاصة بك
           </p>

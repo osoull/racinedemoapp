@@ -6,7 +6,7 @@ export function BorrowerProfile() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">الملف التعريفي</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-primary">الملف التعريفي</h2>
         <p className="text-muted-foreground">
           إدارة وتحديث معلومات الملف الشخصي
         </p>

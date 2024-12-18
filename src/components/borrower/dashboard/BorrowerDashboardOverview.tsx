@@ -54,7 +54,6 @@ export function BorrowerDashboardOverview() {
 
   return (
     <div className="space-y-6">
-      {/* Simple KYC Alert */}
       {profile?.kyc_status !== "approved" && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -64,13 +63,9 @@ export function BorrowerDashboardOverview() {
         </Alert>
       )}
 
-      {/* Statistics */}
       <BorrowerDashboardStats stats={stats} />
-
-      {/* Additional Statistics */}
       <BorrowerAdditionalStats stats={stats} />
 
-      {/* Recent Payments */}
       <Card>
         <CardHeader>
           <CardTitle>آخر المدفوعات</CardTitle>
