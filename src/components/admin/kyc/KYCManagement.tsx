@@ -9,25 +9,33 @@ export function KYCManagement() {
   const { data: kycRequests, isLoading } = useQuery({
     queryKey: ["kyc-requests"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First get profiles with KYC status pending or under review
+      const { data: profiles, error: profilesError } = await supabase
         .from("profiles")
         .select(`
           *,
           investor_kyc (verification_status),
-          borrower_kyc (verification_status),
-          kyc_documents (
-            id,
-            document_type,
-            document_url,
-            status,
-            verification_notes
-          )
+          borrower_kyc (verification_status)
         `)
         .or('kyc_status.eq.pending,kyc_status.eq.under_review')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
-      return data
+      if (profilesError) throw profilesError
+
+      // Then fetch documents for these profiles
+      const profileIds = profiles?.map(p => p.id) || []
+      const { data: documents, error: documentsError } = await supabase
+        .from("kyc_documents")
+        .select('*')
+        .in('user_id', profileIds)
+
+      if (documentsError) throw documentsError
+
+      // Combine the data
+      return profiles?.map(profile => ({
+        ...profile,
+        kyc_documents: documents?.filter(doc => doc.user_id === profile.id) || []
+      }))
     }
   })
 
