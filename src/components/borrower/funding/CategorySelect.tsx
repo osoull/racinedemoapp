@@ -1,8 +1,9 @@
+import { Control } from "react-hook-form"
 import {
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormControl,
   FormMessage,
 } from "@/components/ui/form"
 import {
@@ -12,17 +13,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Control } from "react-hook-form"
 
 const categories = [
-  { id: "technology", label: "تقنية" },
-  { id: "real_estate", label: "عقارات" },
-  { id: "healthcare", label: "رعاية صحية" },
-  { id: "education", label: "تعليم" },
-  { id: "retail", label: "تجارة تجزئة" },
-  { id: "manufacturing", label: "تصنيع" },
-  { id: "services", label: "خدمات" },
-  { id: "other", label: "أخرى" },
+  { value: "real_estate", label: "العقارات" },
+  { value: "technology", label: "التكنولوجيا" },
+  { value: "healthcare", label: "الرعاية الصحية" },
+  { value: "education", label: "التعليم" },
+  { value: "retail", label: "التجزئة" },
+  { value: "manufacturing", label: "التصنيع" },
+  { value: "services", label: "الخدمات" },
+  { value: "agriculture", label: "الزراعة" },
+  { value: "energy", label: "الطاقة" },
+  { value: "other", label: "أخرى" },
 ]
 
 interface CategorySelectProps {
@@ -39,17 +41,13 @@ export function CategorySelect({ control }: CategorySelectProps) {
           <FormLabel>تصنيف المشروع *</FormLabel>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
-              <SelectTrigger className="text-right" dir="rtl">
-                <SelectValue placeholder="اختر تصنيف" />
+              <SelectTrigger>
+                <SelectValue placeholder="اختر تصنيف المشروع" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent align="end" className="text-right" dir="rtl">
+            <SelectContent>
               {categories.map((category) => (
-                <SelectItem 
-                  key={category.id} 
-                  value={category.id}
-                  className="text-right"
-                >
+                <SelectItem key={category.value} value={category.value}>
                   {category.label}
                 </SelectItem>
               ))}

@@ -1,83 +1,173 @@
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Form } from "@/components/ui/form"
 import { BasicInfoStep } from "./steps/BasicInfoStep"
 import { DocumentsStep } from "./steps/DocumentsStep"
 import { PaymentStep } from "./steps/PaymentStep"
-import { useProjectSubmission } from "@/hooks/useProjectSubmission"
-import { calculateFees } from "@/utils/feeCalculations"
+import { Card } from "@/components/ui/card"
+import { useToast } from "@/components/ui/use-toast"
+import { useNavigate } from "react-router-dom"
+import { supabase } from "@/integrations/supabase/client"
+import { useAuth } from "@/hooks/useAuth"
 
-interface FundingRequestFormProps {
-  onSuccess?: () => void;
-  onCancel?: () => void;
-}
+const formSchema = z.object({
+  title: z.string().min(1, "عنوان المشروع مطلوب"),
+  category: z.string().min(1, "تصنيف المشروع مطلوب"),
+  funding_goal: z.number().min(1000, "المبلغ المستهدف يجب أن يكون أكبر من 1000 ريال"),
+  campaign_duration: z.number().min(1, "مدة الحملة مطلوبة"),
+  description: z.string().min(50, "يجب أن يكون الوصف 50 حرفاً على الأقل"),
+  fund_usage_plan: z.string().min(50, "يجب أن تكون خطة استخدام التمويل 50 حرفاً على الأقل"),
+  business_plan: z.string().optional(),
+  financial_statements: z.string().optional(),
+  additional_documents: z.string().optional(),
+})
 
-export function FundingRequestForm({ onSuccess, onCancel }: FundingRequestFormProps) {
+export function FundingRequestForm() {
   const [step, setStep] = useState(1)
-  const { form, onSubmit, isSubmitting } = useProjectSubmission()
+  const { toast } = useToast()
+  const navigate = useNavigate()
+  const { user } = useAuth()
 
-  const handleNext = async () => {
-    const isValid = await form.trigger()
-    if (isValid) setStep(step + 1)
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      category: "",
+      funding_goal: 0,
+      campaign_duration: 30,
+      description: "",
+      fund_usage_plan: "",
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const { data: request, error } = await supabase
+        .from("funding_requests")
+        .insert({
+          owner_id: user?.id,
+          title: values.title,
+          category: values.category,
+          funding_goal: values.funding_goal,
+          campaign_duration: values.campaign_duration,
+          description: values.description,
+          fund_usage_plan: values.fund_usage_plan,
+          status: "draft",
+          completion_steps: {
+            basic_info: true,
+            documents: !!values.business_plan && !!values.financial_statements,
+            payment: false,
+          },
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      if (values.business_plan || values.financial_statements || values.additional_documents) {
+        const documents = []
+        if (values.business_plan) {
+          documents.push({
+            request_id: request.id,
+            document_type: "business_plan",
+            document_url: values.business_plan,
+          })
+        }
+        if (values.financial_statements) {
+          documents.push({
+            request_id: request.id,
+            document_type: "financial_statements",
+            document_url: values.financial_statements,
+          })
+        }
+        if (values.additional_documents) {
+          documents.push({
+            request_id: request.id,
+            document_type: "additional",
+            document_url: values.additional_documents,
+          })
+        }
+
+        const { error: docsError } = await supabase
+          .from("funding_request_documents")
+          .insert(documents)
+
+        if (docsError) throw docsError
+      }
+
+      toast({
+        title: "تم حفظ الطلب",
+        description: "تم حفظ طلب التمويل بنجاح",
+      })
+
+      navigate("/borrower/funding-requests")
+    } catch (error) {
+      console.error("Error submitting funding request:", error)
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء حفظ الطلب",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handleBack = () => {
-    setStep(step - 1)
+  const nextStep = () => {
+    const currentStepFields = {
+      1: ["title", "category", "funding_goal", "campaign_duration", "description", "fund_usage_plan"],
+      2: ["business_plan", "financial_statements"],
+      3: [],
+    }[step]
+
+    const isValid = currentStepFields.every((field) => {
+      const value = form.getValues(field)
+      return value && (!["description", "fund_usage_plan"].includes(field) || value.length >= 50)
+    })
+
+    if (isValid) {
+      setStep((prev) => Math.min(prev + 1, 3))
+    } else {
+      toast({
+        title: "تحقق من البيانات",
+        description: "يرجى إكمال جميع الحقول المطلوبة",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handleSubmit = async (data: any) => {
-    await onSubmit(data)
-    onSuccess?.()
-  }
+  const prevStep = () => setStep((prev) => Math.max(prev - 1, 1))
 
   return (
-    <Card className="p-6">
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        {step === 1 && (
-          <div className="space-y-6">
-            <BasicInfoStep control={form.control} />
-            <div className="flex justify-end space-x-4">
-              <Button type="button" variant="outline" onClick={onCancel}>
-                إلغاء
-              </Button>
-              <Button type="button" onClick={handleNext}>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Card className="p-6">
+          {step === 1 && <BasicInfoStep control={form.control} />}
+          {step === 2 && <DocumentsStep control={form.control} />}
+          {step === 3 && <PaymentStep amount={form.getValues("funding_goal")} control={form.control} />}
+
+          <div className="flex justify-between mt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              disabled={step === 1}
+            >
+              السابق
+            </Button>
+            {step < 3 ? (
+              <Button type="button" onClick={nextStep}>
                 التالي
               </Button>
-            </div>
+            ) : (
+              <Button type="submit">
+                إرسال الطلب
+              </Button>
+            )}
           </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-6">
-            <DocumentsStep control={form.control} />
-            <div className="flex justify-between">
-              <Button type="button" variant="outline" onClick={handleBack}>
-                السابق
-              </Button>
-              <Button type="button" onClick={handleNext}>
-                التالي
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div className="space-y-6">
-            <PaymentStep 
-              amount={form.getValues("funding_goal") || 0}
-              control={form.control}
-            />
-            <div className="flex justify-between">
-              <Button type="button" variant="outline" onClick={handleBack}>
-                السابق
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "جاري الإرسال..." : "إرسال الطلب"}
-              </Button>
-            </div>
-          </div>
-        )}
+        </Card>
       </form>
-    </Card>
+    </Form>
   )
 }
