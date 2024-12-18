@@ -1,68 +1,70 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
 import { FundingRequestForm } from "./FundingRequestForm"
-import { FundingRequest } from "@/types/funding"
-import { useToast } from "@/components/ui/use-toast"
 import { Loader2 } from "lucide-react"
+import type { FundingRequest } from "@/types/funding"
 
 export function EditFundingRequest() {
   const { id } = useParams()
-  const [loading, setLoading] = useState(true)
-  const [fundingRequest, setFundingRequest] = useState<FundingRequest | null>(null)
-  const { toast } = useToast()
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    const fetchFundingRequest = async () => {
-      if (!id) return
+  const { data: request, isLoading } = useQuery({
+    queryKey: ["funding-request", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("funding_requests")
+        .select(`
+          *,
+          documents:funding_request_documents(
+            document_type,
+            document_url
+          )
+        `)
+        .eq("id", id)
+        .single()
 
-      try {
-        const { data, error } = await supabase
-          .from("funding_requests")
-          .select("*, funding_request_documents(*)")
-          .eq("id", id)
-          .single()
+      if (error) throw error
 
-        if (error) throw error
-
-        // Format the data to match FundingRequest type
-        const formattedData: FundingRequest = {
-          ...data,
-          fund_usage_plan: data.fund_usage_plan ? JSON.stringify(data.fund_usage_plan) : "",
-          documents: data.funding_request_documents
-        }
-
-        setFundingRequest(formattedData)
-      } catch (error: any) {
-        console.error("Error fetching funding request:", error)
-        toast({
-          title: "خطأ",
-          description: "حدث خطأ أثناء تحميل بيانات الطلب",
-          variant: "destructive",
-        })
-      } finally {
-        setLoading(false)
+      const formattedData: FundingRequest = {
+        ...data,
+        fund_usage_plan: typeof data.fund_usage_plan === 'object' 
+          ? JSON.stringify(data.fund_usage_plan)
+          : data.fund_usage_plan,
+        documents: data.documents
       }
-    }
 
-    fetchFundingRequest()
-  }, [id, toast])
+      return formattedData
+    },
+    enabled: !!id,
+  })
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
   }
 
-  if (!fundingRequest) {
-    return (
-      <div className="text-center py-8">
-        <h2 className="text-2xl font-semibold text-gray-900">لم يتم العثور على الطلب</h2>
-      </div>
-    )
+  if (!request) {
+    return <div>طلب التمويل غير موجود</div>
   }
 
-  return <FundingRequestForm initialData={fundingRequest} />
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">تعديل طلب التمويل</h2>
+        <p className="text-muted-foreground">
+          قم بتعديل بيانات طلب التمويل الخاص بك
+        </p>
+      </div>
+
+      <FundingRequestForm
+        initialData={request}
+        onSuccess={() => navigate("/borrower/funding-requests")}
+        onCancel={() => navigate("/borrower/funding-requests")}
+      />
+    </div>
+  )
 }
