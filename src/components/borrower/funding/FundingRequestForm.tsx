@@ -34,9 +34,9 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
       campaign_duration: initialData.campaign_duration,
       description: initialData.description,
       fund_usage_plan: initialData.fund_usage_plan,
-      business_plan: initialData.business_plan,
-      financial_statements: initialData.financial_statements,
-      additional_documents: initialData.additional_documents,
+      business_plan: initialData.business_plan || initialData.documents?.find(d => d.document_type === 'business_plan')?.document_url,
+      financial_statements: initialData.financial_statements || initialData.documents?.find(d => d.document_type === 'financial_statements')?.document_url,
+      additional_documents: initialData.additional_documents || initialData.documents?.find(d => d.document_type === 'additional')?.document_url,
     } : {
       title: "",
       category: "",
