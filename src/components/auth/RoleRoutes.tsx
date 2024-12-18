@@ -25,40 +25,14 @@ export const RoleRoutes = () => {
         path="/borrower/*"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
-            <Routes>
-              <Route
-                path="dashboard"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerDashboardOverview />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerProfile />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="kyc"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerKYCForm />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="payments"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerPayments />
-                  </BorrowerDashboardLayout>
-                }
-              />
-            </Routes>
+            <BorrowerDashboardLayout>
+              <Routes>
+                <Route path="dashboard" element={<BorrowerDashboardOverview />} />
+                <Route path="profile" element={<BorrowerProfile />} />
+                <Route path="kyc" element={<BorrowerKYCForm />} />
+                <Route path="payments" element={<BorrowerPayments />} />
+              </Routes>
+            </BorrowerDashboardLayout>
           </PrivateRoute>
         }
       />

@@ -1,11 +1,15 @@
-import { Outlet } from "react-router-dom"
+import { ReactNode } from "react"
 import { BorrowerSidebar } from "./BorrowerSidebar"
 import { DashboardLayout } from "../dashboard/DashboardLayout"
 
-export function BorrowerDashboardLayout() {
+interface BorrowerDashboardLayoutProps {
+  children: ReactNode
+}
+
+export function BorrowerDashboardLayout({ children }: BorrowerDashboardLayoutProps) {
   return (
     <DashboardLayout sidebar={<BorrowerSidebar />}>
-      <Outlet />
+      {children}
     </DashboardLayout>
   )
 }
