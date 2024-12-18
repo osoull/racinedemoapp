@@ -31,7 +31,7 @@ export function EditFundingRequest() {
         ...data,
         fund_usage_plan: typeof data.fund_usage_plan === 'object' 
           ? JSON.stringify(data.fund_usage_plan)
-          : data.fund_usage_plan || '',
+          : String(data.fund_usage_plan || ''),
         documents: data.documents
       }
 
