@@ -1,4 +1,3 @@
-import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
 import { useAuth } from "@/hooks/useAuth"
 
@@ -15,27 +14,25 @@ export default function BorrowerDashboard() {
   }
 
   return (
-    <BorrowerDashboardLayout>
-      <div className="space-y-6">
-        {/* Welcome Message */}
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 rounded-lg">
-          <p className="text-xl text-primary-800 font-medium">
-            {getGreeting()}, {firstName}! 👋
-          </p>
-          <p className="text-muted-foreground mt-1">
-            نتمنى لك يوماً موفقاً ومليئاً بالإنجازات
-          </p>
-        </div>
-
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
-          <p className="text-muted-foreground">
-            نظرة عامة على طلبات التمويل والمدفوعات
-          </p>
-        </div>
-
-        <BorrowerDashboardOverview />
+    <div className="space-y-6">
+      {/* Welcome Message */}
+      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-6 rounded-lg">
+        <p className="text-xl text-primary-800 font-medium">
+          {getGreeting()}, {firstName}! 👋
+        </p>
+        <p className="text-muted-foreground mt-1">
+          نتمنى لك يوماً موفقاً ومليئاً بالإنجازات
+        </p>
       </div>
-    </BorrowerDashboardLayout>
+
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
+        <p className="text-muted-foreground">
+          نظرة عامة على طلبات التمويل والمدفوعات
+        </p>
+      </div>
+
+      <BorrowerDashboardOverview />
+    </div>
   )
 }

@@ -81,71 +81,22 @@ export function Routes() {
 
       {/* Routes Emprunteur */}
       <Route
-        path="/borrower/*"
+        path="/borrower"
         element={
           <PrivateRoute allowedTypes={["borrower"]}>
-            <RouterRoutes>
-              <Route
-                path="dashboard"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerDashboard />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="funding-requests"
-                element={
-                  <BorrowerDashboardLayout>
-                    <FundingRequestsList />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="funding-requests/new"
-                element={
-                  <BorrowerDashboardLayout>
-                    <NewFundingRequest />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerProfile />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="settings"
-                element={
-                  <BorrowerDashboardLayout>
-                    <Settings />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="kyc"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerKYCForm />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="payments"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerPayments />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route index element={<Navigate to="/borrower/dashboard" replace />} />
-            </RouterRoutes>
+            <BorrowerDashboardLayout />
           </PrivateRoute>
         }
-      />
+      >
+        <Route path="dashboard" element={<BorrowerDashboard />} />
+        <Route path="funding-requests" element={<FundingRequestsList />} />
+        <Route path="funding-requests/new" element={<NewFundingRequest />} />
+        <Route path="profile" element={<BorrowerProfile />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="kyc" element={<BorrowerKYCForm />} />
+        <Route path="payments" element={<BorrowerPayments />} />
+        <Route index element={<Navigate to="/borrower/dashboard" replace />} />
+      </Route>
 
       {/* Routes Investisseur */}
       <Route

@@ -6,9 +6,5 @@ interface BorrowerDashboardLayoutProps {
 }
 
 export function BorrowerDashboardLayout({ children }: BorrowerDashboardLayoutProps) {
-  return (
-    <DashboardLayout sidebar={<BorrowerSidebar />}>
-      {children}
-    </DashboardLayout>
-  )
+  return <DashboardLayout sidebar={<BorrowerSidebar />}>{children}</DashboardLayout>
 }
