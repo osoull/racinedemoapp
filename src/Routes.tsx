@@ -1,31 +1,9 @@
 import { Routes as RouterRoutes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { Auth } from "@/components/Auth"
-import { PrivateRoute } from "@/components/auth/PrivateRoute"
-import { DashboardLayout } from "@/components/dashboard/DashboardLayout"
-import { AdminSidebar } from "@/components/admin/AdminSidebar"
-import { DashboardOverview } from "@/components/dashboard/DashboardOverview"
-import { InvestorManagement } from "@/components/admin/investor/InvestorManagement"
-import { BorrowerManagement } from "@/components/admin/borrower/BorrowerManagement"
-import { FundingManagement } from "@/components/admin/funding/FundingManagement"
-import { FinanceOverview } from "@/components/admin/finance/FinanceOverview"
-import { ShariaCompliance } from "@/components/admin/compliance/ShariaCompliance"
-import { PlatformLicenses } from "@/components/admin/compliance/PlatformLicenses"
-import { RegulatoryReports } from "@/components/admin/compliance/RegulatoryReports"
-import { KYCManagement } from "@/components/admin/kyc/KYCManagement"
-import { PlatformSettings } from "@/components/admin/settings/PlatformSettings"
-import Profile from "@/pages/Profile"
-import Settings from "@/pages/Settings"
-import Notifications from "@/pages/admin/Notifications"
-import BorrowerDashboard from "@/pages/borrower/Dashboard"
-import { FundingRequestsList } from "@/components/borrower/funding/FundingRequestsList"
-import { NewFundingRequest } from "@/components/borrower/funding/NewFundingRequest"
-import { BorrowerProfile } from "@/components/borrower/BorrowerProfile"
-import { BorrowerKYCForm } from "@/components/borrower/BorrowerKYCForm"
-import { BorrowerPayments } from "@/components/borrower/BorrowerPayments"
-import { InvestorSidebar } from "@/components/investor/InvestorSidebar"
-import InvestorDashboard from "@/pages/investor/Dashboard"
-import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
+import { AdminRoutes } from "@/components/auth/AdminRoutes"
+import { BorrowerRoutes } from "@/components/auth/BorrowerRoutes"
+import { InvestorRoutes } from "@/components/auth/InvestorRoutes"
 
 export function Routes() {
   const { user } = useAuth()
@@ -43,125 +21,9 @@ export function Routes() {
 
   return (
     <RouterRoutes>
-      {/* Routes Admin */}
-      <Route
-        path="/admin/*"
-        element={
-          <PrivateRoute allowedTypes={["admin"]}>
-            <DashboardLayout sidebar={<AdminSidebar />}>
-              <RouterRoutes>
-                <Route path="dashboard" element={<DashboardOverview />} />
-                <Route path="investors" element={<InvestorManagement />} />
-                <Route path="borrowers" element={<BorrowerManagement />} />
-                <Route path="funding-requests" element={<FundingManagement />} />
-                <Route path="finance" element={<FinanceOverview />} />
-                <Route path="compliance" element={
-                  <div className="space-y-6">
-                    <div>
-                      <h2 className="text-3xl font-bold tracking-tight text-primary-800">الامتثال</h2>
-                      <p className="text-muted-foreground">
-                        إدارة ومراقبة الامتثال التنظيمي والشرعي للمنصة
-                      </p>
-                    </div>
-                    <ShariaCompliance />
-                    <PlatformLicenses />
-                    <RegulatoryReports />
-                  </div>
-                } />
-                <Route path="kyc" element={<KYCManagement />} />
-                <Route path="platform-settings" element={<PlatformSettings />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="notifications" element={<Notifications />} />
-              </RouterRoutes>
-            </DashboardLayout>
-          </PrivateRoute>
-        }
-      />
-
-      {/* Routes Emprunteur */}
-      <Route
-        path="/borrower/*"
-        element={
-          <PrivateRoute allowedTypes={["borrower"]}>
-            <RouterRoutes>
-              <Route
-                path="dashboard"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerDashboard />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="funding-requests"
-                element={
-                  <BorrowerDashboardLayout>
-                    <FundingRequestsList />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="funding-requests/new"
-                element={
-                  <BorrowerDashboardLayout>
-                    <NewFundingRequest />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerProfile />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="settings"
-                element={
-                  <BorrowerDashboardLayout>
-                    <Settings />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="kyc"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerKYCForm />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route
-                path="payments"
-                element={
-                  <BorrowerDashboardLayout>
-                    <BorrowerPayments />
-                  </BorrowerDashboardLayout>
-                }
-              />
-              <Route index element={<Navigate to="/borrower/dashboard" replace />} />
-            </RouterRoutes>
-          </PrivateRoute>
-        }
-      />
-
-      {/* Routes Investisseur */}
-      <Route
-        path="/investor/*"
-        element={
-          <PrivateRoute allowedTypes={["basic_investor", "qualified_investor"]}>
-            <DashboardLayout sidebar={<InvestorSidebar />}>
-              <RouterRoutes>
-                <Route path="dashboard" element={<InvestorDashboard />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="settings" element={<Settings />} />
-              </RouterRoutes>
-            </DashboardLayout>
-          </PrivateRoute>
-        }
-      />
+      <AdminRoutes />
+      <BorrowerRoutes />
+      <InvestorRoutes />
 
       {/* Redirection par défaut basée sur le type d'utilisateur */}
       <Route
