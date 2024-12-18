@@ -74,21 +74,15 @@ export function DashboardOverview() {
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">لوحة التحكم</h2>
-          <p className="text-muted-foreground">
-            {profile.user_type === "admin" 
-              ? "نظرة عامة على أداء المنصة"
-              : profile.user_type === "borrower"
-              ? "نظرة عامة على طلبات التمويل"
-              : "نظرة عامة على محفظتك الاستثمارية"}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-muted-foreground">مرحباً بك</p>
-          <p className="font-medium">{profile.first_name} {profile.last_name}</p>
-        </div>
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight text-primary-800">لوحة التحكم</h2>
+        <p className="text-muted-foreground">
+          {profile.user_type === "admin" 
+            ? "نظرة عامة على أداء المنصة"
+            : profile.user_type === "borrower"
+            ? "نظرة عامة على طلبات التمويل"
+            : "نظرة عامة على محفظتك الاستثمارية"}
+        </p>
       </div>
 
       {/* Stats */}
