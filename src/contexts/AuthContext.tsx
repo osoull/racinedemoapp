@@ -95,16 +95,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      setError(error.message)
+    try {
+      // First clear local session state
+      setSession(null)
+      setUser(null)
+      
+      // Then attempt to sign out from Supabase
+      const { error } = await supabase.auth.signOut()
+      
+      if (error) {
+        // If there's an error, but it's just about session not found, we can ignore it
+        if (error.message.includes('session_not_found')) {
+          return { error: null }
+        }
+        // For other errors, show the toast
+        toast({
+          title: "خطأ",
+          description: error.message,
+          variant: "destructive",
+        })
+        return { error }
+      }
+
+      toast({
+        title: "تم تسجيل الخروج بنجاح",
+        description: "نراك قريباً",
+      })
+      
+      return { error: null }
+    } catch (err: any) {
       toast({
         title: "خطأ",
-        description: error.message,
+        description: "حدث خطأ أثناء تسجيل الخروج",
         variant: "destructive",
       })
+      return { error: err }
     }
-    return { error }
   }
 
   const value = {
