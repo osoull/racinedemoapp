@@ -14,7 +14,7 @@ export function EditFundingRequest() {
   const { data: request, isLoading } = useQuery({
     queryKey: ["funding-request", id],
     queryFn: async () => {
-      // Fetch the funding request
+      // Fetch the funding request with its documents
       const { data, error } = await supabase
         .from("funding_requests")
         .select(`

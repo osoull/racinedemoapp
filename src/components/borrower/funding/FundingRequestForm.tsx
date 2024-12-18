@@ -45,6 +45,9 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
       campaign_duration: initialData.campaign_duration,
       description: initialData.description,
       fund_usage_plan: initialData.fund_usage_plan,
+      business_plan: initialData.business_plan,
+      financial_statements: initialData.financial_statements,
+      additional_documents: initialData.additional_documents,
     } : {
       title: "",
       category: "",
@@ -79,6 +82,48 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
           .eq("owner_id", user?.id)
 
         if (error) throw error
+
+        // Update documents if changed
+        if (values.business_plan || values.financial_statements || values.additional_documents) {
+          // First, get existing documents
+          const { data: existingDocs } = await supabase
+            .from("funding_request_documents")
+            .select("*")
+            .eq("request_id", initialData.id)
+
+          // Prepare new documents
+          const documents = []
+          if (values.business_plan && values.business_plan !== initialData.business_plan) {
+            documents.push({
+              request_id: initialData.id,
+              document_type: "business_plan",
+              document_url: values.business_plan,
+            })
+          }
+          if (values.financial_statements && values.financial_statements !== initialData.financial_statements) {
+            documents.push({
+              request_id: initialData.id,
+              document_type: "financial_statements",
+              document_url: values.financial_statements,
+            })
+          }
+          if (values.additional_documents && values.additional_documents !== initialData.additional_documents) {
+            documents.push({
+              request_id: initialData.id,
+              document_type: "additional",
+              document_url: values.additional_documents,
+            })
+          }
+
+          // Update documents if there are changes
+          if (documents.length > 0) {
+            const { error: docsError } = await supabase
+              .from("funding_request_documents")
+              .upsert(documents, { onConflict: "request_id,document_type" })
+
+            if (docsError) throw docsError
+          }
+        }
       } else {
         // Create new request
         const { data: request, error } = await supabase
