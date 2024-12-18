@@ -1,22 +1,23 @@
-import { useState, useEffect } from "react"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/components/ui/use-toast"
-import { UserTypeSelection } from "./auth/UserTypeSelection"
-import { SignUpForm } from "./auth/SignUpForm"
-import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
+import { useToast } from "@/hooks/use-toast"
 import { SignInForm } from "./auth/SignInForm"
+import { SignUpForm } from "./auth/SignUpForm"
+import { UserTypeSelection } from "./auth/UserTypeSelection"
+import { BorrowerSignUpForm } from "./auth/BorrowerSignUpForm"
+import { BusinessInfoForm } from "./auth/BusinessInfoForm"
+import { Card, CardContent } from "./ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 import { Loader2 } from "lucide-react"
 
-type AuthStep = "selection" | "signup" | "signin" | "borrower_signup"
-
 export function Auth() {
-  const [step, setStep] = useState<AuthStep>("signin")
   const [isLoading, setIsLoading] = useState(false)
   const [isRedirecting, setIsRedirecting] = useState(false)
-  const [year] = useState(new Date().getFullYear())
-  const { user, signIn } = useAuth()
+  const [user, setUser] = useState<any>(null)
+  const [view, setView] = useState<"sign_in" | "sign_up">("sign_in")
+  const [userType, setUserType] = useState<string | null>(null)
+  const [step, setStep] = useState(1)
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -76,101 +77,131 @@ export function Auth() {
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setIsRedirecting(true)
-        await redirectBasedOnUserType()
+      if (session?.user) {
+        setUser(session.user)
       }
     }
-    
     checkSession()
   }, [])
 
   useEffect(() => {
     if (!user) return
     redirectBasedOnUserType()
-  }, [user])
+  }, [user, navigate, toast])
 
   const handleSignIn = async (email: string, password: string) => {
     if (isLoading) return
-    
     setIsLoading(true)
+
     try {
-      const { error } = await signIn(email, password)
-      if (error) {
-        if (error.message === "Invalid login credentials") {
-          toast({
-            title: "خطأ في تسجيل الدخول",
-            description: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-            variant: "destructive",
-          })
-        } else {
-          toast({
-            title: "خطأ",
-            description: error.message,
-            variant: "destructive",
-          })
-        }
-        throw error
-      }
-      
-      toast({
-        title: "تم تسجيل الدخول بنجاح",
-        description: "مرحباً بك في لوحة التحكم",
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       })
+
+      if (error) throw error
+
+      setUser(data.user)
     } catch (error: any) {
-      console.error("Auth error:", error)
+      toast({
+        title: "خطأ في تسجيل الدخول",
+        description: error.message,
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleUserTypeSelect = (type: "investor" | "borrower" | "login") => {
-    if (type === "login") {
-      setStep("signin")
-    } else if (type === "borrower") {
-      setStep("borrower_signup")
-    } else {
-      setStep("signup")
+  const handleSignUp = async (email: string, password: string) => {
+    if (isLoading) return
+    setIsLoading(true)
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+
+      if (error) throw error
+
+      setUser(data.user)
+    } catch (error: any) {
+      toast({
+        title: "خطأ في إنشاء الحساب",
+        description: error.message,
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleBusinessInfo = async (businessInfo: any) => {
+    if (isLoading) return
+    setIsLoading(true)
+
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update(businessInfo)
+        .eq("id", user?.id)
+
+      if (error) throw error
+
+      await navigate("/borrower/dashboard")
+    } catch (error: any) {
+      toast({
+        title: "خطأ في حفظ المعلومات",
+        description: error.message,
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const renderContent = () => {
+    switch (step) {
+      case 1:
+        return <UserTypeSelection onSelect={setUserType} />
+      case 2:
+        return userType === "borrower" ? (
+          <BorrowerSignUpForm onSubmit={handleSignUp} />
+        ) : (
+          <BusinessInfoForm onSubmit={handleBusinessInfo} />
+        )
+      default:
+        return null
     }
   }
 
   if (isRedirecting) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center flex-col relative">
-      <img 
-        src="https://haovnjkyayiqenjpvlfb.supabase.co/storage/v1/object/public/platform-assets/logo.svg" 
-        alt="Racine Investment" 
-        className="w-64 md:w-72 lg:w-80 mb-8 object-contain" 
-      />
-      {step === "selection" ? (
-        <UserTypeSelection onSelect={handleUserTypeSelect} />
-      ) : step === "signup" ? (
-        <SignUpForm 
-          onBack={() => setStep("signin")}
-          onSuccess={() => setStep("signin")}
-        />
-      ) : step === "borrower_signup" ? (
-        <BorrowerSignUpForm 
-          onBack={() => setStep("signin")}
-          onSuccess={() => setStep("signin")}
-        />
-      ) : (
-        <SignInForm 
-          onSignIn={handleSignIn}
-          onRegisterClick={() => setStep("selection")}
-          isLoading={isLoading}
-        />
-      )}
-      <p className="text-primary/80 font-medium text-base text-center absolute bottom-4">
-        جميع الحقوق محفوظة لشركة رسين للأستثمار© {year}
-      </p>
+    <div className="container relative flex h-screen flex-col items-center justify-center">
+      <Card className="w-full max-w-lg">
+        <CardContent className="pt-6">
+          <Tabs value={view} onValueChange={(v) => setView(v as "sign_in" | "sign_up")}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="sign_in">تسجيل الدخول</TabsTrigger>
+              <TabsTrigger value="sign_up">إنشاء حساب</TabsTrigger>
+            </TabsList>
+            <TabsContent value="sign_in" className="mt-4">
+              <SignInForm onSubmit={handleSignIn} isLoading={isLoading} />
+            </TabsContent>
+            <TabsContent value="sign_up" className="mt-4">
+              {renderContent()}
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   )
 }
