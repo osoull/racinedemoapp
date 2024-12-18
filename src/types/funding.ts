@@ -6,7 +6,7 @@ export interface FundingRequest {
   funding_goal: number
   current_funding: number
   campaign_duration: number
-  fund_usage_plan: Record<string, any>
+  fund_usage_plan: string
   status: string
   fees_paid: boolean
   owner_id: string
