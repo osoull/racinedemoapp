@@ -26,11 +26,12 @@ export function EditFundingRequest() {
 
       if (error) throw error
 
+      // Ensure fund_usage_plan is a string
       const formattedData: FundingRequest = {
         ...data,
         fund_usage_plan: typeof data.fund_usage_plan === 'object' 
           ? JSON.stringify(data.fund_usage_plan)
-          : data.fund_usage_plan,
+          : data.fund_usage_plan || '',
         documents: data.documents
       }
 
