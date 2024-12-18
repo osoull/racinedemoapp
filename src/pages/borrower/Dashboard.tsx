@@ -1,7 +1,5 @@
 import { BorrowerDashboardLayout } from "@/components/borrower/BorrowerDashboardLayout"
 import { BorrowerDashboardOverview } from "@/components/borrower/dashboard/BorrowerDashboardOverview"
-import { Card, CardContent } from "@/components/ui/card"
-import { Handshake, Rocket } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 
 export default function BorrowerDashboard() {
