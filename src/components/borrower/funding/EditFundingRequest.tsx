@@ -23,12 +23,12 @@ export function EditFundingRequest() {
 
       if (error) throw error
 
-      // Convert fund_usage_plan to string if it's not already
+      // Convert fund_usage_plan to string regardless of its type
       const formattedData: FundingRequest = {
         ...data,
         fund_usage_plan: typeof data.fund_usage_plan === 'object' 
           ? JSON.stringify(data.fund_usage_plan)
-          : data.fund_usage_plan
+          : String(data.fund_usage_plan) // Convert any primitive value to string
       }
       
       return formattedData
