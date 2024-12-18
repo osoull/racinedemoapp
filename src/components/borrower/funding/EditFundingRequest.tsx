@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 import { FundingRequestForm } from "./FundingRequestForm"
+import { FundingRequest } from "@/types/funding"
 
 export function EditFundingRequest() {
   const navigate = useNavigate()
@@ -21,7 +22,16 @@ export function EditFundingRequest() {
         .single()
 
       if (error) throw error
-      return data
+
+      // Convert fund_usage_plan to string if it's not already
+      const formattedData: FundingRequest = {
+        ...data,
+        fund_usage_plan: typeof data.fund_usage_plan === 'object' 
+          ? JSON.stringify(data.fund_usage_plan)
+          : data.fund_usage_plan
+      }
+      
+      return formattedData
     },
     enabled: !!id && !!user,
   })
