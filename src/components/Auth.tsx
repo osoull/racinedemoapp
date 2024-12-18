@@ -86,6 +86,14 @@ export function Auth() {
     }
   }
 
+  const handleSignUpSuccess = () => {
+    setView("sign_in")
+    toast({
+      title: "تم إنشاء الحساب بنجاح",
+      description: "يمكنك الآن تسجيل الدخول",
+    })
+  }
+
   if (isRedirecting) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -116,9 +124,9 @@ export function Auth() {
                 />
               ) : (
                 userType === "borrower" ? (
-                  <BorrowerSignUpForm onBack={() => setStep(1)} />
+                  <BorrowerSignUpForm onBack={() => setStep(1)} onSuccess={handleSignUpSuccess} />
                 ) : (
-                  <SignUpForm onBack={() => setStep(1)} />
+                  <SignUpForm onBack={() => setStep(1)} onSuccess={handleSignUpSuccess} />
                 )
               )}
             </TabsContent>
