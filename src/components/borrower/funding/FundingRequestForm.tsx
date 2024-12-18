@@ -47,18 +47,16 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
     },
   })
 
-  const onSubmit = (values: FundingRequestFormData) => {
-    submitFundingRequest(values, user?.id);
-  }
-
   const nextStep = () => {
-    const currentStepFields = {
-      1: ["title", "category", "funding_goal", "campaign_duration", "description", "fund_usage_plan"] as const,
-      2: ["business_plan", "financial_statements"] as const,
-      3: [] as const,
-    }[step]
+    type StepFields = readonly (keyof FundingRequestFormData)[]
+    
+    const currentStepFields: Record<number, StepFields> = {
+      1: ["title", "category", "funding_goal", "campaign_duration", "description", "fund_usage_plan"],
+      2: ["business_plan", "financial_statements"],
+      3: [],
+    }
 
-    const isValid = currentStepFields.every((field) => {
+    const isValid = currentStepFields[step].every((field) => {
       const value = form.getValues(field)
       if (typeof value === "string") {
         return value && (!["description", "fund_usage_plan"].includes(field) || value.length >= 50)
