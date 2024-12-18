@@ -1,9 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useQuery } from "@tanstack/react-query"
 import { supabase } from "@/integrations/supabase/client"
-import { Loader2 } from "lucide-react"
-import { KYCVerificationList } from "./KYCVerificationList"
-import { Badge } from "@/components/ui/badge"
+import { KYCStatsGrid } from "./stats/KYCStatsGrid"
+import { KYCRequestsTable } from "./KYCRequestsTable"
 
 export function KYCManagement() {
   const { data: kycRequests, isLoading } = useQuery({
@@ -48,82 +46,8 @@ export function KYCManagement() {
         </p>
       </div>
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>إجمالي الطلبات</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                kycRequests?.length || 0
-              )}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>المستثمرون</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                kycRequests?.filter(r => r.user_type === "basic_investor" || r.user_type === "qualified_investor").length || 0
-              )}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>المقترضون</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                kycRequests?.filter(r => r.user_type === "borrower").length || 0
-              )}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>قيد المراجعة</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {isLoading ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                kycRequests?.filter(r => r.kyc_status === "under_review").length || 0
-              )}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>طلبات التحقق من الهوية</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center h-96">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          ) : (
-            <KYCVerificationList requests={kycRequests || []} />
-          )}
-        </CardContent>
-      </Card>
+      <KYCStatsGrid data={kycRequests} isLoading={isLoading} />
+      <KYCRequestsTable data={kycRequests} isLoading={isLoading} />
     </div>
   )
 }
