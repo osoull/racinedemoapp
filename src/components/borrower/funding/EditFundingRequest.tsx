@@ -35,7 +35,7 @@ export function EditFundingRequest() {
         ...data,
         fund_usage_plan: typeof data.fund_usage_plan === 'object' 
           ? JSON.stringify(data.fund_usage_plan)
-          : String(data.fund_usage_plan), // Convert any primitive value to string
+          : String(data.fund_usage_plan),
         business_plan: data.documents?.find(d => d.document_type === 'business_plan')?.document_url,
         financial_statements: data.documents?.find(d => d.document_type === 'financial_statements')?.document_url,
         additional_documents: data.documents?.find(d => d.document_type === 'additional')?.document_url,

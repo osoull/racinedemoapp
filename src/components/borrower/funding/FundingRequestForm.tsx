@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { BasicInfoStep } from "./steps/BasicInfoStep"
@@ -9,21 +8,10 @@ import { DocumentsStep } from "./steps/DocumentsStep"
 import { PaymentStep } from "./steps/PaymentStep"
 import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { supabase } from "@/integrations/supabase/client"
 import { useAuth } from "@/hooks/useAuth"
 import { FundingRequest } from "@/types/funding"
-
-const formSchema = z.object({
-  title: z.string().min(1, "عنوان المشروع مطلوب"),
-  category: z.string().min(1, "تصنيف المشروع مطلوب"),
-  funding_goal: z.number().min(1000, "المبلغ المستهدف يجب أن يكون أكبر من 1000 ريال"),
-  campaign_duration: z.number().min(1, "مدة الحملة مطلوبة"),
-  description: z.string().min(50, "يجب أن يكون الوصف 50 حرفاً على الأقل"),
-  fund_usage_plan: z.string().min(50, "يجب أن تكون خطة استخدام التمويل 50 حرفاً على الأقل"),
-  business_plan: z.string().optional(),
-  financial_statements: z.string().optional(),
-  additional_documents: z.string().optional(),
-})
+import { fundingRequestSchema, FundingRequestFormData } from "./types"
+import { useFundingRequestSubmit } from "./hooks/useFundingRequestSubmit"
 
 export interface FundingRequestFormProps {
   initialData?: FundingRequest;
@@ -35,9 +23,10 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
   const [step, setStep] = useState(1)
   const { toast } = useToast()
   const { user } = useAuth()
+  const { handleSubmit: submitFundingRequest } = useFundingRequestSubmit(initialData, onSuccess)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FundingRequestFormData>({
+    resolver: zodResolver(fundingRequestSchema),
     defaultValues: initialData ? {
       title: initialData.title,
       category: initialData.category,
@@ -58,142 +47,8 @@ export function FundingRequestForm({ initialData, onSuccess, onCancel }: Funding
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      if (initialData) {
-        // Update existing request
-        const { error } = await supabase
-          .from("funding_requests")
-          .update({
-            title: values.title,
-            category: values.category,
-            funding_goal: values.funding_goal,
-            campaign_duration: values.campaign_duration,
-            description: values.description,
-            fund_usage_plan: values.fund_usage_plan,
-            status: "draft",
-            completion_steps: {
-              basic_info: true,
-              documents: !!values.business_plan && !!values.financial_statements,
-              payment: false,
-            },
-          })
-          .eq("id", initialData.id)
-          .eq("owner_id", user?.id)
-
-        if (error) throw error
-
-        // Update documents if changed
-        if (values.business_plan || values.financial_statements || values.additional_documents) {
-          // First, get existing documents
-          const { data: existingDocs } = await supabase
-            .from("funding_request_documents")
-            .select("*")
-            .eq("request_id", initialData.id)
-
-          // Prepare new documents
-          const documents = []
-          if (values.business_plan && values.business_plan !== initialData.business_plan) {
-            documents.push({
-              request_id: initialData.id,
-              document_type: "business_plan",
-              document_url: values.business_plan,
-            })
-          }
-          if (values.financial_statements && values.financial_statements !== initialData.financial_statements) {
-            documents.push({
-              request_id: initialData.id,
-              document_type: "financial_statements",
-              document_url: values.financial_statements,
-            })
-          }
-          if (values.additional_documents && values.additional_documents !== initialData.additional_documents) {
-            documents.push({
-              request_id: initialData.id,
-              document_type: "additional",
-              document_url: values.additional_documents,
-            })
-          }
-
-          // Update documents if there are changes
-          if (documents.length > 0) {
-            const { error: docsError } = await supabase
-              .from("funding_request_documents")
-              .upsert(documents, { onConflict: "request_id,document_type" })
-
-            if (docsError) throw docsError
-          }
-        }
-      } else {
-        // Create new request
-        const { data: request, error } = await supabase
-          .from("funding_requests")
-          .insert({
-            owner_id: user?.id,
-            title: values.title,
-            category: values.category,
-            funding_goal: values.funding_goal,
-            campaign_duration: values.campaign_duration,
-            description: values.description,
-            fund_usage_plan: values.fund_usage_plan,
-            status: "draft",
-            completion_steps: {
-              basic_info: true,
-              documents: !!values.business_plan && !!values.financial_statements,
-              payment: false,
-            },
-          })
-          .select()
-          .single()
-
-        if (error) throw error
-
-        if (values.business_plan || values.financial_statements || values.additional_documents) {
-          const documents = []
-          if (values.business_plan) {
-            documents.push({
-              request_id: request.id,
-              document_type: "business_plan",
-              document_url: values.business_plan,
-            })
-          }
-          if (values.financial_statements) {
-            documents.push({
-              request_id: request.id,
-              document_type: "financial_statements",
-              document_url: values.financial_statements,
-            })
-          }
-          if (values.additional_documents) {
-            documents.push({
-              request_id: request.id,
-              document_type: "additional",
-              document_url: values.additional_documents,
-            })
-          }
-
-          const { error: docsError } = await supabase
-            .from("funding_request_documents")
-            .insert(documents)
-
-          if (docsError) throw docsError
-        }
-      }
-
-      toast({
-        title: initialData ? "تم تحديث الطلب" : "تم حفظ الطلب",
-        description: initialData ? "تم تحديث طلب التمويل بنجاح" : "تم حفظ طلب التمويل بنجاح",
-      })
-
-      onSuccess?.()
-    } catch (error) {
-      console.error("Error submitting funding request:", error)
-      toast({
-        title: "خطأ",
-        description: "حدث خطأ أثناء حفظ الطلب",
-        variant: "destructive",
-      })
-    }
+  const onSubmit = (values: FundingRequestFormData) => {
+    submitFundingRequest(values, user?.id);
   }
 
   const nextStep = () => {
